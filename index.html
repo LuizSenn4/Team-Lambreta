@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="pt-PT">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Team Lambreta</title>
+  <link rel="stylesheet" href="intro.css" />
+</head>
+<body>
+  <section id="introScreen" class="intro-screen">
+    <div class="scene-bg"></div>
+    <canvas id="starfield" class="starfield"></canvas>
+    <div class="scene-vignette"></div>
+    <div class="gold-particles"></div>
+
+    <div class="side side-left">
+      <div class="side-line"></div>
+      <div class="side-card"><span>01</span><strong>FOCO</strong></div>
+      <div class="side-card"><span>02</span><strong>GARRA</strong></div>
+      <div class="side-card"><span>03</span><strong>LEALDADE</strong></div>
+    </div>
+
+    <div class="side side-right">
+      <div class="side-line"></div>
+      <div class="side-card"><span>04</span><strong>DISCIPLINA</strong></div>
+      <div class="side-card"><span>05</span><strong>UNIÃO</strong></div>
+      <div class="side-card"><span>06</span><strong>FAMÍLIA</strong></div>
+    </div>
+
+    <div class="corner-ui corner-top-left"></div>
+    <div class="corner-ui corner-top-right"></div>
+    <div class="corner-ui corner-bottom-left"></div>
+    <div class="corner-ui corner-bottom-right"></div>
+
+    <main class="intro-center">
+      <div class="crest-stage">
+        <div class="crest-halo"></div>
+        <div class="crest-shine"></div>
+        <img src="img/brasao.png" alt="Brasão Team Lambreta" class="main-crest">
+      </div>
+
+      <div class="enter-box">
+        <div class="enter-box-line left"></div>
+        <button id="enterBtn" type="button">CLIQUE PARA ENTRAR <span>›</span></button>
+        <div class="enter-box-line right"></div>
+      </div>
+
+      <p class="intro-motto">JUNTOS SOMOS MAIS FORTES</p>
+
+      <div id="loadingArea" class="loading-area">
+        <h2>CARREGANDO...</h2>
+        <div class="loading-track"><div id="loadingBar"></div></div>
+        <p id="loadingPercent">0%</p>
+
+        <div class="steps">
+          <div class="step active"><i>◆</i><span>VERIFICANDO EQUIPE</span></div>
+          <div class="step"><i>◆</i><span>SINCRONIZANDO DADOS</span></div>
+          <div class="step"><i>◆</i><span>CARREGANDO RECURSOS</span></div>
+          <div class="step"><i>◆</i><span>CONECTANDO SERVIDORES</span></div>
+          <div class="step"><i>◆</i><span>PREPARANDO VITÓRIA</span></div>
+        </div>
+
+        <p id="loadingText" class="loading-message">VERIFICANDO EQUIPE...</p>
+      </div>
+    </main>
+  </section>
+
+  <script src="intro.js"></script>
+</body>
+</html>

@@ -1,0 +1,16 @@
+{
+  "removed_novidades_from_banner": true,
+  "removed_destaque_from_banner": true,
+  "has_clean_banner": true,
+  "has_3_clean_slides": true,
+  "has_3_clean_dots": false,
+  "has_v45_js": true,
+  "node_check_ok": true
+}
+
+Console test:
+teamLambretaBanner.state()
+teamLambretaBanner.next()
+teamLambretaBanner.prev()
+
+Node:

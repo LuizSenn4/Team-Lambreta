@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="pt-PT">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Fórum - Team Lambreta</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <section id="siteContent" class="site-content forum-page">
+    <header class="site-header">
+  <a href="home.html" class="brand">
+    <img src="img/brasao.png" alt="Brasão Team Lambreta">
+    <div>
+      <strong id="publicTeamName">TEAM LAMBRETA</strong>
+      <span id="publicSlogan">Lambreta é uma família</span>
+    </div>
+  </a>
+
+  <nav>
+    <a href="home.html">Início</a>
+    <a href="team.html">Team</a>
+    <a href="streamers.html">Streamers</a>
+    <a href="forum.html">Fórum</a>
+    <a href="eventos.html">Eventos</a>
+    <a href="conquistas.html">Conquistas</a>
+    <a href="midia.html">Mídia</a>
+    <a href="loja.html">Loja</a>
+    <a href="contacto.html">Contacto</a>
+        <a href="ajuda.html">Ajuda</a>
+  </nav>
+
+  <a class="admin-link" href="admin.html">Admin</a>
+</header>
+    
+<main class="forum-page-shell">
+  <section class="forum-hero forum-hero-v38">
+    <div class="forum-title-badge">Fórum</div>
+    <h1>Tópicos da equipa</h1>
+    <p>Cria sugestões, acompanha discussões e espera aprovação da administração.</p>
+  </section>
+
+  <section class="forum-board">
+    <aside class="forum-create-panel">
+      <h2>Criar tópico</h2>
+      <p>O tópico fica pendente até o admin aprovar.</p>
+
+      <form id="userTopicForm" class="user-topic-form">
+        <input id="topicUserName" type="text" placeholder="Teu nome" value="Visitante" maxlength="18"><small class="field-counter" data-for="topicUserName"></small>
+        <input id="topicTitle" type="text" placeholder="Título do tópico" maxlength="60"><small class="field-counter" data-for="topicTitle"></small>
+        <textarea id="topicDescription" placeholder="Explica o tópico..." maxlength="280"></textarea><small class="field-counter full" data-for="topicDescription"></small>
+        <button type="submit">Enviar para aprovação</button>
+      </form>
+
+      <p id="topicFeedback" class="topic-feedback"></p>
+    </aside>
+
+    <section class="forum-topic-panel">
+      <div class="forum-tabs">
+        <span class="active">Aprovados</span>
+        <span>Fixados</span>
+        <span>Fechados</span>
+      </div>
+      <div id="forumGrid" class="forum-list"></div>
+    </section>
+  </section>
+</main>
+
+    <footer class="site-footer">
+      <p>© <span id="year"></span> Team Lambreta — Juntos somos mais fortes.</p>
+    </footer>
+  </section>
+
+  <script src="data.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>

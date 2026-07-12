@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="pt-PT">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ajuda - Team Lambreta</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <section id="siteContent" class="site-content help-page">
+    <header class="site-header">
+      <a href="home.html" class="brand">
+        <img src="img/brasao.png" alt="Brasão Team Lambreta">
+        <div>
+          <strong id="publicTeamName">TEAM LAMBRETA</strong>
+          <span id="publicSlogan">Lambreta é uma família</span>
+        </div>
+      </a>
+
+      <nav>
+        <a href="home.html">Início</a>
+        <a href="team.html">Team</a>
+        <a href="streamers.html">Streamers</a>
+        <a href="forum.html">Fórum</a>
+        <a href="eventos.html">Eventos</a>
+        <a href="conquistas.html">Conquistas</a>
+        <a href="midia.html">Mídia</a>
+        <a href="loja.html">Loja</a>
+        <a href="contacto.html">Contacto</a>
+        <a href="ajuda.html">Ajuda</a>
+      </nav>
+
+      <a class="admin-link" href="admin.html">Admin</a>
+    </header>
+
+    <main class="help-page-shell">
+      <section class="help-hero page-hero-center">
+        <div class="page-title-badge">Ajuda</div>
+        <h1>Guia do Lobby</h1>
+        <p>Explicação rápida das regras do chat, cores, fórum, cargos, status e funcionamento do site.</p>
+      </section>
+
+      <section class="help-grid">
+        <article class="help-card">
+          <h2>Cores do chat</h2>
+          <div class="role-example admin"><span>Admin</span><p>Administração do site. Pode falar sem delay.</p></div>
+          <div class="role-example streamer"><span>Streamer</span><p>Quem faz live/conteúdo.</p></div>
+          <div class="role-example staff"><span>Staff</span><p>Organização, apoio e moderação.</p></div>
+          <div class="role-example user"><span>Usuário</span><p>Membro/visitante normal do lobby.</p></div>
+        </article>
+
+        <article class="help-card">
+          <h2>Anti-flood</h2>
+          <p>Usuários normais podem falar livremente, mas se enviarem <strong>3 mensagens em até 10 segundos</strong>, recebem <strong>10 segundos de cooldown</strong>.</p>
+          <p>Admin não tem delay. No site real, essa regra deve ser validada no backend.</p>
+        </article>
+
+        <article class="help-card">
+          <h2>Fórum</h2>
+          <p>Usuários podem criar tópicos, mas eles ficam <strong>pendentes</strong>.</p>
+          <p>O admin aprova ou recusa. Só tópicos aprovados aparecem publicamente.</p>
+        </article>
+
+        <article class="help-card">
+          <h2>Onde adiciono fotos e vídeos?</h2>
+          <p><strong>Fotos dos integrantes:</strong> entra no Admin → Team → Foto da pessoa / URL. Pode colar link ou carregar imagem.</p>
+          <p><strong>Fotos, vídeos e shorts gerais:</strong> entra no Admin → Mídia. Escolhe photo, video ou short. Para Shorts/TikTok/Reels, cola o link no campo de vídeo/short/reel.</p>
+        </article>
+
+        <article class="help-card">
+          <h2>Status</h2>
+          <p><strong>Online:</strong> disponível no lobby.</p>
+          <p><strong>Ocupado:</strong> não deve ser incomodado.</p>
+          <p><strong>Ausente:</strong> sem atividade. Após 5 minutos parado, vira ausente automaticamente.</p>
+        </article>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <p>© <span id="year"></span> Team Lambreta — Juntos somos mais fortes.</p>
+    </footer>
+  </section>
+
+  <script src="data.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>

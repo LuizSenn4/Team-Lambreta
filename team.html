@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="pt-PT">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Team - Team Lambreta</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <section id="siteContent" class="site-content team-page">
+    <header class="site-header">
+      <a href="home.html" class="brand">
+        <img src="img/brasao.png" alt="Brasão Team Lambreta">
+        <div>
+          <strong id="publicTeamName">TEAM LAMBRETA</strong>
+          <span id="publicSlogan">Lambreta é uma família</span>
+        </div>
+      </a>
+
+      <nav>
+        <a href="home.html">Início</a>
+        <a href="team.html">Team</a>
+        <a href="streamers.html">Streamers</a>
+        <a href="forum.html">Fórum</a>
+        <a href="eventos.html">Eventos</a>
+        <a href="conquistas.html">Conquistas</a>
+        <a href="midia.html">Mídia</a>
+        <a href="loja.html">Loja</a>
+        <a href="contacto.html">Contacto</a>
+        <a href="ajuda.html">Ajuda</a>
+      </nav>
+
+      <a class="admin-link" href="admin.html">Admin</a>
+    </header>
+
+    <main class="team-page-shell">
+      <section class="page-hero-center">
+        <div class="page-title-badge">Team</div>
+        <h1>Família Lambreta</h1>
+        <p>Gamers, staff, moderadores e administração organizados por área. A parte dos streamers agora tem espaço próprio.</p>
+      </section>
+
+      <section class="team-category-block">
+        <div class="team-category-head">
+          <div>
+            <p class="tag">ÁREA 01</p>
+            <h2>Gamers</h2>
+          </div>
+          <span>Jogadores do team</span>
+        </div>
+        <div id="teamGamersGrid" class="team-profile-grid"></div>
+      </section>
+
+      <section class="team-category-block">
+        <div class="team-category-head">
+          <div>
+            <p class="tag">ÁREA 02</p>
+            <h2>Staff & Família</h2>
+          </div>
+          <span>Organização, apoio e administração</span>
+        </div>
+        <div id="teamStaffGrid" class="team-profile-grid"></div>
+      </section>
+
+      <section class="team-category-block team-link-block">
+        <div class="team-category-head">
+          <div>
+            <p class="tag">NOVA ÁREA</p>
+            <h2>Streamers</h2>
+          </div>
+          <span>Iniciantes, criadores e parceiros</span>
+        </div>
+        <p class="team-link-copy">Os streamers ganharam aba própria para divulgação, candidaturas, parceria e hall da fama.</p>
+        <div class="lobby-actions team-link-actions">
+          <a href="streamers.html">Abrir área dos Streamers</a>
+        </div>
+      </section>
+    </main>
+
+    <div id="teamHoverPreview" class="team-hover-preview">
+      <div class="team-hover-photo"></div>
+      <strong></strong>
+      <span></span>
+    </div>
+
+    <div id="teamProfileModal" class="team-profile-modal">
+      <div class="team-profile-backdrop" data-team-close="1"></div>
+      <article class="team-profile-full">
+        <button class="team-profile-close" type="button" data-team-close="1">×</button>
+        <div class="team-profile-full-photo"></div>
+        <div class="team-profile-full-copy">
+          <p class="tag">PERFIL</p>
+          <h2></h2>
+          <strong></strong>
+          <p class="team-profile-full-bio"></p>
+          <div class="team-profile-full-links"></div>
+        </div>
+      </article>
+    </div>
+
+    <footer class="site-footer">
+      <p>© <span id="year"></span> Team Lambreta — Juntos somos mais fortes.</p>
+    </footer>
+  </section>
+
+  <script src="data.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>

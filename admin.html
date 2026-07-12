@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="pt-PT">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin - Team Lambreta</title>
+  <link rel="stylesheet" href="admin.css" />
+</head>
+<body>
+  <aside class="admin-sidebar">
+    <div class="admin-brand">
+      <img src="img/brasao.png" alt="Brasão Team Lambreta">
+      <div><strong>Admin</strong><span>Team Lambreta</span></div>
+    </div>
+
+    <nav>
+      <a href="#geral">Geral</a>
+      <a href="#team">Team</a>
+      <a href="#streamers">Streamers</a>
+      <a href="#hall">Hall da Fama</a>
+      <a href="#forum">Fórum</a>
+      <a href="#pendentes">Pendentes</a>
+      <a href="#candidaturas">Candidaturas</a>
+      <a href="#mensagens">Mensagens</a>
+      <a href="#usuarios">Usuários</a>
+      <a href="#eventos">Eventos</a>
+      <a href="#conquistas">Conquistas</a>
+      <a href="#midia">Mídia</a>
+      <a href="#loja">Loja</a>
+      <a href="#redes">Redes</a>
+      <a href="ajuda.html">Ajuda</a>
+    </nav>
+
+    <a class="back-public" href="home.html">Ver site</a>
+  </aside>
+
+  <main class="admin-main">
+    <header class="admin-top">
+      <div><p>PAINEL DE CONTROLO</p><h1>Team Lambreta Admin</h1></div>
+      <button id="saveAllBtn">Salvar tudo</button>
+    </header>
+
+    <section id="geral" class="admin-card">
+      <h2>Geral</h2>
+      <div class="form-grid">
+        <label>Nome do time<input id="teamNameInput" type="text"></label>
+        <label>Slogan<input id="sloganInput" type="text"></label>
+        <label>Título do lobby<input id="heroTitleInput" type="text"></label>
+        <label>Texto do lobby<textarea id="heroTextInput"></textarea></label>
+        <label class="full">Recado do lobby<textarea id="announcementInput"></textarea></label>
+      </div>
+    </section>
+
+    <section id="team" class="admin-card">
+      <div class="card-head"><h2>Team</h2><button data-add="members">Adicionar perfil</button></div>
+      <p class="hint">Aqui ficam gamers, staff, moderadores e família. A área Streamers agora está separada.</p>
+      <div id="membersAdminList" class="admin-list"></div>
+    </section>
+
+    <section id="streamers" class="admin-card">
+      <div class="card-head"><h2>Streamers</h2><button data-add="streamers">Adicionar streamer</button></div>
+      <p class="hint">Área própria para quem está a começar, parceiros e trocas de divulgação.</p>
+      <div id="streamersAdminList" class="admin-list"></div>
+    </section>
+
+    <section id="hall" class="admin-card">
+      <div class="card-head"><h2>Hall da Fama</h2><button data-add="hallOfFame">Adicionar destaque</button></div>
+      <p class="hint">Conforme o valor total de doações, o apoiador pode ganhar destaque, cor especial e nível VIP.</p>
+      <div id="hallOfFameAdminList" class="admin-list"></div>
+    </section>
+
+    <section id="forum" class="admin-card">
+      <div class="card-head"><h2>Fórum aprovado</h2><button data-add="forum">Criar tópico aprovado</button></div>
+      <p class="hint">Tópicos aprovados aparecem no Fórum público. Aqui o admin pode editar, abrir/fechar ou fixar.</p>
+      <div id="forumAdminList" class="admin-list"></div>
+    </section>
+
+    <section id="pendentes" class="admin-card">
+      <div class="card-head"><h2>Tópicos pendentes</h2><span class="pill">Aguardando aprovação</span></div>
+      <p class="hint">Tópicos criados pelos usuários ficam aqui até o admin aprovar ou recusar.</p>
+      <div id="pendingForumAdminList" class="admin-list"></div>
+    </section>
+
+    <section id="candidaturas" class="admin-card">
+      <div class="card-head"><h2>Candidaturas de Streamers</h2><span class="pill">Quero participar</span></div>
+      <p class="hint">Pedidos enviados pelo formulário público entram aqui e também podem virar mensagem privada para a administração.</p>
+      <div id="streamerApplicationsAdminList" class="admin-list"></div>
+    </section>
+
+    <section id="mensagens" class="admin-card">
+      <div class="card-head"><h2>Mensagens privadas / avisos</h2><button data-add="privateInbox">Adicionar mensagem</button></div>
+      <p class="hint">Centro preparado para notícias, eventos, respostas dos admins e contactos privados.</p>
+      <div id="privateInboxAdminList" class="admin-list"></div>
+    </section>
+
+    <section id="usuarios" class="admin-card">
+      <div class="card-head"><h2>Usuários pendentes</h2><button data-add="pendingUsers">Adicionar usuário teste</button></div>
+      <p class="hint">Copo vazio para quando tivermos login real: usuários novos entram pendentes até o admin aceitar.</p>
+      <div id="pendingUsersAdminList" class="admin-list"></div>
+    </section>
+
+    <section id="eventos" class="admin-card">
+      <div class="card-head"><h2>Eventos</h2><button data-add="events">Adicionar evento</button></div>
+      <div id="eventsAdminList" class="admin-list"></div>
+    </section>
+
+    <section id="conquistas" class="admin-card">
+      <div class="card-head"><h2>Conquistas</h2><button data-add="achievements">Adicionar conquista</button></div>
+      <div id="achievementsAdminList" class="admin-list"></div>
+    </section>
+
+    <section id="midia" class="admin-card">
+      <div class="card-head"><h2>Mídia</h2><button data-add="media">Adicionar mídia</button></div>
+      <div id="mediaAdminList" class="admin-list"></div>
+    </section>
+
+    <section id="loja" class="admin-card">
+      <div class="card-head"><h2>Loja</h2><button data-add="store">Adicionar produto</button></div>
+      <div id="storeAdminList" class="admin-list"></div>
+    </section>
+
+    <section id="redes" class="admin-card">
+      <h2>Redes sociais</h2>
+      <div class="form-grid">
+        <label>TikTok<input id="tiktokInput" type="text" placeholder="https://..."></label>
+        <label>Instagram<input id="instagramInput" type="text" placeholder="https://..."></label>
+        <label>YouTube<input id="youtubeInput" type="text" placeholder="https://..."></label>
+        <label>Discord<input id="discordInput" type="text" placeholder="https://..."></label>
+        <label>Facebook<input id="facebookInput" type="text" placeholder="https://..."></label>
+      </div>
+    </section>
+  </main>
+
+  <div id="toast">Salvo!</div>
+  <script src="data.js"></script>
+  <script src="admin.js"></script>
+</body>
+</html>

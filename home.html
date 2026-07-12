@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="pt-PT">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Início - Team Lambreta</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <section id="siteContent" class="site-content home-page">
+    <header class="site-header">
+  <a href="home.html" class="brand">
+    <div>
+      <strong id="publicTeamName">TEAM LAMBRETA</strong>
+      <span id="publicSlogan">Lambreta é uma família</span>
+    </div>
+  </a>
+
+  <nav>
+    <a href="home.html">Início</a>
+    <a href="team.html">Team</a>
+    <a href="streamers.html">Streamers</a>
+    <a href="forum.html">Fórum</a>
+    <a href="eventos.html">Eventos</a>
+    <a href="conquistas.html">Conquistas</a>
+    <a href="midia.html">Mídia</a>
+    <a href="loja.html">Loja</a>
+    <a href="contacto.html">Contacto</a>
+        <a href="ajuda.html">Ajuda</a>
+  </nav>
+
+  <a class="admin-link" href="admin.html">Admin</a>
+</header>
+    
+<main id="home" class="home-v22">
+  <section class="home-main">
+    <div class="hero-v22">
+      <div>
+        <p class="tag">LOBBY OFICIAL</p>
+        <h1 id="publicHeroTitle">Bem-vindo ao Team Lambreta</h1>
+        <p id="publicHeroText">Foco, garra, lealdade, disciplina e família. Este é o lobby oficial do Team Lambreta.</p>
+
+        <div class="lobby-actions">
+          <a href="forum.html">Entrar no fórum</a>
+          <a href="team.html">Ver team</a>
+        </div>
+      </div>
+    </div>
+
+    <section class="lb-banner-final" id="lbBannerFinal">
+      <button class="lb-arrow lb-left" type="button" onclick="lbBannerMove(-1)" aria-label="Banner anterior">‹</button>
+      <button class="lb-arrow lb-right" type="button" onclick="lbBannerMove(1)" aria-label="Próximo banner">›</button>
+
+      <div class="lb-slide is-active">
+        <h2>Torneio interno em breve</h2>
+        <p>Campeonatos, horários, regras rápidas e inscrições do Team Lambreta.</p>
+      </div>
+
+      <div class="lb-slide">
+        <h2>Drop oficial da loja</h2>
+        <p>Camisolas, hoodies e peças exclusivas da marca Lambreta.</p>
+      </div>
+
+      <div class="lb-slide">
+        <h2>Recados da administração</h2>
+        <p>Avisos importantes, calendário, decisões e novidades da comunidade.</p>
+      </div>
+
+      <div class="lb-dots">
+        <button class="is-active" type="button" onclick="lbBannerGo(0)" aria-label="Banner 1"></button>
+        <button type="button" onclick="lbBannerGo(1)" aria-label="Banner 2"></button>
+        <button type="button" onclick="lbBannerGo(2)" aria-label="Banner 3"></button>
+      </div>
+
+      <script>
+        window.lbBannerIndex = 0;
+        window.lbBannerTimer = null;
+
+        window.lbBannerRender = function(index) {
+          const banner = document.getElementById("lbBannerFinal");
+          if (!banner) return;
+
+          const slides = Array.from(banner.querySelectorAll(".lb-slide"));
+          const dots = Array.from(banner.querySelectorAll(".lb-dots button"));
+
+          if (!slides.length) return;
+
+          window.lbBannerIndex = (index + slides.length) % slides.length;
+
+          slides.forEach(function(slide, i) {
+            slide.classList.toggle("is-active", i === window.lbBannerIndex);
+          });
+
+          dots.forEach(function(dot, i) {
+            dot.classList.toggle("is-active", i === window.lbBannerIndex);
+          });
+
+          console.log("[LB Banner Final] slide:", window.lbBannerIndex + 1);
+        };
+
+        window.lbBannerGo = function(index) {
+          window.lbBannerRender(index);
+          window.lbBannerRestart();
+        };
+
+        window.lbBannerMove = function(direction) {
+          window.lbBannerRender(window.lbBannerIndex + direction);
+          window.lbBannerRestart();
+        };
+
+        window.lbBannerRestart = function() {
+          clearInterval(window.lbBannerTimer);
+          window.lbBannerTimer = setInterval(function() {
+            window.lbBannerRender(window.lbBannerIndex + 1);
+          }, 6500);
+        };
+
+        window.lbBannerDebug = function() {
+          const banner = document.getElementById("lbBannerFinal");
+          return {
+            found: !!banner,
+            index: window.lbBannerIndex,
+            slides: banner ? banner.querySelectorAll(".lb-slide").length : 0,
+            dots: banner ? banner.querySelectorAll(".lb-dots button").length : 0
+          };
+        };
+
+        window.lbBannerRender(0);
+        window.lbBannerRestart();
+      </script>
+    </section>
+  </section>
+
+  <aside class="online-chat">
+    <div class="chat-head">
+      <div>
+        <p>CHAT ONLINE</p>
+        <h2>Lobby ao vivo</h2>
+      </div>
+      <div class="status-picker">
+        <span id="onlineDot" class="online-dot online"></span>
+        <select id="userStatus" aria-label="Escolher status">
+          <option value="online">Online</option>
+          <option value="busy">Ocupado</option>
+          <option value="away">Ausente</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="chat-auth-box" id="chatAuthBox">
+      <h3>Entrar para usar o chat</h3>
+      <p>Estrutura preparada para Google Login + captcha, para reduzir spam e bots.</p>
+      <div class="chat-auth-actions">
+        <button id="googleLoginBtn" class="google-login-btn" type="button">Entrar com Google</button>
+        <label class="captcha-demo"><input id="chatCaptchaCheck" type="checkbox"> <span>Não sou um bot</span></label>
+      </div>
+
+      <small>No futuro ligamos OAuth real + reCAPTCHA com backend/chaves.</small>
+    </div>
+
+    <div id="chatMessages" class="chat-messages"></div>
+
+    <form id="chatForm" class="chat-form">
+      <input id="chatName" type="text" placeholder="Nome" value="Visitante">
+      <input id="chatInput" type="text" placeholder="Escreve no lobby...">
+      <button type="submit">Enviar</button>
+    </form>
+
+    <p id="chatDelayInfo" class="chat-delay-info"></p>
+    <p id="chatModerationInfo" class="chat-moderation-info"></p>
+
+    <div id="moderationPanel" class="moderation-panel">
+      <strong id="moderationTarget">Usuário</strong>
+      <button type="button" data-mod-action="block-1">Bloquear 1 min</button>
+      <button type="button" data-mod-action="block-5">Bloquear 5 min</button>
+      <button type="button" data-mod-action="block-15">Bloquear 15 min</button>
+      <button type="button" data-mod-action="unblock">Desbloquear usuário</button>
+      <button type="button" data-mod-action="lock-chat">Lock chat</button>
+      <button type="button" data-mod-action="unlock-chat">Unlock chat</button>
+
+      <div class="role-assign-box">
+        <span>Atribuir cargo</span>
+        <button type="button" data-role-set="master">Admin Master</button>
+        <button type="button" data-role-set="admin">Admin</button>
+        <button type="button" data-role-set="staff">Staff</button>
+        <button type="button" data-role-set="moderator">Moderador</button>
+        <button type="button" data-role-set="streamer">Streamer</button>
+        <button type="button" data-role-set="vip1">VIP I</button>
+        <button type="button" data-role-set="vip2">VIP II</button>
+        <button type="button" data-role-set="vip3">VIP III</button>
+        <button type="button" data-role-set="user">Usuário</button>
+      </div>
+
+      <button type="button" data-mod-action="close">Fechar</button>
+    </div>
+
+    <small>Funções são atribuídas pelo Admin Master. Admins/moderação controlam o chat.</small>
+  </aside>
+<!-- V44 slider debug active -->
+</main>
+
+    <footer class="site-footer">
+      <p>© <span id="year"></span> Team Lambreta — Juntos somos mais fortes.</p>
+    </footer>
+  </section>
+
+  <script src="data.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>

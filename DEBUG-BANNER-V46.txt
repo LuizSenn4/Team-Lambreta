@@ -1,0 +1,19 @@
+{
+  "has_lb_banner_final": true,
+  "has_inline_onclick_left": true,
+  "has_inline_onclick_right": true,
+  "has_3_slides": true,
+  "has_3_dots": true,
+  "no_novidades": true,
+  "no_destaque": true,
+  "css_has_final": true,
+  "external_script_syntax_ok": true
+}
+
+No console testa:
+lbBannerDebug()
+lbBannerMove(1)
+lbBannerMove(-1)
+lbBannerGo(2)
+
+Node external script:
