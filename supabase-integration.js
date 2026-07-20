@@ -16,6 +16,12 @@
   let audioContext = null;
   let lastKnownMessageId = 0;
   let initialChatLoaded = false;
+  let manualPresence = 'online';
+  let autoAway = false;
+  let lastActivityAt = Date.now();
+  let heartbeatTimer = null;
+  const AWAY_AFTER_MS = 5 * 60 * 1000;
+  const OFFLINE_AFTER_MS = 150 * 1000;
 
   const $ = id => document.getElementById(id);
   const esc = value => String(value ?? '').replace(/[&<>'"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]));
@@ -26,9 +32,16 @@
   const canModerate = () => moderationRoles.has(profile?.role);
   const canManageRoles = () => ['admin','master'].includes(profile?.role);
   const statusDb = v => ({busy:'busy',away:'away',online:'online'}[v] || 'online');
-  const statusUi = v => ({busy:'busy',away:'away',online:'online',offline:'away'}[v] || 'online');
+  const statusUi = v => ({busy:'busy',away:'away',online:'online',offline:'offline'}[v] || 'offline');
   const roleClass = role => ['master','admin','moderator','staff','member'].includes(role) ? role : 'member';
   const roleLabel = role => ({master:'DEV',admin:'ADMIN',moderator:'MODERADOR',staff:'STAFF',member:'MEMBRO'}[role] || 'MEMBRO');
+  const isVip = p => Number(p?.donation_total || 0) >= 150;
+  const effectivePresence = p => {
+    if (!p) return 'offline';
+    const seen = p.last_seen ? new Date(p.last_seen).getTime() : 0;
+    if (!seen || Date.now() - seen > OFFLINE_AFTER_MS) return 'offline';
+    return statusUi(p.presence);
+  };
 
   // Filtro preventivo no navegador. O SQL complementar também valida no banco.
   const censoredPatterns = [
@@ -122,7 +135,7 @@
     const bar = $('supabaseAuthBar');
     if (bar) {
       if (!session) bar.innerHTML = '<button id="sbGlobalLogin" type="button">Entrar com Google</button>';
-      else bar.innerHTML = `<div class="sb-user role-${roleClass(profile?.role)}">${profile?.avatar_url?`<img src="${esc(profile.avatar_url)}" alt="">`:''}<span>${esc(profile?.game_nickname || profile?.full_name || session.user.email)}</span><small>${roleLabel(profile?.role)}</small></div><button class="sb-logout" id="sbLogout" type="button">Sair</button>`;
+      else bar.innerHTML = `<div class="sb-user role-${roleClass(profile?.role)}">${profile?.avatar_url?`<img src="${esc(profile.avatar_url)}" alt="">`:''}<span>${esc(profile?.game_nickname || profile?.full_name || session.user.email)}</span><small>${roleLabel(profile?.role)}</small>${isVip(profile)?'<small class="vip-badge">VIP</small>':''}</div><button class="sb-logout" id="sbLogout" type="button">Sair</button>`;
       $('sbGlobalLogin')?.addEventListener('click', loginGoogle);
       $('sbLogout')?.addEventListener('click', logout);
     }
@@ -150,26 +163,55 @@
     renderUnreadBadge();
   }
 
-  async function setPresence(value) {
+  async function setPresence(value, {manual=true}={}) {
     if (!session) return;
     const presence = statusDb(value);
-    const { error } = await sb.from('profiles').update({presence,last_seen:new Date().toISOString(),updated_at:new Date().toISOString()}).eq('id',session.user.id);
-    if (!error && profile) profile.presence = presence;
+    if (manual) { manualPresence = presence; autoAway = false; }
+    const now = new Date().toISOString();
+    const { error } = await sb.from('profiles').update({presence,last_seen:now,updated_at:now}).eq('id',session.user.id);
+    if (!error && profile) { profile.presence = presence; profile.last_seen = now; }
+    const picker = $('userStatus'); if (picker) picker.value = presence;
     updateStatusUi(presence);
     if (presence !== 'online') unreadChat = 0;
     renderUnreadBadge();
+  }
+
+  function registerActivity() {
+    lastActivityAt = Date.now();
+    if (!session || manualPresence === 'busy') return;
+    if (autoAway || profile?.presence === 'away') { autoAway = false; setPresence('online',{manual:false}); }
+  }
+
+  async function presenceHeartbeat() {
+    if (!session) return;
+    const idle = Date.now() - lastActivityAt;
+    if (manualPresence !== 'busy' && idle >= AWAY_AFTER_MS && !autoAway) {
+      autoAway = true;
+      await setPresence('away',{manual:false});
+      return;
+    }
+    const desired = manualPresence === 'busy' ? 'busy' : (autoAway ? 'away' : 'online');
+    const now = new Date().toISOString();
+    await sb.from('profiles').update({presence:desired,last_seen:now,updated_at:now}).eq('id',session.user.id);
+    if (profile) { profile.presence=desired; profile.last_seen=now; }
+  }
+
+  function startPresenceTracking() {
+    clearInterval(heartbeatTimer);
+    ['pointerdown','keydown','scroll','touchstart'].forEach(evt=>window.addEventListener(evt,registerActivity,{passive:true}));
+    heartbeatTimer=setInterval(presenceHeartbeat,45000);
   }
 
   async function renderChat() {
     const box = $('chatMessages');
     if (!box) return;
     if (!session) { box.innerHTML = '<div class="sb-login-required">Entra com Google para ver e escrever no chat.</div>'; return; }
-    const { data, error } = await sb.from('chat_messages').select('id,message,created_at,user_id,profiles!chat_messages_user_id_fkey(full_name,game_nickname,role,presence,avatar_url)').eq('is_deleted',false).order('created_at',{ascending:true}).limit(30);
+    const { data, error } = await sb.from('chat_messages').select('id,message,created_at,user_id,profiles!chat_messages_user_id_fkey(full_name,game_nickname,role,presence,last_seen,avatar_url,donation_total)').eq('is_deleted',false).order('created_at',{ascending:true}).limit(30);
     if (error) { box.innerHTML = `<p>${esc(error.message)}</p>`; return; }
     const rows = data || [];
     box.innerHTML = rows.map(row => {
-      const p=row.profiles||{}; const name=p.game_nickname||p.full_name||'Jogador'; const role=roleClass(p.role);
-      return `<article class="chat-msg role-${role} ${statusUi(p.presence)} ${canModerate()?'has-actions':''}" data-message-id="${row.id}" data-user-id="${esc(row.user_id)}"><div class="chat-msg-top"><strong class="chat-name" data-user-id="${esc(row.user_id)}">${esc(name)}</strong><small class="role-badge">${roleLabel(role)}</small><span class="status ${statusUi(p.presence)}">${esc(p.presence||'offline')}</span><time>${new Date(row.created_at).toLocaleTimeString('pt-PT',{hour:'2-digit',minute:'2-digit'})}</time>${canModerate()?'<button class="chat-delete-btn" type="button" title="Opções da mensagem" aria-label="Opções da mensagem">⋮</button>':''}</div><p class="chat-text">${esc(row.message)}</p></article>`;
+      const p=row.profiles||{}; const name=p.game_nickname||p.full_name||'Jogador'; const role=roleClass(p.role); const presence=effectivePresence(p);
+      return `<article class="chat-msg role-${role} ${isVip(p)?'is-vip':''} ${presence} ${canModerate()?'has-actions':''}" data-message-id="${row.id}" data-user-id="${esc(row.user_id)}"><div class="chat-msg-top"><strong class="chat-name" data-user-id="${esc(row.user_id)}">${esc(name)}</strong><small class="role-badge">${roleLabel(role)}</small>${isVip(p)?'<small class="vip-badge">VIP</small>':''}<span class="status ${presence}">${presence==='busy'?'ocupado':presence==='away'?'ausente':presence}</span><time>${new Date(row.created_at).toLocaleTimeString('pt-PT',{hour:'2-digit',minute:'2-digit'})}</time>${canModerate()?'<button class="chat-delete-btn" type="button" title="Opções da mensagem" aria-label="Opções da mensagem">⋮</button>':''}</div><p class="chat-text">${esc(row.message)}</p></article>`;
     }).join('') || '<p class="sb-login-required">Ainda não há mensagens. Manda a primeira 😎</p>';
     box.scrollTop = box.scrollHeight;
     bindModerationTargets();
@@ -241,7 +283,7 @@
       if (error) return alert(error.message);
       input.value=''; playChatTick('send',profile?.role); await renderChat();
     }, true);
-    $('userStatus')?.addEventListener('change', e => setPresence(e.target.value));
+    $('userStatus')?.addEventListener('change', e => { manualPresence=statusDb(e.target.value); autoAway=false; registerActivity(); setPresence(e.target.value,{manual:true}); });
     document.addEventListener('visibilitychange',()=>{ if(!document.hidden && (profile?.presence==='online')){ unreadChat=0; renderUnreadBadge(); } });
   }
 
@@ -296,9 +338,9 @@
 
   async function boot() {
     const { data }=await sb.auth.getSession(); session=data.session; await loadProfile(); renderAuth();
-    if(session){ await ensureNickname(); await setPresence($('userStatus')?.value||profile?.presence||'online'); }
+    if(session){ manualPresence=profile?.presence==='busy'?'busy':'online'; lastActivityAt=Date.now(); await ensureNickname(); await setPresence(manualPresence,{manual:false}); startPresenceTracking(); }
     bindChat(); bindContact(); await renderChat(); await renderInbox(); subscribe();
-    sb.auth.onAuthStateChange(async (_event,newSession)=>{session=newSession;await loadProfile();renderAuth();await renderChat();await renderInbox();subscribe();});
+    sb.auth.onAuthStateChange(async (_event,newSession)=>{session=newSession;await loadProfile();renderAuth();if(session){manualPresence=profile?.presence==='busy'?'busy':'online';lastActivityAt=Date.now();startPresenceTracking();}await renderChat();await renderInbox();subscribe();});
     window.addEventListener('beforeunload',()=>{ if(session) sb.from('profiles').update({presence:'offline',last_seen:new Date().toISOString()}).eq('id',session.user.id); });
   }
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',boot); else boot();

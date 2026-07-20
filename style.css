@@ -4418,3 +4418,33 @@ body:not([data-user-role="master"]):not([data-user-role="admin"]):not([data-user
   .chat-msg time { grid-area: time; justify-self: end; }
   .chat-delete-btn { grid-area: action; align-self: center; }
 }
+
+/* V52 — presença inteligente e selo VIP */
+.chat-msg .status.offline {
+  color: #a9a9a9 !important;
+  background: rgba(160,160,160,.10) !important;
+  border-color: rgba(180,180,180,.18) !important;
+}
+.online-dot.offline { background:#858585 !important; box-shadow:none !important; }
+.vip-badge {
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  min-height:22px;
+  padding:4px 8px;
+  border:1px solid rgba(255,210,65,.55);
+  border-radius:999px;
+  color:#ffe77a;
+  background:linear-gradient(135deg,rgba(255,199,30,.17),rgba(255,94,0,.08));
+  box-shadow:0 0 13px rgba(255,200,45,.10);
+  font-size:.61rem;
+  font-weight:900;
+  letter-spacing:.08em;
+}
+.chat-msg.is-vip:not(.role-master):not(.role-admin) {
+  border-color:rgba(255,209,66,.36);
+}
+.chat-msg.is-vip:not(.role-master):not(.role-admin)::before {
+  background:linear-gradient(180deg,#fff08a,#ffb71b);
+}
+.sb-user .vip-badge { margin-left:5px; }
