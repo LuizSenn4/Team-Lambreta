@@ -38,7 +38,7 @@
   const roleLabel = role => ({master:'DEV',admin:'ADMIN',moderator:'MODERADOR',staff:'STAFF',member:'MEMBRO'}[role] || 'MEMBRO');
   const isVip = p => Boolean(p?.vip_until && new Date(p.vip_until).getTime() > Date.now());
   const isStreamer = p => Boolean(p?.is_streamer);
-  const extraBadges = p => `${isStreamer(p)?'<small class="streamer-badge">STREAMER</small>':''}${extraBadges(p)}`;
+  const extraBadges = p => `${isStreamer(p)?'<small class="streamer-badge">STREAMER</small>':''}${isVip(p)?'<small class="vip-badge">VIP</small>':''}`;
   const effectivePresence = p => {
     if (!p) return 'offline';
     const seen = p.last_seen ? new Date(p.last_seen).getTime() : 0;
