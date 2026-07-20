@@ -226,10 +226,8 @@
     const rows = data || [];
     box.innerHTML = rows.map(row => {
       const p=row.profiles||{}; const name=p.game_nickname||p.full_name||'Jogador'; const role=roleClass(p.role); const presence=effectivePresence(p);
-      const hasSpecialBadge = isVip(p) || isStreamer(p);
-      const showRoleBadge = role !== 'member' || !hasSpecialBadge;
       const statusLabel = presence==='busy'?'Ocupado':presence==='away'?'Ausente':presence==='online'?'Online':'Offline';
-      return `<article class="chat-msg role-${role} ${isVip(p)?'is-vip':''} ${isStreamer(p)?'is-streamer':''} ${presence} ${canModerate()?'has-actions':''}" data-message-id="${row.id}" data-user-id="${esc(row.user_id)}"><div class="chat-msg-top"><strong class="chat-name" data-user-id="${esc(row.user_id)}">${esc(name)}</strong>${showRoleBadge?`<small class="role-badge">${roleLabel(role)}</small>`:''}${extraBadges(p)}<span class="presence-dot ${presence}" title="${statusLabel}" aria-label="${statusLabel}"></span><time>${new Date(row.created_at).toLocaleTimeString('pt-PT',{hour:'2-digit',minute:'2-digit'})}</time>${canModerate()?'<button class="chat-delete-btn" type="button" title="Opções da mensagem" aria-label="Opções da mensagem">⋮</button>':''}</div><p class="chat-text">${esc(row.message)}</p></article>`;
+      return `<article class="chat-msg role-${role} ${isVip(p)?'is-vip':''} ${isStreamer(p)?'is-streamer':''} ${presence} ${canModerate()?'has-actions':''}" data-message-id="${row.id}" data-user-id="${esc(row.user_id)}"><div class="chat-msg-top"><strong class="chat-name" data-user-id="${esc(row.user_id)}">${esc(name)}</strong><span class="presence-dot ${presence}" title="${statusLabel}" aria-label="${statusLabel}"></span><time>${new Date(row.created_at).toLocaleTimeString('pt-PT',{hour:'2-digit',minute:'2-digit'})}</time>${canModerate()?'<button class="chat-delete-btn" type="button" title="Opções da mensagem" aria-label="Opções da mensagem">⋮</button>':''}</div><p class="chat-text">${esc(row.message)}</p></article>`;
     }).join('') || '<p class="sb-login-required">Ainda não há mensagens. Manda a primeira 😎</p>';
     box.scrollTop = box.scrollHeight;
     bindModerationTargets();
