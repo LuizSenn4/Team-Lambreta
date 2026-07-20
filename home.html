@@ -138,8 +138,9 @@
         <p>CHAT ONLINE</p>
         <h2>Lobby ao vivo</h2>
       </div>
-      <div class="status-picker">
+      <div class="status-picker" data-status="online">
         <span id="onlineDot" class="online-dot online"></span>
+        <span id="chatUnreadBadge" class="chat-unread-badge" hidden>0</span>
         <select id="userStatus" aria-label="Escolher status">
           <option value="online">Online</option>
           <option value="busy">Ocupado</option>
@@ -169,6 +170,8 @@
 
     <p id="chatDelayInfo" class="chat-delay-info"></p>
     <p id="chatModerationInfo" class="chat-moderation-info"></p>
+
+    <div class="chat-filter-status"><span>🛡️ Filtro ativo</span><small>Linguagem ofensiva e pornografia bloqueadas</small></div>
 
     <div id="moderationPanel" class="moderation-panel">
       <strong id="moderationTarget">Usuário</strong>
@@ -205,6 +208,7 @@
     </footer>
   </section>
 
+  <script>window.TEAM_SUPABASE_MODE = true;</script>
   <script src="data.js"></script>
   <script src="script.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>

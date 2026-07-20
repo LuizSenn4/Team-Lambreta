@@ -559,12 +559,14 @@ function bindChat(){
 }
 
 renderPublicSite();
-loadStatus();
-renderChat();
-bindChatAuth();
-bindChatRole();
-bindModeration();
-bindChat();
+if(!window.TEAM_SUPABASE_MODE){
+  loadStatus();
+  renderChat();
+  bindChatAuth();
+  bindChatRole();
+  bindModeration();
+  bindChat();
+}
 
 
 /* Usuário cria tópico -> pendente para o admin */
