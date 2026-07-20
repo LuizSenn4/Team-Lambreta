@@ -4480,3 +4480,47 @@ body:not([data-user-role="master"]):not([data-user-role="admin"]):not([data-user
 .role-assign-box { display:flex; flex-wrap:wrap; gap:7px; }
 .role-assign-box span { flex-basis:100%; }
 @media (max-width:700px){ .chat-messages{min-height:580px!important;max-height:74vh!important;} }
+
+/* V56 — presença por cor, sem texto; badges especiais substituem MEMBRO */
+.chat-msg-top {
+  grid-template-columns: minmax(0,1fr) auto auto auto auto !important;
+}
+.chat-msg.has-actions .chat-msg-top {
+  grid-template-columns: minmax(0,1fr) auto auto auto auto 24px !important;
+}
+.presence-dot {
+  width: 10px;
+  height: 10px;
+  min-width: 10px;
+  border-radius: 50%;
+  display: inline-block;
+  align-self: center;
+  border: 1px solid rgba(255,255,255,.18);
+}
+.presence-dot.online { background:#73ff18; box-shadow:0 0 10px rgba(115,255,24,.62); }
+.presence-dot.busy { background:#ff3046; box-shadow:0 0 10px rgba(255,48,70,.52); }
+.presence-dot.away { background:#f0a51a; box-shadow:0 0 10px rgba(240,165,26,.50); }
+.presence-dot.offline { background:#858585; box-shadow:none; }
+.chat-msg .status { display:none !important; }
+
+@media (max-width:520px) {
+  .chat-msg-top { grid-template-columns:minmax(0,1fr) auto auto auto auto !important; }
+  .chat-msg.has-actions .chat-msg-top { grid-template-columns:minmax(0,1fr) auto auto auto auto 22px !important; }
+  .presence-dot { width:9px; height:9px; min-width:9px; }
+}
+
+@media (max-width:380px) {
+  .chat-msg-top,
+  .chat-msg.has-actions .chat-msg-top {
+    grid-template-columns:minmax(0,1fr) auto auto 22px !important;
+    grid-template-areas:"name badge dot action" "time time time action" !important;
+    row-gap:4px !important;
+  }
+  .chat-msg .chat-name { grid-area:name; }
+  .chat-msg .role-badge,
+  .chat-msg .streamer-badge,
+  .chat-msg .vip-badge { grid-area:badge; }
+  .presence-dot { grid-area:dot; }
+  .chat-msg time { grid-area:time; justify-self:end; }
+  .chat-delete-btn { grid-area:action; }
+}
