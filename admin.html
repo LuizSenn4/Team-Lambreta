@@ -7,6 +7,7 @@
   <link rel="stylesheet" href="admin.css" />
 </head>
 <body>
+  <div id="supabaseAuthBar" class="sb-auth-bar"></div>
   <aside class="admin-sidebar">
     <div class="admin-brand">
       <img src="img/brasao.png" alt="Brasão Team Lambreta">
@@ -88,8 +89,9 @@
     </section>
 
     <section id="mensagens" class="admin-card">
-      <div class="card-head"><h2>Mensagens privadas / avisos</h2><button data-add="privateInbox">Adicionar mensagem</button></div>
+      <div class="card-head"><h2>Mensagens privadas / avisos <span id="supabaseInboxBadge" class="sb-inbox-badge">0</span></h2><button data-add="privateInbox">Adicionar mensagem</button></div>
       <p class="hint">Centro preparado para notícias, eventos, respostas dos admins e contactos privados.</p>
+      <div id="supabasePrivateInbox" class="admin-list"></div>
       <div id="privateInboxAdminList" class="admin-list"></div>
     </section>
 
@@ -134,5 +136,7 @@
   <div id="toast">Salvo!</div>
   <script src="data.js"></script>
   <script src="admin.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="supabase-integration.js"></script>
 </body>
 </html>

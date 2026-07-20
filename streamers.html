@@ -7,6 +7,7 @@
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
+  <div id="supabaseAuthBar" class="sb-auth-bar"></div>
   <section id="siteContent" class="site-content streamers-page">
     <header class="site-header">
       <a href="home.html" class="brand">
@@ -113,6 +114,7 @@
           <form id="contactAdminForm" class="streamer-form-grid">
             <input id="contactAdminTitle" type="text" placeholder="Assunto" maxlength="60">
             <input id="contactAdminName" type="text" placeholder="Teu nome" maxlength="24">
+            <input id="contactAdminNickname" type="text" placeholder="Nickname no jogo" maxlength="32" required>
             <textarea id="contactAdminMessage" placeholder="Escreve tua mensagem para a administração..." maxlength="400"></textarea>
             <button type="submit">Enviar para a caixa</button>
           </form>
@@ -149,5 +151,7 @@
 
   <script src="data.js"></script>
   <script src="script.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="supabase-integration.js"></script>
 </body>
 </html>
