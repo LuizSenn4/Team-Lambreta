@@ -126,10 +126,13 @@
       $('sbGlobalLogin')?.addEventListener('click', loginGoogle);
       $('sbLogout')?.addEventListener('click', logout);
     }
+    const authBox = $('chatAuthBox');
+    if (authBox) authBox.classList.toggle('is-connected', Boolean(session));
     const btn = $('googleLoginBtn');
     if (btn) {
       btn.textContent = session ? `Ligado: ${profile?.game_nickname || profile?.full_name || 'Google'}` : 'Entrar com Google';
       btn.onclick = session ? logout : loginGoogle;
+      btn.title = session ? 'Clique para sair' : 'Entrar com Google';
     }
     const name = $('chatName');
     if (name && session) { name.value = profile?.game_nickname || profile?.full_name || ''; name.readOnly = true; }

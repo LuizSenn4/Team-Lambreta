@@ -4124,3 +4124,98 @@ body:not([data-user-role="master"]):not([data-user-role="admin"]):not([data-user
   white-space:pre-wrap !important;
   overflow-wrap:anywhere !important;
 }
+
+
+/* V49 — autenticação compacta e alinhamento estável do chat */
+.chat-auth-box.chat-auth-compact {
+  padding: 0 !important;
+  margin: 0 0 12px !important;
+  border: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+.chat-auth-compact .google-login-btn {
+  width: auto;
+  max-width: 100%;
+  min-height: 42px;
+  padding: 10px 14px;
+  border-radius: 12px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.chat-auth-compact.is-connected .google-login-btn {
+  border-color: rgba(217,164,65,.32);
+  color: var(--gold-light);
+  background: linear-gradient(90deg,rgba(217,164,65,.10),rgba(255,255,255,.025));
+}
+
+.chat-messages {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: stretch !important;
+  gap: 10px !important;
+  padding: 12px !important;
+}
+.chat-msg {
+  box-sizing: border-box !important;
+  width: 100% !important;
+  min-width: 0 !important;
+  min-height: 0 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 8px !important;
+  padding: 12px 14px 12px 16px !important;
+  overflow: hidden !important;
+}
+.chat-msg-top {
+  order: 1 !important;
+  width: 100% !important;
+  min-width: 0 !important;
+  display: grid !important;
+  grid-template-columns: minmax(0,1fr) auto auto auto !important;
+  align-items: center !important;
+  column-gap: 8px !important;
+  row-gap: 6px !important;
+}
+.chat-msg .chat-name {
+  min-width: 0 !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  white-space: nowrap !important;
+}
+.chat-msg .role-badge,
+.chat-msg .status,
+.chat-msg time {
+  margin: 0 !important;
+  white-space: nowrap !important;
+}
+.chat-msg .chat-text,
+.chat-msg > p {
+  order: 2 !important;
+  width: 100% !important;
+  min-width: 0 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  display: block !important;
+  position: static !important;
+  color: #e4ddcb !important;
+  line-height: 1.45 !important;
+  text-align: left !important;
+  white-space: pre-wrap !important;
+  overflow-wrap: anywhere !important;
+}
+.chat-delete-btn { z-index: 2; }
+
+@media (max-width: 520px) {
+  .chat-auth-compact .google-login-btn { width: 100%; }
+  .chat-msg-top {
+    grid-template-columns: minmax(0,1fr) auto !important;
+  }
+  .chat-msg .role-badge { grid-column: 1; justify-self: start; }
+  .chat-msg .status { grid-column: 2; grid-row: 1; }
+  .chat-msg time { grid-column: 2; grid-row: 2; justify-self: end; }
+}
