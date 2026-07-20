@@ -4105,3 +4105,22 @@ input.action-lift-button:active {
 .sb-user.role-staff small { color:#9bc5ff; }
 body:not([data-user-role="master"]):not([data-user-role="admin"]):not([data-user-role="moderator"]) .chat-delete-btn { display:none; }
 @media (max-width:650px){ .chat-filter-status{align-items:flex-start;flex-direction:column}.chat-filter-status small{text-align:left} }
+
+
+/* V48 — correção: corpo da mensagem sempre visível */
+.chat-msg { height:auto !important; min-height:72px; overflow:visible; }
+.chat-msg::before { border-radius:14px 0 0 14px; }
+.chat-msg .chat-text,
+.chat-msg > p {
+  display:block !important;
+  visibility:visible !important;
+  opacity:1 !important;
+  position:relative !important;
+  height:auto !important;
+  max-height:none !important;
+  margin:9px 0 0 !important;
+  color:#d7d0bd !important;
+  line-height:1.45 !important;
+  white-space:pre-wrap !important;
+  overflow-wrap:anywhere !important;
+}

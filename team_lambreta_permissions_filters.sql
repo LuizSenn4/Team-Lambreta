@@ -69,14 +69,22 @@ grant execute on function public.moderate_chat_message(bigint) to authenticated;
 
 create or replace function public.validate_team_chat()
 returns trigger language plpgsql security definer set search_path=public as $$
-declare p public.profiles; normalized text;
+declare p public.profiles;
 begin
   select * into p from public.profiles where id=new.user_id;
   if p.is_banned then raise exception 'Conta bloqueada no chat'; end if;
   if p.muted_until is not null and p.muted_until>now() then raise exception 'Você está silenciado até %',p.muted_until; end if;
-  normalized:=lower(unaccent(new.message));
-  if normalized ~ '(pornhub|xvideos|xnxx|redtube|youporn|pornografia|porno|hentai|onlyfans|nudes?)' then raise exception 'Conteúdo pornográfico bloqueado'; end if;
-  if normalized ~ '(^|[^a-z])(puta|puto|caralho|fdp|merda|porra|buceta|foder|nigger|faggot|cunt|motherfucker|pendejo|cabron)([^a-z]|$)' then raise exception 'Linguagem ofensiva bloqueada'; end if;
+
+  -- Em vez de apagar a mensagem inteira, troca somente o conteúdo proibido por ####.
+  new.message := regexp_replace(new.message,
+    '(pornhub|xvideos|xnxx|redtube|youporn)\.[^[:space:]]*', '####', 'gi');
+  new.message := regexp_replace(new.message,
+    '(pornografia|porno|porn|hentai|onlyfans|nudes?|xxx|sexo[[:space:]]+explicito)', '####', 'gi');
+  new.message := regexp_replace(new.message,
+    '(^|[^[:alpha:]])(puta|puto|caralho|fdp|merda|porra|buceta|foder|nigger|faggot|cunt|motherfucker|pendejo|cabron)([^[:alpha:]]|$)',
+    '\1####\3', 'gi');
+
+  if new.message ~ '(.)\1{10,}' then raise exception 'Flood de caracteres bloqueado'; end if;
   return new;
 end; $$;
 

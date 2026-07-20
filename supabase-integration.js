@@ -31,22 +31,20 @@
   const roleLabel = role => ({master:'ADMIN • DEV',admin:'ADMIN',moderator:'MODERADOR',staff:'STAFF',member:'MEMBRO'}[role] || 'MEMBRO');
 
   // Filtro preventivo no navegador. O SQL complementar também valida no banco.
-  const blockedLanguage = [
-    /\b(?:puta|puto|caralho|fdp|filho\s+da\s+puta|merda|porra|cabr[aã]o|buceta|pica|foder|foda-se)\b/i,
-    /\b(?:nigger|faggot|cunt|motherfucker)\b/i,
-    /\b(?:mierda|puta|puto|pendejo|cabron)\b/i
-  ];
-  const blockedPorn = [
-    /\b(?:porn|porno|pornografia|xxx|hentai|onlyfans|nudes?|sexo\s+expl[ií]cito)\b/i,
-    /(?:pornhub|xvideos|xnxx|redtube|youporn)\./i
+  const censoredPatterns = [
+    /\b(?:puta|puto|caralho|fdp|filho\s+da\s+puta|merda|porra|cabr[aã]o|buceta|pica|foder|foda-se)\b/gi,
+    /\b(?:nigger|faggot|cunt|motherfucker)\b/gi,
+    /\b(?:mierda|pendejo|cabron)\b/gi,
+    /\b(?:porn|porno|pornografia|xxx|hentai|onlyfans|nudes?|sexo\s+expl[ií]cito)\b/gi,
+    /\b(?:pornhub|xvideos|xnxx|redtube|youporn)\.[^\s]*/gi
   ];
 
   function moderateText(text) {
     const normalized = String(text || '').normalize('NFKC');
-    if (blockedPorn.some(rx => rx.test(normalized))) return { ok:false, reason:'Conteúdo pornográfico bloqueado.' };
-    if (blockedLanguage.some(rx => rx.test(normalized))) return { ok:false, reason:'Linguagem ofensiva bloqueada.' };
-    if (/(.)\1{10,}/.test(normalized)) return { ok:false, reason:'Flood de caracteres bloqueado.' };
-    return { ok:true };
+    if (/(.)\1{10,}/.test(normalized)) return { ok:false, reason:'Flood de caracteres bloqueado.', text:normalized };
+    let clean = normalized;
+    for (const rx of censoredPatterns) clean = clean.replace(rx, '####');
+    return { ok:true, text:clean };
   }
 
   function getAudioContext() {
@@ -168,7 +166,7 @@
     const rows = data || [];
     box.innerHTML = rows.map(row => {
       const p=row.profiles||{}; const name=p.game_nickname||p.full_name||'Jogador'; const role=roleClass(p.role);
-      return `<article class="chat-msg role-${role} ${statusUi(p.presence)}" data-message-id="${row.id}" data-user-id="${esc(row.user_id)}"><div class="chat-msg-top"><strong class="chat-name" data-user-id="${esc(row.user_id)}">${esc(name)}</strong><small class="role-badge">${roleLabel(role)}</small><span class="status ${statusUi(p.presence)}">${esc(p.presence||'offline')}</span><time>${new Date(row.created_at).toLocaleTimeString('pt-PT',{hour:'2-digit',minute:'2-digit'})}</time></div><p>${esc(row.message)}</p>${canModerate()?'<button class="chat-delete-btn" type="button" title="Apagar mensagem">×</button>':''}</article>`;
+      return `<article class="chat-msg role-${role} ${statusUi(p.presence)}" data-message-id="${row.id}" data-user-id="${esc(row.user_id)}"><div class="chat-msg-top"><strong class="chat-name" data-user-id="${esc(row.user_id)}">${esc(name)}</strong><small class="role-badge">${roleLabel(role)}</small><span class="status ${statusUi(p.presence)}">${esc(p.presence||'offline')}</span><time>${new Date(row.created_at).toLocaleTimeString('pt-PT',{hour:'2-digit',minute:'2-digit'})}</time></div><p class="chat-text">${esc(row.message)}</p>${canModerate()?'<button class="chat-delete-btn" type="button" title="Apagar mensagem">×</button>':''}</article>`;
     }).join('') || '<p class="sb-login-required">Ainda não há mensagens. Manda a primeira 😎</p>';
     box.scrollTop = box.scrollHeight;
     bindModerationTargets();
@@ -235,7 +233,8 @@
       const check=moderateText(message);
       if(!check.ok){ $('chatModerationInfo').textContent=check.reason; $('chatModerationInfo').classList.add('error'); return; }
       $('chatModerationInfo').textContent=''; $('chatModerationInfo').classList.remove('error');
-      const { error }=await sb.from('chat_messages').insert({user_id:session.user.id,message});
+      const safeMessage=check.text || message;
+      const { error }=await sb.from('chat_messages').insert({user_id:session.user.id,message:safeMessage});
       if (error) return alert(error.message);
       input.value=''; playChatTick('send',profile?.role); await renderChat();
     }, true);
