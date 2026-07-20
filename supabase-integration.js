@@ -28,7 +28,7 @@
   const statusDb = v => ({busy:'busy',away:'away',online:'online'}[v] || 'online');
   const statusUi = v => ({busy:'busy',away:'away',online:'online',offline:'away'}[v] || 'online');
   const roleClass = role => ['master','admin','moderator','staff','member'].includes(role) ? role : 'member';
-  const roleLabel = role => ({master:'ADMIN • DEV',admin:'ADMIN',moderator:'MODERADOR',staff:'STAFF',member:'MEMBRO'}[role] || 'MEMBRO');
+  const roleLabel = role => ({master:'DEV',admin:'ADMIN',moderator:'MODERADOR',staff:'STAFF',member:'MEMBRO'}[role] || 'MEMBRO');
 
   // Filtro preventivo no navegador. O SQL complementar também valida no banco.
   const censoredPatterns = [
@@ -169,7 +169,7 @@
     const rows = data || [];
     box.innerHTML = rows.map(row => {
       const p=row.profiles||{}; const name=p.game_nickname||p.full_name||'Jogador'; const role=roleClass(p.role);
-      return `<article class="chat-msg role-${role} ${statusUi(p.presence)}" data-message-id="${row.id}" data-user-id="${esc(row.user_id)}"><div class="chat-msg-top"><strong class="chat-name" data-user-id="${esc(row.user_id)}">${esc(name)}</strong><small class="role-badge">${roleLabel(role)}</small><span class="status ${statusUi(p.presence)}">${esc(p.presence||'offline')}</span><time>${new Date(row.created_at).toLocaleTimeString('pt-PT',{hour:'2-digit',minute:'2-digit'})}</time></div><p class="chat-text">${esc(row.message)}</p>${canModerate()?'<button class="chat-delete-btn" type="button" title="Apagar mensagem">×</button>':''}</article>`;
+      return `<article class="chat-msg role-${role} ${statusUi(p.presence)} ${canModerate()?'has-actions':''}" data-message-id="${row.id}" data-user-id="${esc(row.user_id)}"><div class="chat-msg-top"><strong class="chat-name" data-user-id="${esc(row.user_id)}">${esc(name)}</strong><small class="role-badge">${roleLabel(role)}</small><span class="status ${statusUi(p.presence)}">${esc(p.presence||'offline')}</span><time>${new Date(row.created_at).toLocaleTimeString('pt-PT',{hour:'2-digit',minute:'2-digit'})}</time>${canModerate()?'<button class="chat-delete-btn" type="button" title="Opções da mensagem" aria-label="Opções da mensagem">⋮</button>':''}</div><p class="chat-text">${esc(row.message)}</p></article>`;
     }).join('') || '<p class="sb-login-required">Ainda não há mensagens. Manda a primeira 😎</p>';
     box.scrollTop = box.scrollHeight;
     bindModerationTargets();
@@ -232,7 +232,7 @@
       ev.preventDefault(); ev.stopImmediatePropagation();
       if (!session) return loginGoogle();
       if (!(await ensureNickname())) return;
-      const input=$('chatInput'); const message=input?.value.trim(); if (!message) return;
+      const input=$('chatInput'); const message=input?.value.trim(); if (!message) return; if (message.length > 240) { alert('A mensagem pode ter no máximo 240 caracteres.'); return; }
       const check=moderateText(message);
       if(!check.ok){ $('chatModerationInfo').textContent=check.reason; $('chatModerationInfo').classList.add('error'); return; }
       $('chatModerationInfo').textContent=''; $('chatModerationInfo').classList.remove('error');
