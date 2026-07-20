@@ -155,23 +155,23 @@
 
     <div id="chatMessages" class="chat-messages"></div>
 
-    <form id="chatForm" class="chat-form">
-      <input id="chatName" type="text" placeholder="Nome" value="Visitante">
-      <input id="chatInput" type="text" maxlength="240" placeholder="Escreve no lobby...">
+    <form id="chatForm" class="chat-form chat-form-single">
+      <input id="chatInput" type="text" maxlength="240" placeholder="Escreve no lobby..." autocomplete="off">
       <button type="submit">Enviar</button>
     </form>
 
     <p id="chatDelayInfo" class="chat-delay-info"></p>
     <p id="chatModerationInfo" class="chat-moderation-info"></p>
 
-    <div class="chat-filter-status"><span>🛡️ Filtro ativo</span><small>Linguagem ofensiva e pornografia bloqueadas</small></div>
 
     <div id="moderationPanel" class="moderation-panel">
       <strong id="moderationTarget">Usuário</strong>
       <button type="button" data-mod-action="block-1">Bloquear 1 min</button>
       <button type="button" data-mod-action="block-5">Bloquear 5 min</button>
       <button type="button" data-mod-action="block-15">Bloquear 15 min</button>
-      <button type="button" data-mod-action="unblock">Desbloquear usuário</button>
+      <button type="button" data-mod-action="unblock">Remover silêncio</button>
+      <button type="button" data-mod-action="ban">Bloquear permanentemente</button>
+      <button type="button" data-mod-action="unban">Remover bloqueio permanente</button>
       <button type="button" data-mod-action="lock-chat">Lock chat</button>
       <button type="button" data-mod-action="unlock-chat">Unlock chat</button>
 
@@ -181,17 +181,16 @@
         <button type="button" data-role-set="admin">Admin</button>
         <button type="button" data-role-set="staff">Staff</button>
         <button type="button" data-role-set="moderator">Moderador</button>
-        <button type="button" data-role-set="streamer">Streamer</button>
-        <button type="button" data-role-set="vip1">VIP I</button>
-        <button type="button" data-role-set="vip2">VIP II</button>
-        <button type="button" data-role-set="vip3">VIP III</button>
+        <button type="button" data-badge-set="streamer" data-enabled="true">Dar STREAMER</button>
+        <button type="button" data-badge-set="streamer" data-enabled="false">Remover STREAMER</button>
+        <button type="button" data-badge-set="vip" data-enabled="true">Dar VIP por 365 dias</button>
+        <button type="button" data-badge-set="vip" data-enabled="false">Remover VIP</button>
         <button type="button" data-role-set="user">Usuário</button>
       </div>
 
       <button type="button" data-mod-action="close">Fechar</button>
     </div>
 
-    <small>Funções são atribuídas pelo Admin Master. Admins/moderação controlam o chat.</small>
   </aside>
 <!-- V44 slider debug active -->
 </main>

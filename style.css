@@ -4448,3 +4448,35 @@ body:not([data-user-role="master"]):not([data-user-role="admin"]):not([data-user
   background:linear-gradient(180deg,#fff08a,#ffb71b);
 }
 .sb-user .vip-badge { margin-left:5px; }
+
+
+/* V53 — remove nickname duplicado e amplia a área útil do chat */
+.chat-form-single {
+  grid-template-columns: 1fr !important;
+}
+.chat-form-single #chatInput {
+  width: 100% !important;
+}
+.chat-messages {
+  min-height: 430px !important;
+  max-height: min(62vh, 620px) !important;
+}
+@media (max-width: 700px) {
+  .chat-messages {
+    min-height: 460px !important;
+    max-height: 68vh !important;
+  }
+}
+
+
+/* V54 — chat ampliado, login com brasão, badges separados e painel limpo */
+.chat-messages { min-height: 560px !important; max-height: min(72vh, 760px) !important; }
+.chat-panel > small, .chat-filter-status { display:none !important; }
+.google-login-btn, .google-brand-login { display:inline-flex !important; align-items:center; gap:9px; }
+.google-login-logo, .google-brand-login img { width:24px; height:24px; object-fit:contain; border-radius:50%; }
+.streamer-badge { display:inline-flex; align-items:center; padding:4px 8px; border-radius:999px; border:1px solid rgba(255,72,207,.58); color:#ff83df; background:rgba(255,42,188,.10); box-shadow:0 0 14px rgba(255,42,188,.12); font-size:.58rem; font-weight:950; letter-spacing:.08em; }
+.chat-msg.is-streamer:not(.role-master):not(.role-admin) { border-color:rgba(255,72,207,.34); }
+.chat-msg.is-streamer:not(.role-master):not(.role-admin)::before { background:linear-gradient(180deg,#ff82df,#9c3cff); }
+.role-assign-box { display:flex; flex-wrap:wrap; gap:7px; }
+.role-assign-box span { flex-basis:100%; }
+@media (max-width:700px){ .chat-messages{min-height:580px!important;max-height:74vh!important;} }

@@ -20,6 +20,7 @@
   let autoAway = false;
   let lastActivityAt = Date.now();
   let heartbeatTimer = null;
+  let recentSendTimes = [];
   const AWAY_AFTER_MS = 5 * 60 * 1000;
   const OFFLINE_AFTER_MS = 150 * 1000;
 
@@ -35,7 +36,9 @@
   const statusUi = v => ({busy:'busy',away:'away',online:'online',offline:'offline'}[v] || 'offline');
   const roleClass = role => ['master','admin','moderator','staff','member'].includes(role) ? role : 'member';
   const roleLabel = role => ({master:'DEV',admin:'ADMIN',moderator:'MODERADOR',staff:'STAFF',member:'MEMBRO'}[role] || 'MEMBRO');
-  const isVip = p => Number(p?.donation_total || 0) >= 150;
+  const isVip = p => Boolean(p?.vip_until && new Date(p.vip_until).getTime() > Date.now());
+  const isStreamer = p => Boolean(p?.is_streamer);
+  const extraBadges = p => `${isStreamer(p)?'<small class="streamer-badge">STREAMER</small>':''}${extraBadges(p)}`;
   const effectivePresence = p => {
     if (!p) return 'offline';
     const seen = p.last_seen ? new Date(p.last_seen).getTime() : 0;
@@ -43,22 +46,34 @@
     return statusUi(p.presence);
   };
 
-  // Filtro preventivo no navegador. O SQL complementar também valida no banco.
-  const censoredPatterns = [
-    /\b(?:puta|puto|caralho|fdp|filho\s+da\s+puta|merda|porra|cabr[aã]o|buceta|pica|foder|foda-se)\b/gi,
-    /\b(?:nigger|faggot|cunt|motherfucker)\b/gi,
-    /\b(?:mierda|pendejo|cabron)\b/gi,
-    /\b(?:porn|porno|pornografia|xxx|hentai|onlyfans|nudes?|sexo\s+expl[ií]cito)\b/gi,
-    /\b(?:pornhub|xvideos|xnxx|redtube|youporn)\.[^\s]*/gi
-  ];
-
+  // Filtro preventivo: normaliza acentos, leetspeak, símbolos e letras repetidas.
+  const blockedCanonical = new Set([
+    'puta','puto','putaria','caralho','fdp','filhodaputa','merda','porra','cabrao','buceta','pica','foder','fodase','cuzao','desgracado',
+    'nigger','faggot','cunt','motherfucker','pendejo','cabron','mierda',
+    'porn','porno','pornografia','hentai','onlyfans','nude','nudes','xxx','sexoexplicito','pornhub','xvideos','xnxx','redtube','youporn'
+  ]);
+  const leetMap = {'0':'o','1':'i','2':'z','3':'e','4':'a','5':'s','6':'g','7':'t','8':'b','9':'g','@':'a','$':'s','!':'i','+':'t'};
+  function canonicalToken(value) {
+    return String(value || '')
+      .normalize('NFD').replace(/[\u0300-\u036f]/g,'')
+      .toLowerCase().split('').map(ch=>leetMap[ch]||ch).join('')
+      .replace(/[^a-z]/g,'')
+      .replace(/(.)\1{1,}/g,'$1');
+  }
   function moderateText(text) {
     const normalized = String(text || '').normalize('NFKC');
-    if (/(.)\1{10,}/.test(normalized)) return { ok:false, reason:'Flood de caracteres bloqueado.', text:normalized };
-    let clean = normalized;
-    for (const rx of censoredPatterns) clean = clean.replace(rx, '####');
+    if (/(.)\1{12,}/u.test(normalized)) return { ok:false, reason:'Flood de caracteres bloqueado.', text:normalized };
+    const parts = normalized.split(/(\s+)/);
+    const clean = parts.map(part => {
+      if (/^\s+$/.test(part)) return part;
+      const canonical = canonicalToken(part);
+      if (!canonical) return part;
+      const blocked = [...blockedCanonical].some(term => canonical === term || canonical.startsWith(term) || (term.length >= 5 && canonical.includes(term)));
+      return blocked ? '####' : part;
+    }).join('');
     return { ok:true, text:clean };
   }
+
 
   function getAudioContext() {
     audioContext ||= new (window.AudioContext || window.webkitAudioContext)();
@@ -134,8 +149,8 @@
   function renderAuth() {
     const bar = $('supabaseAuthBar');
     if (bar) {
-      if (!session) bar.innerHTML = '<button id="sbGlobalLogin" type="button">Entrar com Google</button>';
-      else bar.innerHTML = `<div class="sb-user role-${roleClass(profile?.role)}">${profile?.avatar_url?`<img src="${esc(profile.avatar_url)}" alt="">`:''}<span>${esc(profile?.game_nickname || profile?.full_name || session.user.email)}</span><small>${roleLabel(profile?.role)}</small>${isVip(profile)?'<small class="vip-badge">VIP</small>':''}</div><button class="sb-logout" id="sbLogout" type="button">Sair</button>`;
+      if (!session) bar.innerHTML = '<button id="sbGlobalLogin" class="google-brand-login" type="button"><img src="img/brasao.png" alt="">Entrar com Google</button>';
+      else bar.innerHTML = `<div class="sb-user role-${roleClass(profile?.role)}">${profile?.avatar_url?`<img src="${esc(profile.avatar_url)}" alt="">`:''}<span>${esc(profile?.game_nickname || profile?.full_name || session.user.email)}</span><small>${roleLabel(profile?.role)}</small>${extraBadges(profile)}</div><button class="sb-logout" id="sbLogout" type="button">Sair</button>`;
       $('sbGlobalLogin')?.addEventListener('click', loginGoogle);
       $('sbLogout')?.addEventListener('click', logout);
     }
@@ -143,7 +158,7 @@
     if (authBox) authBox.classList.toggle('is-connected', Boolean(session));
     const btn = $('googleLoginBtn');
     if (btn) {
-      btn.textContent = session ? `Ligado: ${profile?.game_nickname || profile?.full_name || 'Google'}` : 'Entrar com Google';
+      btn.innerHTML = session ? `Logado como: ${esc(profile?.game_nickname || profile?.full_name || 'Google')}` : '<img class="google-login-logo" src="img/brasao.png" alt=""> Entrar com Google';
       btn.onclick = session ? logout : loginGoogle;
       btn.title = session ? 'Clique para sair' : 'Entrar com Google';
     }
@@ -206,12 +221,12 @@
     const box = $('chatMessages');
     if (!box) return;
     if (!session) { box.innerHTML = '<div class="sb-login-required">Entra com Google para ver e escrever no chat.</div>'; return; }
-    const { data, error } = await sb.from('chat_messages').select('id,message,created_at,user_id,profiles!chat_messages_user_id_fkey(full_name,game_nickname,role,presence,last_seen,avatar_url,donation_total)').eq('is_deleted',false).order('created_at',{ascending:true}).limit(30);
+    const { data, error } = await sb.from('chat_messages').select('id,message,created_at,user_id,profiles!chat_messages_user_id_fkey(full_name,game_nickname,role,presence,last_seen,avatar_url,donation_total,vip_until,is_streamer)').eq('is_deleted',false).order('created_at',{ascending:true}).limit(30);
     if (error) { box.innerHTML = `<p>${esc(error.message)}</p>`; return; }
     const rows = data || [];
     box.innerHTML = rows.map(row => {
       const p=row.profiles||{}; const name=p.game_nickname||p.full_name||'Jogador'; const role=roleClass(p.role); const presence=effectivePresence(p);
-      return `<article class="chat-msg role-${role} ${isVip(p)?'is-vip':''} ${presence} ${canModerate()?'has-actions':''}" data-message-id="${row.id}" data-user-id="${esc(row.user_id)}"><div class="chat-msg-top"><strong class="chat-name" data-user-id="${esc(row.user_id)}">${esc(name)}</strong><small class="role-badge">${roleLabel(role)}</small>${isVip(p)?'<small class="vip-badge">VIP</small>':''}<span class="status ${presence}">${presence==='busy'?'ocupado':presence==='away'?'ausente':presence}</span><time>${new Date(row.created_at).toLocaleTimeString('pt-PT',{hour:'2-digit',minute:'2-digit'})}</time>${canModerate()?'<button class="chat-delete-btn" type="button" title="Opções da mensagem" aria-label="Opções da mensagem">⋮</button>':''}</div><p class="chat-text">${esc(row.message)}</p></article>`;
+      return `<article class="chat-msg role-${role} ${isVip(p)?'is-vip':''} ${isStreamer(p)?'is-streamer':''} ${presence} ${canModerate()?'has-actions':''}" data-message-id="${row.id}" data-user-id="${esc(row.user_id)}"><div class="chat-msg-top"><strong class="chat-name" data-user-id="${esc(row.user_id)}">${esc(name)}</strong><small class="role-badge">${roleLabel(role)}</small>${extraBadges(p)}<span class="status ${presence}">${presence==='busy'?'ocupado':presence==='away'?'ausente':presence}</span><time>${new Date(row.created_at).toLocaleTimeString('pt-PT',{hour:'2-digit',minute:'2-digit'})}</time>${canModerate()?'<button class="chat-delete-btn" type="button" title="Opções da mensagem" aria-label="Opções da mensagem">⋮</button>':''}</div><p class="chat-text">${esc(row.message)}</p></article>`;
     }).join('') || '<p class="sb-login-required">Ainda não há mensagens. Manda a primeira 😎</p>';
     box.scrollTop = box.scrollHeight;
     bindModerationTargets();
@@ -250,6 +265,16 @@
         if (error) alert(error.message); else { panel.classList.remove('show'); await renderChat(); }
       };
     });
+    panel.querySelectorAll('[data-badge-set]').forEach(btn => {
+      btn.hidden = !canManageRoles();
+      btn.onclick = async () => {
+        if (!selectedTargetId) return;
+        const badge=btn.dataset.badgeSet;
+        const enabled=btn.dataset.enabled==='true';
+        const { error }=await sb.rpc('set_profile_badge',{target_user_id:selectedTargetId,badge_name:badge,enabled});
+        if(error) alert(error.message); else { panel.classList.remove('show'); await renderChat(); }
+      };
+    });
     panel.querySelectorAll('[data-mod-action]').forEach(btn => {
       const action=btn.dataset.modAction;
       if (action === 'close') { btn.onclick=()=>panel.classList.remove('show'); return; }
@@ -262,6 +287,7 @@
         if(action==='block-5') minutes=5;
         if(action==='block-15') minutes=15;
         if(action==='unblock') minutes=0;
+        if(action==='ban' || action==='unban'){ const {error}=await sb.rpc('set_chat_ban',{target_user_id:selectedTargetId,banned:action==='ban'}); if(error) alert(error.message); else { $('chatModerationInfo').textContent=action==='ban'?'Usuário bloqueado permanentemente.':'Bloqueio permanente removido.'; panel.classList.remove('show'); } return; }
         const { error }=await sb.rpc('moderate_user',{target_user_id:selectedTargetId,mute_minutes:minutes});
         if(error) alert(error.message); else { $('chatModerationInfo').textContent=minutes?`Usuário silenciado por ${minutes} min.`:'Usuário desbloqueado.'; panel.classList.remove('show'); }
       };
@@ -274,14 +300,15 @@
       ev.preventDefault(); ev.stopImmediatePropagation();
       if (!session) return loginGoogle();
       if (!(await ensureNickname())) return;
-      const input=$('chatInput'); const message=input?.value.trim(); if (!message) return; if (message.length > 240) { alert('A mensagem pode ter no máximo 240 caracteres.'); return; }
+      const input=$('chatInput'); const message=input?.value.trim();
+      const nowMs=Date.now(); recentSendTimes=recentSendTimes.filter(t=>nowMs-t<10000); if(recentSendTimes.length>=5){ $('chatDelayInfo').textContent='Calma 😅 aguarda 30 segundos antes de continuar.'; setTimeout(()=>{ if($('chatDelayInfo')) $('chatDelayInfo').textContent=''; },30000); return; } if (!message) return; if (message.length > 240) { alert('A mensagem pode ter no máximo 240 caracteres.'); return; }
       const check=moderateText(message);
       if(!check.ok){ $('chatModerationInfo').textContent=check.reason; $('chatModerationInfo').classList.add('error'); return; }
       $('chatModerationInfo').textContent=''; $('chatModerationInfo').classList.remove('error');
       const safeMessage=check.text || message;
       const { error }=await sb.from('chat_messages').insert({user_id:session.user.id,message:safeMessage});
       if (error) return alert(error.message);
-      input.value=''; playChatTick('send',profile?.role); await renderChat();
+      recentSendTimes.push(nowMs); input.value=''; playChatTick('send',profile?.role); await renderChat();
     }, true);
     $('userStatus')?.addEventListener('change', e => { manualPresence=statusDb(e.target.value); autoAway=false; registerActivity(); setPresence(e.target.value,{manual:true}); });
     document.addEventListener('visibilitychange',()=>{ if(!document.hidden && (profile?.presence==='online')){ unreadChat=0; renderUnreadBadge(); } });

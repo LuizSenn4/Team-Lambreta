@@ -526,7 +526,7 @@ function bindChat(){
     event.preventDefault();
     if(!isChatAuthReady()) return;
 
-    const name=document.getElementById("chatName").value.trim() || "Visitante";
+    const name=document.getElementById("chatName")?.value.trim() || document.getElementById("googleLoginBtn")?.textContent.replace(/^Logado como:\s*/i, "").trim() || "Visitante";
     const text=document.getElementById("chatInput").value.trim();
     const status=document.getElementById("userStatus")?.value || "online";
 
