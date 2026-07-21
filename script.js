@@ -1362,20 +1362,49 @@ bindStreamerApplications();
   }, { passive: true });
 })();
 
-// V68 — submenus responsivos e efeito curto de pixels ao abrir.
+// V70 — submenus: hover fluido no PC e toque controlado no telemóvel.
 (() => {
   const nav = document.querySelector('.tl-main-nav');
   if (!nav) return;
 
   const groups = [...nav.querySelectorAll('.tl-menu-group')];
   const coarsePointer = () => window.matchMedia('(hover: none), (pointer: coarse), (max-width: 900px)').matches;
+  let closeTimer = null;
+
+  function clearCloseTimer() {
+    if (closeTimer) {
+      window.clearTimeout(closeTimer);
+      closeTimer = null;
+    }
+  }
 
   function closeGroups(except = null) {
+    clearCloseTimer();
     groups.forEach(group => {
       if (group === except) return;
       group.classList.remove('is-open');
       group.querySelector('.tl-menu-toggle')?.setAttribute('aria-expanded', 'false');
     });
+  }
+
+  function openGroup(group, withBurst = false) {
+    const toggle = group.querySelector('.tl-menu-toggle');
+    if (!toggle) return;
+    clearCloseTimer();
+    const wasOpen = group.classList.contains('is-open');
+    closeGroups(group);
+    group.classList.add('is-open');
+    toggle.setAttribute('aria-expanded', 'true');
+    if (withBurst && !wasOpen) pixelBurst(toggle);
+  }
+
+  function scheduleClose(group) {
+    clearCloseTimer();
+    closeTimer = window.setTimeout(() => {
+      group.classList.remove('is-open');
+      group.querySelector('.tl-menu-toggle')?.setAttribute('aria-expanded', 'false');
+      closeTimer = null;
+    }, 180);
   }
 
   function pixelBurst(element) {
@@ -1403,29 +1432,44 @@ bindStreamerApplications();
 
   groups.forEach(group => {
     const toggle = group.querySelector('.tl-menu-toggle');
-    if (!toggle) return;
+    const submenu = group.querySelector('.tl-submenu');
+    if (!toggle || !submenu) return;
 
     toggle.addEventListener('click', event => {
       event.preventDefault();
-      const willOpen = !group.classList.contains('is-open');
-      closeGroups(group);
-      group.classList.toggle('is-open', willOpen);
-      toggle.setAttribute('aria-expanded', String(willOpen));
-      if (willOpen) pixelBurst(toggle);
+
+      // No telemóvel, o toque abre/fecha. No PC, o clique apenas abre;
+      // ao sair da área completa ele fecha sozinho, sem ficar travado.
+      if (coarsePointer()) {
+        const willOpen = !group.classList.contains('is-open');
+        closeGroups(group);
+        group.classList.toggle('is-open', willOpen);
+        toggle.setAttribute('aria-expanded', String(willOpen));
+        if (willOpen) pixelBurst(toggle);
+      } else {
+        openGroup(group, true);
+      }
     });
 
     group.addEventListener('mouseenter', () => {
       if (coarsePointer()) return;
-      closeGroups(group);
-      group.classList.add('is-open');
-      toggle.setAttribute('aria-expanded', 'true');
-      pixelBurst(toggle);
+      openGroup(group, true);
     });
 
     group.addEventListener('mouseleave', () => {
       if (coarsePointer()) return;
-      group.classList.remove('is-open');
-      toggle.setAttribute('aria-expanded', 'false');
+      scheduleClose(group);
+    });
+
+    submenu.addEventListener('mouseenter', () => {
+      if (coarsePointer()) return;
+      clearCloseTimer();
+      openGroup(group, false);
+    });
+
+    submenu.addEventListener('mouseleave', () => {
+      if (coarsePointer()) return;
+      scheduleClose(group);
     });
 
     group.querySelectorAll('.tl-submenu a').forEach(link => {

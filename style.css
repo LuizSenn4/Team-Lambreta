@@ -5036,6 +5036,18 @@ body:not([data-user-role="master"]):not([data-user-role="admin"]):not([data-user
   transition:transform .22s ease,color .22s ease;
 }
 .tl-menu-group { position:relative; }
+/* ponte invisível entre o botão e a caixa: evita fechar enquanto o cursor atravessa o espaço */
+@media(min-width:901px){
+  .tl-menu-group.is-open::after{
+    content:"";
+    position:absolute;
+    left:0;
+    right:0;
+    top:100%;
+    height:14px;
+    z-index:1299;
+  }
+}
 .tl-menu-group.is-open>.tl-menu-toggle b { transform:rotate(180deg); color:#fff0aa; }
 
 /* Portugal 50/50 também nos botões-pai */
