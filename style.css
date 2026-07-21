@@ -4958,3 +4958,42 @@ body:not([data-user-role="master"]):not([data-user-role="admin"]):not([data-user
 .ink31-live-box>p{margin:12px 2px 0;color:#827b72;font-size:11px;line-height:1.5}
 @media(max-width:1120px){.ink31-featured{grid-template-columns:.9fr 1.1fr}.ink31-live-box{grid-column:1/-1;border-top:1px solid rgba(255,255,255,.07)}.ink31-visual{min-height:500px}}
 @media(max-width:720px){.ink31-featured{grid-template-columns:1fr}.ink31-visual{min-height:430px}.ink31-profile-copy{border-right:0}.ink31-details,.ink31-actions{grid-template-columns:1fr}.ink31-profile-copy h2{letter-spacing:-3px}}
+
+/* V67 — efeito Portugal 50/50 nos nomes do menu */
+.site-header nav a[href] {
+  position: relative;
+  display: inline-block;
+  background-image: linear-gradient(
+    90deg,
+    #046a38 0%,
+    #046a38 50%,
+    #da291c 50%,
+    #da291c 100%
+  );
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
+  -webkit-background-clip: text;
+  background-clip: text;
+  transition: color .18s ease, text-shadow .18s ease, transform .18s ease,
+              filter .18s ease, -webkit-text-fill-color .18s ease;
+}
+
+.site-header nav a[href]:hover,
+.site-header nav a[href]:focus-visible,
+.site-header nav a[href]:active,
+.site-header nav a[href].pt-flag-hover {
+  color: transparent;
+  -webkit-text-fill-color: transparent;
+  text-shadow:
+    -5px 0 12px rgba(4,106,56,.38),
+     5px 0 12px rgba(218,41,28,.38),
+     0 0 6px rgba(255,215,0,.18);
+  filter: brightness(1.2) saturate(1.15);
+  transform: translateY(-1px) scale(1.04);
+}
+
+@media (hover: none) and (pointer: coarse) {
+  .site-header nav a[href] {
+    -webkit-tap-highlight-color: transparent;
+  }
+}

@@ -1340,3 +1340,24 @@ function bindStreamerApplications(){
 }
 
 bindStreamerApplications();
+
+// V67 — efeito Portugal no menu também em toque no telemóvel.
+(() => {
+  const menuSelector = '.site-header nav a[href]';
+  let touchTimer = null;
+
+  document.addEventListener('touchstart', event => {
+    const link = event.target.closest(menuSelector);
+    if (!link) return;
+
+    document.querySelectorAll(`${menuSelector}.pt-flag-hover`).forEach(item => {
+      if (item !== link) item.classList.remove('pt-flag-hover');
+    });
+
+    link.classList.add('pt-flag-hover');
+    clearTimeout(touchTimer);
+    touchTimer = setTimeout(() => {
+      link.classList.remove('pt-flag-hover');
+    }, 900);
+  }, { passive: true });
+})();
