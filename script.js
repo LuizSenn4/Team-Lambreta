@@ -1361,3 +1361,73 @@ bindStreamerApplications();
     }, 900);
   }, { passive: true });
 })();
+
+// V68 — submenus responsivos e efeito curto de pixels ao abrir.
+(() => {
+  const nav = document.querySelector('.tl-main-nav');
+  if (!nav) return;
+
+  const groups = [...nav.querySelectorAll('.tl-menu-group')];
+  const coarsePointer = () => window.matchMedia('(hover: none), (pointer: coarse), (max-width: 900px)').matches;
+
+  function closeGroups(except = null) {
+    groups.forEach(group => {
+      if (group === except) return;
+      group.classList.remove('is-open');
+      group.querySelector('.tl-menu-toggle')?.setAttribute('aria-expanded', 'false');
+    });
+  }
+
+  function pixelBurst(element) {
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    const rect = element.getBoundingClientRect();
+    const cx = rect.left + rect.width / 2;
+    const cy = rect.bottom - 3;
+    const colors = ['#046a38','#da291c','#d9a441','#f6f1df'];
+    for (let i = 0; i < 18; i += 1) {
+      const pixel = document.createElement('i');
+      pixel.className = 'tl-pixel-burst';
+      const angle = Math.PI + Math.random() * Math.PI;
+      const distance = 20 + Math.random() * 55;
+      pixel.style.left = `${cx + (Math.random() - .5) * Math.min(rect.width, 90)}px`;
+      pixel.style.top = `${cy}px`;
+      pixel.style.setProperty('--dx', `${Math.cos(angle) * distance}px`);
+      pixel.style.setProperty('--dy', `${Math.sin(angle) * distance + 14}px`);
+      pixel.style.setProperty('--rot', `${Math.round((Math.random() - .5) * 280)}deg`);
+      pixel.style.setProperty('--size', `${3 + Math.round(Math.random() * 4)}px`);
+      pixel.style.setProperty('--pixel', colors[i % colors.length]);
+      document.body.appendChild(pixel);
+      pixel.addEventListener('animationend', () => pixel.remove(), { once:true });
+    }
+  }
+
+  groups.forEach(group => {
+    const toggle = group.querySelector('.tl-menu-toggle');
+    if (!toggle) return;
+
+    toggle.addEventListener('click', event => {
+      event.preventDefault();
+      const willOpen = !group.classList.contains('is-open');
+      closeGroups(group);
+      group.classList.toggle('is-open', willOpen);
+      toggle.setAttribute('aria-expanded', String(willOpen));
+      if (willOpen) pixelBurst(toggle);
+    });
+
+    group.addEventListener('mouseenter', () => {
+      if (coarsePointer() || group.classList.contains('is-open')) return;
+      pixelBurst(toggle);
+    });
+  });
+
+  document.addEventListener('click', event => {
+    if (!event.target.closest('.tl-main-nav')) closeGroups();
+  });
+
+  document.addEventListener('keydown', event => {
+    if (event.key === 'Escape') {
+      closeGroups();
+      nav.querySelector('.tl-menu-toggle')?.focus();
+    }
+  });
+})();

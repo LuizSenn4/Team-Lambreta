@@ -18,18 +18,43 @@
         </div>
       </a>
 
-      <nav>
-        <a href="home.html">Início</a>
+      <nav class="tl-main-nav" aria-label="Menu principal">
+    <a class="tl-menu-link" href="home.html">Início</a>
+
+    <div class="tl-menu-group">
+      <button class="tl-menu-toggle" type="button" aria-expanded="false">
+        <span>Team</span><b aria-hidden="true">⌄</b>
+      </button>
+      <div class="tl-submenu">
         <a href="team.html">Team</a>
         <a href="streamers.html">Streamers</a>
+      </div>
+    </div>
+
+    <div class="tl-menu-group">
+      <button class="tl-menu-toggle" type="button" aria-expanded="false">
+        <span>Comunidade</span><b aria-hidden="true">⌄</b>
+      </button>
+      <div class="tl-submenu">
         <a href="forum.html">Fórum</a>
+        <a href="ajuda.html">Ajuda</a>
+        <a href="contacto.html">Contacto</a>
+      </div>
+    </div>
+
+    <div class="tl-menu-group">
+      <button class="tl-menu-toggle" type="button" aria-expanded="false">
+        <span>Destaques</span><b aria-hidden="true">⌄</b>
+      </button>
+      <div class="tl-submenu">
         <a href="eventos.html">Eventos</a>
         <a href="conquistas.html">Conquistas</a>
         <a href="midia.html">Mídia</a>
-        <a href="loja.html">Loja</a>
-        <a href="contacto.html">Contacto</a>
-        <a href="ajuda.html">Ajuda</a>
-      </nav>
+      </div>
+    </div>
+
+    <a class="tl-menu-link" href="loja.html">Loja</a>
+  </nav>
 
       <button class="admin-link pwd-admin-trigger" type="button" aria-label="Abrir acesso administrativo">🔐 PWD</button>
     </header>
