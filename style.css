@@ -5056,22 +5056,27 @@ body:not([data-user-role="master"]):not([data-user-role="admin"]):not([data-user
   transform: rotate(180deg);
 }
 
-/* Portugal 50/50 */
+/* Cor normal do menu */
 .site-header .tl-main-nav .tl-menu-toggle > span,
 .site-header .tl-main-nav > .tl-menu-link {
+  color: #f7f1df;
+  -webkit-text-fill-color: #f7f1df;
+  background: none;
+  transition: filter .18s ease, transform .18s ease, text-shadow .18s ease;
+}
+
+/* Portugal 50/50 somente ao interagir */
+.site-header .tl-main-nav .tl-menu-toggle:hover > span,
+.site-header .tl-main-nav .tl-menu-toggle:focus-visible > span,
+.site-header .tl-main-nav .tl-menu-group.is-open > .tl-menu-toggle > span,
+.site-header .tl-main-nav > .tl-menu-link:hover,
+.site-header .tl-main-nav > .tl-menu-link:focus-visible,
+.site-header .tl-main-nav > .tl-menu-link.pt-flag-hover {
   background: linear-gradient(90deg, #046a38 0 50%, #da291c 50% 100%);
   background-clip: text;
   -webkit-background-clip: text;
   color: transparent;
   -webkit-text-fill-color: transparent;
-  transition: filter .18s ease, transform .18s ease, text-shadow .18s ease;
-}
-
-.site-header .tl-main-nav .tl-menu-toggle:hover > span,
-.site-header .tl-main-nav .tl-menu-toggle:focus-visible > span,
-.site-header .tl-main-nav .tl-menu-group.is-open > .tl-menu-toggle > span,
-.site-header .tl-main-nav > .tl-menu-link:hover,
-.site-header .tl-main-nav > .tl-menu-link:focus-visible {
   filter: brightness(1.28) saturate(1.15);
   transform: translateY(-1px);
   text-shadow:

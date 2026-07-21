@@ -1382,11 +1382,35 @@ bindStreamerApplications();
     });
   };
 
+
+  const pixelBurst = element => {
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    const rect = element.getBoundingClientRect();
+    const colors = ['#046a38', '#da291c', '#d9a441', '#f7f1df'];
+
+    for (let i = 0; i < 12; i += 1) {
+      const pixel = document.createElement('i');
+      pixel.className = 'tl-pixel-burst';
+      pixel.style.left = `${rect.left + rect.width / 2}px`;
+      pixel.style.top = `${rect.top + rect.height / 2}px`;
+      pixel.style.setProperty('--size', `${3 + Math.random() * 4}px`);
+      pixel.style.setProperty('--pixel', colors[i % colors.length]);
+      pixel.style.setProperty('--dx', `${(Math.random() - .5) * 70}px`);
+      pixel.style.setProperty('--dy', `${(Math.random() - .5) * 42}px`);
+      document.body.appendChild(pixel);
+      pixel.addEventListener('animationend', () => pixel.remove(), { once: true });
+    }
+  };
+
   const setOpen = (group, open) => {
+    const wasOpen = group.classList.contains('is-open');
     closeAll(open ? group : null);
     group.classList.toggle('is-open', open);
     const toggle = group.querySelector('.tl-menu-toggle');
-    if (toggle) toggle.setAttribute('aria-expanded', String(open));
+    if (toggle) {
+      toggle.setAttribute('aria-expanded', String(open));
+      if (open && !wasOpen) pixelBurst(toggle);
+    }
   };
 
   groups.forEach(group => {
@@ -1416,6 +1440,14 @@ bindStreamerApplications();
   // Links principais também navegam normalmente.
   nav.querySelectorAll(':scope > a[href]').forEach(link => {
     link.addEventListener('click', () => closeAll());
+  });
+
+
+  nav.querySelectorAll('a.tl-menu-link[href]').forEach(link => {
+    link.addEventListener('touchstart', () => {
+      link.classList.add('pt-flag-hover');
+      window.setTimeout(() => link.classList.remove('pt-flag-hover'), 700);
+    }, { passive: true });
   });
 
   document.addEventListener('pointerdown', event => {

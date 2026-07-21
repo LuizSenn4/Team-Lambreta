@@ -1,0 +1,6 @@
+TEAM LAMBRETA V73
+- Menu volta à cor normal quando não há interação.
+- Portugal 50/50 aparece somente no hover, foco, toque ou submenu aberto.
+- Efeito de pixels restaurado ao abrir submenus.
+- Mantida a navegação limpa e funcional da v72.
+- Mantido “Logado como” apenas informativo na Home.
