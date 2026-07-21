@@ -1363,150 +1363,69 @@ bindStreamerApplications();
 })();
 
 // V70 — submenus: hover fluido no PC e toque controlado no telemóvel.
+
+// V72 — navegação limpa: links normais, sem interceptar cliques.
 (() => {
   const nav = document.querySelector('.tl-main-nav');
   if (!nav) return;
 
-  const groups = [...nav.querySelectorAll('.tl-menu-group')];
-  const coarsePointer = () => window.matchMedia('(hover: none), (pointer: coarse), (max-width: 900px)').matches;
-  let closeTimer = null;
+  const groups = Array.from(nav.querySelectorAll('.tl-menu-group'));
+  const mobileMode = () =>
+    window.matchMedia('(hover: none), (pointer: coarse), (max-width: 900px)').matches;
 
-  function clearCloseTimer() {
-    if (closeTimer) {
-      window.clearTimeout(closeTimer);
-      closeTimer = null;
-    }
-  }
-
-  function closeGroups(except = null) {
-    clearCloseTimer();
+  const closeAll = (except = null) => {
     groups.forEach(group => {
       if (group === except) return;
       group.classList.remove('is-open');
-      group.querySelector('.tl-menu-toggle')?.setAttribute('aria-expanded', 'false');
+      const toggle = group.querySelector('.tl-menu-toggle');
+      if (toggle) toggle.setAttribute('aria-expanded', 'false');
     });
-  }
+  };
 
-  function openGroup(group, withBurst = false) {
+  const setOpen = (group, open) => {
+    closeAll(open ? group : null);
+    group.classList.toggle('is-open', open);
     const toggle = group.querySelector('.tl-menu-toggle');
-    if (!toggle) return;
-    clearCloseTimer();
-    const wasOpen = group.classList.contains('is-open');
-    closeGroups(group);
-    group.classList.add('is-open');
-    toggle.setAttribute('aria-expanded', 'true');
-    if (withBurst && !wasOpen) pixelBurst(toggle);
-  }
-
-  function scheduleClose(group) {
-    clearCloseTimer();
-    closeTimer = window.setTimeout(() => {
-      group.classList.remove('is-open');
-      group.querySelector('.tl-menu-toggle')?.setAttribute('aria-expanded', 'false');
-      closeTimer = null;
-    }, 180);
-  }
-
-  function pixelBurst(element) {
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-    const rect = element.getBoundingClientRect();
-    const cx = rect.left + rect.width / 2;
-    const cy = rect.bottom - 3;
-    const colors = ['#046a38','#da291c','#d9a441','#f6f1df'];
-    for (let i = 0; i < 18; i += 1) {
-      const pixel = document.createElement('i');
-      pixel.className = 'tl-pixel-burst';
-      const angle = Math.PI + Math.random() * Math.PI;
-      const distance = 20 + Math.random() * 55;
-      pixel.style.left = `${cx + (Math.random() - .5) * Math.min(rect.width, 90)}px`;
-      pixel.style.top = `${cy}px`;
-      pixel.style.setProperty('--dx', `${Math.cos(angle) * distance}px`);
-      pixel.style.setProperty('--dy', `${Math.sin(angle) * distance + 14}px`);
-      pixel.style.setProperty('--rot', `${Math.round((Math.random() - .5) * 280)}deg`);
-      pixel.style.setProperty('--size', `${3 + Math.round(Math.random() * 4)}px`);
-      pixel.style.setProperty('--pixel', colors[i % colors.length]);
-      document.body.appendChild(pixel);
-      pixel.addEventListener('animationend', () => pixel.remove(), { once:true });
-    }
-  }
+    if (toggle) toggle.setAttribute('aria-expanded', String(open));
+  };
 
   groups.forEach(group => {
     const toggle = group.querySelector('.tl-menu-toggle');
-    const submenu = group.querySelector('.tl-submenu');
-    if (!toggle || !submenu) return;
+    if (!toggle) return;
 
     toggle.addEventListener('click', event => {
       event.preventDefault();
-
-      // No telemóvel, o toque abre/fecha. No PC, o clique apenas abre;
-      // ao sair da área completa ele fecha sozinho, sem ficar travado.
-      if (coarsePointer()) {
-        const willOpen = !group.classList.contains('is-open');
-        closeGroups(group);
-        group.classList.toggle('is-open', willOpen);
-        toggle.setAttribute('aria-expanded', String(willOpen));
-        if (willOpen) pixelBurst(toggle);
-      } else {
-        openGroup(group, true);
-      }
-    });
-
-    group.addEventListener('mouseenter', () => {
-      if (coarsePointer()) return;
-      openGroup(group, true);
-    });
-
-    group.addEventListener('mouseleave', () => {
-      if (coarsePointer()) return;
-      scheduleClose(group);
-    });
-
-    submenu.addEventListener('mouseenter', () => {
-      if (coarsePointer()) return;
-      clearCloseTimer();
-      openGroup(group, false);
-    });
-
-    submenu.addEventListener('mouseleave', () => {
-      if (coarsePointer()) return;
-      scheduleClose(group);
-    });
-
-    group.querySelectorAll('.tl-submenu a').forEach(link => {
-      link.addEventListener('click', event => {
-        // Navegação explícita: fecha o menu e abre sempre o destino escolhido.
-        // Evita que o clique do submenu seja perdido por causa da animação/fecho.
-        event.preventDefault();
-        event.stopPropagation();
-        const destination = link.href;
-        closeGroups();
-        window.requestAnimationFrame(() => {
-          window.location.assign(destination);
-        });
-      });
-    });
-  });
-
-  nav.querySelectorAll('a.tl-menu-link[href]').forEach(link => {
-    link.addEventListener('click', event => {
-      event.preventDefault();
       event.stopPropagation();
-      const destination = link.href;
-      closeGroups();
-      window.requestAnimationFrame(() => {
-        window.location.assign(destination);
-      });
+      setOpen(group, !group.classList.contains('is-open'));
+    });
+
+    // No PC, hover abre e sair da área inteira fecha.
+    group.addEventListener('mouseenter', () => {
+      if (!mobileMode()) setOpen(group, true);
+    });
+    group.addEventListener('mouseleave', () => {
+      if (!mobileMode()) setOpen(group, false);
+    });
+
+    // IMPORTANTE: links do submenu navegam normalmente.
+    group.querySelectorAll('.tl-submenu a[href]').forEach(link => {
+      link.addEventListener('click', () => closeAll());
     });
   });
 
-  document.addEventListener('click', event => {
-    if (!event.target.closest('.tl-main-nav')) closeGroups();
+  // Links principais também navegam normalmente.
+  nav.querySelectorAll(':scope > a[href]').forEach(link => {
+    link.addEventListener('click', () => closeAll());
+  });
+
+  document.addEventListener('pointerdown', event => {
+    if (!nav.contains(event.target)) closeAll();
   });
 
   document.addEventListener('keydown', event => {
-    if (event.key === 'Escape') {
-      closeGroups();
-      nav.querySelector('.tl-menu-toggle')?.focus();
-    }
+    if (event.key === 'Escape') closeAll();
   });
+
+  window.addEventListener('resize', closeAll);
 })();
+

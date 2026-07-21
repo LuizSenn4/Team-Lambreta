@@ -176,8 +176,10 @@
     const btn = $('googleLoginBtn');
     if (btn) {
       btn.innerHTML = session ? `Logado como: ${esc(profile?.game_nickname || profile?.full_name || 'Google')}` : '<img class="google-login-logo" src="img/brasao.png" alt=""> Entrar com Google';
-      btn.onclick = session ? logout : loginGoogle;
-      btn.title = session ? 'Clique para sair' : 'Entrar com Google';
+      btn.onclick = session ? null : loginGoogle;
+      btn.disabled = Boolean(session);
+      btn.setAttribute('aria-disabled', session ? 'true' : 'false');
+      btn.title = session ? 'Conta conectada' : 'Entrar com Google';
     }
     const name = $('chatName');
     if (name && session) { name.value = profile?.game_nickname || profile?.full_name || ''; name.readOnly = true; }

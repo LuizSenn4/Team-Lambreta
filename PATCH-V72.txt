@@ -1,0 +1,7 @@
+TEAM LAMBRETA V72
+- Menu reescrito do zero.
+- Links dos submenus usam navegação HTML normal, sem preventDefault.
+- Hover no PC, toque no móvel, clique fora fecha.
+- Apenas um submenu aberto.
+- “Logado como” no chat da Home não desloga mais.
+- O logout continua no balão flutuante da conta.
