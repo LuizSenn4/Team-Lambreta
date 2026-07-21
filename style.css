@@ -4820,3 +4820,26 @@ body:not([data-user-role="master"]):not([data-user-role="admin"]):not([data-user
 }
 .chat-msg.identity-member::before { background:#edf2f7!important; box-shadow:0 0 11px rgba(238,242,247,.45)!important; }
 .chat-msg.identity-member .chat-name { color:#f6f8fb!important; text-shadow:0 0 9px rgba(255,255,255,.34)!important; }
+
+/* V61 — identidade visual isolada: cada cargo aplica uma única cor, sem herdar estilos antigos */
+.chat-msg[data-identity]::before {
+  display: none !important;
+  content: none !important;
+}
+.chat-msg[data-identity] {
+  --identity: #edf2f7;
+  --identity-rgb: 237,242,247;
+  border: 1px solid rgba(var(--identity-rgb), .56) !important;
+  box-shadow: inset 5px 0 0 var(--identity), 0 0 18px rgba(var(--identity-rgb), .10) !important;
+  background: linear-gradient(135deg, rgba(var(--identity-rgb), .055), rgba(255,255,255,.018)) !important;
+}
+.chat-msg[data-identity] .chat-name {
+  color: var(--identity) !important;
+  text-shadow: 0 0 12px rgba(var(--identity-rgb), .62) !important;
+}
+.chat-msg.identity-admin { --identity:#5ef3ff; --identity-rgb:94,243,255; }
+.chat-msg.identity-staff { --identity:#ff6679; --identity-rgb:255,102,121; }
+.chat-msg.identity-moderator { --identity:#75b8ff; --identity-rgb:117,184,255; }
+.chat-msg.identity-streamer { --identity:#ff74ec; --identity-rgb:255,116,236; }
+.chat-msg.identity-vip { --identity:#ffd45d; --identity-rgb:255,212,93; }
+.chat-msg.identity-member { --identity:#f6f8fb; --identity-rgb:246,248,251; }
