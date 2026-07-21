@@ -1,0 +1,8 @@
+TEAM LAMBRETA V74 — CHAT 30 MENSAGENS
+- Corrigido o limite do chat: agora mostra sempre as 30 mensagens mais recentes.
+- Ao chegar à mensagem 31, a mais antiga sai da tela e a nova entra.
+- Nenhuma mensagem nova fica escondida atrás das primeiras 30.
+- Envio protegido contra clique duplo.
+- Campo volta ao foco depois do envio.
+- Realtime mantido.
+- Não precisa executar SQL.

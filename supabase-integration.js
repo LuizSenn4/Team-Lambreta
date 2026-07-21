@@ -240,9 +240,16 @@
     const box = $('chatMessages');
     if (!box) return;
     if (!session) { box.innerHTML = '<div class="sb-login-required">Entra com Google para ver e escrever no chat.</div>'; return; }
-    const { data, error } = await sb.from('chat_messages').select('id,message,created_at,user_id,profiles!chat_messages_user_id_fkey(full_name,game_nickname,role,presence,last_seen,avatar_url,donation_total,vip_until,is_streamer)').eq('is_deleted',false).order('created_at',{ascending:true}).limit(30);
+    // Busca sempre as 30 mensagens MAIS RECENTES.
+    // A consulta vem em ordem decrescente para o limite funcionar corretamente,
+    // depois invertimos apenas para exibir do mais antigo ao mais novo.
+    const { data, error } = await sb.from('chat_messages')
+      .select('id,message,created_at,user_id,profiles!chat_messages_user_id_fkey(full_name,game_nickname,role,presence,last_seen,avatar_url,donation_total,vip_until,is_streamer)')
+      .eq('is_deleted',false)
+      .order('created_at',{ascending:false})
+      .limit(30);
     if (error) { box.innerHTML = `<p>${esc(error.message)}</p>`; return; }
-    const rows = data || [];
+    const rows = [...(data || [])].reverse();
     box.innerHTML = rows.map(row => {
       const p=row.profiles||{};
       const name=p.game_nickname||p.full_name||'Jogador';
@@ -333,9 +340,31 @@
       if(!check.ok){ $('chatModerationInfo').textContent=check.reason; $('chatModerationInfo').classList.add('error'); return; }
       $('chatModerationInfo').textContent=''; $('chatModerationInfo').classList.remove('error');
       const safeMessage=check.text || message;
-      const { error }=await sb.from('chat_messages').insert({user_id:session.user.id,message:safeMessage});
-      if (error) return alert(error.message);
-      recentSendTimes.push(nowMs); input.value=''; playChatTick('send',profile?.role); await renderChat();
+      const submitButton=form.querySelector('button[type="submit"]');
+      if (form.dataset.sending === '1') return;
+      form.dataset.sending='1';
+      if(submitButton) submitButton.disabled=true;
+
+      const { error }=await sb.from('chat_messages').insert({
+        user_id:session.user.id,
+        message:safeMessage
+      });
+
+      form.dataset.sending='0';
+      if(submitButton) submitButton.disabled=false;
+
+      if (error) {
+        input?.focus();
+        return alert(`Não foi possível enviar: ${error.message}`);
+      }
+
+      recentSendTimes.push(nowMs);
+      input.value='';
+      input.focus();
+      playChatTick('send',profile?.role);
+
+      // Atualiza imediatamente. A assinatura realtime continua como segunda garantia.
+      await renderChat();
     }, true);
     $('userStatus')?.addEventListener('change', e => { manualPresence=statusDb(e.target.value); autoAway=false; registerActivity(); setPresence(e.target.value,{manual:true}); });
     document.addEventListener('visibilitychange',()=>{ if(!document.hidden && (profile?.presence==='online')){ unreadChat=0; renderUnreadBadge(); } });
