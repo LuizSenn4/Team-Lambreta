@@ -1473,7 +1473,29 @@ bindStreamerApplications();
     });
 
     group.querySelectorAll('.tl-submenu a').forEach(link => {
-      link.addEventListener('click', () => closeGroups());
+      link.addEventListener('click', event => {
+        // Navegação explícita: fecha o menu e abre sempre o destino escolhido.
+        // Evita que o clique do submenu seja perdido por causa da animação/fecho.
+        event.preventDefault();
+        event.stopPropagation();
+        const destination = link.href;
+        closeGroups();
+        window.requestAnimationFrame(() => {
+          window.location.assign(destination);
+        });
+      });
+    });
+  });
+
+  nav.querySelectorAll('a.tl-menu-link[href]').forEach(link => {
+    link.addEventListener('click', event => {
+      event.preventDefault();
+      event.stopPropagation();
+      const destination = link.href;
+      closeGroups();
+      window.requestAnimationFrame(() => {
+        window.location.assign(destination);
+      });
     });
   });
 
