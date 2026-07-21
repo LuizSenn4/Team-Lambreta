@@ -39,6 +39,15 @@
   const isVip = p => Boolean(p?.vip_until && new Date(p.vip_until).getTime() > Date.now());
   const isStreamer = p => Boolean(p?.is_streamer);
   const extraBadges = p => isStreamer(p) ? '<small class="streamer-badge">STREAMER</small>' : (isVip(p) ? '<small class="vip-badge">VIP</small>' : '');
+  const identityClass = p => {
+    const role = roleClass(p?.role);
+    if (role === 'master' || role === 'admin') return 'admin';
+    if (role === 'staff') return 'staff';
+    if (role === 'moderator') return 'moderator';
+    if (isStreamer(p)) return 'streamer';
+    if (isVip(p)) return 'vip';
+    return 'member';
+  };
   const effectivePresence = p => {
     if (!p) return 'offline';
     const seen = p.last_seen ? new Date(p.last_seen).getTime() : 0;
@@ -227,7 +236,7 @@
     box.innerHTML = rows.map(row => {
       const p=row.profiles||{}; const name=p.game_nickname||p.full_name||'Jogador'; const role=roleClass(p.role); const presence=effectivePresence(p);
       const statusLabel = presence==='busy'?'Ocupado':presence==='away'?'Ausente':presence==='online'?'Online':'Offline';
-      return `<article class="chat-msg role-${role} ${isVip(p)?'is-vip':''} ${isStreamer(p)?'is-streamer':''} ${presence} ${canModerate()?'has-actions':''}" data-message-id="${row.id}" data-user-id="${esc(row.user_id)}"><div class="chat-msg-top"><strong class="chat-name" data-user-id="${esc(row.user_id)}">${esc(name)}</strong><span class="presence-dot ${presence}" title="${statusLabel}" aria-label="${statusLabel}"></span><time>${new Date(row.created_at).toLocaleTimeString('pt-PT',{hour:'2-digit',minute:'2-digit'})}</time>${canModerate()?'<button class="chat-delete-btn" type="button" title="Opções da mensagem" aria-label="Opções da mensagem">⋮</button>':''}</div><p class="chat-text">${esc(row.message)}</p></article>`;
+      return `<article class="chat-msg role-${role} identity-${identityClass(p)} ${presence} ${canModerate()?'has-actions':''}" data-message-id="${row.id}" data-user-id="${esc(row.user_id)}"><div class="chat-msg-top"><strong class="chat-name" data-user-id="${esc(row.user_id)}">${esc(name)}</strong><span class="presence-dot ${presence}" title="${statusLabel}" aria-label="${statusLabel}"></span><time>${new Date(row.created_at).toLocaleTimeString('pt-PT',{hour:'2-digit',minute:'2-digit'})}</time>${canModerate()?'<button class="chat-delete-btn" type="button" title="Opções da mensagem" aria-label="Opções da mensagem">⋮</button>':''}</div><p class="chat-text">${esc(row.message)}</p></article>`;
     }).join('') || '<p class="sb-login-required">Ainda não há mensagens. Manda a primeira 😎</p>';
     box.scrollTop = box.scrollHeight;
     bindModerationTargets();
@@ -262,7 +271,7 @@
       btn.hidden = !['member','staff','moderator','admin'].includes(desired) || !canManageRoles();
       btn.onclick = async () => {
         if (!selectedTargetId) return;
-        const { error }=await sb.rpc('set_team_role',{target_user_id:selectedTargetId,new_role:desired});
+        const { error }=await sb.rpc('set_profile_identity',{target_user_id:selectedTargetId,new_identity:desired});
         if (error) alert(error.message); else { panel.classList.remove('show'); await renderChat(); }
       };
     });
@@ -272,7 +281,8 @@
         if (!selectedTargetId) return;
         const badge=btn.dataset.badgeSet;
         const enabled=btn.dataset.enabled==='true';
-        const { error }=await sb.rpc('set_profile_badge',{target_user_id:selectedTargetId,badge_name:badge,enabled});
+        const identity = enabled ? badge : 'member';
+        const { error }=await sb.rpc('set_profile_identity',{target_user_id:selectedTargetId,new_identity:identity});
         if(error) alert(error.message); else { panel.classList.remove('show'); await renderChat(); }
       };
     });
