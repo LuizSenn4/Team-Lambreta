@@ -5036,8 +5036,7 @@ body:not([data-user-role="master"]):not([data-user-role="admin"]):not([data-user
   transition:transform .22s ease,color .22s ease;
 }
 .tl-menu-group { position:relative; }
-.tl-menu-group.is-open>.tl-menu-toggle b,
-.tl-menu-group:hover>.tl-menu-toggle b { transform:rotate(180deg); color:#fff0aa; }
+.tl-menu-group.is-open>.tl-menu-toggle b { transform:rotate(180deg); color:#fff0aa; }
 
 /* Portugal 50/50 também nos botões-pai */
 .site-header .tl-main-nav .tl-menu-toggle>span,
@@ -5088,8 +5087,6 @@ body:not([data-user-role="master"]):not([data-user-role="admin"]):not([data-user
   pointer-events:none;
   background:linear-gradient(90deg,rgba(4,106,56,.10),transparent 44%,transparent 56%,rgba(218,41,28,.10));
 }
-.tl-menu-group:hover>.tl-submenu,
-.tl-menu-group:focus-within>.tl-submenu,
 .tl-menu-group.is-open>.tl-submenu {
   opacity:1;
   visibility:visible;

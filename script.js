@@ -1415,8 +1415,21 @@ bindStreamerApplications();
     });
 
     group.addEventListener('mouseenter', () => {
-      if (coarsePointer() || group.classList.contains('is-open')) return;
+      if (coarsePointer()) return;
+      closeGroups(group);
+      group.classList.add('is-open');
+      toggle.setAttribute('aria-expanded', 'true');
       pixelBurst(toggle);
+    });
+
+    group.addEventListener('mouseleave', () => {
+      if (coarsePointer()) return;
+      group.classList.remove('is-open');
+      toggle.setAttribute('aria-expanded', 'false');
+    });
+
+    group.querySelectorAll('.tl-submenu a').forEach(link => {
+      link.addEventListener('click', () => closeGroups());
     });
   });
 
