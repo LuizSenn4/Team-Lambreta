@@ -4709,3 +4709,70 @@ body:not([data-user-role="master"]):not([data-user-role="admin"]):not([data-user
   .chat-msg .chat-delete-btn{grid-area:action!important}
   .chat-msg{min-height:72px!important}
 }
+
+/* V59 — mapa final de cores do chat aprovado
+   Admin/DEV ciano, Staff vermelho, Moderador azul,
+   Streamer magenta, VIP dourado, Membro branco. */
+.chat-msg.role-master,
+.chat-msg.role-admin {
+  border-color:rgba(35,232,255,.62)!important;
+  box-shadow:inset 4px 0 0 #23e8ff,0 0 18px rgba(35,232,255,.11)!important;
+}
+.chat-msg.role-master .chat-name,
+.chat-msg.role-admin .chat-name {
+  color:#5ef3ff!important;
+  text-shadow:0 0 12px rgba(35,232,255,.68)!important;
+}
+
+.chat-msg.role-staff {
+  border-color:rgba(255,54,78,.58)!important;
+  box-shadow:inset 4px 0 0 #ff364e,0 0 18px rgba(255,54,78,.10)!important;
+}
+.chat-msg.role-staff .chat-name {
+  color:#ff6679!important;
+  text-shadow:0 0 11px rgba(255,54,78,.62)!important;
+}
+
+.chat-msg.role-moderator {
+  border-color:rgba(53,142,255,.58)!important;
+  box-shadow:inset 4px 0 0 #358eff,0 0 18px rgba(53,142,255,.10)!important;
+}
+.chat-msg.role-moderator .chat-name {
+  color:#75b8ff!important;
+  text-shadow:0 0 11px rgba(53,142,255,.60)!important;
+}
+
+.chat-msg.is-streamer:not(.role-master):not(.role-admin):not(.role-moderator):not(.role-staff) {
+  border-color:rgba(238,52,221,.60)!important;
+  box-shadow:inset 4px 0 0 #ee34dd,0 0 18px rgba(238,52,221,.11)!important;
+}
+.chat-msg.is-streamer:not(.role-master):not(.role-admin):not(.role-moderator):not(.role-staff) .chat-name {
+  color:#ff74ec!important;
+  text-shadow:0 0 12px rgba(238,52,221,.66)!important;
+}
+
+.chat-msg.is-vip:not(.role-master):not(.role-admin):not(.role-moderator):not(.role-staff):not(.is-streamer) {
+  border-color:rgba(255,190,26,.62)!important;
+  box-shadow:inset 4px 0 0 #ffbe1a,0 0 18px rgba(255,190,26,.11)!important;
+}
+.chat-msg.is-vip:not(.role-master):not(.role-admin):not(.role-moderator):not(.role-staff):not(.is-streamer) .chat-name {
+  color:#ffd45d!important;
+  text-shadow:0 0 12px rgba(255,190,26,.66)!important;
+}
+
+.chat-msg.role-member:not(.is-streamer):not(.is-vip) {
+  border-color:rgba(238,242,247,.38)!important;
+  box-shadow:inset 4px 0 0 #edf2f7,0 0 14px rgba(238,242,247,.06)!important;
+}
+.chat-msg.role-member:not(.is-streamer):not(.is-vip) .chat-name {
+  color:#f6f8fb!important;
+  text-shadow:0 0 9px rgba(255,255,255,.34)!important;
+}
+
+/* Cores explicativas da página Ajuda */
+.help-color-map{display:grid;gap:10px;margin-top:14px}
+.help-color-item{display:grid;grid-template-columns:14px minmax(100px,150px) 1fr;gap:10px;align-items:start;padding:10px 12px;border:1px solid rgba(214,166,59,.18);border-radius:12px;background:rgba(255,255,255,.018)}
+.help-color-dot{width:11px;height:11px;border-radius:50%;margin-top:5px;box-shadow:0 0 10px currentColor;background:currentColor}
+.help-color-item strong{letter-spacing:.02em}
+.help-color-item.cyan{color:#5ef3ff}.help-color-item.red{color:#ff6679}.help-color-item.blue{color:#75b8ff}.help-color-item.magenta{color:#ff74ec}.help-color-item.gold{color:#ffd45d}.help-color-item.white{color:#f6f8fb}
+.help-color-item span:last-child{color:#b9ad8f}
