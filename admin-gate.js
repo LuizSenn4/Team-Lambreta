@@ -10,6 +10,16 @@
     location.replace('home.html?admin=locked');
   };
 
+  function leaveAdmin() {
+    sessionStorage.removeItem('tl_admin_unlocked');
+    location.href = 'home.html';
+  }
+
+  function bindExitButtons() {
+    document.getElementById('exitAdminBtn')?.addEventListener('click', leaveAdmin);
+    document.getElementById('exitAdminSidebarBtn')?.addEventListener('click', leaveAdmin);
+  }
+
   async function verifyAccess() {
     if (!sb || sessionStorage.getItem('tl_admin_unlocked') !== '1') return deny();
 
@@ -24,6 +34,7 @@
 
     if (error || !['admin', 'master'].includes(profile?.role)) return deny();
 
+    bindExitButtons();
     document.documentElement.classList.remove('admin-pending');
   }
 

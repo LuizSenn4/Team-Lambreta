@@ -100,3 +100,11 @@
 
 /* v63 — evita mostrar o painel antes da validação */
 html.admin-pending body { visibility: hidden; }
+
+
+/* V64 — saída clara do painel administrativo */
+.admin-top-actions{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.exit-admin-btn{border-color:rgba(255,240,168,.58);background:rgba(217,164,65,.10);color:var(--gold-light)}
+.exit-admin-btn:hover{border-color:var(--gold-light);box-shadow:0 0 18px rgba(217,164,65,.20)}
+.exit-admin-sidebar{width:100%;font:900 14px Inter,Arial,sans-serif;cursor:pointer}
+@media(max-width:860px){.admin-top-actions{width:100%}.admin-top-actions button{flex:1;min-width:150px}}
