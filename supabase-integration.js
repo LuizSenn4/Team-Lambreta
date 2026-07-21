@@ -36,8 +36,8 @@
   const statusUi = v => ({busy:'busy',away:'away',online:'online',offline:'offline'}[v] || 'offline');
   const roleClass = role => ['master','admin','moderator','staff','member'].includes(role) ? role : 'member';
   const roleLabel = role => ({master:'DEV',admin:'ADMIN',moderator:'MODERADOR',staff:'STAFF',member:'MEMBRO'}[role] || 'MEMBRO');
-  const isVip = p => Boolean(p?.vip_until && new Date(p.vip_until).getTime() > Date.now());
-  const isStreamer = p => Boolean(p?.is_streamer);
+  const isVip = p => Boolean(p?.vip_until && Number.isFinite(new Date(p.vip_until).getTime()) && new Date(p.vip_until).getTime() > Date.now());
+  const isStreamer = p => p?.is_streamer === true || String(p?.is_streamer).toLowerCase() === 'true';
   const extraBadges = p => isStreamer(p) ? '<small class="streamer-badge">STREAMER</small>' : (isVip(p) ? '<small class="vip-badge">VIP</small>' : '');
   const identityClass = p => {
     const role = roleClass(p?.role);
@@ -47,6 +47,14 @@
     if (isStreamer(p)) return 'streamer';
     if (isVip(p)) return 'vip';
     return 'member';
+  };
+  const identityPalette = {
+    admin: { color:'#5ef3ff', rgb:'94,243,255' },
+    staff: { color:'#ff6679', rgb:'255,102,121' },
+    moderator: { color:'#75b8ff', rgb:'117,184,255' },
+    streamer: { color:'#ff74ec', rgb:'255,116,236' },
+    vip: { color:'#ffd45d', rgb:'255,212,93' },
+    member: { color:'#f6f8fb', rgb:'246,248,251' }
   };
   const effectivePresence = p => {
     if (!p) return 'offline';
@@ -128,7 +136,7 @@
     const { error } = await sb.auth.signInWithOAuth({ provider:'google', options:{ redirectTo } });
     if (error) alert(`Erro no login: ${error.message}`);
   }
-  async function logout() { await sb.auth.signOut(); location.reload(); }
+  async function logout() { sessionStorage.removeItem('tl_admin_unlocked'); await sb.auth.signOut(); location.reload(); }
 
   async function loadProfile() {
     profile = null;
@@ -237,9 +245,12 @@
       const p=row.profiles||{};
       const name=p.game_nickname||p.full_name||'Jogador';
       const identity=identityClass(p);
+      const palette=identityPalette[identity] || identityPalette.member;
       const presence=effectivePresence(p);
       const statusLabel = presence==='busy'?'Ocupado':presence==='away'?'Ausente':presence==='online'?'Online':'Offline';
-      return `<article class="chat-msg identity-${identity} ${presence} ${canModerate()?'has-actions':''}" data-identity="${identity}" data-message-id="${row.id}" data-user-id="${esc(row.user_id)}"><div class="chat-msg-top"><strong class="chat-name" data-user-id="${esc(row.user_id)}">${esc(name)}</strong><span class="presence-dot ${presence}" title="${statusLabel}" aria-label="${statusLabel}"></span><time>${new Date(row.created_at).toLocaleTimeString('pt-PT',{hour:'2-digit',minute:'2-digit'})}</time>${canModerate()?'<button class="chat-delete-btn" type="button" title="Opções da mensagem" aria-label="Opções da mensagem">⋮</button>':''}</div><p class="chat-text">${esc(row.message)}</p></article>`;
+      const identityStyle=`--identity:${palette.color};--identity-rgb:${palette.rgb};border-color:rgba(${palette.rgb},.56)!important;box-shadow:inset 5px 0 0 ${palette.color},0 0 18px rgba(${palette.rgb},.10)!important;`;
+      const nameStyle=`color:${palette.color}!important;text-shadow:0 0 12px rgba(${palette.rgb},.62)!important;`;
+      return `<article class="chat-msg identity-${identity} ${presence} ${canModerate()?'has-actions':''}" style="${identityStyle}" data-identity="${identity}" data-message-id="${row.id}" data-user-id="${esc(row.user_id)}"><div class="chat-msg-top"><strong class="chat-name" style="${nameStyle}" data-user-id="${esc(row.user_id)}">${esc(name)}</strong><span class="presence-dot ${presence}" title="${statusLabel}" aria-label="${statusLabel}"></span><time>${new Date(row.created_at).toLocaleTimeString('pt-PT',{hour:'2-digit',minute:'2-digit'})}</time>${canModerate()?'<button class="chat-delete-btn" type="button" title="Opções da mensagem" aria-label="Opções da mensagem">⋮</button>':''}</div><p class="chat-text">${esc(row.message)}</p></article>`;
     }).join('') || '<p class="sb-login-required">Ainda não há mensagens. Manda a primeira 😎</p>';
     box.scrollTop = box.scrollHeight;
     bindModerationTargets();
@@ -346,6 +357,56 @@
 
   function bindContact() { $('contactAdminForm')?.addEventListener('submit', sendContact, true); }
 
+
+  function ensurePwdModal() {
+    if ($('tlPwdModal')) return $('tlPwdModal');
+    const modal = document.createElement('div');
+    modal.id = 'tlPwdModal';
+    modal.className = 'tl-pwd-modal';
+    modal.hidden = true;
+    modal.innerHTML = `
+      <form class="tl-pwd-box" id="tlPwdForm">
+        <h2>🔐 PWD</h2>
+        <p>Acesso exclusivo da administração.</p>
+        <input id="tlAdminPassword" type="password" autocomplete="current-password" placeholder="Senha administrativa" maxlength="120" required>
+        <p class="tl-pwd-feedback" id="tlPwdFeedback"></p>
+        <div class="tl-pwd-actions">
+          <button type="button" id="tlPwdCancel">Cancelar</button>
+          <button type="submit" class="tl-pwd-enter">Entrar</button>
+        </div>
+      </form>`;
+    document.body.appendChild(modal);
+    $('tlPwdCancel').onclick = () => { modal.hidden = true; $('tlAdminPassword').value = ''; $('tlPwdFeedback').textContent = ''; };
+    modal.addEventListener('click', ev => { if (ev.target === modal) $('tlPwdCancel').click(); });
+    $('tlPwdForm').addEventListener('submit', async ev => {
+      ev.preventDefault();
+      const feedback = $('tlPwdFeedback');
+      const password = $('tlAdminPassword').value;
+      feedback.textContent = 'A validar…';
+      if (!session) { feedback.textContent = 'Primeiro entra com a tua conta Google.'; return; }
+      if (!['admin','master'].includes(profile?.role)) { feedback.textContent = 'Esta conta não possui acesso administrativo.'; return; }
+      const { data, error } = await sb.rpc('verify_admin_password', { candidate_password: password });
+      if (error || data !== true) { feedback.textContent = 'Senha administrativa incorreta.'; return; }
+      sessionStorage.setItem('tl_admin_unlocked', '1');
+      location.href = 'admin.html';
+    });
+    return modal;
+  }
+
+  function bindPwdAccess() {
+    document.querySelectorAll('.pwd-admin-trigger').forEach(button => {
+      button.addEventListener('click', async () => {
+        if (!session) { await loginGoogle(); return; }
+        const modal = ensurePwdModal();
+        modal.hidden = false;
+        setTimeout(() => $('tlAdminPassword')?.focus(), 30);
+      });
+    });
+    if (new URLSearchParams(location.search).get('admin') === 'locked') {
+      history.replaceState({}, '', location.pathname);
+    }
+  }
+
   async function renderInbox() {
     const target=$('supabasePrivateInbox'); const badge=$('supabaseInboxBadge');
     if (!target && !badge) return;
@@ -380,7 +441,7 @@
   async function boot() {
     const { data }=await sb.auth.getSession(); session=data.session; await loadProfile(); renderAuth();
     if(session){ manualPresence=profile?.presence==='busy'?'busy':'online'; lastActivityAt=Date.now(); await ensureNickname(); await setPresence(manualPresence,{manual:false}); startPresenceTracking(); }
-    bindChat(); bindContact(); await renderChat(); await renderInbox(); subscribe();
+    bindChat(); bindContact(); bindPwdAccess(); await renderChat(); await renderInbox(); subscribe();
     sb.auth.onAuthStateChange(async (_event,newSession)=>{session=newSession;await loadProfile();renderAuth();if(session){manualPresence=profile?.presence==='busy'?'busy':'online';lastActivityAt=Date.now();startPresenceTracking();}await renderChat();await renderInbox();subscribe();});
     window.addEventListener('beforeunload',()=>{ if(session) sb.from('profiles').update({presence:'offline',last_seen:new Date().toISOString()}).eq('id',session.user.id); });
   }

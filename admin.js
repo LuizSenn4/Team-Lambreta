@@ -1,3 +1,8 @@
+if (sessionStorage.getItem('tl_admin_unlocked') !== '1') {
+  location.replace('home.html?admin=locked');
+  throw new Error('Painel administrativo bloqueado.');
+}
+
 let data = getTeamData();
 
 const fields = {

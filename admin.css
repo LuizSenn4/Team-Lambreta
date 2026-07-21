@@ -97,3 +97,6 @@
 .online-dot.online,.status-dot.online{background:#73ff18!important;box-shadow:0 0 14px rgba(115,255,24,.72)!important}
 .online-dot.busy,.status-dot.busy{background:#ff1736!important;box-shadow:0 0 14px rgba(255,23,54,.62)!important}
 .online-dot.away,.status-dot.away{background:#f0a51a!important;box-shadow:0 0 14px rgba(240,165,26,.62)!important}
+
+/* v63 — evita mostrar o painel antes da validação */
+html.admin-pending body { visibility: hidden; }

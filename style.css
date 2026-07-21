@@ -4843,3 +4843,67 @@ body:not([data-user-role="master"]):not([data-user-role="admin"]):not([data-user
 .chat-msg.identity-streamer { --identity:#ff74ec; --identity-rgb:255,116,236; }
 .chat-msg.identity-vip { --identity:#ffd45d; --identity-rgb:255,212,93; }
 .chat-msg.identity-member { --identity:#f6f8fb; --identity-rgb:246,248,251; }
+
+
+/* V62 — cor blindada por identidade: nome, borda e faixa nunca herdam cargo anterior */
+.chat-msg[data-identity] .chat-name {
+  color: var(--identity) !important;
+  -webkit-text-fill-color: var(--identity) !important;
+  text-decoration-color: rgba(var(--identity-rgb), .45) !important;
+  text-shadow: 0 0 12px rgba(var(--identity-rgb), .62) !important;
+}
+.chat-msg[data-identity] {
+  border-color: rgba(var(--identity-rgb), .56) !important;
+  box-shadow: inset 5px 0 0 var(--identity), 0 0 18px rgba(var(--identity-rgb), .10) !important;
+}
+
+/* v63 — acesso PWD ao painel administrativo */
+.pwd-admin-trigger {
+  appearance: none;
+  cursor: pointer;
+  font: inherit;
+}
+
+.tl-pwd-modal[hidden] { display: none !important; }
+.tl-pwd-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 99999;
+  display: grid;
+  place-items: center;
+  padding: 20px;
+  background: rgba(2, 5, 10, .82);
+  backdrop-filter: blur(9px);
+}
+.tl-pwd-box {
+  width: min(410px, 100%);
+  padding: 24px;
+  border: 1px solid rgba(94, 243, 255, .55);
+  border-radius: 18px;
+  background: linear-gradient(145deg, rgba(15,22,35,.98), rgba(6,10,18,.98));
+  box-shadow: 0 0 34px rgba(94,243,255,.14);
+}
+.tl-pwd-box h2 { margin: 0 0 6px; color: #5ef3ff; }
+.tl-pwd-box p { margin: 0 0 16px; opacity: .82; }
+.tl-pwd-box input {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 13px 14px;
+  border: 1px solid rgba(255,255,255,.18);
+  border-radius: 11px;
+  background: rgba(255,255,255,.06);
+  color: #fff;
+  outline: none;
+}
+.tl-pwd-box input:focus { border-color: #5ef3ff; box-shadow: 0 0 0 3px rgba(94,243,255,.12); }
+.tl-pwd-actions { display: flex; gap: 10px; justify-content: flex-end; margin-top: 16px; }
+.tl-pwd-actions button {
+  padding: 10px 16px;
+  border-radius: 10px;
+  border: 1px solid rgba(255,255,255,.18);
+  cursor: pointer;
+  color: #fff;
+  background: rgba(255,255,255,.08);
+}
+.tl-pwd-actions .tl-pwd-enter { color: #041015; border-color: #5ef3ff; background: #5ef3ff; font-weight: 800; }
+.tl-pwd-feedback { min-height: 22px; margin-top: 10px !important; color: #ff8292; font-size: .9rem; }
