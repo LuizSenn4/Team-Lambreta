@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Cinzel:wght@700;900&family=Inter:wght@400;600;800;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Cinzel:wght@700;900&family=Inter:wght@400;600;800;900&family=Road+Rage&display=swap');
 
 :root {
   --black: #050403;
@@ -86,6 +86,15 @@ body {
   font-size: 12px;
   font-weight: 900;
   text-transform: uppercase;
+}
+
+/* V66 — fonte brush do INK31 aplicada apenas aos nomes do menu */
+.site-header nav a {
+  font-family: "Road Rage", cursive;
+  font-size: 22px;
+  font-weight: 400;
+  line-height: 1;
+  letter-spacing: 1px;
 }
 
 .admin-link {
