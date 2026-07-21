@@ -4907,3 +4907,45 @@ body:not([data-user-role="master"]):not([data-user-role="admin"]):not([data-user
 }
 .tl-pwd-actions .tl-pwd-enter { color: #041015; border-color: #5ef3ff; background: #5ef3ff; font-weight: 800; }
 .tl-pwd-feedback { min-height: 22px; margin-top: 10px !important; color: #ff8292; font-size: .9rem; }
+
+/* V65 — perfil oficial do streamer INK31 */
+.ink31-featured{
+  display:grid;grid-template-columns:minmax(280px,.82fr) minmax(300px,.9fr) minmax(340px,1.08fr);
+  gap:0;overflow:hidden;border:1px solid rgba(255,30,55,.42);border-radius:30px;
+  background:linear-gradient(135deg,rgba(18,2,5,.98),rgba(5,5,5,.98) 52%,rgba(15,3,5,.98));
+  box-shadow:0 24px 70px rgba(0,0,0,.48),0 0 34px rgba(255,23,54,.08);
+}
+.ink31-visual{position:relative;min-height:560px;background:#070707;overflow:hidden}
+.ink31-visual:after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,transparent 62%,rgba(7,7,7,.92)),linear-gradient(0deg,rgba(0,0,0,.35),transparent 45%);pointer-events:none}
+.ink31-visual img{width:100%;height:100%;object-fit:cover;object-position:center top;filter:contrast(1.05) saturate(1.08)}
+.ink31-status{position:absolute;z-index:2;top:22px;left:22px;display:flex;align-items:center;gap:8px;padding:9px 13px;border:1px solid #ff2444;border-radius:999px;background:rgba(10,0,2,.85);color:#ff4961;font-weight:950;font-size:11px;letter-spacing:1px;box-shadow:0 0 22px rgba(255,23,54,.22)}
+.ink31-status i,.live-pulse{width:8px;height:8px;border-radius:50%;background:#ff1736;box-shadow:0 0 13px #ff1736;animation:ink31Pulse 1.35s infinite}
+@keyframes ink31Pulse{50%{opacity:.38;transform:scale(.72)}}
+.ink31-profile-copy{padding:clamp(28px,4vw,54px);display:flex;flex-direction:column;justify-content:center;border-right:1px solid rgba(255,255,255,.07)}
+.ink31-profile-copy h2{margin:5px 0 10px;font-family:Cinzel,serif;font-size:clamp(58px,7vw,104px);line-height:.88;letter-spacing:-5px;color:#f3eee8;text-shadow:0 3px 0 rgba(255,255,255,.08)}
+.ink31-profile-copy h2 span{color:#e10f2d;text-shadow:0 0 24px rgba(255,23,54,.28)}
+.ink31-intro{color:var(--muted);font-size:16px;line-height:1.65;margin:0 0 24px}
+.ink31-details{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:18px}
+.ink31-details>div{padding:14px;border:1px solid rgba(217,164,65,.16);border-radius:15px;background:rgba(255,255,255,.025)}
+.ink31-details small,.ink31-social small{display:block;color:#9d9487;font-size:10px;font-weight:900;text-transform:uppercase;letter-spacing:1px;margin-bottom:5px}
+.ink31-details strong{color:#fff;font-size:15px}
+.ink31-socials{display:grid;gap:10px}
+.ink31-social{display:flex;align-items:center;gap:13px;padding:13px 15px;border-radius:15px;text-decoration:none;background:rgba(255,255,255,.025);transition:.2s ease}
+.ink31-social>span{width:40px;height:40px;display:grid;place-items:center;border-radius:12px;font-size:22px;font-weight:950}
+.ink31-social strong{color:#fff}
+.ink31-social.tiktok{border:1px solid rgba(255,36,68,.38)}.ink31-social.tiktok>span{color:#fff;background:#161616;box-shadow:inset 3px 0 #26f4ee,inset -3px 0 #ff245b}
+.ink31-social.twitch{border:1px solid rgba(155,90,255,.38)}.ink31-social.twitch>span{color:#b98cff;background:rgba(112,45,190,.16)}
+.ink31-social:hover{transform:translateX(4px);filter:brightness(1.15)}
+.ink31-live-box{padding:clamp(24px,3vw,38px);display:flex;flex-direction:column;justify-content:center;background:radial-gradient(circle at 70% 30%,rgba(255,23,54,.08),transparent 42%)}
+.ink31-live-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;color:#fff}.ink31-live-head>div{display:flex;align-items:center;gap:10px}.ink31-live-head small{color:#9d9487}
+.ink31-preview{position:relative;aspect-ratio:16/9;border:1px solid rgba(255,23,54,.55);border-radius:18px;overflow:hidden;background:#090909;box-shadow:0 0 24px rgba(255,23,54,.11)}
+.ink31-preview img{width:100%;height:100%;object-fit:cover;object-position:center 30%;filter:brightness(.48) blur(.4px)}
+.ink31-preview-overlay{position:absolute;inset:0;display:grid;place-content:center;text-align:center;padding:20px;background:linear-gradient(0deg,rgba(0,0,0,.62),transparent 70%)}
+.ink31-preview-overlay span{color:#ff1736;font-weight:950;letter-spacing:3px;font-size:13px}.ink31-preview-overlay strong{margin-top:7px;color:#fff;font-size:21px}
+.ink31-actions{display:grid;grid-template-columns:1.2fr .8fr;gap:10px;margin-top:14px}
+.ink31-actions a{display:flex;align-items:center;justify-content:center;min-height:48px;border-radius:13px;text-decoration:none;font-weight:950;text-align:center}
+.ink31-watch{background:linear-gradient(135deg,#e50829,#ff3150);color:#fff;box-shadow:0 10px 24px rgba(255,23,54,.2)}
+.ink31-open{border:1px solid rgba(155,90,255,.55);color:#c8a7ff;background:rgba(96,32,170,.08)}
+.ink31-live-box>p{margin:12px 2px 0;color:#827b72;font-size:11px;line-height:1.5}
+@media(max-width:1120px){.ink31-featured{grid-template-columns:.9fr 1.1fr}.ink31-live-box{grid-column:1/-1;border-top:1px solid rgba(255,255,255,.07)}.ink31-visual{min-height:500px}}
+@media(max-width:720px){.ink31-featured{grid-template-columns:1fr}.ink31-visual{min-height:430px}.ink31-profile-copy{border-right:0}.ink31-details,.ink31-actions{grid-template-columns:1fr}.ink31-profile-copy h2{letter-spacing:-3px}}
