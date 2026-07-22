@@ -61,10 +61,117 @@
       <div id="membersAdminList" class="admin-list"></div>
     </section>
 
-    <section id="streamers" class="admin-card">
-      <div class="card-head"><h2>Streamers</h2><button data-add="streamers">Adicionar streamer</button></div>
-      <p class="hint">Área própria para quem está a começar, parceiros e trocas de divulgação.</p>
-      <div id="streamersAdminList" class="admin-list"></div>
+    <section id="streamers" class="admin-card streamer-manager">
+      <div class="card-head">
+        <div>
+          <h2>Gerenciar streamers</h2>
+          <p class="hint">INK31 é protegido e continua editado apenas pelo código. Aqui entram os demais streamers.</p>
+        </div>
+        <button id="newStreamerBtn" type="button">+ Adicionar streamer</button>
+      </div>
+
+      <div id="streamerEditor" class="streamer-editor" hidden>
+        <div class="streamer-editor-head">
+          <div>
+            <small id="streamerEditorMode">NOVO STREAMER</small>
+            <h3 id="streamerEditorTitle">Adicionar streamer</h3>
+          </div>
+          <button id="closeStreamerEditor" type="button" aria-label="Fechar">×</button>
+        </div>
+
+        <form id="streamerAdminForm">
+          <input id="streamerId" type="hidden">
+
+          <fieldset>
+            <legend>Informações principais</legend>
+            <div class="streamer-form-grid">
+              <label>Nome de exibição *<input id="streamerDisplayName" required maxlength="60"></label>
+              <label>Nick no jogo<input id="streamerGameNick" maxlength="60"></label>
+              <label>Jogo principal<input id="streamerMainGame" maxlength="60" placeholder="Fortnite"></label>
+              <label>Título / cargo<input id="streamerTitle" maxlength="80" placeholder="Streamer oficial"></label>
+              <label class="full">Descrição<textarea id="streamerDescription" rows="4" maxlength="500"></textarea></label>
+            </div>
+          </fieldset>
+
+          <fieldset>
+            <legend>Foto</legend>
+            <div class="streamer-photo-row">
+              <img id="streamerPhotoPreview" alt="Pré-visualização" hidden>
+              <div>
+                <label>Colar link da foto<input id="streamerPhotoUrl" type="url" placeholder="https://..."></label>
+                <label>Ou enviar do PC/telemóvel<input id="streamerPhotoFile" type="file" accept="image/*"></label>
+                <small>Se enviar um ficheiro, ele será guardado no Supabase Storage.</small>
+              </div>
+            </div>
+          </fieldset>
+
+          <fieldset>
+            <legend>Redes sociais</legend>
+            <p class="hint">Deixe vazio o que a pessoa não possuir. Campo vazio não aparece no site.</p>
+            <div class="streamer-form-grid">
+              <label>TikTok<input id="streamerTikTok" type="url" placeholder="https://tiktok.com/@..."></label>
+              <label>Twitch<input id="streamerTwitch" type="url" placeholder="https://twitch.tv/..."></label>
+              <label>YouTube<input id="streamerYouTube" type="url" placeholder="https://youtube.com/@..."></label>
+              <label>Instagram<input id="streamerInstagram" type="url" placeholder="https://instagram.com/..."></label>
+            </div>
+          </fieldset>
+
+          <fieldset>
+            <legend>Transmissão</legend>
+            <div class="streamer-form-grid">
+              <label>Plataforma principal
+                <select id="streamerLivePlatform">
+                  <option value="">Selecionar</option>
+                  <option value="tiktok">TikTok</option>
+                  <option value="twitch">Twitch</option>
+                  <option value="youtube">YouTube</option>
+                  <option value="outro">Outra</option>
+                </select>
+              </label>
+              <label>Detecção
+                <select id="streamerLiveMode">
+                  <option value="manual">Manual</option>
+                  <option value="automatic">Automática — YouTube/Twitch</option>
+                </select>
+              </label>
+              <label class="full">Link da live / canal<input id="streamerLiveUrl" type="url" placeholder="https://..."></label>
+            </div>
+            <div class="streamer-checks">
+              <label><input id="streamerManualLive" type="checkbox"> Está ao vivo agora</label>
+              <label><input id="streamerForceLive" type="checkbox"> Forçar AO VIVO</label>
+              <label><input id="streamerAllowEmbed" type="checkbox" checked> Permitir assistir dentro do site</label>
+              <label><input id="streamerAllowChat" type="checkbox" checked> Permitir chat na página da live</label>
+            </div>
+            <p class="hint">Automático fica preparado para YouTube/Twitch. Para funcionar de verdade, ainda serão necessárias as credenciais das APIs e uma função segura no servidor. TikTok permanece manual.</p>
+          </fieldset>
+
+          <fieldset>
+            <legend>Exibição</legend>
+            <div class="streamer-checks">
+              <label><input id="streamerPublished" type="checkbox" checked> Publicado</label>
+              <label><input id="streamerFeatured" type="checkbox"> Destaque principal</label>
+            </div>
+            <label>Ordem na página<input id="streamerOrder" type="number" value="100" min="0" max="9999"></label>
+          </fieldset>
+
+          <div class="streamer-editor-actions">
+            <button id="cancelStreamerBtn" type="button">Cancelar</button>
+            <button id="previewStreamerBtn" type="button">Pré-visualizar</button>
+            <button class="primary" type="submit">Guardar streamer</button>
+          </div>
+          <p id="streamerAdminFeedback" class="hint"></p>
+        </form>
+      </div>
+
+      <div id="streamerAdminPreview" class="streamer-admin-preview" hidden></div>
+
+      <div class="streamer-list-head">
+        <h3>Streamers publicados e arquivados</h3>
+        <button id="refreshStreamersBtn" type="button">Atualizar</button>
+      </div>
+      <div id="streamersSupabaseList" class="streamers-supabase-list">
+        <p class="hint">Carregando streamers...</p>
+      </div>
     </section>
 
     <section id="hall" class="admin-card">
@@ -141,6 +248,7 @@
   <script src="admin-gate.js"></script>
   <script src="data.js"></script>
   <script src="admin.js"></script>
-  <script src="supabase-integration-v81.js"></script>
+  <script src="supabase-integration-v83.js"></script>
+  <script src="streamer-admin-v83.js"></script>
 </body>
 </html>

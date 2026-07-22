@@ -108,3 +108,48 @@ html.admin-pending body { visibility: hidden; }
 .exit-admin-btn:hover{border-color:var(--gold-light);box-shadow:0 0 18px rgba(217,164,65,.20)}
 .exit-admin-sidebar{width:100%;font:900 14px Inter,Arial,sans-serif;cursor:pointer}
 @media(max-width:860px){.admin-top-actions{width:100%}.admin-top-actions button{flex:1;min-width:150px}}
+
+/* V83 — gestor simples de streamers */
+.streamer-manager .card-head{align-items:flex-start}
+.streamer-editor{margin:18px 0;padding:18px;border:1px solid rgba(217,164,65,.28);border-radius:18px;background:rgba(0,0,0,.28)}
+.streamer-editor-head,.streamer-list-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:14px}
+.streamer-editor-head small{color:#73ff18;letter-spacing:2px;font-weight:900}
+.streamer-editor-head h3,.streamer-list-head h3{margin:4px 0 0}
+.streamer-editor-head>button{width:38px;height:38px;border-radius:50%;font-size:22px}
+.streamer-editor fieldset{margin:0 0 16px;padding:15px;border:1px solid rgba(217,164,65,.18);border-radius:14px}
+.streamer-editor legend{padding:0 8px;color:#f1d98b;font-weight:900}
+.streamer-form-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.streamer-form-grid .full{grid-column:1/-1}
+.streamer-editor label{display:grid;gap:6px;color:#d9cfae;font-size:12px;font-weight:800}
+.streamer-editor input,.streamer-editor textarea,.streamer-editor select{box-sizing:border-box;width:100%;padding:11px;border:1px solid rgba(217,164,65,.24);border-radius:10px;background:#070707;color:#fff}
+.streamer-photo-row{display:grid;grid-template-columns:140px minmax(0,1fr);gap:15px;align-items:start}
+.streamer-photo-row img{width:140px;height:140px;object-fit:cover;border-radius:16px;border:1px solid rgba(217,164,65,.32)}
+.streamer-checks{display:flex;flex-wrap:wrap;gap:10px;margin:12px 0}
+.streamer-checks label{display:flex;align-items:center;gap:7px;padding:9px 11px;border:1px solid rgba(217,164,65,.17);border-radius:10px}
+.streamer-checks input{width:auto}
+.streamer-editor-actions{display:flex;justify-content:flex-end;gap:10px;flex-wrap:wrap}
+.streamer-editor-actions .primary{border-color:rgba(115,255,24,.46);color:#73ff18}
+.streamers-supabase-list{display:grid;gap:10px}
+.streamer-admin-row{display:grid;grid-template-columns:minmax(220px,1fr) auto auto;gap:12px;align-items:center;padding:12px;border:1px solid rgba(217,164,65,.18);border-radius:14px;background:rgba(255,255,255,.025)}
+.streamer-admin-row.is-archived{opacity:.58}
+.streamer-admin-identity{display:flex;align-items:center;gap:10px;min-width:0}
+.streamer-admin-identity img,.streamer-admin-identity>span{width:54px;height:54px;border-radius:12px;object-fit:cover;display:grid;place-items:center;background:#101010}
+.streamer-admin-identity div{display:grid;gap:3px;min-width:0}
+.streamer-admin-identity strong,.streamer-admin-identity small{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.streamer-admin-flags,.streamer-admin-actions{display:flex;align-items:center;gap:7px;flex-wrap:wrap}
+.streamer-admin-flags b{color:#ff5267}.streamer-admin-flags em{color:#ffd74a}.streamer-admin-flags i{color:#9ab7a5}
+.streamer-admin-actions button{padding:8px 10px}
+.streamer-admin-preview{margin:14px 0}
+.streamer-preview-card{display:grid;grid-template-columns:180px minmax(0,1fr);gap:18px;padding:16px;border:1px solid rgba(217,164,65,.28);border-radius:18px;background:#080908}
+.streamer-preview-card>img{width:180px;height:180px;object-fit:cover;border-radius:14px}
+.streamer-preview-top,.streamer-preview-socials,.streamer-preview-details{display:flex;gap:8px;flex-wrap:wrap}
+.streamer-preview-top b{color:#ff5267}.streamer-preview-top em{color:#ffd74a}
+.streamer-preview-details span{display:grid;padding:8px;border:1px solid rgba(217,164,65,.15);border-radius:8px}
+.streamer-preview-socials a{color:#73ff18}
+@media(max-width:760px){
+ .streamer-form-grid{grid-template-columns:1fr}
+ .streamer-form-grid .full{grid-column:auto}
+ .streamer-photo-row,.streamer-preview-card{grid-template-columns:1fr}
+ .streamer-admin-row{grid-template-columns:1fr}
+ .streamer-editor-actions>*{flex:1}
+}
