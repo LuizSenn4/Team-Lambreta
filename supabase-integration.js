@@ -259,7 +259,17 @@
       const statusLabel = presence==='busy'?'Ocupado':presence==='away'?'Ausente':presence==='online'?'Online':'Offline';
       const identityStyle=`--identity:${palette.color};--identity-rgb:${palette.rgb};border-color:rgba(${palette.rgb},.56)!important;box-shadow:inset 5px 0 0 ${palette.color},0 0 18px rgba(${palette.rgb},.10)!important;`;
       const nameStyle=`color:${palette.color}!important;text-shadow:0 0 12px rgba(${palette.rgb},.62)!important;`;
-      return `<article class="chat-msg identity-${identity} ${presence} ${canModerate()?'has-actions':''}" style="${identityStyle}" data-identity="${identity}" data-message-id="${row.id}" data-user-id="${esc(row.user_id)}"><div class="chat-msg-top"><strong class="chat-name" style="${nameStyle}" data-user-id="${esc(row.user_id)}">${esc(name)}</strong><span class="presence-dot ${presence}" title="${statusLabel}" aria-label="${statusLabel}"></span><time>${new Date(row.created_at).toLocaleTimeString('pt-PT',{hour:'2-digit',minute:'2-digit'})}</time>${canModerate()?'<button class="chat-delete-btn" type="button" title="Opções da mensagem" aria-label="Opções da mensagem">⋮</button>':''}</div><p class="chat-text">${esc(row.message)}</p></article>`;
+      return `<article class="tl-chat-card tl-chat-${identity} tl-presence-${presence} ${canModerate()?'tl-has-actions':''}" style="${identityStyle}" data-identity="${identity}" data-message-id="${row.id}" data-user-id="${esc(row.user_id)}">
+        <header class="tl-chat-header">
+          <strong class="tl-chat-name" style="${nameStyle}" data-user-id="${esc(row.user_id)}">${esc(name)}</strong>
+          <div class="tl-chat-meta">
+            <span class="tl-chat-dot ${presence}" title="${statusLabel}" aria-label="${statusLabel}"></span>
+            <time class="tl-chat-time">${new Date(row.created_at).toLocaleTimeString('pt-PT',{hour:'2-digit',minute:'2-digit'})}</time>
+            ${canModerate()?'<button class="tl-chat-action" type="button" title="Opções da mensagem" aria-label="Opções da mensagem">⋮</button>':''}
+          </div>
+        </header>
+        <p class="tl-chat-text">${esc(row.message)}</p>
+      </article>`;
     }).join('') || '<p class="sb-login-required">Ainda não há mensagens. Manda a primeira 😎</p>';
     box.scrollTop = box.scrollHeight;
     bindModerationTargets();
@@ -269,7 +279,7 @@
   }
 
   function bindModerationTargets() {
-    document.querySelectorAll('.chat-name[data-user-id]').forEach(el => {
+    document.querySelectorAll('.tl-chat-name[data-user-id]').forEach(el => {
       el.onclick = () => {
         if (!canModerate() && !canManageRoles()) return;
         selectedTargetId = el.dataset.userId;
@@ -277,7 +287,7 @@
         $('moderationPanel')?.classList.add('show');
       };
     });
-    document.querySelectorAll('.chat-delete-btn').forEach(btn => {
+    document.querySelectorAll('.tl-chat-action').forEach(btn => {
       btn.onclick = async () => {
         const article=btn.closest('[data-message-id]');
         if (!article || !confirm('Apagar esta mensagem?')) return;
