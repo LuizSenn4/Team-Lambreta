@@ -1,0 +1,10 @@
+TEAM LAMBRETA V84 — STREAMERS PREMIUM
+- Todos os streamers dinâmicos agora usam o mesmo layout premium do INK31.
+- Foto grande à esquerda.
+- Nome, título, descrição, nick, jogo e redes ao centro.
+- Área de live, preview e botões à direita.
+- Campos vazios não aparecem.
+- Destaque principal muda apenas a ordem, levando o perfil ao primeiro lugar abaixo do INK31.
+- Demais perfis seguem display_order.
+- INK31 continua fixo e protegido.
+- Não precisa executar SQL novo.
