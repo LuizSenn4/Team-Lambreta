@@ -55,10 +55,84 @@
       </div>
     </section>
 
-    <section id="team" class="admin-card">
-      <div class="card-head"><h2>Team</h2><button data-add="members">Adicionar perfil</button></div>
-      <p class="hint">Aqui ficam gamers, staff, moderadores e família. A área Streamers agora está separada.</p>
-      <div id="membersAdminList" class="admin-list"></div>
+    <section id="team" class="admin-card team-cloud-manager">
+      <div class="card-head">
+        <div>
+          <h2>Team global</h2>
+          <p class="hint">Você e Rafael administram aqui. Tudo fica na nuvem e aparece para toda a gente.</p>
+        </div>
+        <button id="newTeamMemberBtn" type="button">+ Adicionar membro</button>
+      </div>
+
+      <div id="teamMemberEditor" class="streamer-editor" hidden>
+        <div class="streamer-editor-head">
+          <div>
+            <small id="teamMemberEditorMode">NOVO MEMBRO</small>
+            <h3 id="teamMemberEditorTitle">Adicionar membro</h3>
+          </div>
+          <button id="closeTeamMemberEditor" type="button" aria-label="Fechar">×</button>
+        </div>
+
+        <form id="teamMemberForm">
+          <input id="teamMemberId" type="hidden">
+          <fieldset>
+            <legend>Perfil</legend>
+            <div class="streamer-form-grid">
+              <label>Nome *<input id="teamMemberName" required maxlength="70"></label>
+              <label>Função / cargo<input id="teamMemberRole" maxlength="90"></label>
+              <label>Área
+                <select id="teamMemberGroup">
+                  <option value="Gamers">Gamers</option>
+                  <option value="Staff">Staff & Família</option>
+                </select>
+              </label>
+              <label>Ordem<input id="teamMemberOrder" type="number" min="0" max="9999" value="100"></label>
+              <label class="full">Sobre<textarea id="teamMemberBio" rows="4" maxlength="500"></textarea></label>
+            </div>
+          </fieldset>
+
+          <fieldset>
+            <legend>Foto</legend>
+            <div class="streamer-photo-row">
+              <img id="teamMemberPhotoPreview" alt="Pré-visualização" hidden>
+              <div>
+                <label>Link da foto<input id="teamMemberPhotoUrl" type="url" placeholder="https://..."></label>
+                <label>Ou enviar do PC/telemóvel<input id="teamMemberPhotoFile" type="file" accept="image/*"></label>
+              </div>
+            </div>
+          </fieldset>
+
+          <fieldset>
+            <legend>Redes</legend>
+            <div class="streamer-form-grid">
+              <label>Instagram<input id="teamMemberInstagram" type="url"></label>
+              <label>TikTok<input id="teamMemberTikTok" type="url"></label>
+              <label>Facebook<input id="teamMemberFacebook" type="url"></label>
+            </div>
+          </fieldset>
+
+          <fieldset>
+            <legend>Exibição</legend>
+            <div class="streamer-checks">
+              <label><input id="teamMemberPublished" type="checkbox" checked> Publicado</label>
+            </div>
+          </fieldset>
+
+          <div class="streamer-editor-actions">
+            <button id="cancelTeamMemberBtn" type="button">Cancelar</button>
+            <button class="primary" type="submit">Guardar membro</button>
+          </div>
+          <p id="teamMemberFeedback" class="hint"></p>
+        </form>
+      </div>
+
+      <div class="streamer-list-head">
+        <h3>Membros na nuvem</h3>
+        <button id="refreshTeamMembersBtn" type="button">Atualizar</button>
+      </div>
+      <div id="teamMembersCloudList" class="streamers-supabase-list">
+        <p class="hint">Carregando membros...</p>
+      </div>
     </section>
 
     <section id="streamers" class="admin-card streamer-manager">
@@ -248,7 +322,8 @@
   <script src="admin-gate.js"></script>
   <script src="data.js"></script>
   <script src="admin.js"></script>
-  <script src="supabase-integration-v86.js"></script>
+  <script src="supabase-integration-v87.js"></script>
   <script src="streamer-admin-v85.js"></script>
+  <script src="team-admin-v87.js"></script>
 </body>
 </html>

@@ -1,0 +1,12 @@
+TEAM LAMBRETA V87 — CORREÇÃO GLOBAL
+- Team agora salva no Supabase e aparece para toda a gente.
+- Você e Rafael, como Admin/Admin Master, podem criar e editar.
+- Perfis mantidos no código-fonte continuam aparecendo.
+- Realtime entre PC, telemóvel e visitantes.
+- Menu móvel abre novamente após navegar.
+- Todos os submenus voltam a navegar.
+- Efeito Portugal 50/50 restaurado.
+- Menu fecha ao navegar, voltar à aba e trocar de página.
+- Previews de imagem continuam compactos.
+- Execute team_lambreta_v87_team_global.sql uma vez.
+- O membro criado localmente por Rafael deve ser cadastrado novamente após instalar esta versão.

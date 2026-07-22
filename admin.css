@@ -235,3 +235,11 @@ html.admin-pending body { visibility: hidden; }
     max-height:96px!important
   }
 }
+
+#teamMemberPhotoPreview{
+  width:110px!important;height:110px!important;max-width:110px!important;max-height:110px!important;
+  object-fit:cover!important;border-radius:12px!important
+}
+@media(max-width:760px){
+  #teamMemberPhotoPreview{width:96px!important;height:96px!important;max-width:96px!important;max-height:96px!important}
+}
