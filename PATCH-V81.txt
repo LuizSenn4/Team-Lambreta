@@ -1,0 +1,12 @@
+TEAM LAMBRETA V81
+- Clique na bolinha do próprio status abre menu rápido.
+- Bolinha no topo também abre o mesmo menu.
+- Online pode virar Ausente automaticamente por inatividade.
+- Ocupado e Ausente escolhidos manualmente ficam fixos.
+- Ausente automático volta para Online ao detectar atividade.
+- Campo do chat virou textarea com altura automática.
+- Shift+Enter sempre quebra linha.
+- Toggle opcional: Enter quebra linha.
+- Com toggle desligado, Enter envia.
+- Botão de envio virou seta circular.
+- Não precisa executar SQL.

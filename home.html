@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Início - Team Lambreta</title>
-  <link rel="stylesheet" href="style-v80.css" />
+  <link rel="stylesheet" href="style-v81.css" />
 </head>
 <body>
   <div id="supabaseAuthBar" class="sb-auth-bar"></div>
@@ -180,9 +180,16 @@
 
     <div id="chatMessages" class="chat-messages"></div>
 
-    <form id="chatForm" class="chat-form chat-form-single">
-      <input id="chatInput" type="text" maxlength="240" placeholder="Escreve no lobby..." autocomplete="off">
-      <button type="submit">Enviar</button>
+    <form id="chatForm" class="chat-form tl-chat-compose">
+      <div class="tl-chat-compose-box">
+        <textarea id="chatInput" maxlength="240" rows="1" placeholder="Escreve no lobby..." autocomplete="off"></textarea>
+        <button class="tl-chat-send" type="submit" aria-label="Enviar mensagem" title="Enviar">➤</button>
+      </div>
+      <label class="tl-enter-toggle">
+        <input id="enterBreakToggle" type="checkbox">
+        <span class="tl-toggle-track" aria-hidden="true"><i></i></span>
+        <span>Enter quebra linha</span>
+      </label>
     </form>
 
     <p id="chatDelayInfo" class="chat-delay-info"></p>
@@ -227,8 +234,8 @@
 
   <script>window.TEAM_SUPABASE_MODE = true;</script>
   <script src="data.js"></script>
-  <script src="script-v80.js"></script>
+  <script src="script-v81.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="supabase-integration-v80.js"></script>
+  <script src="supabase-integration-v81.js"></script>
 </body>
 </html>
