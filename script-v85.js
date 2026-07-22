@@ -1365,44 +1365,54 @@ bindStreamerApplications();
 
 // V70 — submenus: hover fluido no PC e toque controlado no telemóvel.
 
-
-
-
-
-// V86 — controlador único do menu responsivo
+// V72 — navegação limpa: links normais, sem interceptar cliques.
 (() => {
-  const nav = document.getElementById('tlMainNav');
-  const trigger = document.querySelector('.tl-mobile-menu-button');
-  const backdrop = document.querySelector('.tl-mobile-menu-backdrop');
-  if (!nav || !trigger || !backdrop) return;
+  const nav = document.querySelector('.tl-main-nav');
+  if (!nav) return;
 
-  const groups = [...nav.querySelectorAll('.tl-menu-group')];
-  const mobile = () => window.matchMedia('(max-width: 900px)').matches;
+  const groups = Array.from(nav.querySelectorAll('.tl-menu-group'));
+  const mobileMode = () =>
+    window.matchMedia('(hover: none), (pointer: coarse), (max-width: 900px)').matches;
 
-  function closeGroups(except = null) {
+  const closeAll = (except = null) => {
     groups.forEach(group => {
       if (group === except) return;
       group.classList.remove('is-open');
-      group.querySelector('.tl-menu-toggle')?.setAttribute('aria-expanded', 'false');
+      const toggle = group.querySelector('.tl-menu-toggle');
+      if (toggle) toggle.setAttribute('aria-expanded', 'false');
     });
-  }
+  };
 
-  function setMenu(open) {
-    const active = Boolean(open && mobile());
-    nav.classList.toggle('is-mobile-open', active);
-    trigger.classList.toggle('is-open', active);
-    trigger.setAttribute('aria-expanded', String(active));
-    trigger.setAttribute('aria-label', active ? 'Fechar menu' : 'Abrir menu');
-    backdrop.hidden = !active;
-    document.body.classList.toggle('tl-mobile-menu-open', active);
-    if (!active) closeGroups();
-  }
 
-  trigger.addEventListener('click', () => {
-    setMenu(!nav.classList.contains('is-mobile-open'));
-  });
+  const pixelBurst = element => {
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    const rect = element.getBoundingClientRect();
+    const colors = ['#046a38', '#da291c', '#d9a441', '#f7f1df'];
 
-  backdrop.addEventListener('click', () => setMenu(false));
+    for (let i = 0; i < 12; i += 1) {
+      const pixel = document.createElement('i');
+      pixel.className = 'tl-pixel-burst';
+      pixel.style.left = `${rect.left + rect.width / 2}px`;
+      pixel.style.top = `${rect.top + rect.height / 2}px`;
+      pixel.style.setProperty('--size', `${3 + Math.random() * 4}px`);
+      pixel.style.setProperty('--pixel', colors[i % colors.length]);
+      pixel.style.setProperty('--dx', `${(Math.random() - .5) * 70}px`);
+      pixel.style.setProperty('--dy', `${(Math.random() - .5) * 42}px`);
+      document.body.appendChild(pixel);
+      pixel.addEventListener('animationend', () => pixel.remove(), { once: true });
+    }
+  };
+
+  const setOpen = (group, open) => {
+    const wasOpen = group.classList.contains('is-open');
+    closeAll(open ? group : null);
+    group.classList.toggle('is-open', open);
+    const toggle = group.querySelector('.tl-menu-toggle');
+    if (toggle) {
+      toggle.setAttribute('aria-expanded', String(open));
+      if (open && !wasOpen) pixelBurst(toggle);
+    }
+  };
 
   groups.forEach(group => {
     const toggle = group.querySelector('.tl-menu-toggle');
@@ -1410,38 +1420,45 @@ bindStreamerApplications();
 
     toggle.addEventListener('click', event => {
       event.preventDefault();
-      const open = !group.classList.contains('is-open');
-      closeGroups(open ? group : null);
-      group.classList.toggle('is-open', open);
-      toggle.setAttribute('aria-expanded', String(open));
+      event.stopPropagation();
+      setOpen(group, !group.classList.contains('is-open'));
     });
 
+    // No PC, hover abre e sair da área inteira fecha.
     group.addEventListener('mouseenter', () => {
-      if (!mobile()) {
-        closeGroups(group);
-        group.classList.add('is-open');
-        toggle.setAttribute('aria-expanded', 'true');
-      }
+      if (!mobileMode()) setOpen(group, true);
+    });
+    group.addEventListener('mouseleave', () => {
+      if (!mobileMode()) setOpen(group, false);
     });
 
-    group.addEventListener('mouseleave', () => {
-      if (!mobile()) {
-        group.classList.remove('is-open');
-        toggle.setAttribute('aria-expanded', 'false');
-      }
+    // IMPORTANTE: links do submenu navegam normalmente.
+    group.querySelectorAll('.tl-submenu a[href]').forEach(link => {
+      link.addEventListener('click', () => closeAll());
     });
   });
 
-  nav.querySelectorAll('a[href]').forEach(link => {
-    link.addEventListener('click', () => setMenu(false));
+  // Links principais também navegam normalmente.
+  nav.querySelectorAll(':scope > a[href]').forEach(link => {
+    link.addEventListener('click', () => closeAll());
+  });
+
+
+  nav.querySelectorAll('a.tl-menu-link[href]').forEach(link => {
+    link.addEventListener('touchstart', () => {
+      link.classList.add('pt-flag-hover');
+      window.setTimeout(() => link.classList.remove('pt-flag-hover'), 700);
+    }, { passive: true });
+  });
+
+  document.addEventListener('pointerdown', event => {
+    if (!nav.contains(event.target)) closeAll();
   });
 
   document.addEventListener('keydown', event => {
-    if (event.key === 'Escape') setMenu(false);
+    if (event.key === 'Escape') closeAll();
   });
 
-  window.addEventListener('pageshow', () => setMenu(false));
-  window.addEventListener('resize', () => {
-    if (!mobile()) setMenu(false);
-  });
+  window.addEventListener('resize', closeAll);
 })();
+
