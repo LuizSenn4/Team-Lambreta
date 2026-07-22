@@ -1,0 +1,7 @@
+TEAM LAMBRETA V80 — LIMPEZA REAL DO CHAT
+- Removidas 239 regras CSS antigas ligadas aos cards do chat.
+- Eliminados conflitos de chat-msg, chat-msg-top, chat-name, chat-text, presence-dot e badges antigos.
+- Mantido apenas um bloco oficial com classes tl-chat-*.
+- Criados style-v80.css, script-v80.js e supabase-integration-v80.js para eliminar cache antigo.
+- HTML atualizado para carregar exclusivamente os ficheiros v80.
+- Não precisa executar SQL.
