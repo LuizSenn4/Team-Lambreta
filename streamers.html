@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Streamers - Team Lambreta</title>
-  <link rel="stylesheet" href="style-v85.css" />
+  <link rel="stylesheet" href="style-v86.css" />
 </head>
 <body data-cloud-streamers="1">
   <div id="supabaseAuthBar" class="sb-auth-bar"></div>
@@ -18,7 +18,11 @@
         </div>
       </a>
 
-      <nav class="tl-main-nav" aria-label="Menu principal">
+      <button class="tl-mobile-menu-button" type="button" aria-label="Abrir menu" aria-expanded="false" aria-controls="tlMainNav">
+    <span></span><span></span><span></span>
+  </button>
+  <div class="tl-mobile-menu-backdrop" hidden></div>
+  <nav id="tlMainNav" class="tl-main-nav" aria-label="Menu principal">
     <a class="tl-menu-link" href="home.html">Início</a>
 
     <div class="tl-menu-group">
@@ -156,9 +160,9 @@
   </section>
 
   <script src="data.js"></script>
-  <script src="script-v85.js"></script>
+  <script src="script-v86.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="supabase-integration-v85.js"></script>
+  <script src="supabase-integration-v86.js"></script>
   <script src="streamer-public-v85.js"></script>
 </body>
 </html>
