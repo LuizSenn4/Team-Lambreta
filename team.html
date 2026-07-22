@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Team - Team Lambreta</title>
-  <link rel="stylesheet" href="style-v88.css" />
+  <link rel="stylesheet" href="style-v89.css" />
 </head>
 <body data-cloud-team="1">
   <section id="siteContent" class="site-content team-page">
@@ -65,70 +65,51 @@
           aria-label="Abrir acesso administrativo">🔐 PWD</button>
 </header>
 
-    <main class="team-page-shell">
-      <section class="page-hero-center">
-        <div class="page-title-badge">Team</div>
-        <h1>Família Lambreta</h1>
-        <p>Gamers, staff, moderadores e administração organizados por área. A parte dos streamers agora tem espaço próprio.</p>
-      </section>
+    <main class="team-esports-page">
+  <section class="team-esports-hero">
+    <p class="tag">ROSTER OFICIAL</p>
+    <h1>Team Lambreta</h1>
+    <p>Perfis da família, jogadores, suporte e desenvolvimento. Passa o cursor ou toca num card para ver o preview; abre o perfil para todos os detalhes.</p>
+  </section>
 
-      <section class="team-category-block">
-        <div class="team-category-head">
-          <div>
-            <p class="tag">ÁREA 01</p>
-            <h2>Gamers</h2>
-          </div>
-          <span>Jogadores do team</span>
-        </div>
-        <div id="teamGamersGrid" class="team-profile-grid"></div>
-      </section>
+  <section class="team-esports-toolbar" aria-label="Filtros do Team">
+    <button class="is-active" type="button" data-team-filter="all">Todos</button>
+    <button type="button" data-team-filter="Gamers">Gamers</button>
+    <button type="button" data-team-filter="Staff">Staff & Família</button>
+  </section>
 
-      <section class="team-category-block">
-        <div class="team-category-head">
-          <div>
-            <p class="tag">ÁREA 02</p>
-            <h2>Staff & Família</h2>
-          </div>
-          <span>Organização, apoio e administração</span>
-        </div>
-        <div id="teamStaffGrid" class="team-profile-grid"></div>
-      </section>
+  <section id="teamRosterGrid" class="team-esports-grid" aria-live="polite">
+    <article class="team-esports-empty">
+      <h2>Carregando Team...</h2>
+    </article>
+  </section>
+</main>
 
-      <section class="team-category-block team-link-block">
-        <div class="team-category-head">
-          <div>
-            <p class="tag">NOVA ÁREA</p>
-            <h2>Streamers</h2>
-          </div>
-          <span>Iniciantes, criadores e parceiros</span>
-        </div>
-        <p class="team-link-copy">Os streamers ganharam aba própria para divulgação, candidaturas, parceria e hall da fama.</p>
-        <div class="lobby-actions team-link-actions">
-          <a href="streamers.html">Abrir área dos Streamers</a>
-        </div>
-      </section>
-    </main>
+<div id="teamQuickPreview" class="team-quick-preview" hidden>
+  <div class="team-quick-preview-photo"></div>
+  <div>
+    <small>PREVIEW</small>
+    <strong></strong>
+    <span></span>
+    <p></p>
+  </div>
+</div>
 
-    <div id="teamHoverPreview" class="team-hover-preview">
-      <div class="team-hover-photo"></div>
-      <strong></strong>
-      <span></span>
+<div id="teamProfileModal" class="team-esports-modal" hidden>
+  <button class="team-esports-backdrop" type="button" data-team-close aria-label="Fechar perfil"></button>
+  <article class="team-esports-profile" role="dialog" aria-modal="true" aria-labelledby="teamProfileName">
+    <button class="team-esports-close" type="button" data-team-close aria-label="Fechar">×</button>
+    <div class="team-esports-profile-photo"></div>
+    <div class="team-esports-profile-copy">
+      <p class="tag">PERFIL DO MEMBRO</p>
+      <h2 id="teamProfileName"></h2>
+      <strong id="teamProfileRole"></strong>
+      <div id="teamProfileFacts" class="team-esports-facts"></div>
+      <p id="teamProfileBio" class="team-esports-bio"></p>
+      <div id="teamProfileLinks" class="team-esports-links"></div>
     </div>
-
-    <div id="teamProfileModal" class="team-profile-modal">
-      <div class="team-profile-backdrop" data-team-close="1"></div>
-      <article class="team-profile-full">
-        <button class="team-profile-close" type="button" data-team-close="1">×</button>
-        <div class="team-profile-full-photo"></div>
-        <div class="team-profile-full-copy">
-          <p class="tag">PERFIL</p>
-          <h2></h2>
-          <strong></strong>
-          <p class="team-profile-full-bio"></p>
-          <div class="team-profile-full-links"></div>
-        </div>
-      </article>
-    </div>
+  </article>
+</div>
 
     <footer class="site-footer">
       <p>© <span id="year"></span> Team Lambreta — Juntos somos mais fortes.</p>
@@ -136,9 +117,9 @@
   </section>
 
   <script src="data.js"></script>
-  <script src="script-v88.js"></script>
+  <script src="script-v89.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="team-public-v87.js"></script>
+  <script src="team-public-v89.js"></script>
   <script src="navigation-v88.js"></script>
 </body>
 </html>

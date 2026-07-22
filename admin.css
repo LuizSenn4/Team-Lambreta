@@ -243,3 +243,22 @@ html.admin-pending body { visibility: hidden; }
 @media(max-width:760px){
   #teamMemberPhotoPreview{width:96px!important;height:96px!important;max-width:96px!important;max-height:96px!important}
 }
+
+
+/* V89 — editor Team compacto */
+#teamMemberPhotoPreview{
+  width:110px!important;
+  height:132px!important;
+  max-width:110px!important;
+  max-height:132px!important;
+  object-fit:cover!important;
+  border-radius:12px!important;
+}
+@media(max-width:760px){
+  #teamMemberPhotoPreview{
+    width:92px!important;
+    height:110px!important;
+    max-width:92px!important;
+    max-height:110px!important;
+  }
+}

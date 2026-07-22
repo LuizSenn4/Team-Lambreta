@@ -56,86 +56,103 @@
     </section>
 
     <section id="team" class="admin-card team-cloud-manager">
-      <div class="card-head">
-        <div>
-          <h2>Team global</h2>
-          <p class="hint">Você e Rafael administram aqui. Tudo fica na nuvem e aparece para toda a gente.</p>
-        </div>
-        <button id="newTeamMemberBtn" type="button">+ Adicionar membro</button>
-      </div>
+  <div class="card-head">
+    <div>
+      <h2>Perfis do Team</h2>
+      <p class="hint">Cria e edita cards verticais estilo e-sports. Tudo fica no Supabase e aparece para toda a gente.</p>
+    </div>
+    <button id="newTeamMemberBtn" type="button">+ Adicionar perfil</button>
+  </div>
 
-      <div id="teamMemberEditor" class="streamer-editor" hidden>
-        <div class="streamer-editor-head">
+  <div id="teamMemberEditor" class="streamer-editor" hidden>
+    <div class="streamer-editor-head">
+      <div>
+        <small id="teamMemberEditorMode">NOVO PERFIL</small>
+        <h3 id="teamMemberEditorTitle">Adicionar membro</h3>
+      </div>
+      <button id="closeTeamMemberEditor" type="button" aria-label="Fechar">×</button>
+    </div>
+
+    <form id="teamMemberForm">
+      <input id="teamMemberId" type="hidden">
+
+      <fieldset>
+        <legend>Identidade</legend>
+        <div class="streamer-form-grid">
+          <label>Nome de exibição *<input id="teamMemberName" required maxlength="70"></label>
+          <label>Nickname<input id="teamMemberNickname" maxlength="70" placeholder="electricmagneti"></label>
+          <label>Idade<input id="teamMemberAge" type="number" min="1" max="120"></label>
+          <label>Função / cargo<input id="teamMemberRole" maxlength="90" placeholder="DEV, Atacante, Suporte..."></label>
+          <label>Área
+            <select id="teamMemberGroup">
+              <option value="Gamers">Gamers</option>
+              <option value="Staff">Staff & Família</option>
+            </select>
+          </label>
+          <label>País<input id="teamMemberCountry" maxlength="70" placeholder="Brasil"></label>
+          <label>Ordem<input id="teamMemberOrder" type="number" min="0" max="9999" value="100"></label>
+          <label class="full">Sobre<textarea id="teamMemberBio" rows="4" maxlength="500"></textarea></label>
+        </div>
+      </fieldset>
+
+      <fieldset>
+        <legend>Preferências de jogo</legend>
+        <div class="streamer-form-grid">
+          <label>Jogo principal<input id="teamMemberMainGame" maxlength="70" placeholder="Fortnite"></label>
+          <label>Modo preferido<input id="teamMemberFavoriteMode" maxlength="100" placeholder="Battle Royale"></label>
+          <label>Armas preferidas<input id="teamMemberFavoriteWeapons" maxlength="140" placeholder="Pistola • Shotgun"></label>
+          <label>Estilo / posições<input id="teamMemberPlayStyle" maxlength="140" placeholder="Atacante • Suporte"></label>
+        </div>
+      </fieldset>
+
+      <fieldset>
+        <legend>Foto ou avatar</legend>
+        <div class="streamer-photo-row">
+          <img id="teamMemberPhotoPreview" alt="Pré-visualização" hidden>
           <div>
-            <small id="teamMemberEditorMode">NOVO MEMBRO</small>
-            <h3 id="teamMemberEditorTitle">Adicionar membro</h3>
+            <label>Link da foto<input id="teamMemberPhotoUrl" type="url" placeholder="https://..."></label>
+            <label>Ou enviar do PC/telemóvel<input id="teamMemberPhotoFile" type="file" accept="image/*"></label>
+            <small>Sem foto, o site cria um avatar fixo com a primeira letra do nickname.</small>
           </div>
-          <button id="closeTeamMemberEditor" type="button" aria-label="Fechar">×</button>
         </div>
+      </fieldset>
 
-        <form id="teamMemberForm">
-          <input id="teamMemberId" type="hidden">
-          <fieldset>
-            <legend>Perfil</legend>
-            <div class="streamer-form-grid">
-              <label>Nome *<input id="teamMemberName" required maxlength="70"></label>
-              <label>Função / cargo<input id="teamMemberRole" maxlength="90"></label>
-              <label>Área
-                <select id="teamMemberGroup">
-                  <option value="Gamers">Gamers</option>
-                  <option value="Staff">Staff & Família</option>
-                </select>
-              </label>
-              <label>Ordem<input id="teamMemberOrder" type="number" min="0" max="9999" value="100"></label>
-              <label class="full">Sobre<textarea id="teamMemberBio" rows="4" maxlength="500"></textarea></label>
-            </div>
-          </fieldset>
+      <fieldset>
+        <legend>Redes sociais</legend>
+        <p class="hint">Pode deixar vazio. Para teste, aceita about:blank nos perfis criados pelo SQL.</p>
+        <div class="streamer-form-grid">
+          <label>Instagram<input id="teamMemberInstagram" type="text" placeholder="https://..."></label>
+          <label>TikTok<input id="teamMemberTikTok" type="text" placeholder="https://..."></label>
+          <label>Facebook / outra<input id="teamMemberFacebook" type="text" placeholder="https://..."></label>
+        </div>
+      </fieldset>
 
-          <fieldset>
-            <legend>Foto</legend>
-            <div class="streamer-photo-row">
-              <img id="teamMemberPhotoPreview" alt="Pré-visualização" hidden>
-              <div>
-                <label>Link da foto<input id="teamMemberPhotoUrl" type="url" placeholder="https://..."></label>
-                <label>Ou enviar do PC/telemóvel<input id="teamMemberPhotoFile" type="file" accept="image/*"></label>
-              </div>
-            </div>
-          </fieldset>
+      <fieldset>
+        <legend>Exibição</legend>
+        <div class="streamer-checks">
+          <label><input id="teamMemberPublished" type="checkbox" checked> Publicado</label>
+          <label><input id="teamMemberFeatured" type="checkbox"> Destaque</label>
+        </div>
+      </fieldset>
 
-          <fieldset>
-            <legend>Redes</legend>
-            <div class="streamer-form-grid">
-              <label>Instagram<input id="teamMemberInstagram" type="url"></label>
-              <label>TikTok<input id="teamMemberTikTok" type="url"></label>
-              <label>Facebook<input id="teamMemberFacebook" type="url"></label>
-            </div>
-          </fieldset>
-
-          <fieldset>
-            <legend>Exibição</legend>
-            <div class="streamer-checks">
-              <label><input id="teamMemberPublished" type="checkbox" checked> Publicado</label>
-            </div>
-          </fieldset>
-
-          <div class="streamer-editor-actions">
-            <button id="cancelTeamMemberBtn" type="button">Cancelar</button>
-            <button class="primary" type="submit">Guardar membro</button>
-          </div>
-          <p id="teamMemberFeedback" class="hint"></p>
-        </form>
+      <div class="streamer-editor-actions">
+        <button id="cancelTeamMemberBtn" type="button">Cancelar</button>
+        <button class="primary" type="submit">Guardar perfil</button>
       </div>
+      <p id="teamMemberFeedback" class="hint"></p>
+    </form>
+  </div>
 
-      <div class="streamer-list-head">
-        <h3>Membros na nuvem</h3>
-        <button id="refreshTeamMembersBtn" type="button">Atualizar</button>
-      </div>
-      <div id="teamMembersCloudList" class="streamers-supabase-list">
-        <p class="hint">Carregando membros...</p>
-      </div>
-    </section>
+  <div class="streamer-list-head">
+    <h3>Perfis na nuvem</h3>
+    <button id="refreshTeamMembersBtn" type="button">Atualizar</button>
+  </div>
+  <div id="teamMembersCloudList" class="streamers-supabase-list">
+    <p class="hint">Carregando perfis...</p>
+  </div>
+</section>
 
-    <section id="streamers" class="admin-card streamer-manager">
+<section id="streamers" class="admin-card streamer-manager">
       <div class="card-head">
         <div>
           <h2>Gerenciar streamers</h2>
@@ -322,8 +339,8 @@
   <script src="admin-gate.js"></script>
   <script src="data.js"></script>
   <script src="admin.js"></script>
-  <script src="supabase-integration-v88.js"></script>
+  <script src="supabase-integration-v89.js"></script>
   <script src="streamer-admin-v85.js"></script>
-  <script src="team-admin-v87.js"></script>
+  <script src="team-admin-v89.js"></script>
 </body>
 </html>
