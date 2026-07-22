@@ -153,3 +153,112 @@ html.admin-pending body { visibility: hidden; }
  .streamer-admin-row{grid-template-columns:1fr}
  .streamer-editor-actions>*{flex:1}
 }
+
+
+/* V86 — previews de imagem compactos no painel */
+.admin-upload-row{
+  display:grid;
+  grid-template-columns:minmax(0,1fr) 110px;
+  gap:12px;
+  align-items:start;
+  margin-top:8px
+}
+
+.admin-upload-preview,
+.admin-upload-empty{
+  width:110px!important;
+  height:110px!important;
+  max-width:110px!important;
+  max-height:110px!important;
+  display:grid!important;
+  place-items:center;
+  overflow:hidden!important;
+  object-fit:cover!important;
+  border:1px solid rgba(217,164,65,.25);
+  border-radius:12px;
+  background:#090909
+}
+
+.streamer-photo-row{
+  grid-template-columns:110px minmax(0,1fr)!important
+}
+
+.streamer-photo-row img,
+#streamerPhotoPreview{
+  width:110px!important;
+  height:110px!important;
+  max-width:110px!important;
+  max-height:110px!important;
+  object-fit:cover!important;
+  border-radius:12px!important
+}
+
+.streamer-preview-card{
+  grid-template-columns:130px minmax(0,1fr)!important
+}
+
+.streamer-preview-card>img{
+  width:130px!important;
+  height:130px!important;
+  max-width:130px!important;
+  max-height:130px!important;
+  object-fit:cover!important
+}
+
+@media(max-width:760px){
+  .admin-upload-row{
+    grid-template-columns:1fr
+  }
+
+  .admin-upload-preview,
+  .admin-upload-empty,
+  .streamer-photo-row img,
+  #streamerPhotoPreview{
+    width:96px!important;
+    height:96px!important;
+    max-width:96px!important;
+    max-height:96px!important
+  }
+
+  .streamer-photo-row{
+    grid-template-columns:96px minmax(0,1fr)!important
+  }
+
+  .streamer-preview-card{
+    grid-template-columns:96px minmax(0,1fr)!important
+  }
+
+  .streamer-preview-card>img{
+    width:96px!important;
+    height:96px!important;
+    max-width:96px!important;
+    max-height:96px!important
+  }
+}
+
+#teamMemberPhotoPreview{
+  width:110px!important;height:110px!important;max-width:110px!important;max-height:110px!important;
+  object-fit:cover!important;border-radius:12px!important
+}
+@media(max-width:760px){
+  #teamMemberPhotoPreview{width:96px!important;height:96px!important;max-width:96px!important;max-height:96px!important}
+}
+
+
+/* V89 — editor Team compacto */
+#teamMemberPhotoPreview{
+  width:110px!important;
+  height:132px!important;
+  max-width:110px!important;
+  max-height:132px!important;
+  object-fit:cover!important;
+  border-radius:12px!important;
+}
+@media(max-width:760px){
+  #teamMemberPhotoPreview{
+    width:92px!important;
+    height:110px!important;
+    max-width:92px!important;
+    max-height:110px!important;
+  }
+}

@@ -1,11 +1,11 @@
-TEAM LAMBRETA — PATCH V86
-
-- Remove o formato gigante dos perfis de streamer.
-- Perfil já aparece completo na frente do card, sem botão “Exibir perfil”.
-- Cards profissionais e compactos com foto, nome, nick, jogo, redes e live.
-- INK31 também ficou compacto, mantendo o destaque e proteção por código.
-- Grade responsiva para PC e telemóvel.
-- Mantida sincronização Supabase/RealtIme da V85.
-
-Próxima etapa combinada:
-- definir largura final e limite visual do nick para alinhar todos os cards em uma única linha quando houver espaço.
+TEAM LAMBRETA V86 — RECONSTRUÇÃO MÓVEL LIMPA
+- Menu móvel inicia fechado com botão hambúrguer.
+- Menu fecha ao navegar, tocar fora, redimensionar ou voltar à página.
+- Submenus funcionam por toque.
+- Regras antigas do menu foram removidas antes da nova implementação.
+- Regras móveis conflitantes do chat foram removidas e reescritas.
+- Chat respeita largura e altura real do telemóvel.
+- Barra de autenticação deixa de cobrir o conteúdo.
+- Previews de upload no Admin ficaram compactos.
+- Desktop e tablet mantêm o comportamento normal.
+- Não precisa executar SQL.

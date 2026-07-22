@@ -4,30 +4,36 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Streamers - Team Lambreta</title>
-  <link rel="stylesheet" href="style-v86.css" />
+  <link rel="stylesheet" href="style-v89.css" />
 </head>
 <body data-cloud-streamers="1">
   <div id="supabaseAuthBar" class="sb-auth-bar"></div>
   <section id="siteContent" class="site-content streamers-page">
-    <header class="site-header">
-      <a href="home.html" class="brand">
-        <img src="img/brasao.png" alt="Brasão Team Lambreta">
-        <div>
-          <strong id="publicTeamName">TEAM LAMBRETA</strong>
-          <span id="publicSlogan">Lambreta é uma família</span>
-        </div>
-      </a>
+    <header class="site-header tl-header-v88">
+  <a href="home.html" class="brand">
+    <div>
+      <strong id="publicTeamName">TEAM LAMBRETA</strong>
+      <span id="publicSlogan">Lambreta é uma família</span>
+    </div>
+  </a>
 
-      <nav class="tl-main-nav" aria-label="Menu principal">
-    <a class="tl-menu-link" href="home.html">Início</a>
+  <button id="tlMenuButton" class="tl-mobile-menu-button" type="button"
+          aria-label="Abrir menu" aria-expanded="false" aria-controls="tlMainNav">
+    <span></span><span></span><span></span>
+  </button>
+
+  <div id="tlMenuBackdrop" class="tl-mobile-menu-backdrop" hidden></div>
+
+  <nav id="tlMainNav" class="tl-main-nav" aria-label="Menu principal">
+    <a class="tl-menu-link" href="home.html"><span>Início</span></a>
 
     <div class="tl-menu-group">
       <button class="tl-menu-toggle" type="button" aria-expanded="false">
         <span>Lambreta</span><b aria-hidden="true">⌄</b>
       </button>
       <div class="tl-submenu">
-        <a href="team.html">Team</a>
-        <a href="streamers.html">Streamers</a>
+        <a href="team.html"><span>Team</span></a>
+        <a href="streamers.html"><span>Streamers</span></a>
       </div>
     </div>
 
@@ -36,9 +42,9 @@
         <span>Comunidade</span><b aria-hidden="true">⌄</b>
       </button>
       <div class="tl-submenu">
-        <a href="forum.html">Fórum</a>
-        <a href="ajuda.html">Ajuda</a>
-        <a href="contacto.html">Contacto</a>
+        <a href="forum.html"><span>Fórum</span></a>
+        <a href="ajuda.html"><span>Ajuda</span></a>
+        <a href="contacto.html"><span>Contacto</span></a>
       </div>
     </div>
 
@@ -47,17 +53,18 @@
         <span>Destaques</span><b aria-hidden="true">⌄</b>
       </button>
       <div class="tl-submenu">
-        <a href="eventos.html">Eventos</a>
-        <a href="conquistas.html">Conquistas</a>
-        <a href="midia.html">Mídia</a>
+        <a href="eventos.html"><span>Eventos</span></a>
+        <a href="conquistas.html"><span>Conquistas</span></a>
+        <a href="midia.html"><span>Mídia</span></a>
       </div>
     </div>
 
-    <a class="tl-menu-link" href="loja.html">Loja</a>
+    <a class="tl-menu-link" href="loja.html"><span>Loja</span></a>
   </nav>
 
-      <button class="admin-link pwd-admin-trigger" type="button" aria-label="Abrir acesso administrativo">🔐 PWD</button>
-    </header>
+  <button class="admin-link pwd-admin-trigger" type="button"
+          aria-label="Abrir acesso administrativo">🔐 PWD</button>
+</header>
 
     <main class="streamers-page-shell">
       <section class="streamers-hero">
@@ -71,29 +78,50 @@
         </div>
       </section>
 
-      <section class="streamers-cards-zone" aria-label="Perfis dos streamers">
-        <article class="streamer-profile-card streamer-profile-card--ink31" aria-labelledby="ink31Title">
-          <div class="streamer-card-photo">
-            <img src="img/streamers/ink31-profile.jpg" alt="INK31, streamer do Team Lambreta" loading="eager">
-            <span class="streamer-card-status"><i></i> PERFIL OFICIAL</span>
+      <section class="ink31-featured" aria-labelledby="ink31Title">
+        <div class="ink31-visual">
+          <img src="img/streamers/ink31-profile.jpg" alt="INK31, streamer do Team Lambreta" loading="eager">
+          <span class="ink31-status" id="ink31LiveStatus"><i></i> PERFIL OFICIAL</span>
+        </div>
+
+        <div class="ink31-profile-copy">
+          <p class="tag">BOSS • STREAMER OFICIAL</p>
+          <h2 id="ink31Title">INK<span>31</span></h2>
+          <p class="ink31-intro">Fundador e streamer do Team Lambreta. Conteúdo focado em Fortnite, comunidade e muita resenha.</p>
+
+          <div class="ink31-details">
+            <div><small>Nick no jogo</small><strong>oklm_31_ink</strong></div>
+            <div><small>Jogo principal</small><strong>Fortnite</strong></div>
           </div>
 
-          <div class="streamer-card-body">
-            <p class="tag">BOSS • STREAMER OFICIAL</p>
-            <h2 id="ink31Title">INK<span>31</span></h2>
-            <p class="streamer-card-bio">Fundador e streamer do Team Lambreta. Conteúdo focado em Fortnite, comunidade e muita resenha.</p>
+          <div class="ink31-socials" aria-label="Redes sociais do INK31">
+            <a class="ink31-social tiktok" href="https://www.tiktok.com/@rv3113" target="_blank" rel="noopener noreferrer">
+              <span>♪</span><div><small>TikTok</small><strong>@rv3113</strong></div>
+            </a>
+            <a class="ink31-social twitch" href="https://www.twitch.tv/oklm31rv" target="_blank" rel="noopener noreferrer">
+              <span>◫</span><div><small>Twitch</small><strong>oklm31rv</strong></div>
+            </a>
+          </div>
+        </div>
 
-            <div class="streamer-card-meta">
-              <div><small>Nick no jogo</small><strong>oklm_31_ink</strong></div>
-              <div><small>Jogo principal</small><strong>Fortnite</strong></div>
-            </div>
-
-            <div class="streamer-card-links" aria-label="Redes sociais do INK31">
-              <a href="https://www.tiktok.com/@rv3113" target="_blank" rel="noopener noreferrer">♪ TikTok</a>
-              <a href="https://www.twitch.tv/oklm31rv" target="_blank" rel="noopener noreferrer">◫ Twitch</a>
+        <aside class="ink31-live-box">
+          <div class="ink31-live-head">
+            <div><span class="live-pulse"></span><strong>Área de live</strong></div>
+            <small>TikTok • Twitch</small>
+          </div>
+          <div class="ink31-preview">
+            <img src="img/streamers/ink31-profile.jpg" alt="Prévia do canal do INK31">
+            <div class="ink31-preview-overlay">
+              <span>INK31</span>
+              <strong>Veja quando estiver ao vivo</strong>
             </div>
           </div>
-        </article>
+          <div class="ink31-actions">
+            <a class="ink31-watch" href="https://www.tiktok.com/@rv3113/live" target="_blank" rel="noopener noreferrer">▶ Assistir no TikTok</a>
+            <a class="ink31-open" href="https://www.twitch.tv/oklm31rv" target="_blank" rel="noopener noreferrer">Abrir Twitch</a>
+          </div>
+          <p>O player dentro do site será ativado quando concluirmos a integração oficial das lives.</p>
+        </aside>
       </section>
 
       <section class="team-category-block">
@@ -104,7 +132,7 @@
           </div>
           <span>Todos os perfis no mesmo formato premium</span>
         </div>
-        <div id="streamersPublicGrid" class="streamers-profile-grid"></div>
+        <div id="streamersPublicGrid" class="team-profile-grid"></div>
       </section>
     </main>
 
@@ -135,9 +163,10 @@
   </section>
 
   <script src="data.js"></script>
-  <script src="script-v85.js"></script>
+  <script src="script-v89.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="supabase-integration-v86.js"></script>
-  <script src="streamer-public-v86.js"></script>
+  <script src="supabase-integration-v89.js"></script>
+  <script src="streamer-public-v85.js"></script>
+  <script src="navigation-v88.js"></script>
 </body>
 </html>
