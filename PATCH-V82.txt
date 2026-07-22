@@ -1,0 +1,6 @@
+TEAM LAMBRETA V82 — QUEBRA DE LINHA REAL
+- O problema estava no trigger SQL do Supabase.
+- Ele reconstruía toda mensagem usando espaços e apagava as quebras de linha.
+- Novo SQL preserva espaços, tabs e quebras de linha exatamente como digitados.
+- O frontend já estava correto com textarea e white-space: pre-wrap.
+- É obrigatório executar o SQL incluído uma vez.
