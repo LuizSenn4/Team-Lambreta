@@ -5224,3 +5224,75 @@ body:not([data-user-role="master"]):not([data-user-role="admin"]):not([data-user
   cursor: default;
   pointer-events: none;
 }
+
+
+/* V77 — chat móvel: quebra antes do status e texto completo */
+@media (max-width: 520px) {
+  .chat-msg {
+    min-height: 0 !important;
+    height: auto !important;
+    overflow: visible !important;
+    padding: 11px 11px 11px 15px !important;
+  }
+
+  .chat-msg-top,
+  .chat-msg.has-actions .chat-msg-top,
+  .chat-msg:not(.has-actions) .chat-msg-top {
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) 10px 34px 25px !important;
+    grid-template-areas:
+      "name name name name"
+      ". dot time action" !important;
+    align-items: center !important;
+    column-gap: 7px !important;
+    row-gap: 6px !important;
+    width: 100% !important;
+    min-width: 0 !important;
+  }
+
+  .chat-msg .chat-name {
+    grid-area: name !important;
+    display: block !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+    overflow: visible !important;
+    text-overflow: clip !important;
+    white-space: normal !important;
+    overflow-wrap: anywhere !important;
+  }
+
+  .chat-msg .presence-dot {
+    grid-area: dot !important;
+    justify-self: center !important;
+  }
+
+  .chat-msg time {
+    grid-area: time !important;
+    justify-self: end !important;
+  }
+
+  .chat-msg .chat-delete-btn {
+    grid-area: action !important;
+    justify-self: end !important;
+    align-self: center !important;
+  }
+
+  .chat-msg .chat-text,
+  .chat-msg > p {
+    display: block !important;
+    width: 100% !important;
+    height: auto !important;
+    max-height: none !important;
+    overflow: visible !important;
+    text-overflow: clip !important;
+    white-space: pre-wrap !important;
+    overflow-wrap: anywhere !important;
+    word-break: break-word !important;
+    -webkit-line-clamp: unset !important;
+    -webkit-box-orient: initial !important;
+    margin: 2px 0 0 !important;
+    padding: 0 !important;
+    line-height: 1.45 !important;
+  }
+}

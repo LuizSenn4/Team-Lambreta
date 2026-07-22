@@ -1,0 +1,7 @@
+TEAM LAMBRETA V77 — CHAT MOBILE
+- Nome ocupa a primeira linha.
+- Status, horário e menu ficam na segunda linha.
+- Texto da mensagem mostra todo o conteúdo.
+- Removido corte por line-clamp e altura fixa no telemóvel.
+- Mantidas todas as correções anteriores.
+- Não precisa executar SQL.
