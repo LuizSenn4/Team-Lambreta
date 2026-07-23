@@ -89,7 +89,21 @@
               <option value="Staff">Staff & Família</option>
             </select>
           </label>
-          <label>País<input id="teamMemberCountry" maxlength="70" placeholder="Brasil"></label>
+          <label>País
+            <select id="teamMemberCountry">
+              <option value="">Selecionar país</option>
+              <option value="Brasil">🇧🇷 Brasil</option>
+              <option value="Portugal">🇵🇹 Portugal</option>
+              <option value="Polónia">🇵🇱 Polónia</option>
+              <option value="Espanha">🇪🇸 Espanha</option>
+              <option value="Estados Unidos">🇺🇸 Estados Unidos</option>
+              <option value="Reino Unido">🇬🇧 Reino Unido</option>
+              <option value="Países Baixos">🇳🇱 Países Baixos</option>
+              <option value="França">🇫🇷 França</option>
+              <option value="Alemanha">🇩🇪 Alemanha</option>
+              <option value="Itália">🇮🇹 Itália</option>
+            </select>
+          </label>
           <label>Ordem<input id="teamMemberOrder" type="number" min="0" max="9999" value="100"></label>
           <label class="full">Sobre<textarea id="teamMemberBio" rows="4" maxlength="500"></textarea></label>
         </div>
@@ -339,8 +353,10 @@
   <script src="admin-gate.js"></script>
   <script src="data.js"></script>
   <script src="admin.js"></script>
-  <script src="supabase-integration-v89.js"></script>
+  <script src="supabase-integration-v92.js"></script>
   <script src="streamer-admin-v85.js"></script>
-  <script src="team-admin-v89.js"></script>
+  <script src="team-admin-v92.js"></script>
+  <script src="error-codes-v92.js"></script>
+  <script src="site-i18n-v92.js"></script>
 </body>
 </html>

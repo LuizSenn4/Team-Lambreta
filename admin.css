@@ -262,3 +262,8 @@ html.admin-pending body { visibility: hidden; }
     max-height:110px!important;
   }
 }
+
+/* V92 */
+#teamMemberPhotoPreview,#streamerPhotoPreview{width:180px!important;height:180px!important;max-width:180px!important;max-height:180px!important;min-width:0!important;min-height:0!important;object-fit:cover!important;object-position:center!important;border-radius:22px!important;display:block;box-shadow:0 0 0 1px rgba(115,255,24,.25),0 0 24px rgba(115,255,24,.10)}
+#teamMemberPhotoPreview[hidden],#streamerPhotoPreview[hidden]{display:none!important}
+@media(max-width:700px){#teamMemberPhotoPreview,#streamerPhotoPreview{width:132px!important;height:132px!important;max-width:132px!important;max-height:132px!important}.streamer-photo-row{align-items:flex-start!important}}
