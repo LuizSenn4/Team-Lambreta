@@ -5838,3 +5838,18 @@ html, body { width:100%; max-width:100%; overflow-x:hidden; }
 .tl-toast-stack{position:fixed;top:78px;right:16px;z-index:100000;display:grid;gap:10px;width:min(390px,calc(100vw - 32px));pointer-events:none}
 .tl-toast{position:relative;padding:14px 42px 14px 16px;border-radius:14px;background:rgba(5,4,3,.96);border:1px solid rgba(217,164,65,.36);box-shadow:0 15px 45px rgba(0,0,0,.48);color:#fff3c5;pointer-events:auto}.tl-toast.success{border-color:rgba(115,255,24,.55);box-shadow:0 0 24px rgba(115,255,24,.12),0 15px 45px rgba(0,0,0,.48)}.tl-toast.error{border-color:rgba(255,23,54,.58)}.tl-toast.warning{border-color:rgba(217,164,65,.58)}.tl-toast button{position:absolute;top:7px;right:8px;border:0;background:transparent;color:inherit;padding:4px 7px}.tl-toast small{display:block;margin-top:5px;color:#b8a37b}
 .tl-chat-translate-row{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:8px}.tl-chat-translate-row select{min-width:150px;flex:1;border:1px solid rgba(217,164,65,.2);border-radius:10px;background:rgba(0,0,0,.34);color:#fff3c5;padding:8px}.tl-chat-original{margin-top:7px}.tl-chat-original summary{cursor:pointer;color:#b8a37b;font-size:12px}
+
+/* V92.3 — ferramentas globais sem sobrepor o conteúdo durante o scroll */
+.tl-global-tools{
+  transition:transform .24s ease,opacity .2s ease,visibility .2s ease;
+  will-change:transform,opacity
+}
+.tl-global-tools.tl-tools-hidden{
+  transform:translateY(calc(-100% - 18px));
+  opacity:0;
+  visibility:hidden;
+  pointer-events:none
+}
+@media(max-width:700px){
+  .tl-global-tools{max-width:calc(100vw - 16px)}
+}

@@ -119,14 +119,26 @@
         </div>
       </fieldset>
 
-      <fieldset>
+      <fieldset class="team-avatar-fieldset">
         <legend>Foto ou avatar</legend>
-        <div class="streamer-photo-row">
-          <img id="teamMemberPhotoPreview" alt="Pré-visualização" hidden>
-          <div>
-            <label>Link da foto<input id="teamMemberPhotoUrl" type="url" placeholder="https://..."></label>
-            <label>Ou enviar do PC/telemóvel<input id="teamMemberPhotoFile" type="file" accept="image/*"></label>
-            <small>Sem foto, o site cria um avatar fixo com a primeira letra do nickname.</small>
+        <div class="team-avatar-box">
+          <div id="teamMemberPhotoStage" class="team-avatar-stage" aria-label="Pré-visualização da foto">
+            <img id="teamMemberPhotoPreview" alt="Pré-visualização" hidden>
+            <span id="teamMemberPhotoEmpty">Sem imagem</span>
+          </div>
+          <div class="team-avatar-controls">
+            <label>Colar link da imagem
+              <input id="teamMemberPhotoUrl" type="url" placeholder="https://i.imgur.com/exemplo.png" autocomplete="off">
+            </label>
+            <small id="teamMemberPhotoLinkHint" class="team-avatar-link-hint">Aceita link direto de Imgur, Supabase e outros sites.</small>
+            <div class="team-avatar-file-row">
+              <label class="team-avatar-file-button">
+                <span>Abrir ficheiro</span>
+                <input id="teamMemberPhotoFile" type="file" accept="image/*">
+              </label>
+              <button id="teamMemberPhotoRemove" type="button" class="team-avatar-remove">Remover imagem</button>
+            </div>
+            <small>A imagem aparece inteira, centralizada e com fundo desfocado quando o formato não preencher a moldura.</small>
           </div>
         </div>
       </fieldset>

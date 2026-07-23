@@ -1,0 +1,16 @@
+TEAM LAMBRETA V92.3 — AVATAR ADMIN + FERRAMENTAS DE TOPO
+
+Inclui:
+- Box única de foto/avatar no Admin da Team.
+- Link externo ou ficheiro local; ao escolher um, o outro é limpo.
+- Link longo aparece resumido no campo.
+- Preview compacto, imagem inteira com object-fit contain.
+- Fundo desfocado da própria imagem para preencher formatos diferentes.
+- Linha/brilho verde interno removido do preview.
+- Confirmação antes de remover a imagem.
+- Francês preservado no site e no chat.
+- Idioma e data/hora somem ao rolar para baixo e reaparecem ao subir, evitando sobreposição.
+
+Substitua os arquivos mantendo as pastas.
+Não há SQL novo.
+A Edge Function só precisa de novo deploy porque o patch inclui a versão atual dela.

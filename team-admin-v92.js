@@ -13,6 +13,32 @@
 
   let session=null;
   let rows=[];
+  let photoObjectUrl=null;
+
+  function clearPhotoObjectUrl(){
+    if(photoObjectUrl){
+      URL.revokeObjectURL(photoObjectUrl);
+      photoObjectUrl=null;
+    }
+  }
+
+  function showPhotoPreview(src=''){
+    const image=$('teamMemberPhotoPreview');
+    const stage=$('teamMemberPhotoStage');
+    const empty=$('teamMemberPhotoEmpty');
+    if(!image||!stage) return;
+    if(src){
+      image.src=src;
+      image.hidden=false;
+      if(empty) empty.hidden=true;
+      stage.style.backgroundImage=`url("${String(src).replace(/"/g,'\\"')}")`;
+    }else{
+      image.hidden=true;
+      image.removeAttribute('src');
+      if(empty) empty.hidden=false;
+      stage.style.backgroundImage='none';
+    }
+  }
 
   function feedback(message,error=false){
     const element=$('teamMemberFeedback');
@@ -43,9 +69,10 @@
     setValue('teamMemberOrder',100);
     $('teamMemberPublished').checked=true;
     $('teamMemberFeatured').checked=false;
-    $('teamMemberPhotoPreview').hidden=true;
-    $('teamMemberPhotoPreview').removeAttribute('src');
+    clearPhotoObjectUrl();
+    showPhotoPreview('');
     $('teamMemberPhotoFile').value='';
+    setValue('teamMemberPhotoUrl');
     $('teamMemberEditorMode').textContent='NOVO PERFIL';
     $('teamMemberEditorTitle').textContent='Adicionar membro';
     feedback('');
@@ -79,14 +106,8 @@
       $('teamMemberPublished').checked=Boolean(row.is_published);
       $('teamMemberFeatured').checked=Boolean(row.is_featured);
 
-      const image=$('teamMemberPhotoPreview');
-      if(row.image_url){
-        image.src=row.image_url;
-        image.hidden=false;
-      }else{
-        image.hidden=true;
-        image.removeAttribute('src');
-      }
+      clearPhotoObjectUrl();
+      showPhotoPreview(row.image_url||'');
     }
 
     $('teamMemberEditor').scrollIntoView({behavior:'smooth',block:'start'});
@@ -253,23 +274,33 @@
   $('teamMemberForm')?.addEventListener('submit',save);
 
   $('teamMemberPhotoUrl')?.addEventListener('input',event=>{
-    const image=$('teamMemberPhotoPreview');
     const value=event.target.value.trim();
+    event.target.title=value;
     if(value){
-      image.src=value;
-      image.hidden=false;
-    }else{
-      image.hidden=true;
-      image.removeAttribute('src');
+      clearPhotoObjectUrl();
+      $('teamMemberPhotoFile').value='';
+      showPhotoPreview(value);
+    }else if(!$('teamMemberPhotoFile').files?.[0]){
+      showPhotoPreview('');
     }
   });
 
   $('teamMemberPhotoFile')?.addEventListener('change',event=>{
     const file=event.target.files?.[0];
     if(!file) return;
-    const image=$('teamMemberPhotoPreview');
-    image.src=URL.createObjectURL(file);
-    image.hidden=false;
+    clearPhotoObjectUrl();
+    photoObjectUrl=URL.createObjectURL(file);
+    setValue('teamMemberPhotoUrl');
+    showPhotoPreview(photoObjectUrl);
+  });
+
+  $('teamMemberPhotoRemove')?.addEventListener('click',()=>{
+    if(!confirm('Tem certeza que deseja remover esta imagem do perfil?')) return;
+    clearPhotoObjectUrl();
+    setValue('teamMemberPhotoUrl');
+    $('teamMemberPhotoFile').value='';
+    showPhotoPreview('');
+    feedback('Imagem removida da pré-visualização. Guarde o perfil para concluir.');
   });
 
   let timer=null;
