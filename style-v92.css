@@ -5942,76 +5942,165 @@ html, body { width:100%; max-width:100%; overflow-x:hidden; }
   }
 }
 
-/* V92.10 - card Team limpo, sem folgas e com curvas reais */
-.team-inline-number{display:none!important}
 
+/* V92.6 - recorte estrutural definitivo da foto Team */
+.team-inline-number{
+  display:none!important;
+}
+
+.team-inline-photo{
+  position:relative!important;
+  padding:18px!important;
+  display:flex!important;
+  align-items:stretch!important;
+  justify-content:center!important;
+  overflow:hidden!important;
+  box-sizing:border-box!important;
+}
+
+.team-inline-photo-frame{
+  position:relative!important;
+  width:100%!important;
+  height:100%!important;
+  min-width:0!important;
+  min-height:0!important;
+  overflow:hidden!important;
+  border-radius:22px!important;
+  clip-path:inset(0 round 22px)!important;
+  background:#090909!important;
+  box-shadow:0 0 0 1px rgba(115,255,24,.22)!important;
+}
+
+.team-inline-photo-frame img,
+.team-inline-photo-frame>span{
+  width:100%!important;
+  height:100%!important;
+  min-width:0!important;
+  min-height:0!important;
+  display:block!important;
+  border:0!important;
+  border-radius:0!important;
+  clip-path:none!important;
+  box-shadow:none!important;
+}
+
+.team-inline-photo-frame img{
+  object-fit:contain!important;
+  object-position:center center!important;
+  background:#090909!important;
+}
+
+.team-inline-photo-frame>span{
+  display:grid!important;
+  place-items:center!important;
+  background:#090909!important;
+}
+
+@media(min-width:901px){
+  .team-inline-photo{
+    min-height:430px!important;
+  }
+  .team-inline-photo-frame{
+    min-height:394px!important;
+  }
+}
+
+@media(max-width:900px){
+  .team-inline-photo{
+    padding:14px!important;
+    aspect-ratio:4/3!important;
+  }
+  .team-inline-photo-frame{
+    border-radius:18px!important;
+    clip-path:inset(0 round 18px)!important;
+  }
+}
+
+
+/* V92.7 - moldura segue a proporcao real da imagem */
+.team-inline-photo{
+  display:flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  padding:18px!important;
+}
+.team-inline-photo-frame{
+  width:100%!important;
+  height:auto!important;
+  min-height:0!important;
+  max-height:none!important;
+  display:block!important;
+  overflow:hidden!important;
+  border-radius:22px!important;
+  clip-path:inset(0 round 22px)!important;
+  background:transparent!important;
+  box-shadow:0 0 0 1px rgba(115,255,24,.22)!important;
+}
+.team-inline-photo-frame img{
+  width:100%!important;
+  height:auto!important;
+  min-height:0!important;
+  max-height:none!important;
+  display:block!important;
+  object-fit:unset!important;
+  object-position:center!important;
+  border-radius:22px!important;
+  clip-path:inset(0 round 22px)!important;
+  background:transparent!important;
+}
+.team-inline-photo-frame>span{
+  min-height:394px!important;
+  border-radius:22px!important;
+  clip-path:inset(0 round 22px)!important;
+}
+@media(max-width:900px){
+  .team-inline-photo{
+    aspect-ratio:auto!important;
+    padding:14px!important;
+  }
+  .team-inline-photo-frame,
+  .team-inline-photo-frame img,
+  .team-inline-photo-frame>span{
+    border-radius:18px!important;
+    clip-path:inset(0 round 18px)!important;
+  }
+}
+
+/* V92.8 - card principal acompanha a altura real da foto */
 @media (min-width:901px){
   .team-inline-profile{
-    grid-template-columns:minmax(300px,330px) minmax(0,1fr)!important;
     align-items:stretch!important;
-    min-height:0!important;
     height:auto!important;
-    border-radius:34px!important;
-    overflow:hidden!important;
+    min-height:0!important;
   }
 
   .team-inline-photo{
-    position:relative!important;
-    display:flex!important;
-    align-items:stretch!important;
-    justify-content:stretch!important;
     min-height:0!important;
     height:auto!important;
-    padding:8px 8px 8px 8px!important;
-    box-sizing:border-box!important;
-    overflow:hidden!important;
-    border-right:1px solid rgba(217,164,65,.13)!important;
-    background:rgba(0,0,0,.30)!important;
+    padding:0 18px!important;
+    align-self:stretch!important;
   }
-
-  .team-inline-photo:after{display:none!important}
 
   .team-inline-photo-frame{
-    position:relative!important;
     width:100%!important;
     height:100%!important;
     min-height:0!important;
-    overflow:hidden!important;
-    border-radius:30px!important;
-    clip-path:inset(0 round 30px)!important;
-    background:#090909!important;
-    box-shadow:0 0 0 1px rgba(115,255,24,.20)!important;
-  }
-
-  .team-inline-photo-frame img,
-  .team-inline-photo-frame>span{
-    width:100%!important;
-    height:100%!important;
-    min-width:0!important;
-    min-height:0!important;
-    display:block!important;
-    border:0!important;
-    border-radius:inherit!important;
-    clip-path:inset(0 round 30px)!important;
-    box-shadow:none!important;
+    display:flex!important;
+    align-items:center!important;
+    justify-content:center!important;
   }
 
   .team-inline-photo-frame img{
-    object-fit:cover!important;
-    object-position:center center!important;
-    background:#090909!important;
-  }
-
-  .team-inline-photo-frame>span{
-    display:grid!important;
-    place-items:center!important;
-    background:#090909!important;
+    width:100%!important;
+    height:100%!important;
+    min-height:0!important;
+    object-fit:contain!important;
   }
 
   .team-inline-copy{
     min-height:0!important;
     height:auto!important;
-    padding:26px clamp(28px,3.5vw,48px)!important;
+    padding:28px clamp(28px,4vw,54px)!important;
     justify-content:center!important;
   }
 }
@@ -6020,40 +6109,71 @@ html, body { width:100%; max-width:100%; overflow-x:hidden; }
   .team-inline-profile{
     height:auto!important;
     min-height:0!important;
-    border-radius:26px!important;
-    overflow:hidden!important;
   }
 
   .team-inline-photo{
-    position:relative!important;
     min-height:0!important;
     height:auto!important;
-    aspect-ratio:auto!important;
-    padding:8px!important;
-    overflow:hidden!important;
-    border-right:0!important;
-    border-bottom:1px solid rgba(217,164,65,.13)!important;
   }
+}
 
-  .team-inline-photo:after{display:none!important}
 
-  .team-inline-photo-frame{
-    width:100%!important;
-    height:auto!important;
-    overflow:hidden!important;
-    border-radius:24px!important;
-    clip-path:inset(0 round 24px)!important;
-    background:#090909!important;
-  }
+/* V92.11 — chat compacto, cards alternados, paginação e redes dinâmicas */
+.tl-chat-compose-box{min-height:46px!important;padding:5px 7px 5px 12px!important;border-radius:14px!important}
+.tl-chat-compose-box textarea{min-height:34px!important;max-height:104px!important;padding:7px 3px!important;line-height:1.35!important}
+.tl-chat-send{width:34px!important;height:34px!important;min-width:34px!important;padding:0!important;border:0!important;border-radius:0!important;background:transparent!important;box-shadow:none!important;color:#73ff18!important;font-size:23px!important;line-height:1!important;filter:drop-shadow(0 0 7px rgba(115,255,24,.58))}
+.tl-chat-send:hover{transform:translateX(2px) scale(1.08)!important;background:transparent!important}
+.tl-chat-translate-row{display:grid!important;grid-template-columns:minmax(0,1fr) auto!important;align-items:end!important;gap:12px!important;flex-wrap:nowrap!important;margin-top:7px!important}
+.tl-chat-language{display:grid;grid-template-columns:auto minmax(125px,1fr);align-items:center;gap:8px;min-width:0}
+.tl-chat-language>label{white-space:nowrap;font-size:12px;color:#d2c6aa}
+.tl-chat-translate-row select{min-width:0!important;width:100%;padding:7px 9px!important;border-radius:9px!important}
+.tl-chat-remember{display:flex!important;align-items:center!important;gap:8px!important;white-space:nowrap!important;color:#d2c6aa;font-size:12px;cursor:pointer;min-height:34px}
+.tl-chat-remember input{position:absolute;opacity:0;pointer-events:none}
+.tl-chat-remember i{position:relative;width:38px;height:21px;border-radius:999px;border:1px solid rgba(217,164,65,.35);background:rgba(255,255,255,.08);transition:.2s}
+.tl-chat-remember i:after{content:"";position:absolute;top:2px;left:2px;width:15px;height:15px;border-radius:50%;background:#b6aa8d;transition:.2s}
+.tl-chat-remember input:checked+i{border-color:rgba(115,255,24,.7);background:rgba(115,255,24,.2);box-shadow:0 0 12px rgba(115,255,24,.18)}
+.tl-chat-remember input:checked+i:after{left:19px;background:#73ff18;box-shadow:0 0 8px rgba(115,255,24,.7)}
 
-  .team-inline-photo-frame img{
-    width:100%!important;
-    height:auto!important;
-    min-height:0!important;
-    display:block!important;
-    object-fit:cover!important;
-    object-position:center!important;
-    border-radius:inherit!important;
-    clip-path:inset(0 round 24px)!important;
-  }
+.team-inline-profile,.streamer-profile-card{transition:border-color .25s ease,box-shadow .25s ease}
+.team-inline-profile.tone-green,.streamer-profile-card.tone-green{--card-neon:#73ff18;border-color:rgba(115,255,24,.42)!important;box-shadow:0 24px 75px rgba(0,0,0,.38),0 0 26px rgba(115,255,24,.09)!important}
+.team-inline-profile.tone-red,.streamer-profile-card.tone-red{--card-neon:#ff1736;border-color:rgba(255,23,54,.48)!important;box-shadow:0 24px 75px rgba(0,0,0,.38),0 0 28px rgba(255,23,54,.1)!important}
+.team-inline-profile.tone-red .team-inline-role,.team-inline-profile.tone-red .team-inline-facts strong{color:#ff7386!important;text-shadow:0 0 8px rgba(255,23,54,.72),0 0 18px rgba(255,23,54,.25)!important}
+.team-inline-profile.tone-red .team-inline-bio{border-left-color:#ff1736!important}
+.team-inline-profile.tone-red .team-inline-links a{border-color:rgba(255,23,54,.35)!important;background:rgba(255,23,54,.06)!important}
+.streamer-profile-card.tone-red .streamer-card-status,.streamer-profile-card.tone-red .streamer-card-live{border-color:rgba(255,23,54,.52)!important;box-shadow:0 0 18px rgba(255,23,54,.12)!important}
+
+.team-social-count{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;margin-bottom:12px}
+.team-social-count>span{font-weight:800;color:#fff3c5}
+.team-social-count-options{display:flex;gap:7px}
+.team-social-count-options input{position:absolute;opacity:0}
+.team-social-count-options span{display:grid;place-items:center;width:36px;height:32px;border-radius:9px;border:1px solid rgba(217,164,65,.25);background:rgba(0,0,0,.25);cursor:pointer;font-weight:900}
+.team-social-count-options input:checked+span{border-color:#73ff18;color:#73ff18;background:rgba(115,255,24,.09);box-shadow:0 0 14px rgba(115,255,24,.12)}
+.team-social-slots{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.team-social-slot{display:grid;gap:10px;padding:14px;border:1px solid rgba(217,164,65,.16);border-radius:14px;background:rgba(255,255,255,.025)}
+.team-social-slot>strong{color:#73ff18;font-size:12px;letter-spacing:1.5px;text-transform:uppercase}
+.team-social-whatsapp{display:grid;grid-template-columns:minmax(90px,.55fr) minmax(140px,1.45fr);gap:10px}
+.team-social-slot [hidden]{display:none!important}
+.team-social-link{text-transform:none!important}
+
+.team-sort-hint{margin:4px 0 0!important}
+.team-sortable-row{grid-template-columns:auto minmax(0,1fr) auto auto!important;cursor:grab;touch-action:pan-y}
+.team-sortable-row.is-dragging{opacity:.48;transform:scale(.985)}
+.team-sortable-row.is-drag-over{border-color:rgba(115,255,24,.5)!important}
+.team-drag-handle{width:38px;height:38px;padding:0!important;border-radius:10px!important;font-size:20px!important;cursor:grab!important;color:#73ff18!important;background:rgba(115,255,24,.06)!important}
+.team-drag-handle:active{cursor:grabbing!important}
+
+.team-roster-pager{display:flex;justify-content:center;gap:8px;margin:28px 0 8px}
+.team-roster-pager button{min-width:38px;height:38px;border:1px solid rgba(217,164,65,.3);border-radius:10px;background:rgba(0,0,0,.35);color:#fff3c5;font-weight:900;cursor:pointer}
+.team-roster-pager button.is-active{border-color:#73ff18;color:#73ff18;box-shadow:0 0 15px rgba(115,255,24,.16)}
+
+@media(max-width:700px){
+  .tl-chat-translate-row{grid-template-columns:1fr auto!important;gap:8px!important}
+  .tl-chat-language{grid-template-columns:1fr!important;gap:4px}
+  .tl-chat-language>label{font-size:10px}
+  .tl-chat-remember{align-self:end;padding-bottom:1px}
+  .tl-chat-remember>span{font-size:11px}
+  .team-social-slots{grid-template-columns:1fr}
+  .team-social-whatsapp{grid-template-columns:100px minmax(0,1fr)}
+  .team-sortable-row{grid-template-columns:auto minmax(0,1fr)!important}
+  .team-sortable-row .streamer-admin-flags,.team-sortable-row .streamer-admin-actions{grid-column:2}
 }

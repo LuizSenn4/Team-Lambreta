@@ -4,7 +4,7 @@ function boot(){
   if(!form||document.getElementById('chatTranslateTarget'))return;
   const row=document.createElement('div');
   row.className='tl-chat-translate-row';
-  row.innerHTML=`<label for="chatTranslateTarget">🌐 Traduzir para</label><select id="chatTranslateTarget"><option value="">Enviar original</option><option value="pt">🇧🇷 Português</option><option value="pl">🇵🇱 Polski</option><option value="es">🇪🇸 Español</option><option value="fr">🇫🇷 Français</option><option value="en">🇺🇸 English</option></select><label><input id="chatTranslateRemember" type="checkbox"> Sempre usar</label>`;
+  row.innerHTML=`<div class="tl-chat-language"><label for="chatTranslateTarget">🌐 Traduzir para</label><select id="chatTranslateTarget"><option value="">Enviar original</option><option value="pt">🇧🇷 Português</option><option value="pl">🇵🇱 Polski</option><option value="es">🇪🇸 Español</option><option value="fr">🇫🇷 Français</option><option value="en">🇺🇸 English</option></select></div><label class="tl-chat-remember"><span>Sempre usar</span><input id="chatTranslateRemember" type="checkbox"><i aria-hidden="true"></i></label>`;
   form.appendChild(row);
   const sel=row.querySelector('select'),remember=row.querySelector('#chatTranslateRemember');
   const saved=localStorage.getItem('tl_chat_translate_target')||'';

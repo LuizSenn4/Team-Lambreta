@@ -104,7 +104,7 @@
               <option value="Itália">🇮🇹 Itália</option>
             </select>
           </label>
-          <label>Ordem<input id="teamMemberOrder" type="number" min="0" max="9999" value="100"></label>
+          <input id="teamMemberOrder" type="hidden" value="100">
           <label class="full">Sobre<textarea id="teamMemberBio" rows="4" maxlength="500"></textarea></label>
         </div>
       </fieldset>
@@ -143,14 +143,19 @@
         </div>
       </fieldset>
 
-      <fieldset>
+      <fieldset class="team-social-fieldset">
         <legend>Redes sociais</legend>
-        <p class="hint">Pode deixar vazio. Para teste, aceita about:blank nos perfis criados pelo SQL.</p>
-        <div class="streamer-form-grid">
-          <label>Instagram<input id="teamMemberInstagram" type="text" placeholder="https://..."></label>
-          <label>TikTok<input id="teamMemberTikTok" type="text" placeholder="https://..."></label>
-          <label>Facebook / outra<input id="teamMemberFacebook" type="text" placeholder="https://..."></label>
+        <div class="team-social-count">
+          <span>Quantas redes deseja exibir?</span>
+          <div class="team-social-count-options" role="radiogroup" aria-label="Quantidade de redes">
+            <label><input type="radio" name="teamSocialCount" value="1" checked><span>1</span></label>
+            <label><input type="radio" name="teamSocialCount" value="2"><span>2</span></label>
+            <label><input type="radio" name="teamSocialCount" value="3"><span>3</span></label>
+            <label><input type="radio" name="teamSocialCount" value="4"><span>4</span></label>
+          </div>
         </div>
+        <p class="hint">Escolha apenas as redes que aparecerão no perfil público.</p>
+        <div id="teamSocialSlots" class="team-social-slots"></div>
       </fieldset>
 
       <fieldset>
@@ -170,7 +175,7 @@
   </div>
 
   <div class="streamer-list-head">
-    <h3>Perfis na nuvem</h3>
+    <div><h3>Perfis na nuvem</h3><p class="hint team-sort-hint">☰ Segure e arraste para ordenar. A ordem é guardada automaticamente.</p></div>
     <button id="refreshTeamMembersBtn" type="button">Atualizar</button>
   </div>
   <div id="teamMembersCloudList" class="streamers-supabase-list">

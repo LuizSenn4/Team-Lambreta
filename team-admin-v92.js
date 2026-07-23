@@ -1,9 +1,9 @@
 (() => {
   'use strict';
 
-  const URL='https://ahiatqnokyhfpailobjx.supabase.co';
+  const SUPABASE_URL='https://ahiatqnokyhfpailobjx.supabase.co';
   const KEY='sb_publishable_qgwMhZPrB_3cFv3yCMcToA_9nDvHz-O';
-  const sb=window.supabase?.createClient(URL,KEY);
+  const sb=window.supabase?.createClient(SUPABASE_URL,KEY);
   if(!sb) return;
 
   const $=id=>document.getElementById(id);
@@ -14,10 +14,12 @@
   let session=null;
   let rows=[];
   let photoObjectUrl=null;
+  let draggedId=null;
+  let savingOrder=false;
 
   function clearPhotoObjectUrl(){
     if(photoObjectUrl){
-      URL.revokeObjectURL(photoObjectUrl);
+      globalThis.URL.revokeObjectURL(photoObjectUrl);
       photoObjectUrl=null;
     }
   }
@@ -38,6 +40,99 @@
       if(empty) empty.hidden=false;
       stage.style.backgroundImage='none';
     }
+  }
+
+  const SOCIAL_OPTIONS=[
+    ['instagram','Instagram'],['tiktok','TikTok'],['whatsapp','WhatsApp'],
+    ['facebook','Facebook'],['twitch','Twitch'],['discord','Discord'],
+    ['youtube','YouTube'],['twitter','X / Twitter'],['other','Outro']
+  ];
+
+  function capitaliseFirst(value=''){
+    const text=String(value).trimStart();
+    return text ? text.charAt(0).toLocaleUpperCase('pt-PT')+text.slice(1) : '';
+  }
+
+  function selectedSocialCount(){
+    return Number(document.querySelector('input[name="teamSocialCount"]:checked')?.value||1);
+  }
+
+  function setSocialCount(count=1){
+    const safe=Math.min(4,Math.max(1,Number(count)||1));
+    const radio=document.querySelector(`input[name="teamSocialCount"][value="${safe}"]`);
+    if(radio) radio.checked=true;
+    renderSocialSlots();
+  }
+
+  function normaliseSocials(row={}){
+    let links=Array.isArray(row.social_links)?row.social_links.filter(Boolean):[];
+    if(!links.length){
+      links=[
+        row.instagram_url&&{type:'instagram',label:'Instagram',url:row.instagram_url},
+        row.tiktok_url&&{type:'tiktok',label:'TikTok',url:row.tiktok_url},
+        row.facebook_url&&{type:'facebook',label:'Facebook',url:row.facebook_url}
+      ].filter(Boolean);
+    }
+    return links.slice(0,4);
+  }
+
+  function readSocialSlots(){
+    return [...document.querySelectorAll('.team-social-slot')].map(slot=>{
+      const type=slot.querySelector('[data-social-type]')?.value||'';
+      const custom=capitaliseFirst(slot.querySelector('[data-social-custom]')?.value||'');
+      const countryCode=(slot.querySelector('[data-social-country]')?.value||'').replace(/\D/g,'');
+      const raw=(type==='whatsapp'
+        ? slot.querySelector('.team-social-whatsapp [data-social-url]')?.value
+        : slot.querySelector('.team-social-link [data-social-url]')?.value||'').trim();
+      const number=raw.replace(/\D/g,'');
+      const label=type==='other'?custom:(SOCIAL_OPTIONS.find(([key])=>key===type)?.[1]||'Rede');
+      const url=type==='whatsapp'?(countryCode&&number?`https://wa.me/${countryCode}${number}`:''):raw;
+      return {type,label,url,country_code:countryCode||null};
+    }).filter(item=>item.type&&item.label&&item.url).slice(0,selectedSocialCount());
+  }
+
+  function socialSlot(index,data={}){
+    const type=data.type||'instagram';
+    const options=SOCIAL_OPTIONS.map(([value,label])=>`<option value="${value}" ${value===type?'selected':''}>${label}</option>`).join('');
+    const isWhats=type==='whatsapp';
+    const rawNumber=isWhats?String(data.url||'').replace(/^https?:\/\/wa\.me\//,''):'';
+    return `<div class="team-social-slot" data-slot="${index}">
+      <strong>Rede ${index+1}</strong>
+      <label>Plataforma<select data-social-type>${options}</select></label>
+      <label class="team-social-custom" ${type==='other'?'':'hidden'}>Nome da rede<input data-social-custom maxlength="40" value="${esc(data.label||'')}" placeholder="Ex.: Kick"></label>
+      <div class="team-social-whatsapp" ${isWhats?'':'hidden'}>
+        <label>Código do país<input data-social-country inputmode="numeric" maxlength="4" value="${esc(data.country_code||'')}" placeholder="351"></label>
+        <label>Número<input data-social-url inputmode="tel" value="${esc(rawNumber)}" placeholder="912345678"></label>
+      </div>
+      <label class="team-social-link" ${isWhats?'hidden':''}>Link<input data-social-url type="url" value="${esc(isWhats?'':data.url||'')}" placeholder="https://..."></label>
+    </div>`;
+  }
+
+  function bindSocialSlots(){
+    document.querySelectorAll('.team-social-slot').forEach(slot=>{
+      const select=slot.querySelector('[data-social-type]');
+      const custom=slot.querySelector('.team-social-custom');
+      const whatsapp=slot.querySelector('.team-social-whatsapp');
+      const link=slot.querySelector('.team-social-link');
+      select?.addEventListener('change',()=>{
+        const other=select.value==='other', whats=select.value==='whatsapp';
+        custom.hidden=!other; whatsapp.hidden=!whats; link.hidden=whats;
+      });
+      slot.querySelector('[data-social-custom]')?.addEventListener('input',event=>{
+        const start=event.target.selectionStart;
+        event.target.value=capitaliseFirst(event.target.value);
+        try{event.target.setSelectionRange(start,start)}catch(_){ }
+      });
+    });
+  }
+
+  function renderSocialSlots(values=null){
+    const container=$('teamSocialSlots');
+    if(!container) return;
+    const count=selectedSocialCount();
+    const previous=values||readSocialSlots();
+    container.innerHTML=Array.from({length:count},(_,index)=>socialSlot(index,previous[index]||{})).join('');
+    bindSocialSlots();
   }
 
   function feedback(message,error=false){
@@ -67,6 +162,7 @@
     $('teamMemberForm')?.reset();
     setValue('teamMemberId');
     setValue('teamMemberOrder',100);
+    setSocialCount(1);
     $('teamMemberPublished').checked=true;
     $('teamMemberFeatured').checked=false;
     clearPhotoObjectUrl();
@@ -100,9 +196,9 @@
       setValue('teamMemberOrder',row.display_order??100);
       setValue('teamMemberBio',row.bio);
       setValue('teamMemberPhotoUrl',row.image_url);
-      setValue('teamMemberInstagram',row.instagram_url);
-      setValue('teamMemberTikTok',row.tiktok_url);
-      setValue('teamMemberFacebook',row.facebook_url);
+      const socials=normaliseSocials(row);
+      setSocialCount(Math.max(1,socials.length));
+      renderSocialSlots(socials);
       $('teamMemberPublished').checked=Boolean(row.is_published);
       $('teamMemberFeatured').checked=Boolean(row.is_featured);
 
@@ -148,9 +244,7 @@
       play_style:$('teamMemberPlayStyle').value.trim()||null,
       bio:$('teamMemberBio').value.trim()||null,
       image_url:$('teamMemberPhotoUrl').value.trim()||null,
-      instagram_url:$('teamMemberInstagram').value.trim()||null,
-      tiktok_url:$('teamMemberTikTok').value.trim()||null,
-      facebook_url:$('teamMemberFacebook').value.trim()||null,
+      social_links:readSocialSlots(),
       is_featured:$('teamMemberFeatured').checked,
       is_published:$('teamMemberPublished').checked,
       display_order:Number($('teamMemberOrder').value||100),
@@ -209,7 +303,8 @@
     }
 
     container.innerHTML=rows.map(row=>`
-      <article class="streamer-admin-row ${row.is_archived?'is-archived':''}">
+      <article class="streamer-admin-row team-sortable-row ${row.is_archived?'is-archived':''}" draggable="${row.is_archived?'false':'true'}" data-member-id="${row.id}">
+        <button class="team-drag-handle" type="button" aria-label="Arrastar ${esc(row.nickname||row.name)}" title="Segure e arraste">☰</button>
         <div class="streamer-admin-identity">
           ${row.image_url
             ? `<img src="${esc(row.image_url)}" alt="">`
@@ -240,6 +335,83 @@
     });
     container.querySelectorAll('[data-restore]').forEach(button=>{
       button.onclick=()=>archive(button.dataset.restore,false);
+    });
+    bindMemberSorting(container);
+  }
+
+  async function persistMemberOrder(container){
+    if(savingOrder) return;
+    const ids=[...container.querySelectorAll('.team-sortable-row:not(.is-archived)')].map(row=>row.dataset.memberId);
+    if(!ids.length) return;
+    savingOrder=true;
+    feedback('Guardando nova ordem...');
+    try{
+      for(let index=0;index<ids.length;index++){
+        const {error}=await sb.from('team_members').update({display_order:(index+1)*10,updated_by:session.user.id,updated_at:new Date().toISOString()}).eq('id',ids[index]);
+        if(error) throw error;
+      }
+      feedback('Ordem guardada na nuvem.');
+      await load();
+    }catch(error){
+      feedback(error.message||'Não foi possível guardar a ordem.',true);
+      await load();
+    }finally{ savingOrder=false; }
+  }
+
+  function bindMemberSorting(container){
+    const sortable=[...container.querySelectorAll('.team-sortable-row[draggable="true"]')];
+    sortable.forEach(row=>{
+      row.addEventListener('dragstart',event=>{
+        draggedId=row.dataset.memberId;
+        row.classList.add('is-dragging');
+        event.dataTransfer.effectAllowed='move';
+        event.dataTransfer.setData('text/plain',draggedId);
+      });
+      row.addEventListener('dragend',()=>{
+        row.classList.remove('is-dragging');
+        container.querySelectorAll('.is-drag-over').forEach(el=>el.classList.remove('is-drag-over'));
+        draggedId=null;
+        persistMemberOrder(container);
+      });
+      row.addEventListener('dragover',event=>{
+        event.preventDefault();
+        if(!draggedId||draggedId===row.dataset.memberId) return;
+        const dragged=container.querySelector(`[data-member-id="${draggedId}"]`);
+        if(!dragged) return;
+        const box=row.getBoundingClientRect();
+        container.insertBefore(dragged,event.clientY<box.top+box.height/2?row:row.nextSibling);
+        row.classList.add('is-drag-over');
+      });
+      const handle=row.querySelector('.team-drag-handle');
+      let pressTimer=null;
+      let touchSorting=false;
+      const stopTouchSort=()=>{
+        clearTimeout(pressTimer);
+        if(!touchSorting) return;
+        touchSorting=false;
+        row.classList.remove('is-dragging','is-touch-ready');
+        document.body.classList.remove('team-touch-sorting');
+        persistMemberOrder(container);
+      };
+      handle?.addEventListener('pointerdown',event=>{
+        if(event.pointerType==='mouse') return;
+        pressTimer=setTimeout(()=>{
+          touchSorting=true;
+          row.classList.add('is-dragging','is-touch-ready');
+          document.body.classList.add('team-touch-sorting');
+          try{handle.setPointerCapture(event.pointerId)}catch(_){ }
+        },260);
+      });
+      handle?.addEventListener('pointermove',event=>{
+        if(!touchSorting) return;
+        event.preventDefault();
+        const target=document.elementFromPoint(event.clientX,event.clientY)?.closest('.team-sortable-row[draggable="true"]');
+        if(!target||target===row||target.parentElement!==container) return;
+        const box=target.getBoundingClientRect();
+        container.insertBefore(row,event.clientY<box.top+box.height/2?target:target.nextSibling);
+      });
+      handle?.addEventListener('pointerup',stopTouchSort);
+      handle?.addEventListener('pointercancel',stopTouchSort);
     });
   }
 
@@ -272,6 +444,7 @@
   $('cancelTeamMemberBtn')?.addEventListener('click',closeEditor);
   $('refreshTeamMembersBtn')?.addEventListener('click',load);
   $('teamMemberForm')?.addEventListener('submit',save);
+  document.querySelectorAll('input[name="teamSocialCount"]')?.forEach(radio=>radio.addEventListener('change',()=>renderSocialSlots()));
 
   $('teamMemberPhotoUrl')?.addEventListener('input',event=>{
     const value=event.target.value.trim();
@@ -289,7 +462,7 @@
     const file=event.target.files?.[0];
     if(!file) return;
     clearPhotoObjectUrl();
-    photoObjectUrl=URL.createObjectURL(file);
+    photoObjectUrl=globalThis.URL.createObjectURL(file);
     setValue('teamMemberPhotoUrl');
     showPhotoPreview(photoObjectUrl);
   });
@@ -307,6 +480,7 @@
   const refresh=()=>{clearTimeout(timer);timer=setTimeout(load,120);};
 
   async function boot(){
+    renderSocialSlots();
     await load();
     sb.channel('team-admin-v89')
       .on('postgres_changes',{event:'*',schema:'public',table:'team_members'},refresh)

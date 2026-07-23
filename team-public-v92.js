@@ -14,7 +14,7 @@
 
   let members=[];
   let currentPage=1;
-  const PAGE_SIZE=10;
+  const PAGE_SIZE=5;
 
   function avatar(row){
     const label=row.nickname||row.name||'L';
@@ -47,10 +47,12 @@
   }
 
   function links(row){
+    const dynamic=Array.isArray(row.social_links)?row.social_links.filter(item=>item&&item.label&&item.url).slice(0,4):[];
+    if(dynamic.length) return dynamic.map(item=>[item.label,item.url,item.type||'other']);
     return [
-      ['Instagram',row.instagram_url],
-      ['TikTok',row.tiktok_url],
-      ['Rede',row.facebook_url]
+      ['Instagram',row.instagram_url,'instagram'],
+      ['TikTok',row.tiktok_url,'tiktok'],
+      ['Facebook',row.facebook_url,'facebook']
     ].filter(([,url])=>url);
   }
 
@@ -64,11 +66,11 @@
         : esc(value);
       return `<div><small>${esc(label)}</small><strong>${shown}</strong></div>`;
     }).join('');
-    const linkMarkup=links(row).map(([label,url])=>
-      `<a href="${esc(url)}" target="_blank" rel="noopener">${esc(label)}</a>`
+    const linkMarkup=links(row).map(([label,url,type])=>
+      `<a class="team-social-link is-${esc(type||'other')}" href="${esc(url)}" target="_blank" rel="noopener">${esc(label)}</a>`
     ).join('');
 
-    return `<article class="team-inline-profile ${row.is_featured?'is-featured':''}">
+    return `<article class="team-inline-profile tone-${index%2===0?'green':'red'} ${row.is_featured?'is-featured':''}">
       <div class="team-inline-photo">
         <div class="team-inline-photo-frame">${avatar(row)}</div>
       </div>

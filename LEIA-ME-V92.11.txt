@@ -1,0 +1,22 @@
+TEAM LAMBRETA V92.11
+
+Arquivos para substituir:
+- admin.html
+- team-admin-v92.js
+- team-public-v92.js
+- streamer-public-v86.js
+- streamers.html
+- chat-translate-v92.js
+- style-v92.css
+
+Depois execute uma vez no Supabase SQL Editor:
+- team_lambreta_v92_11_social_links.sql
+
+Inclui:
+- 5 membros por página (o 5º fica verde)
+- alternância verde/vermelho na Team e Streamers
+- ordenação por arrastar no Admin Team
+- 1 a 4 redes configuráveis
+- WhatsApp com código do país
+- opção Outro com primeira letra maiúscula
+- chat compacto, toggle à direita e botão somente com seta
