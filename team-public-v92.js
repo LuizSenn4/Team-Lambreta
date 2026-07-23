@@ -69,8 +69,9 @@
     ).join('');
 
     return `<article class="team-inline-profile ${row.is_featured?'is-featured':''}">
-      <div class="team-inline-number">${String(index+1).padStart(2,'0')}</div>
-      <div class="team-inline-photo">${avatar(row)}</div>
+      <div class="team-inline-photo">
+        <div class="team-inline-photo-frame">${avatar(row)}</div>
+      </div>
       <div class="team-inline-copy">
         <h2 title="${esc(nickname)}" style="--nick-length:${nickLength}">${esc(nickname)}</h2>
         ${identity?`<strong class="team-inline-role">${esc(identity)}</strong>`:''}
