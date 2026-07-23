@@ -5746,24 +5746,30 @@ html, body { width:100%; max-width:100%; overflow-x:hidden; }
 .team-esports-hero p:last-child{max-width:780px;margin-inline:auto;font-size:clamp(15px,1.6vw,20px);line-height:1.55}
 .team-esports-grid{width:min(1180px,100%);margin-inline:auto;gap:24px}
 .team-inline-profile{
-  grid-template-columns:minmax(250px,360px) minmax(0,1fr);
+  grid-template-columns:minmax(280px,320px) minmax(0,1fr);
+  align-items:stretch;
   border:1px solid rgba(217,164,65,.34);border-radius:30px;
   background:linear-gradient(115deg,rgba(4,106,56,.075),rgba(2,2,2,.78) 38%,rgba(218,41,28,.045));
   box-shadow:0 28px 80px rgba(0,0,0,.36),inset 0 1px rgba(255,255,255,.035);
 }
 .team-inline-profile.is-featured{border-color:rgba(115,255,24,.44);box-shadow:0 28px 90px rgba(0,0,0,.42),0 0 28px rgba(115,255,24,.06)}
 .team-inline-photo{
-  min-height:410px;position:relative;
+  min-height:410px;position:relative;display:flex;align-items:stretch;justify-content:flex-start;
+  padding:18px 10px 18px 18px;
   background:radial-gradient(circle at 52% 28%,rgba(115,255,24,.14),transparent 38%),rgba(0,0,0,.43);
-  border-right:1px solid rgba(217,164,65,.13)
+  border-right:1px solid rgba(217,164,65,.13);box-sizing:border-box;overflow:hidden
 }
-.team-inline-photo:after{content:"";position:absolute;inset:18px;border:1px solid rgba(115,255,24,.20);border-radius:20px;pointer-events:none}
-.team-inline-photo img{min-height:410px;object-fit:cover;object-position:center top}
+.team-inline-photo:after{content:"";position:absolute;inset:18px 10px 18px 18px;border:1px solid rgba(115,255,24,.20);border-radius:24px;pointer-events:none}
+.team-inline-photo img,.team-inline-photo>span{
+  width:100%;height:100%;min-height:374px;border-radius:24px;overflow:hidden;
+  box-sizing:border-box;display:block;clip-path:inset(0 round 24px)
+}
+.team-inline-photo img{object-fit:cover;object-position:center top;box-shadow:0 18px 40px rgba(0,0,0,.22)}
 .team-inline-photo>span{
-  min-height:410px;font-family:"Road Rage",cursive;font-size:clamp(130px,17vw,230px);font-weight:400;
+  display:grid;place-items:center;font-family:"Road Rage",cursive;font-size:clamp(130px,17vw,230px);font-weight:400;
   color:var(--green);text-shadow:0 0 26px rgba(115,255,24,.24),3px 3px 0 rgba(217,164,65,.18)
 }
-.team-inline-copy{padding:clamp(28px,4vw,54px)}
+.team-inline-copy{padding:clamp(26px,3.4vw,46px)}
 .team-inline-copy>.tag{
   margin:0 0 9px;font-family:"Road Rage",cursive;font-size:24px;letter-spacing:3px;color:var(--gold-light)
 }
@@ -5806,8 +5812,10 @@ html, body { width:100%; max-width:100%; overflow-x:hidden; }
   .team-esports-hero{padding:24px 17px;border-radius:22px;margin-bottom:18px}
   .team-esports-hero h1{font-size:clamp(48px,18vw,74px)}
   .team-inline-profile{grid-template-columns:1fr;border-radius:22px}
-  .team-inline-photo{border-right:0;border-bottom:1px solid rgba(217,164,65,.13)}
+  .team-inline-photo{border-right:0;border-bottom:1px solid rgba(217,164,65,.13);padding:14px 14px 0;min-height:0}
+  .team-inline-photo:after{inset:14px 14px 0;border-radius:20px}
   .team-inline-photo,.team-inline-photo img,.team-inline-photo>span{min-height:0;aspect-ratio:4/3}
+  .team-inline-photo img,.team-inline-photo>span{border-radius:20px;clip-path:inset(0 round 20px)}
   .team-inline-copy{padding:22px 17px 24px}
   .team-inline-copy h2{font-size:clamp(31px,calc(49px - (var(--nick-length, 8) - 8)*1.25px),49px)}
   .team-inline-role{font-size:27px}
