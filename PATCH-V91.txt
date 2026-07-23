@@ -1,0 +1,11 @@
+TEAM LAMBRETA V91 — PROFILE FIEL AO MOCKUP
+
+- Remove filtros Todos / Gamers / Staff & Família da página Team.
+- Nickname principal usa a mesma fonte Road Rage do menu.
+- Nicknames limitados a 16 caracteres no Admin e mantidos em uma linha.
+- Cargo aparece somente na linha secundária, sem duplicar nome/cargo.
+- Campo Armas alterado para Tipo de armas.
+- Valores das boxes recebem destaque neon/dourado.
+- País recebe bandeira automática ao lado do nome.
+- Layout desktop/mobile preservado, fullscreen e sem scroll lateral.
+- Streamers, chat, menu e fórum não foram alterados.
