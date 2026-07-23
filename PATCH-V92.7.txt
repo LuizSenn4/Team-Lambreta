@@ -1,0 +1,5 @@
+V92.7
+- A moldura passa a seguir a proporcao real da foto.
+- Remove barras internas que escondiam os cantos inferiores.
+- Mantem a imagem inteira, sem corte.
+- Substituir somente style-v92.css.
