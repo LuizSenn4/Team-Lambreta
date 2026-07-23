@@ -1,5 +1,0 @@
-V92.8
-- Faz a box principal acompanhar a altura real da foto.
-- Remove o espaço vertical sobrando acima e abaixo da imagem no desktop.
-- Mantém o conteúdo da direita centralizado e simétrico.
-- Preserva os cantos arredondados e a imagem completa.

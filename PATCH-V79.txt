@@ -1,8 +1,0 @@
-TEAM LAMBRETA V79 — CHAT REFEITO LIMPO
-- Card do chat reconstruído com classes novas e isoladas.
-- Regras antigas não controlam mais os cards.
-- Sem sobreposição, alturas fixas ou line-clamp.
-- Texto completo em PC, tablet e telemóvel normal.
-- Nome e metadados organizados responsivamente.
-- Mantidos realtime, cargos, cores, moderação e limite visual das 30 mais recentes.
-- Não precisa executar SQL.

@@ -1,8 +1,0 @@
-TEAM LAMBRETA V76 — PÁGINA STREAMERS LIMPA
-- Mantido somente o conteúdo de streamers.
-- Removidos Hall da Fama / Apoiadores & VIP desta página.
-- Removidas Mensagens privadas.
-- Removida candidatura “Quero participar”.
-- Removido “Falar com os admins”.
-- Mantido o perfil do INK31, área de live, redes e grelha de streamers.
-- Não precisa executar SQL.

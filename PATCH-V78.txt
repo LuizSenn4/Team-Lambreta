@@ -1,6 +1,0 @@
-TEAM LAMBRETA V78
-- A quebra antes do ponto de status agora funciona em PC, modo desktop e telemóvel.
-- Linha 1: nickname.
-- Linha 2: status, horário e menu.
-- Linha 3: mensagem completa.
-- Não precisa executar SQL.

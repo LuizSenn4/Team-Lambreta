@@ -1,6 +1,0 @@
-TEAM LAMBRETA V85
-- Streamers agora vêm apenas do Supabase.
-- Renderizador local antigo desativado na página Streamers.
-- PC e telemóvel recebem alterações em tempo real.
-- Atualização ao focar, voltar à aba e a cada 15 segundos.
-- Execute team_lambreta_v85_streamers_realtime.sql uma vez.

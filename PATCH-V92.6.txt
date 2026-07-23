@@ -1,5 +1,0 @@
-V92.6
-- Remove o numero 01/1 diretamente do componente.
-- Cria um wrapper interno que faz o recorte real dos quatro cantos.
-- Mantem a imagem completa com object-fit: contain.
-- Substituir team-public-v92.js e style-v92.css.
