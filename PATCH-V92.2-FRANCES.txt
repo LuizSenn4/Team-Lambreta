@@ -1,0 +1,17 @@
+TEAM LAMBRETA V92.2 — FRANCÊS
+
+Arquivos alterados:
+- site-i18n-v92.js
+- chat-translate-v92.js
+- supabase/functions/translate-message/index.ts
+
+Incluído:
+- 🇫🇷 Français no seletor global do site
+- detecção automática de navegador em francês na primeira visita
+- preferência salva no localStorage
+- francês no seletor de tradução do chat
+- mapeamento DeepL FR
+- CORS OPTIONS 200 preservado
+
+Não precisa executar SQL novamente.
+Depois de substituir, publicar a Edge Function novamente.

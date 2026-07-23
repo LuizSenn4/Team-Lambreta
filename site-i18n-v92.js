@@ -1,13 +1,22 @@
 (()=>{'use strict';
 const LANGS={
-'pt-BR':{label:'🇧🇷 Português — Brasil'},'pt-PT':{label:'🇵🇹 Português — Portugal'},'pl':{label:'🇵🇱 Polski'},'es':{label:'🇪🇸 Español'},'en-US':{label:'🇺🇸 English — US'},'en-GB':{label:'🇬🇧 English — UK'}};
+'pt-BR':{label:'🇧🇷 Português — Brasil'},
+'pt-PT':{label:'🇵🇹 Português — Portugal'},
+'pl':{label:'🇵🇱 Polski'},
+'es':{label:'🇪🇸 Español'},
+'fr':{label:'🇫🇷 Français'},
+'en-US':{label:'🇺🇸 English — US'},
+'en-GB':{label:'🇬🇧 English — UK'}
+};
 const map={
-'pl':{'Início':'Start','Sobre':'O nas','Team':'Zespół','Fórum':'Forum','Loja':'Sklep','Contato':'Kontakt','Entrar com Google':'Zaloguj przez Google','Guardar perfil':'Zapisz profil','Cancelar':'Anuluj','País':'Kraj','Idade':'Wiek','Jogo':'Gra','Modo':'Tryb','Tipo de armas':'Rodzaj broni','Estilo':'Styl','Escreve no lobby...':'Napisz na lobby...','Traduzir para':'Tłumacz na'},
-'es':{'Início':'Inicio','Sobre':'Sobre nosotros','Team':'Equipo','Fórum':'Foro','Loja':'Tienda','Contato':'Contacto','Entrar com Google':'Entrar con Google','Guardar perfil':'Guardar perfil','Cancelar':'Cancelar','País':'País','Idade':'Edad','Jogo':'Juego','Modo':'Modo','Tipo de armas':'Tipo de armas','Estilo':'Estilo','Escreve no lobby...':'Escribe en el lobby...','Traduzir para':'Traducir a'},
-'en-US':{'Início':'Home','Sobre':'About','Team':'Team','Fórum':'Forum','Loja':'Store','Contato':'Contact','Entrar com Google':'Sign in with Google','Guardar perfil':'Save profile','Cancelar':'Cancel','País':'Country','Idade':'Age','Jogo':'Game','Modo':'Mode','Tipo de armas':'Weapon type','Estilo':'Style','Escreve no lobby...':'Write in the lobby...','Traduzir para':'Translate to'},
-'en-GB':{'Início':'Home','Sobre':'About','Team':'Team','Fórum':'Forum','Loja':'Shop','Contato':'Contact','Entrar com Google':'Sign in with Google','Guardar perfil':'Save profile','Cancelar':'Cancel','País':'Country','Idade':'Age','Jogo':'Game','Modo':'Mode','Tipo de armas':'Weapon type','Estilo':'Style','Escreve no lobby...':'Write in the lobby...','Traduzir para':'Translate to'},
-'pt-PT':{},'pt-BR':{}};
-const detected=(()=>{const n=(navigator.language||'pt-PT').toLowerCase();if(n.startsWith('pl'))return'pl';if(n.startsWith('es'))return'es';if(n==='pt-br')return'pt-BR';if(n.startsWith('pt'))return'pt-PT';if(n==='en-us')return'en-US';if(n.startsWith('en'))return'en-GB';return'pt-PT'})();
+'pl':{'Início':'Start','Sobre':'O nas','Team':'Zespół','Fórum':'Forum','Loja':'Sklep','Contato':'Kontakt','Entrar com Google':'Zaloguj przez Google','Guardar perfil':'Zapisz profil','Cancelar':'Anuluj','País':'Kraj','Idade':'Wiek','Jogo':'Gra','Modo':'Tryb','Tipo de armas':'Rodzaj broni','Estilo':'Styl','Escreve no lobby...':'Napisz na lobby...','Traduzir para':'Tłumacz na','Enviar original':'Wyślij oryginał','Sempre usar':'Zawsze używaj'},
+'es':{'Início':'Inicio','Sobre':'Sobre nosotros','Team':'Equipo','Fórum':'Foro','Loja':'Tienda','Contato':'Contacto','Entrar com Google':'Entrar con Google','Guardar perfil':'Guardar perfil','Cancelar':'Cancelar','País':'País','Idade':'Edad','Jogo':'Juego','Modo':'Modo','Tipo de armas':'Tipo de armas','Estilo':'Estilo','Escreve no lobby...':'Escribe en el lobby...','Traduzir para':'Traducir a','Enviar original':'Enviar original','Sempre usar':'Usar siempre'},
+'fr':{'Início':'Accueil','Sobre':'À propos','Team':'Équipe','Fórum':'Forum','Loja':'Boutique','Contato':'Contact','Entrar com Google':'Se connecter avec Google','Guardar perfil':'Enregistrer le profil','Cancelar':'Annuler','País':'Pays','Idade':'Âge','Jogo':'Jeu','Modo':'Mode','Tipo de armas':'Type d’armes','Estilo':'Style','Escreve no lobby...':'Écrivez dans le lobby...','Traduzir para':'Traduire vers','Enviar original':'Envoyer l’original','Sempre usar':'Toujours utiliser'},
+'en-US':{'Início':'Home','Sobre':'About','Team':'Team','Fórum':'Forum','Loja':'Store','Contato':'Contact','Entrar com Google':'Sign in with Google','Guardar perfil':'Save profile','Cancelar':'Cancel','País':'Country','Idade':'Age','Jogo':'Game','Modo':'Mode','Tipo de armas':'Weapon type','Estilo':'Style','Escreve no lobby...':'Write in the lobby...','Traduzir para':'Translate to','Enviar original':'Send original','Sempre usar':'Always use'},
+'en-GB':{'Início':'Home','Sobre':'About','Team':'Team','Fórum':'Forum','Loja':'Shop','Contato':'Contact','Entrar com Google':'Sign in with Google','Guardar perfil':'Save profile','Cancelar':'Cancel','País':'Country','Idade':'Age','Jogo':'Game','Modo':'Mode','Tipo de armas':'Weapon type','Estilo':'Style','Escreve no lobby...':'Write in the lobby...','Traduzir para':'Translate to','Enviar original':'Send original','Sempre usar':'Always use'},
+'pt-PT':{},'pt-BR':{}
+};
+const detected=(()=>{const n=(navigator.language||'pt-PT').toLowerCase();if(n.startsWith('pl'))return'pl';if(n.startsWith('es'))return'es';if(n.startsWith('fr'))return'fr';if(n==='pt-br')return'pt-BR';if(n.startsWith('pt'))return'pt-PT';if(n==='en-us')return'en-US';if(n.startsWith('en'))return'en-GB';return'pt-PT'})();
 let lang=localStorage.getItem('tl_language')||detected;localStorage.setItem('tl_language',lang);
 const original=new WeakMap();
 function translateNode(node){if(node.nodeType!==Node.TEXT_NODE)return;const t=node.nodeValue.trim();if(!t)return;if(!original.has(node))original.set(node,node.nodeValue);const base=original.get(node);const raw=base.trim();const value=(map[lang]||{})[raw];node.nodeValue=value?base.replace(raw,value):base}
