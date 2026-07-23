@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Fórum - Team Lambreta</title>
-  <link rel="stylesheet" href="style-v89.css" />
+  <link rel="stylesheet" href="style-v90.css" />
 </head>
 <body>
   <section id="siteContent" class="site-content forum-page">
@@ -77,8 +77,9 @@
       <h2>Criar tópico</h2>
       <p>O tópico fica pendente até o admin aprovar.</p>
 
-      <form id="userTopicForm" class="user-topic-form">
-        <input id="topicUserName" type="text" placeholder="Teu nome" value="Visitante" maxlength="18"><small class="field-counter" data-for="topicUserName"></small>
+      <div id="forumLoginNotice" class="forum-login-notice">Entra com o Google para criar um tópico.</div>
+      <form id="userTopicFormV90" class="user-topic-form" hidden>
+        <div id="forumAuthorIdentity" class="forum-author-identity"></div>
         <input id="topicTitle" type="text" placeholder="Título do tópico" maxlength="60"><small class="field-counter" data-for="topicTitle"></small>
         <textarea id="topicDescription" placeholder="Explica o tópico..." maxlength="280"></textarea><small class="field-counter full" data-for="topicDescription"></small>
         <button type="submit">Enviar para aprovação</button>
@@ -107,6 +108,7 @@
   <script src="script-v89.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="supabase-integration-v89.js"></script>
+  <script src="forum-auth-v90.js"></script>
   <script src="navigation-v88.js"></script>
 </body>
 </html>

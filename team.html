@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Team - Team Lambreta</title>
-  <link rel="stylesheet" href="style-v89.css" />
+  <link rel="stylesheet" href="style-v90.css" />
 </head>
 <body data-cloud-team="1">
   <section id="siteContent" class="site-content team-page">
@@ -69,7 +69,7 @@
   <section class="team-esports-hero">
     <p class="tag">ROSTER OFICIAL</p>
     <h1>Team Lambreta</h1>
-    <p>Perfis da família, jogadores, suporte e desenvolvimento. Passa o cursor ou toca num card para ver o preview; abre o perfil para todos os detalhes.</p>
+    <p>Perfis da família, jogadores, suporte e desenvolvimento. Perfis completos da família, organizados para leitura rápida em qualquer ecrã.</p>
   </section>
 
   <section class="team-esports-toolbar" aria-label="Filtros do Team">
@@ -83,33 +83,8 @@
       <h2>Carregando Team...</h2>
     </article>
   </section>
+  <nav id="teamRosterPager" class="team-roster-pager" aria-label="Paginação do Team" hidden></nav>
 </main>
-
-<div id="teamQuickPreview" class="team-quick-preview" hidden>
-  <div class="team-quick-preview-photo"></div>
-  <div>
-    <small>PREVIEW</small>
-    <strong></strong>
-    <span></span>
-    <p></p>
-  </div>
-</div>
-
-<div id="teamProfileModal" class="team-esports-modal" hidden>
-  <button class="team-esports-backdrop" type="button" data-team-close aria-label="Fechar perfil"></button>
-  <article class="team-esports-profile" role="dialog" aria-modal="true" aria-labelledby="teamProfileName">
-    <button class="team-esports-close" type="button" data-team-close aria-label="Fechar">×</button>
-    <div class="team-esports-profile-photo"></div>
-    <div class="team-esports-profile-copy">
-      <p class="tag">PERFIL DO MEMBRO</p>
-      <h2 id="teamProfileName"></h2>
-      <strong id="teamProfileRole"></strong>
-      <div id="teamProfileFacts" class="team-esports-facts"></div>
-      <p id="teamProfileBio" class="team-esports-bio"></p>
-      <div id="teamProfileLinks" class="team-esports-links"></div>
-    </div>
-  </article>
-</div>
 
     <footer class="site-footer">
       <p>© <span id="year"></span> Team Lambreta — Juntos somos mais fortes.</p>
@@ -119,7 +94,7 @@
   <script src="data.js"></script>
   <script src="script-v89.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="team-public-v89.js"></script>
+  <script src="team-public-v90.js"></script>
   <script src="navigation-v88.js"></script>
 </body>
 </html>
