@@ -6057,3 +6057,54 @@ html, body { width:100%; max-width:100%; overflow-x:hidden; }
     clip-path:inset(0 round 18px)!important;
   }
 }
+
+/* V92.8 - card principal acompanha a altura real da foto */
+@media (min-width:901px){
+  .team-inline-profile{
+    align-items:stretch!important;
+    height:auto!important;
+    min-height:0!important;
+  }
+
+  .team-inline-photo{
+    min-height:0!important;
+    height:auto!important;
+    padding:0 18px!important;
+    align-self:stretch!important;
+  }
+
+  .team-inline-photo-frame{
+    width:100%!important;
+    height:100%!important;
+    min-height:0!important;
+    display:flex!important;
+    align-items:center!important;
+    justify-content:center!important;
+  }
+
+  .team-inline-photo-frame img{
+    width:100%!important;
+    height:100%!important;
+    min-height:0!important;
+    object-fit:contain!important;
+  }
+
+  .team-inline-copy{
+    min-height:0!important;
+    height:auto!important;
+    padding:28px clamp(28px,4vw,54px)!important;
+    justify-content:center!important;
+  }
+}
+
+@media (max-width:900px){
+  .team-inline-profile{
+    height:auto!important;
+    min-height:0!important;
+  }
+
+  .team-inline-photo{
+    min-height:0!important;
+    height:auto!important;
+  }
+}
