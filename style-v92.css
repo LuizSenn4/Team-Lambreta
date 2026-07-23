@@ -5895,3 +5895,41 @@ html, body { width:100%; max-width:100%; overflow-x:hidden; }
   .team-inline-photo img,
   .team-inline-photo>span{height:100%;aspect-ratio:auto!important}
 }
+
+
+/* V92.5 - cantos arredondados reais na foto Team */
+.team-inline-number{
+  display:none!important;
+}
+
+.team-inline-photo{
+  position:relative!important;
+  padding:18px!important;
+  overflow:hidden!important;
+}
+
+.team-inline-photo img{
+  width:100%!important;
+  height:100%!important;
+  min-width:0!important;
+  min-height:0!important;
+  display:block!important;
+  object-fit:contain!important;
+  object-position:center!important;
+  border-radius:22px!important;
+  overflow:hidden!important;
+  clip-path:inset(0 round 22px)!important;
+  background:#090909!important;
+  box-shadow:0 0 0 1px rgba(115,255,24,.18)!important;
+}
+
+@media(max-width:900px){
+  .team-inline-photo{
+    padding:14px!important;
+  }
+
+  .team-inline-photo img{
+    border-radius:18px!important;
+    clip-path:inset(0 round 18px)!important;
+  }
+}

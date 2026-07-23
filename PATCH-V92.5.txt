@@ -1,0 +1,5 @@
+V92.5
+- Remove o numero da foto.
+- Garante cantos arredondados reais nos quatro lados.
+- Mantem a imagem completa com object-fit: contain.
+- Patch somente visual: substitua style-v92.css.
