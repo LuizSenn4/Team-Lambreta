@@ -6177,3 +6177,288 @@ html, body { width:100%; max-width:100%; overflow-x:hidden; }
   .team-sortable-row{grid-template-columns:auto minmax(0,1fr)!important}
   .team-sortable-row .streamer-admin-flags,.team-sortable-row .streamer-admin-actions{grid-column:2}
 }
+
+/* ============================================================
+   V92.12 — Team + Streamers + Chat compactos (ajuste fino)
+   ============================================================ */
+
+/* Chat mais minimalista: caixa menor, seta sem círculo, “Sempre usar” na mesma linha */
+.tl-chat-compose{gap:8px!important;margin-top:10px!important}
+.tl-chat-compose-box{
+  min-height:42px!important;
+  grid-template-columns:minmax(0,1fr) 28px!important;
+  align-items:center!important;
+  gap:6px!important;
+  padding:4px 4px 4px 12px!important;
+  border-radius:13px!important;
+}
+.tl-chat-compose-box textarea{
+  min-height:28px!important;
+  max-height:92px!important;
+  padding:5px 1px!important;
+  line-height:1.3!important;
+}
+.tl-chat-send{
+  width:28px!important;
+  height:28px!important;
+  min-width:28px!important;
+  display:grid!important;
+  place-items:center!important;
+  padding:0!important;
+  border:0!important;
+  border-radius:0!important;
+  background:transparent!important;
+  box-shadow:none!important;
+  outline:none!important;
+  color:#fff3c5!important;
+  font-size:22px!important;
+  line-height:1!important;
+  filter:drop-shadow(0 0 8px rgba(115,255,24,.72))!important;
+}
+.tl-chat-send::before,
+.tl-chat-send::after{display:none!important;content:none!important}
+.tl-chat-send:hover{
+  background:transparent!important;
+  transform:translateX(2px) scale(1.06)!important;
+}
+.tl-chat-translate-row{
+  grid-template-columns:minmax(0,1fr) auto!important;
+  align-items:center!important;
+  gap:10px!important;
+}
+.tl-chat-language{grid-template-columns:auto minmax(120px,1fr)!important;gap:7px!important}
+.tl-chat-language>label{font-size:11px!important}
+.tl-chat-translate-row select{padding:6px 9px!important}
+.tl-chat-remember{
+  justify-self:end!important;
+  gap:7px!important;
+  min-height:auto!important;
+  padding:0!important;
+}
+.tl-chat-remember>span{order:1;font-size:12px!important}
+.tl-chat-remember i{order:2;width:34px!important;height:19px!important}
+.tl-chat-remember i:after{width:13px!important;height:13px!important}
+.tl-chat-remember input:checked+i:after{left:17px!important}
+
+/* No mobile, continua compacto sem quebrar “Sempre usar” */
+@media(max-width:700px){
+  .tl-chat-translate-row{grid-template-columns:1fr auto!important;gap:8px!important}
+  .tl-chat-language{grid-template-columns:1fr!important;gap:3px!important}
+  .tl-chat-language>label{font-size:10px!important}
+  .tl-chat-remember{align-self:end!important;white-space:nowrap!important}
+  .tl-chat-remember>span{font-size:11px!important}
+}
+
+/* Team: apenas bordas alternam; tipografia mantém identidade igual */
+.team-inline-profile.tone-red .team-inline-role{
+  color:var(--green)!important;
+  text-shadow:0 0 10px rgba(115,255,24,.28)!important;
+}
+.team-inline-profile.tone-red .team-inline-facts strong,
+.team-inline-profile.tone-red .team-inline-copy h2,
+.team-inline-profile.tone-red .team-inline-bio,
+.team-inline-profile.tone-red .team-social-link,
+.streamer-profile-card.tone-red .tag,
+.streamer-profile-card.tone-red h2,
+.streamer-profile-card.tone-red .streamer-card-bio,
+.streamer-profile-card.tone-red .streamer-card-meta strong,
+.streamer-profile-card.tone-red .streamer-card-links a,
+.streamer-profile-card.tone-red .streamer-card-live{
+  color:inherit!important;
+  text-shadow:none!important;
+}
+.team-inline-profile.tone-red .team-inline-facts strong{color:var(--text)!important}
+.team-inline-profile.tone-red .team-inline-links a{
+  color:var(--text)!important;
+  border-color:rgba(255,23,54,.35)!important;
+  background:rgba(255,23,54,.055)!important;
+}
+.team-inline-profile.tone-red .team-inline-bio{border-left-color:#73ff18!important}
+
+/* Streamers públicos: card premium estável, sem imagem gigante */
+.team-category-block,
+.team-profile-grid{
+  width:min(1180px,100%);
+  max-width:100%;
+  margin-inline:auto;
+}
+.team-category-block{
+  margin-top:34px;
+  padding:0;
+}
+.team-category-head{
+  display:flex;
+  align-items:flex-end;
+  justify-content:space-between;
+  gap:16px;
+  margin-bottom:18px;
+  flex-wrap:wrap;
+}
+.team-category-head h2{margin:4px 0 0;color:var(--gold-light);font-size:clamp(28px,4vw,44px)}
+.team-category-head>span{color:var(--muted)}
+.team-profile-grid{
+  display:grid;
+  grid-template-columns:1fr;
+  gap:24px;
+}
+.streamer-profile-card{
+  position:relative;
+  display:grid;
+  grid-template-columns:minmax(250px,320px) minmax(0,1fr);
+  align-items:stretch;
+  width:100%;
+  overflow:hidden;
+  border:1px solid rgba(217,164,65,.28);
+  border-radius:30px;
+  background:linear-gradient(115deg,rgba(4,106,56,.075),rgba(2,2,2,.78) 38%,rgba(218,41,28,.045));
+  box-shadow:0 28px 80px rgba(0,0,0,.36),inset 0 1px rgba(255,255,255,.03);
+}
+.streamer-card-photo{
+  position:relative;
+  padding:18px 10px 18px 18px;
+  min-width:0;
+}
+.streamer-card-photo img,
+.streamer-card-placeholder{
+  width:100%;
+  height:100%;
+  min-height:410px;
+  display:block;
+  border-radius:22px;
+  overflow:hidden;
+}
+.streamer-card-photo img{
+  object-fit:cover;
+  object-position:center center;
+  background:#080808;
+}
+.streamer-card-placeholder{
+  display:grid;
+  place-items:center;
+  background:radial-gradient(circle at 50% 20%,rgba(217,164,65,.22),transparent 34%),rgba(0,0,0,.55);
+  font-size:52px;
+}
+.streamer-card-status{
+  position:absolute;
+  top:30px;
+  left:30px;
+  z-index:2;
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  padding:9px 14px;
+  border-radius:999px;
+  border:1px solid rgba(217,164,65,.28);
+  background:rgba(0,0,0,.74);
+  color:var(--gold-light);
+  font-size:13px;
+  font-weight:900;
+  letter-spacing:.12em;
+  text-transform:uppercase;
+}
+.streamer-card-status i{
+  width:10px;height:10px;border-radius:50%;background:#ff3146;box-shadow:0 0 10px rgba(255,49,70,.55)
+}
+.streamer-card-status.is-live i{background:#73ff18;box-shadow:0 0 10px rgba(115,255,24,.6)}
+.streamer-card-body{
+  min-width:0;
+  padding:clamp(24px,4vw,40px) clamp(20px,3vw,34px) clamp(24px,4vw,34px) 18px;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+}
+.streamer-card-body .tag{
+  margin:0 0 10px;
+  color:var(--green);
+  font-family:"Road Rage",cursive;
+  font-size:clamp(20px,2.4vw,28px);
+  letter-spacing:3px;
+}
+.streamer-card-body h2{
+  margin:0 0 12px;
+  color:var(--gold-light);
+  font-family:"Road Rage",cursive;
+  font-size:clamp(52px,6vw,78px);
+  line-height:.9;
+  letter-spacing:1px;
+  text-transform:uppercase;
+  overflow-wrap:anywhere;
+}
+.streamer-card-bio{
+  margin:0 0 18px;
+  max-width:760px;
+  color:var(--muted);
+  line-height:1.7;
+}
+.streamer-card-meta{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:12px;
+  margin:0 0 18px;
+}
+.streamer-card-meta div{
+  min-width:0;
+  padding:12px 14px;
+  border:1px solid rgba(217,164,65,.18);
+  border-radius:14px;
+  background:rgba(255,255,255,.025);
+}
+.streamer-card-meta small{
+  display:block;
+  color:var(--muted);
+  font-size:10px;
+  letter-spacing:1px;
+  text-transform:uppercase;
+}
+.streamer-card-meta strong{
+  display:block;
+  margin-top:4px;
+  color:var(--text);
+  overflow-wrap:anywhere;
+}
+.streamer-card-links{
+  display:flex;
+  flex-wrap:wrap;
+  gap:9px;
+  margin-top:2px;
+}
+.streamer-card-links a,
+.streamer-card-live{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  min-height:46px;
+  padding:10px 15px;
+  border:1px solid rgba(217,164,65,.24);
+  border-radius:14px;
+  color:var(--text);
+  text-decoration:none;
+  background:rgba(255,255,255,.02);
+}
+.streamer-card-live{
+  align-self:flex-start;
+  margin-top:16px;
+  border-color:rgba(115,255,24,.28);
+  background:rgba(115,255,24,.05);
+}
+.streamer-profile-card.tone-red .streamer-card-links a{
+  border-color:rgba(255,23,54,.36)!important;
+  background:rgba(255,23,54,.055)!important;
+}
+.streamer-profile-card.tone-red .streamer-card-live{
+  border-color:rgba(255,23,54,.38)!important;
+  background:rgba(255,23,54,.06)!important;
+}
+
+@media(max-width:900px){
+  .streamer-profile-card{
+    grid-template-columns:1fr;
+    border-radius:24px;
+  }
+  .streamer-card-photo{padding:16px 16px 0}
+  .streamer-card-photo img,
+  .streamer-card-placeholder{min-height:0;height:auto;aspect-ratio:4/3}
+  .streamer-card-body{padding:18px 16px 20px}
+  .streamer-card-body h2{font-size:clamp(42px,12vw,64px)}
+  .streamer-card-meta{grid-template-columns:1fr}
+}

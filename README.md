@@ -1,23 +1,16 @@
-# Team Lambreta
+# Team Lambreta — V92.12
 
-Versão organizada do projeto após a V92.9.
+Projeto organizado e pronto para publicação.
 
-## Arquivos principais
-- `style-v92.css`: estilo ativo
-- `script-v89.js`: script geral ativo
-- `supabase-integration-v92.js`: integração ativa
-- `team-public-v92.js` / `team-admin-v92.js`: Team
-- `streamer-public-v85.js` / `streamer-admin-v85.js`: Streamers
-- `site-i18n-v92.js`: idiomas
-- `chat-translate-v92.js`: tradução do chat
-- `supabase/functions/translate-message/index.ts`: Edge Function DeepL
+## Versão atual
+- Team: perfis com até 4 redes, 5 por página e ordenação administrativa.
+- Cards: bordas neon alternadas verde/vermelho, mantendo as cores originais dos textos.
+- Streamers: layout público corrigido e responsivo.
+- Chat: composição compacta, envio apenas com seta e tradução organizada.
 
-## Banco
-Os SQLs históricos foram movidos para `database/sql-history/`.
+## Banco de dados
+O SQL desta atualização está em:
 
-## Deploy
-```bash
-git add .
-git commit -m "Organiza projeto Team Lambreta"
-git push
-```
+`database/sql-history/team_lambreta_v92_11_social_links.sql`
+
+Execute-o uma única vez no Supabase caso ainda não tenha sido aplicado.
