@@ -14,3 +14,7 @@ O SQL desta atualização está em:
 `database/sql-history/team_lambreta_v92_11_social_links.sql`
 
 Execute-o uma única vez no Supabase caso ainda não tenha sido aplicado.
+
+
+## V92.14
+Topo unificado com um único seletor de país/cidade/idioma, relógio local e chave administrativa alinhada.

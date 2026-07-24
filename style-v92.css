@@ -6463,64 +6463,62 @@ html, body { width:100%; max-width:100%; overflow-x:hidden; }
   .streamer-card-meta{grid-template-columns:1fr}
 }
 
-/* ============================================================
-   V92.13 — chave Matrix, fusos agrupados e acabamento uniforme
-   ============================================================ */
-.tl-admin-key{
-  --key-color:#5ef3ff;
-  position:fixed;
-  z-index:10020;
-  top:62px;
-  right:15px;
-  width:42px;
-  height:42px;
-  display:grid;
-  place-items:center;
-  padding:4px;
-  border:0;
-  border-radius:13px;
-  background:rgba(1,8,8,.72);
-  color:var(--key-color);
-  cursor:pointer;
-  backdrop-filter:blur(12px);
-  filter:drop-shadow(0 0 8px color-mix(in srgb,var(--key-color) 72%,transparent));
-  transition:transform .2s ease,filter .2s ease;
-}
-.tl-admin-key:hover{transform:translateY(-2px) rotate(-4deg) scale(1.08);filter:drop-shadow(0 0 13px var(--key-color))}
-.tl-admin-key svg{width:100%;height:100%;overflow:visible}
-.tl-admin-key-master{--key-color:#5ef3ff}
-.tl-admin-key-admin{--key-color:#ff3046}
-.tl-admin-key-moderator{--key-color:#b66cff}
-.tl-admin-key-staff{--key-color:#4fa8ff}
 
-.tl-global-tools{align-items:stretch!important}
+/* ============================================================
+   V92.14 — topo unificado: fuso + relógio + chave alinhada
+   ============================================================ */
+.tl-global-tools{
+  position:fixed;
+  top:10px;
+  right:12px;
+  z-index:99999;
+  display:flex;
+  align-items:center!important;
+  justify-content:flex-end;
+  gap:8px;
+  max-width:calc(100vw - 24px);
+  transition:transform .25s ease,opacity .25s ease;
+}
+.tl-global-tools.tl-tools-hidden{transform:translateY(-130%);opacity:0;pointer-events:none}
 .tl-zone-wrap{position:relative;display:flex;min-width:0}
-.tl-zone-button{
-  max-width:220px;
-  min-width:0;
-  padding:8px 10px;
+.tl-zone-button,
+.tl-local-clock{
+  min-height:38px;
   border:1px solid rgba(217,164,65,.3);
   border-radius:12px;
-  background:rgba(5,4,3,.9);
+  background:rgba(5,4,3,.92);
   color:#fff3c5;
+  backdrop-filter:blur(12px);
   box-shadow:0 8px 24px rgba(0,0,0,.35);
+}
+.tl-zone-button{
+  max-width:230px;
+  min-width:0;
+  padding:8px 11px;
   white-space:nowrap;
   overflow:hidden;
   text-overflow:ellipsis;
   cursor:pointer;
+}
+.tl-local-clock{
+  display:flex;
+  align-items:center;
+  padding:8px 10px;
+  font-size:12px;
+  white-space:nowrap;
 }
 .tl-zone-menu{
   position:absolute;
   z-index:10050;
   top:calc(100% + 8px);
   right:0;
-  width:min(330px,calc(100vw - 22px));
+  width:min(340px,calc(100vw - 22px));
   max-height:min(72vh,620px);
   overflow:auto;
   padding:12px;
   border:1px solid rgba(115,255,24,.28);
   border-radius:18px;
-  background:rgba(3,5,4,.97);
+  background:rgba(3,5,4,.98);
   color:#fff3c5;
   box-shadow:0 22px 70px rgba(0,0,0,.72),0 0 28px rgba(115,255,24,.08);
   backdrop-filter:blur(18px);
@@ -6529,6 +6527,9 @@ html, body { width:100%; max-width:100%; overflow-x:hidden; }
 .tl-zone-menu-head{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:2px 4px 10px}
 .tl-zone-menu-head strong{font-size:14px;letter-spacing:.6px}
 .tl-zone-menu-head button{width:30px;height:30px;padding:0;border:0;border-radius:9px;background:rgba(255,255,255,.06);color:#fff3c5;font-size:20px}
+.tl-zone-language{display:grid;gap:6px;margin:0 0 10px}
+.tl-zone-language span{font-size:11px;color:#bfb196;letter-spacing:.7px;text-transform:uppercase}
+.tl-zone-language select{width:100%;padding:9px 10px;border:1px solid rgba(217,164,65,.2);border-radius:11px;background:rgba(255,255,255,.035);color:#fff3c5}
 .tl-zone-device{width:100%;padding:10px 12px;margin-bottom:8px;border:1px solid rgba(217,164,65,.18);border-radius:11px;background:rgba(255,255,255,.025);color:#fff3c5;text-align:left}
 .tl-zone-country{border-top:1px solid rgba(217,164,65,.12)}
 .tl-zone-country summary{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 7px;cursor:pointer;font-weight:850;list-style:none}
@@ -6537,6 +6538,55 @@ html, body { width:100%; max-width:100%; overflow-x:hidden; }
 .tl-zone-country>div{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px;padding:0 4px 11px}
 .tl-zone-country button{padding:9px 10px;border:1px solid rgba(217,164,65,.16);border-radius:10px;background:rgba(255,255,255,.025);color:#d8ccb1;text-align:left;cursor:pointer}
 .tl-zone-country button:hover,.tl-zone-country button.is-active{border-color:#73ff18;color:#73ff18;background:rgba(115,255,24,.07)}
+
+/* A chave agora pertence ao mesmo grupo visual do seletor e do relógio. */
+.tl-admin-key{
+  --key-color:#5ef3ff;
+  position:relative!important;
+  inset:auto!important;
+  flex:0 0 38px;
+  width:38px;
+  height:38px;
+  display:grid;
+  place-items:center;
+  padding:5px;
+  border:1px solid color-mix(in srgb,var(--key-color) 46%,transparent);
+  border-radius:12px;
+  background:rgba(2,8,8,.92);
+  color:var(--key-color);
+  cursor:pointer;
+  box-shadow:0 8px 24px rgba(0,0,0,.35),0 0 16px color-mix(in srgb,var(--key-color) 25%,transparent);
+  filter:none!important;
+  transform:none!important;
+  transition:box-shadow .2s ease,border-color .2s ease,transform .2s ease;
+}
+.tl-admin-key:hover{
+  transform:translateY(-1px) scale(1.04)!important;
+  border-color:var(--key-color);
+  box-shadow:0 8px 24px rgba(0,0,0,.35),0 0 22px color-mix(in srgb,var(--key-color) 45%,transparent);
+}
+.tl-admin-key svg{width:100%;height:100%;overflow:visible}
+.tl-admin-key-master{--key-color:#5ef3ff}
+.tl-admin-key-admin{--key-color:#ff3046}
+.tl-admin-key-moderator{--key-color:#b66cff}
+.tl-admin-key-staff{--key-color:#4fa8ff}
+
+/* Tipografia uniforme: apenas a borda externa alterna verde/vermelho. */
+.team-inline-copy h2,
+.streamer-card-body h2{
+  color:#fff3c5!important;
+  text-shadow:0 2px 0 rgba(0,0,0,.85),0 0 12px rgba(255,243,197,.12)!important;
+}
+.team-inline-role,
+.streamer-card-body .tag{
+  color:#73ff18!important;
+  text-shadow:0 0 8px rgba(115,255,24,.78),0 0 18px rgba(115,255,24,.22)!important;
+}
+.team-inline-profile.tone-red .team-inline-copy h2,
+.streamer-profile-card.tone-red .streamer-card-body h2{color:#fff3c5!important}
+.team-inline-profile.tone-red .team-inline-role,
+.streamer-profile-card.tone-red .streamer-card-body .tag{color:#73ff18!important}
+.team-inline-profile.tone-red .team-inline-facts strong{color:var(--text)!important;text-shadow:none!important}
 
 .tl-development-note{
   width:min(1180px,calc(100% - 24px));
@@ -6553,32 +6603,10 @@ html, body { width:100%; max-width:100%; overflow-x:hidden; }
 .tl-development-note strong{color:#fff3c5;font-size:16px}
 .tl-development-note small{margin-top:5px;color:var(--muted)}
 
-/* Todos os cards mantêm o preenchimento e os efeitos tipográficos; só a linha externa alterna. */
-.team-inline-copy h2,
-.streamer-card-body h2{
-  color:#fff3c5!important;
-  text-shadow:0 2px 0 rgba(0,0,0,.85),0 0 12px rgba(255,243,197,.12)!important;
-}
-.team-inline-role,
-.streamer-card-body .tag{
-  color:#73ff18!important;
-  text-shadow:0 0 8px rgba(115,255,24,.78),0 0 18px rgba(115,255,24,.22)!important;
-}
-.team-inline-profile.tone-red .team-inline-copy h2,
-.team-inline-profile.tone-red .team-inline-role,
-.team-inline-profile.tone-red .team-inline-facts strong,
-.streamer-profile-card.tone-red .streamer-card-body h2,
-.streamer-profile-card.tone-red .streamer-card-body .tag{
-  color:inherit!important;
-}
-.team-inline-profile.tone-red .team-inline-copy h2,
-.streamer-profile-card.tone-red .streamer-card-body h2{color:#fff3c5!important}
-.team-inline-profile.tone-red .team-inline-role,
-.streamer-profile-card.tone-red .streamer-card-body .tag{color:#73ff18!important}
-
 @media(max-width:700px){
-  .tl-global-tools{max-width:calc(100vw - 58px)!important}
-  .tl-zone-button{max-width:150px;font-size:11px;padding:7px 8px}
+  .tl-global-tools{top:8px;right:8px;gap:6px;max-width:calc(100vw - 16px)}
+  .tl-zone-button{max-width:190px;min-height:36px;padding:7px 9px;font-size:11px}
+  .tl-local-clock{display:none}
+  .tl-admin-key{flex-basis:36px;width:36px;height:36px;border-radius:11px}
   .tl-zone-country>div{grid-template-columns:1fr}
-  .tl-admin-key{top:53px;right:9px;width:38px;height:38px}
 }

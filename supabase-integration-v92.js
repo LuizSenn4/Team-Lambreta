@@ -185,7 +185,7 @@
       modal.hidden = false;
       setTimeout(() => $('tlAdminPassword')?.focus(), 30);
     });
-    document.body.appendChild(button);
+    (document.querySelector('.tl-global-tools') || document.body).appendChild(button);
   }
 
   function renderAuth() {
