@@ -1,7 +1,8 @@
 (() => {
   const URL = 'https://ahiatqnokyhfpailobjx.supabase.co';
   const KEY = 'sb_publishable_qgwMhZPrB_3cFv3yCMcToA_9nDvHz-O';
-  const sb = window.supabase?.createClient?.(URL, KEY) || null;
+  const sb = window.supabase?.createClient(URL, KEY);
+  if (!sb) return;
 
   const $ = (id) => document.getElementById(id);
   const PAGE_SIZE = 5;
@@ -197,7 +198,7 @@
           <section class="streamer-card-panel streamer-card-notify">
             <h3><span>◉</span>NÃO PERCA A LIVE!</h3>
             <p>${esc(notifyText)}</p>
-            <button class="streamer-panel-button streamer-panel-button--notify" type="button" data-streamer-notify data-streamer-name="${esc(row.display_name || 'Streamer')}">ATIVAR NOTIFICAÇÕES</button>
+            ${watchUrl ? `<a class="streamer-panel-button streamer-panel-button--notify" href="${esc(watchUrl)}" target="_blank" rel="noopener noreferrer">ATIVAR NOTIFICAÇÕES</a>` : '<span class="streamer-panel-button streamer-panel-button--ghost">EM BREVE</span>'}
           </section>
 
           <section class="streamer-card-panel streamer-card-live">
@@ -275,37 +276,24 @@
     const grid = $('streamersPublicGrid');
     if (!grid) return;
 
-    // Renderiza imediatamente o perfil fixo. A página nunca fica vazia
-    // enquanto o Supabase carrega, está lento ou indisponível.
-    renderPage();
-    const count = $('streamersCount');
-    if (count) count.textContent = String(allRows.length + 1);
+    const { data, error } = await sb
+      .from('streamers')
+      .select('*')
+      .eq('is_published', true)
+      .eq('is_archived', false)
+      .order('is_featured', { ascending: false })
+      .order('display_order', { ascending: true })
+      .order('created_at', { ascending: true });
 
-    if (!sb) {
-      console.warn('[Team Lambreta] Supabase ainda não carregou; mantendo o perfil fixo visível.');
+    if (error) {
+      grid.innerHTML = `<article class="empty-card"><h3>Streamers</h3><p>${esc(error.message)}</p></article>`;
       return;
     }
 
-    try {
-      const { data, error } = await sb
-        .from('streamers')
-        .select('*')
-        .eq('is_published', true)
-        .eq('is_archived', false)
-        .order('is_featured', { ascending: false })
-        .order('display_order', { ascending: true })
-        .order('created_at', { ascending: true });
-
-      if (error) throw error;
-
-      allRows = data || [];
-      if (count) count.textContent = String(allRows.length + 1);
-      renderPage();
-    } catch (error) {
-      console.error('[Team Lambreta] Falha ao carregar streamers:', error);
-      // Mantém o INK31 e os últimos dados renderizados em vez de apagar tudo.
-      renderPage();
-    }
+    allRows = data || [];
+    const count = $('streamersCount');
+    if (count) count.textContent = String(allRows.length + 1);
+    renderPage();
   }
 
   const scheduleLoad = () => {
@@ -314,11 +302,9 @@
   };
 
   function startCloudSync() {
-    if (sb) {
-      sb.channel('public-streamers-cloud-v86')
-        .on('postgres_changes', { event: '*', schema: 'public', table: 'streamers' }, scheduleLoad)
-        .subscribe();
-    }
+    sb.channel('public-streamers-cloud-v86')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'streamers' }, scheduleLoad)
+      .subscribe();
 
     setInterval(() => {
       if (!document.hidden) load();
