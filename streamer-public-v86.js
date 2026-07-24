@@ -1,140 +1,327 @@
 (() => {
-  const URL='https://ahiatqnokyhfpailobjx.supabase.co';
-  const KEY='sb_publishable_qgwMhZPrB_3cFv3yCMcToA_9nDvHz-O';
-  const sb=window.supabase?.createClient(URL,KEY);
-  if(!sb) return;
+  const URL = 'https://ahiatqnokyhfpailobjx.supabase.co';
+  const KEY = 'sb_publishable_qgwMhZPrB_3cFv3yCMcToA_9nDvHz-O';
+  const sb = window.supabase?.createClient(URL, KEY);
+  if (!sb) return;
 
-  const $=id=>document.getElementById(id);
-  let allRows=[];
-  let currentPage=1;
-  const PAGE_SIZE=5;
-  const esc=value=>String(value??'').replace(/[&<>"']/g,ch=>({
-    '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
+  const $ = (id) => document.getElementById(id);
+  const PAGE_SIZE = 5;
+  let allRows = [];
+  let currentPage = 1;
+  let refreshTimer = null;
+
+  const esc = (value) => String(value ?? '').replace(/[&<>"']/g, (ch) => ({
+    '&': '&amp;',
+    '<': '&lt;',
+    '>': '&gt;',
+    '"': '&quot;',
+    "'": '&#39;'
   }[ch]));
 
-  function platformName(row){
-    if(row.live_platform==='tiktok') return 'TikTok';
-    if(row.live_platform==='twitch') return 'Twitch';
-    if(row.live_platform==='youtube') return 'YouTube';
-    return 'Live';
-  }
+  const staticInk = {
+    id: 'ink31-static',
+    is_static: true,
+    is_featured: true,
+    display_name: 'INK31',
+    title: 'Boss • Streamer Oficial',
+    description: 'Fundador e streamer do Team Lambreta. Conteúdo focado em Fortnite, comunidade e muita resenha.',
+    photo_url: 'img/streamers/ink31-profile.jpg',
+    game_nickname: 'oklm_31_ink',
+    main_game: 'Fortnite',
+    live_platform: 'tiktok',
+    live_url: 'https://www.tiktok.com/@rv3113/live',
+    tiktok_url: 'https://www.tiktok.com/@rv3113',
+    twitch_url: 'https://www.twitch.tv/oklm31rv',
+    schedule_text: 'Terça a Domingo · horários variáveis · acompanha nas redes para saber quando abrir live.',
+    notify_text: 'Ativa as notificações e acompanha o perfil para saber quando o INK31 entrar ao vivo.',
+    force_live: false,
+    manual_live: false,
+    auto_live: false,
+    custom_socials: [
+      { name: 'TikTok', url: 'https://www.tiktok.com/@rv3113' },
+      { name: 'Twitch', url: 'https://www.twitch.tv/oklm31rv' }
+    ]
+  };
 
-  function platformClass(name){
-    const value=String(name||'').toLowerCase();
-    if(value.includes('tiktok')) return 'tiktok';
-    if(value.includes('twitch')) return 'twitch';
-    if(value.includes('youtube')) return 'youtube';
-    if(value.includes('instagram')) return 'instagram';
+  function platformClass(name) {
+    const value = String(name || '').toLowerCase();
+    if (value.includes('tiktok')) return 'tiktok';
+    if (value.includes('twitch')) return 'twitch';
+    if (value.includes('youtube')) return 'youtube';
+    if (value.includes('instagram')) return 'instagram';
+    if (value.includes('discord')) return 'discord';
     return 'other';
   }
 
-  function platformIcon(name){
-    const value=platformClass(name);
-    return value==='tiktok'?'♪':value==='twitch'?'◫':value==='youtube'?'▶':value==='instagram'?'◎':'↗';
+  function platformIcon(name) {
+    const value = platformClass(name);
+    if (value === 'tiktok') return '♪';
+    if (value === 'twitch') return '◫';
+    if (value === 'youtube') return '▶';
+    if (value === 'instagram') return '◎';
+    if (value === 'discord') return '◉';
+    return '↗';
   }
 
-  function socialData(row){
+  function platformName(row) {
+    if (row.live_platform === 'tiktok') return 'TikTok';
+    if (row.live_platform === 'twitch') return 'Twitch';
+    if (row.live_platform === 'youtube') return 'YouTube';
+    return 'Live';
+  }
+
+  function socialData(row) {
+    if (Array.isArray(row.custom_socials) && row.custom_socials.length) {
+      return row.custom_socials.filter((item) => item?.url);
+    }
+
     return [
-      ['TikTok',row.tiktok_url],
-      ['Twitch',row.twitch_url],
-      ['YouTube',row.youtube_url],
-      ['Instagram',row.instagram_url]
-    ].filter(([,url])=>url);
+      { name: 'TikTok', url: row.tiktok_url },
+      { name: 'Twitch', url: row.twitch_url },
+      { name: 'YouTube', url: row.youtube_url },
+      { name: 'Instagram', url: row.instagram_url }
+    ].filter((item) => item.url);
   }
 
-  function nameMarkup(name){
-    const clean=String(name||'STREAMER');
-    const match=clean.match(/^(.*?)(\d+)$/);
-    return match ? `${esc(match[1])}<span>${esc(match[2])}</span>` : esc(clean);
+  function parseSchedule(description, fallbackText = '') {
+    const source = String(description || '').trim();
+    const match = source.match(/hor[aá]rio(?:s)?\s+de\s+live(?:s)?\s*:\s*([\s\S]*)/i);
+    const scheduleText = match ? match[1].trim() : String(fallbackText || '').trim();
+    const cleanDescription = match ? source.replace(match[0], '').replace(/\s{2,}/g, ' ').trim() : source;
+
+    if (!scheduleText) {
+      return {
+        cleanDescription,
+        scheduleMarkup: '<div class="streamer-schedule-empty">Agenda em atualização</div>'
+      };
+    }
+
+    const normalized = scheduleText
+      .replace(/\s+/g, ' ')
+      .replace(/\s*([,;])\s*/g, '$1 ')
+      .trim();
+
+    const lines = normalized
+      .split(/(?=(?:Segunda|Segundas|Terça|Terca|Terças|Tercas|Quarta|Quartas|Quinta|Quintas|Sexta|Sextas|Sábado|Sabado|Sábados|Sabados|Domingo|Domingos))/i)
+      .map((item) => item.trim())
+      .filter(Boolean);
+
+    if (!lines.length) {
+      return {
+        cleanDescription,
+        scheduleMarkup: `<div class="streamer-schedule-free">${esc(normalized)}</div>`
+      };
+    }
+
+    const rows = lines.map((line) => {
+      const parts = line.split(/\s+[—–-]\s+|\s+das\s+/i);
+      if (parts.length > 1) {
+        const label = parts[0].trim();
+        const value = line.replace(label, '').replace(/^\s*[—–-]?\s*/,'').trim();
+        return `<div class="streamer-schedule-row"><span>${esc(label)}</span><strong>${esc(value || 'Ao vivo')}</strong></div>`;
+      }
+      return `<div class="streamer-schedule-row"><span>${esc(line)}</span><strong>—</strong></div>`;
+    }).join('');
+
+    return { cleanDescription, scheduleMarkup: rows };
   }
 
-  function card(row,index){
-    const live=Boolean(row.force_live||row.manual_live||row.auto_live);
-    const watch=row.live_url||row.tiktok_url||row.twitch_url||row.youtube_url||row.instagram_url||'';
-    const secondary=[row.twitch_url,row.youtube_url,row.instagram_url,row.tiktok_url].find(url=>url&&url!==watch)||'';
-    const title=row.title||'STREAMER OFICIAL';
-    const photo=row.photo_url||'';
-    const socials=socialData(row);
-    const tone=index%2===0?'green':'red';
+  function nameClass(name) {
+    const length = String(name || '').trim().length;
+    if (length >= 18) return 'is-long';
+    if (length >= 12) return 'is-medium';
+    return '';
+  }
 
-    return `<article class="ink31-featured premium-streamer-card tone-${tone} ${row.is_featured?'is-featured':''}" data-streamer-id="${esc(row.id)}">
-      <div class="ink31-visual">
-        ${photo?`<img src="${esc(photo)}" alt="${esc(row.display_name)}" loading="${index===0?'eager':'lazy'}">`:`<div class="premium-streamer-placeholder">🎥</div>`}
-        <span class="ink31-status ${live?'is-live':''}"><i></i>${live?'AO VIVO':'PERFIL OFICIAL'}</span>
-      </div>
+  function getTone(globalIndex) {
+    return globalIndex % 2 === 0 ? 'tone-red' : 'tone-green';
+  }
 
-      <div class="ink31-profile-copy">
-        <p class="tag">${esc(title)}</p>
-        <h2>${nameMarkup(row.display_name)}</h2>
-        ${row.description?`<p class="ink31-intro">${esc(row.description)}</p>`:''}
+  function buildCard(row, globalIndex) {
+    const tone = row.is_static ? 'tone-red' : getTone(globalIndex);
+    const socials = socialData(row);
+    const live = Boolean(row.force_live || row.manual_live || row.auto_live);
+    const watchUrl = row.live_url || row.tiktok_url || row.twitch_url || row.youtube_url || row.instagram_url || '';
+    const watchLabel = live ? 'ASSISTIR AGORA' : `ABRIR ${platformName(row).toUpperCase()}`;
+    const { cleanDescription, scheduleMarkup } = parseSchedule(row.description, row.schedule_text);
+    const titleLine = row.title ? esc(row.title) : 'Streamer Oficial';
+    const gameLine = row.main_game ? esc(row.main_game) : 'Fortnite';
+    const mainPhoto = row.photo_url
+      ? `<img src="${esc(row.photo_url)}" alt="${esc(row.display_name)}" loading="lazy">`
+      : '<div class="streamer-photo-placeholder">🎥</div>';
+    const previewPhoto = row.photo_url
+      ? `<img src="${esc(row.photo_url)}" alt="Prévia de ${esc(row.display_name)}" loading="lazy">`
+      : '<div class="streamer-photo-placeholder streamer-photo-placeholder--small">🎥</div>';
+    const notifyText = row.notify_text || 'Ativa as notificações e acompanha as redes para não perder a próxima live.';
 
-        ${(row.game_nickname||row.main_game)?`<div class="ink31-details">
-          ${row.game_nickname?`<div><small>Nick no jogo</small><strong>${esc(row.game_nickname)}</strong></div>`:''}
-          ${row.main_game?`<div><small>Jogo principal</small><strong>${esc(row.main_game)}</strong></div>`:''}
-        </div>`:''}
+    return `
+      <article class="streamer-unified-card ${tone} ${live ? 'is-live' : ''}" data-streamer-id="${esc(row.id)}">
+        <div class="streamer-card-top">
+          <div class="streamer-card-photo-wrap">
+            <div class="streamer-card-photo">
+              ${mainPhoto}
+            </div>
+          </div>
 
-        ${socials.length?`<div class="ink31-socials premium-socials">${socials.map(([name,url])=>{
-          const cls=platformClass(name);
-          return `<a class="ink31-social ${cls}" href="${esc(url)}" target="_blank" rel="noopener noreferrer"><span>${platformIcon(name)}</span><div><small>${esc(name)}</small><strong>${esc((row.display_name||name))}</strong></div></a>`;
-        }).join('')}</div>`:''}
-      </div>
+          <div class="streamer-card-main">
+            <p class="streamer-card-kicker"><span class="live-dot"></span>${live ? 'AO VIVO AGORA' : 'PERFIL OFICIAL'}</p>
+            <h2 class="streamer-card-name ${nameClass(row.display_name)}">${esc(row.display_name || 'STREAMER')}</h2>
+            <div class="streamer-card-meta"><span>${titleLine}</span><span>${gameLine}</span></div>
+            <p class="streamer-card-bio">${esc(cleanDescription || 'Streamer oficial do Team Lambreta.')}</p>
 
-      <aside class="ink31-live-box">
-        <div class="ink31-live-head"><div><span class="live-pulse"></span><strong>Área de live</strong></div><small>${socials.slice(0,2).map(([name])=>esc(name)).join(' • ')||esc(platformName(row))}</small></div>
-        <div class="ink31-preview">
-          ${photo?`<img src="${esc(photo)}" alt="Prévia do canal de ${esc(row.display_name)}">`:`<div class="premium-streamer-placeholder">🎥</div>`}
-          <div class="ink31-preview-overlay"><span>${esc(row.display_name||'STREAMER')}</span><strong>${live?'Está ao vivo agora':'Veja quando estiver ao vivo'}</strong></div>
+            <div class="streamer-card-facts">
+              ${row.game_nickname ? `<div class="streamer-fact"><small>NICK NO JOGO</small><strong>${esc(row.game_nickname)}</strong></div>` : ''}
+              ${row.main_game ? `<div class="streamer-fact"><small>JOGO PRINCIPAL</small><strong>${esc(row.main_game)}</strong></div>` : ''}
+            </div>
+          </div>
+
+          <aside class="streamer-card-socials">
+            <h3>REDES SOCIAIS</h3>
+            <div class="streamer-social-list">
+              ${socials.length ? socials.map((social) => `
+                <a class="streamer-social-chip ${platformClass(social.name)}" href="${esc(social.url)}" target="_blank" rel="noopener noreferrer">
+                  <span class="streamer-social-icon">${platformIcon(social.name)}</span>
+                  <strong>${esc(social.name)}</strong>
+                  <b>→</b>
+                </a>
+              `).join('') : '<div class="streamer-social-empty">Redes em atualização</div>'}
+            </div>
+          </aside>
         </div>
-        <div class="ink31-actions">
-          ${watch?`<a class="ink31-watch" href="${esc(watch)}" target="_blank" rel="noopener noreferrer">▶ ${live?'Assistir agora':'Abrir '+esc(platformName(row))}</a>`:''}
-          ${secondary?`<a class="ink31-open" href="${esc(secondary)}" target="_blank" rel="noopener noreferrer">Abrir outra rede</a>`:''}
+
+        <div class="streamer-card-bottom">
+          <section class="streamer-card-panel streamer-card-schedule">
+            <h3><span>◔</span>HORÁRIOS DE LIVE</h3>
+            <div class="streamer-schedule-list">${scheduleMarkup}</div>
+          </section>
+
+          <section class="streamer-card-panel streamer-card-notify">
+            <h3><span>◉</span>NÃO PERCA A LIVE!</h3>
+            <p>${esc(notifyText)}</p>
+            ${watchUrl ? `<a class="streamer-panel-button streamer-panel-button--notify" href="${esc(watchUrl)}" target="_blank" rel="noopener noreferrer">ATIVAR NOTIFICAÇÕES</a>` : '<span class="streamer-panel-button streamer-panel-button--ghost">EM BREVE</span>'}
+          </section>
+
+          <section class="streamer-card-panel streamer-card-live">
+            <div class="streamer-live-head">
+              <h3><span class="live-dot"></span>AO VIVO AGORA</h3>
+              <span>${esc(row.main_game || 'Fortnite')}</span>
+            </div>
+            <div class="streamer-live-preview">
+              ${previewPhoto}
+              <div class="streamer-live-overlay">
+                <span>${esc(row.display_name || 'STREAMER')}</span>
+                <strong>${live ? 'Acompanha a transmissão' : 'Veja quando estiver ao vivo'}</strong>
+              </div>
+            </div>
+            <div class="streamer-live-cta">
+              ${watchUrl ? `<a class="streamer-panel-button streamer-panel-button--watch" href="${esc(watchUrl)}" target="_blank" rel="noopener noreferrer">${watchLabel}</a>` : '<span class="streamer-panel-button streamer-panel-button--ghost">LIVE EM BREVE</span>'}
+            </div>
+          </section>
         </div>
-        <p>O player dentro do site será ativado quando concluirmos a integração oficial das lives.</p>
-      </aside>
-    </article>`;
+      </article>
+    `;
   }
 
-  function renderPage(){
-    const grid=$('streamersPublicGrid');
-    const pager=$('streamersPublicPager');
-    if(!grid) return;
-    const totalPages=Math.max(1,Math.ceil(allRows.length/PAGE_SIZE));
-    if(currentPage>totalPages) currentPage=totalPages;
-    const start=(currentPage-1)*PAGE_SIZE;
-    const pageRows=allRows.slice(start,start+PAGE_SIZE);
-    grid.innerHTML=pageRows.length
-      ? pageRows.map((row,index)=>card(row,start+index)).join('')
+  function getPageRows() {
+    const totalItems = allRows.length + 1;
+    const totalPages = Math.max(1, Math.ceil(totalItems / PAGE_SIZE));
+    if (currentPage > totalPages) currentPage = totalPages;
+
+    if (currentPage === 1) {
+      return {
+        rows: [staticInk, ...allRows.slice(0, PAGE_SIZE - 1)],
+        totalPages
+      };
+    }
+
+    const start = (PAGE_SIZE - 1) + ((currentPage - 2) * PAGE_SIZE);
+    return {
+      rows: allRows.slice(start, start + PAGE_SIZE),
+      totalPages
+    };
+  }
+
+  function renderPage() {
+    const grid = $('streamersPublicGrid');
+    const pager = $('streamersPublicPager');
+    if (!grid) return;
+
+    const { rows, totalPages } = getPageRows();
+    grid.innerHTML = rows.length
+      ? rows.map((row, index) => buildCard(row, (currentPage === 1 ? index : index + PAGE_SIZE))).join('')
       : '<article class="empty-card"><h3>Mais streamers em breve</h3><p>Os perfis adicionados pelo painel aparecerão aqui.</p></article>';
-    if(!pager) return;
-    if(totalPages<=1){pager.hidden=true;pager.innerHTML='';return;}
-    pager.hidden=false;
-    pager.innerHTML=Array.from({length:totalPages},(_,i)=>i+1).map(page=>`<button type="button" data-page="${page}" class="${page===currentPage?'is-active':''}">${page}</button>`).join('');
-    pager.querySelectorAll('[data-page]').forEach(button=>button.onclick=()=>{
-      currentPage=Number(button.dataset.page)||1;
-      renderPage();
-      document.querySelector('.team-category-block')?.scrollIntoView({behavior:'smooth',block:'start'});
+
+    if (!pager) return;
+    if (totalPages <= 1) {
+      pager.hidden = true;
+      pager.innerHTML = '';
+      return;
+    }
+
+    pager.hidden = false;
+    pager.innerHTML = Array.from({ length: totalPages }, (_, i) => i + 1)
+      .map((page) => `<button type="button" data-page="${page}" class="${page === currentPage ? 'is-active' : ''}">${page}</button>`)
+      .join('');
+
+    pager.querySelectorAll('[data-page]').forEach((button) => {
+      button.onclick = () => {
+        currentPage = Number(button.dataset.page) || 1;
+        renderPage();
+        document.querySelector('.streamers-showcase-page')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      };
     });
   }
 
-  async function load(){
-    const grid=$('streamersPublicGrid');
-    if(!grid) return;
-    const {data,error}=await sb.from('streamers').select('*').eq('is_published',true).eq('is_archived',false)
-      .order('is_featured',{ascending:false}).order('display_order',{ascending:true}).order('created_at',{ascending:true});
-    if(error){grid.innerHTML=`<article class="empty-card"><h3>Streamers</h3><p>${esc(error.message)}</p></article>`;return;}
-    allRows=data||[];
+  async function load() {
+    const grid = $('streamersPublicGrid');
+    if (!grid) return;
+
+    const { data, error } = await sb
+      .from('streamers')
+      .select('*')
+      .eq('is_published', true)
+      .eq('is_archived', false)
+      .order('is_featured', { ascending: false })
+      .order('display_order', { ascending: true })
+      .order('created_at', { ascending: true });
+
+    if (error) {
+      grid.innerHTML = `<article class="empty-card"><h3>Streamers</h3><p>${esc(error.message)}</p></article>`;
+      return;
+    }
+
+    allRows = data || [];
+    const count = $('streamersCount');
+    if (count) count.textContent = String(allRows.length + 1);
     renderPage();
-    const count=$('streamersCount');if(count)count.textContent=String(allRows.length+1);
   }
 
-  let refreshTimer=null;
-  const scheduleLoad=()=>{clearTimeout(refreshTimer);refreshTimer=setTimeout(load,120)};
-  function startCloudSync(){
-    sb.channel('public-streamers-cloud-v86').on('postgres_changes',{event:'*',schema:'public',table:'streamers'},scheduleLoad).subscribe();
-    setInterval(()=>{if(!document.hidden)load()},15000);
-    document.addEventListener('visibilitychange',()=>{if(!document.hidden)load()});
-    window.addEventListener('focus',load);
+  const scheduleLoad = () => {
+    clearTimeout(refreshTimer);
+    refreshTimer = setTimeout(load, 120);
+  };
+
+  function startCloudSync() {
+    sb.channel('public-streamers-cloud-v86')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'streamers' }, scheduleLoad)
+      .subscribe();
+
+    setInterval(() => {
+      if (!document.hidden) load();
+    }, 15000);
+
+    document.addEventListener('visibilitychange', () => {
+      if (!document.hidden) load();
+    });
+
+    window.addEventListener('focus', load);
   }
-  async function boot(){await load();startCloudSync()}
-  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot);else boot();
+
+  async function boot() {
+    await load();
+    startCloudSync();
+  }
+
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot);
+  else boot();
 })();
