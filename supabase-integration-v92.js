@@ -163,6 +163,31 @@
     return false;
   }
 
+  function renderAdminKey() {
+    document.querySelector('.tl-admin-key')?.remove();
+    if (!session || !['master','admin','moderator','staff'].includes(profile?.role)) return;
+    const role = roleClass(profile?.role);
+    const button = document.createElement('button');
+    button.type = 'button';
+    button.className = `tl-admin-key tl-admin-key-${role}`;
+    button.setAttribute('aria-label', `Painel administrativo — ${roleLabel(profile?.role)}`);
+    button.title = `Painel administrativo — ${roleLabel(profile?.role)}`;
+    button.innerHTML = `<svg viewBox="0 0 160 160" aria-hidden="true" focusable="false">
+      <g fill="none" stroke="currentColor" stroke-width="10" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="42" cy="43" r="24"/><circle cx="82" cy="40" r="30"/><circle cx="50" cy="82" r="29"/><circle cx="77" cy="71" r="22"/>
+        <path d="M92 85 137 130M111 104l12-12M121 116l13-13M130 126l10-10"/>
+        <path d="M137 130h-19v-13h-13v-13"/>
+      </g>
+    </svg>`;
+    button.addEventListener('click', async () => {
+      if (!session) { await loginGoogle(); return; }
+      const modal = ensurePwdModal();
+      modal.hidden = false;
+      setTimeout(() => $('tlAdminPassword')?.focus(), 30);
+    });
+    document.body.appendChild(button);
+  }
+
   function renderAuth() {
     const bar = $('supabaseAuthBar');
     if (bar) {
@@ -186,6 +211,7 @@
     document.body.dataset.userRole = roleClass(profile?.role);
     updateStatusUi(profile?.presence || 'online');
     configureModerationPanel();
+    renderAdminKey();
   }
 
   function updateStatusUi(value) {

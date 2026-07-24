@@ -1,13 +1,18 @@
 (()=>{'use strict';
 const LANGS={
-'pt-BR':{label:'🇧🇷 Português — Brasil'},
-'pt-PT':{label:'🇵🇹 Português — Portugal'},
-'pl':{label:'🇵🇱 Polski'},
-'es':{label:'🇪🇸 Español'},
-'fr':{label:'🇫🇷 Français'},
-'en-US':{label:'🇺🇸 English — US'},
-'en-GB':{label:'🇬🇧 English — UK'}
+'pt-BR':{label:'🇧🇷 Português — Brasil'},'pt-PT':{label:'🇵🇹 Português — Portugal'},
+'pl':{label:'🇵🇱 Polski'},'es':{label:'🇪🇸 Español'},'fr':{label:'🇫🇷 Français'},
+'en-US':{label:'🇺🇸 English — US'},'en-GB':{label:'🇬🇧 English — UK'}
 };
+const ZONES=[
+ {country:'Portugal',flag:'🇵🇹',cities:[['Lisboa','Europe/Lisbon'],['Porto','Europe/Lisbon'],['Madeira','Atlantic/Madeira'],['Açores','Atlantic/Azores']]},
+ {country:'Brasil',flag:'🇧🇷',cities:[['Brasília','America/Sao_Paulo'],['São Paulo','America/Sao_Paulo'],['Rio de Janeiro','America/Sao_Paulo'],['Manaus','America/Manaus'],['Cuiabá','America/Cuiaba'],['Rio Branco','America/Rio_Branco'],['Fernando de Noronha','America/Noronha']]},
+ {country:'Polónia',flag:'🇵🇱',cities:[['Varsóvia','Europe/Warsaw'],['Cracóvia','Europe/Warsaw'],['Wrocław','Europe/Warsaw'],['Gdańsk','Europe/Warsaw']]},
+ {country:'França',flag:'🇫🇷',cities:[['Paris','Europe/Paris'],['Lyon','Europe/Paris'],['Marselha','Europe/Paris'],['Toulouse','Europe/Paris']]},
+ {country:'Alemanha',flag:'🇩🇪',cities:[['Berlim','Europe/Berlin'],['Munique','Europe/Berlin'],['Frankfurt','Europe/Berlin'],['Hamburgo','Europe/Berlin']]},
+ {country:'Espanha',flag:'🇪🇸',cities:[['Madrid','Europe/Madrid'],['Barcelona','Europe/Madrid'],['Valência','Europe/Madrid'],['Ilhas Canárias','Atlantic/Canary']]},
+ {country:'Estados Unidos',flag:'🇺🇸',cities:[['Nova York','America/New_York'],['Chicago','America/Chicago'],['Denver','America/Denver'],['Los Angeles','America/Los_Angeles']]}
+];
 const map={
 'pl':{'Início':'Start','Sobre':'O nas','Team':'Zespół','Fórum':'Forum','Loja':'Sklep','Contato':'Kontakt','Entrar com Google':'Zaloguj przez Google','Guardar perfil':'Zapisz profil','Cancelar':'Anuluj','País':'Kraj','Idade':'Wiek','Jogo':'Gra','Modo':'Tryb','Tipo de armas':'Rodzaj broni','Estilo':'Styl','Escreve no lobby...':'Napisz na lobby...','Traduzir para':'Tłumacz na','Enviar original':'Wyślij oryginał','Sempre usar':'Zawsze używaj'},
 'es':{'Início':'Inicio','Sobre':'Sobre nosotros','Team':'Equipo','Fórum':'Foro','Loja':'Tienda','Contato':'Contacto','Entrar com Google':'Entrar con Google','Guardar perfil':'Guardar perfil','Cancelar':'Cancelar','País':'País','Idade':'Edad','Jogo':'Juego','Modo':'Modo','Tipo de armas':'Tipo de armas','Estilo':'Estilo','Escreve no lobby...':'Escribe en el lobby...','Traduzir para':'Traducir a','Enviar original':'Enviar original','Sempre usar':'Usar siempre'},
@@ -18,8 +23,24 @@ const map={
 };
 const detected=(()=>{const n=(navigator.language||'pt-PT').toLowerCase();if(n.startsWith('pl'))return'pl';if(n.startsWith('es'))return'es';if(n.startsWith('fr'))return'fr';if(n==='pt-br')return'pt-BR';if(n.startsWith('pt'))return'pt-PT';if(n==='en-us')return'en-US';if(n.startsWith('en'))return'en-GB';return'pt-PT'})();
 let lang=localStorage.getItem('tl_language')||detected;localStorage.setItem('tl_language',lang);
+let zone=(()=>{try{return JSON.parse(localStorage.getItem('tl_clock_zone'))}catch(_){return null}})()||{country:'Portugal',flag:'🇵🇹',city:'Lisboa',timeZone:'Europe/Lisbon'};
 const original=new WeakMap();
-function translateNode(node){if(node.nodeType!==Node.TEXT_NODE)return;const t=node.nodeValue.trim();if(!t)return;if(!original.has(node))original.set(node,node.nodeValue);const base=original.get(node);const raw=base.trim();const value=(map[lang]||{})[raw];node.nodeValue=value?base.replace(raw,value):base}
-function apply(){document.documentElement.lang=lang;const w=document.createTreeWalker(document.body,NodeFilter.SHOW_TEXT,{acceptNode:n=>/^(SCRIPT|STYLE|TEXTAREA|OPTION)$/.test(n.parentElement?.tagName)?NodeFilter.FILTER_REJECT:NodeFilter.FILTER_ACCEPT});let n;while(n=w.nextNode())translateNode(n);document.querySelectorAll('[placeholder]').forEach(el=>{el.dataset.tlOriginalPlaceholder||=(el.getAttribute('placeholder')||'');el.placeholder=(map[lang]||{})[el.dataset.tlOriginalPlaceholder]||el.dataset.tlOriginalPlaceholder});}
-function tools(){if(document.querySelector('.tl-global-tools'))return;const box=document.createElement('div');box.className='tl-global-tools';const sel=document.createElement('select');sel.className='tl-language-select';sel.setAttribute('aria-label','Idioma');Object.entries(LANGS).forEach(([v,o])=>{const x=document.createElement('option');x.value=v;x.textContent=o.label;sel.appendChild(x)});sel.value=lang;sel.onchange=()=>{lang=sel.value;localStorage.setItem('tl_language',lang);location.reload()};const clock=document.createElement('time');clock.className='tl-local-clock';const tick=()=>{clock.textContent=new Intl.DateTimeFormat(lang,{dateStyle:'short',timeStyle:'short'}).format(new Date())};tick();setInterval(tick,30000);box.append(sel,clock);document.body.appendChild(box);let lastY=Math.max(0,scrollY),ticking=false;const updateTools=()=>{const y=Math.max(0,scrollY);if(y>lastY&&y>90)box.classList.add('tl-tools-hidden');else if(y<lastY-3||y<36)box.classList.remove('tl-tools-hidden');lastY=y;ticking=false};addEventListener('scroll',()=>{if(!ticking){requestAnimationFrame(updateTools);ticking=true}},{passive:true})}
-function boot(){tools();apply();new MutationObserver(()=>apply()).observe(document.body,{childList:true,subtree:true})}if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot);else boot();window.TLI18n={getLanguage:()=>lang};})();
+function translateNode(node){if(node.nodeType!==Node.TEXT_NODE)return;const t=node.nodeValue.trim();if(!t)return;if(!original.has(node))original.set(node,node.nodeValue);const base=original.get(node),raw=base.trim(),value=(map[lang]||{})[raw];node.nodeValue=value?base.replace(raw,value):base}
+function apply(){document.documentElement.lang=lang;const w=document.createTreeWalker(document.body,NodeFilter.SHOW_TEXT,{acceptNode:n=>/^(SCRIPT|STYLE|TEXTAREA|OPTION)$/.test(n.parentElement?.tagName)?NodeFilter.FILTER_REJECT:NodeFilter.FILTER_ACCEPT});let n;while(n=w.nextNode())translateNode(n);document.querySelectorAll('[placeholder]').forEach(el=>{el.dataset.tlOriginalPlaceholder||=(el.getAttribute('placeholder')||'');el.placeholder=(map[lang]||{})[el.dataset.tlOriginalPlaceholder]||el.dataset.tlOriginalPlaceholder})}
+function zoneMenu(host,clock,label){
+ const menu=document.createElement('div');menu.className='tl-zone-menu';menu.hidden=true;
+ menu.innerHTML=`<div class="tl-zone-menu-head"><strong>Escolher horário</strong><button type="button" aria-label="Fechar">×</button></div><button class="tl-zone-device" type="button">⌖ Horário do dispositivo</button><div class="tl-zone-groups"></div>`;
+ const groups=menu.querySelector('.tl-zone-groups');
+ ZONES.forEach(group=>{const details=document.createElement('details');details.className='tl-zone-country';if(group.country===zone.country)details.open=true;details.innerHTML=`<summary>${group.flag} ${group.country}<span>›</span></summary><div></div>`;const list=details.querySelector('div');group.cities.forEach(([city,timeZone])=>{const b=document.createElement('button');b.type='button';b.textContent=city;if(zone.city===city&&zone.country===group.country)b.classList.add('is-active');b.onclick=()=>{zone={country:group.country,flag:group.flag,city,timeZone};localStorage.setItem('tl_clock_zone',JSON.stringify(zone));label.textContent=`${zone.flag} ${zone.country} — ${zone.city}`;menu.hidden=true;tickClock(clock)};list.appendChild(b)});groups.appendChild(details)});
+ menu.querySelector('.tl-zone-menu-head button').onclick=()=>menu.hidden=true;
+ menu.querySelector('.tl-zone-device').onclick=()=>{zone={country:'Dispositivo',flag:'⌖',city:'Local',timeZone:null};localStorage.setItem('tl_clock_zone',JSON.stringify(zone));label.textContent='⌖ Horário do dispositivo';menu.hidden=true;tickClock(clock)};
+ host.appendChild(menu);return menu;
+}
+function tickClock(clock){const opts={dateStyle:'short',timeStyle:'short'};if(zone.timeZone)opts.timeZone=zone.timeZone;try{clock.textContent=new Intl.DateTimeFormat(lang,opts).format(new Date())}catch(_){delete opts.timeZone;clock.textContent=new Intl.DateTimeFormat(lang,opts).format(new Date())}}
+function developmentBadge(){const page=(location.pathname.split('/').pop()||'').toLowerCase();if(!['eventos.html','conquistas.html','midia.html','loja.html'].includes(page))return;const main=document.querySelector('main');if(!main||main.querySelector('.tl-development-note'))return;const note=document.createElement('aside');note.className='tl-development-note';note.innerHTML='<span>EM DESENVOLVIMENTO</span><strong>por ElectricMagnetis &amp; Scho</strong><small>Estamos construindo esta área uma etapa de cada vez.</small>';main.prepend(note)}
+function tools(){if(document.querySelector('.tl-global-tools'))return;const box=document.createElement('div');box.className='tl-global-tools';
+ const sel=document.createElement('select');sel.className='tl-language-select';sel.setAttribute('aria-label','Idioma');Object.entries(LANGS).forEach(([v,o])=>{const x=document.createElement('option');x.value=v;x.textContent=o.label;sel.appendChild(x)});sel.value=lang;sel.onchange=()=>{lang=sel.value;localStorage.setItem('tl_language',lang);location.reload()};
+ const zoneWrap=document.createElement('div');zoneWrap.className='tl-zone-wrap';const zoneButton=document.createElement('button');zoneButton.type='button';zoneButton.className='tl-zone-button';const zoneLabel=document.createElement('span');zoneLabel.textContent=zone.timeZone?`${zone.flag} ${zone.country} — ${zone.city}`:'⌖ Horário do dispositivo';zoneButton.append(zoneLabel);const clock=document.createElement('time');clock.className='tl-local-clock';tickClock(clock);setInterval(()=>tickClock(clock),30000);const menu=zoneMenu(zoneWrap,clock,zoneLabel);zoneButton.onclick=()=>menu.hidden=!menu.hidden;zoneWrap.appendChild(zoneButton);
+ box.append(sel,zoneWrap,clock);document.body.appendChild(box);
+ document.addEventListener('click',e=>{if(!zoneWrap.contains(e.target))menu.hidden=true});let lastY=Math.max(0,scrollY),ticking=false;const updateTools=()=>{const y=Math.max(0,scrollY);if(y>lastY&&y>90)box.classList.add('tl-tools-hidden');else if(y<lastY-3||y<36)box.classList.remove('tl-tools-hidden');lastY=y;ticking=false};addEventListener('scroll',()=>{if(!ticking){requestAnimationFrame(updateTools);ticking=true}},{passive:true})}
+function boot(){tools();developmentBadge();apply();new MutationObserver(()=>apply()).observe(document.body,{childList:true,subtree:true})}if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot);else boot();window.TLI18n={getLanguage:()=>lang,getZone:()=>zone};})();
