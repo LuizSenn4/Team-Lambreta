@@ -77,6 +77,19 @@
       <div id="forumLoginNotice" class="forum-login-notice">Entra com o Google para criar um tópico.</div>
       <form id="userTopicFormV90" class="user-topic-form" hidden>
         <div id="forumAuthorIdentity" class="forum-author-identity"></div>
+        <label class="forum-field-label" for="topicCategory">Sala</label>
+        <select id="topicCategory" class="forum-category-select">
+          <option value="geral">Geral</option>
+          <option value="suporte">Suporte</option>
+          <option value="loja">Loja</option>
+          <option value="sugestoes">Sugestões</option>
+          <option value="duvidas">Dúvidas</option>
+          <option value="ajuda">Ajuda</option>
+          <option value="candidaturas">Candidaturas — privada</option>
+          <option value="eventos">Eventos e Torneios</option>
+          <option value="fortnite">Fortnite</option>
+          <option value="denuncias">Denúncias — privada</option>
+        </select>
         <input id="topicTitle" type="text" placeholder="Título do tópico" maxlength="60"><small class="field-counter" data-for="topicTitle"></small>
         <textarea id="topicDescription" placeholder="Explica o tópico..." maxlength="280"></textarea><small class="field-counter full" data-for="topicDescription"></small>
         <button type="submit">Enviar para aprovação</button>
@@ -86,11 +99,13 @@
     </aside>
 
     <section class="forum-topic-panel">
-      <div class="forum-tabs">
-        <span class="active">Aprovados</span>
-        <span>Fixados</span>
-        <span>Fechados</span>
+      <div id="forumTabs" class="forum-tabs">
+        <button class="active" type="button" data-forum-filter="approved">Aprovados</button>
+        <button type="button" data-forum-filter="fixed">Fixados</button>
+        <button type="button" data-forum-filter="closed">Fechados</button>
+        <button type="button" data-forum-filter="pending" data-moderator-only hidden>Pendentes</button>
       </div>
+      <div id="forumRooms" class="forum-rooms" aria-label="Salas do fórum"></div>
       <div id="forumGrid" class="forum-list"></div>
     </section>
   </section>
