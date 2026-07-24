@@ -198,7 +198,7 @@
           <section class="streamer-card-panel streamer-card-notify">
             <h3><span>◉</span>NÃO PERCA A LIVE!</h3>
             <p>${esc(notifyText)}</p>
-            ${watchUrl ? `<a class="streamer-panel-button streamer-panel-button--notify" href="${esc(watchUrl)}" target="_blank" rel="noopener noreferrer">ATIVAR NOTIFICAÇÕES</a>` : '<span class="streamer-panel-button streamer-panel-button--ghost">EM BREVE</span>'}
+            <button class="streamer-panel-button streamer-panel-button--notify" type="button" data-streamer-notify data-streamer-name="${esc(row.display_name || 'Streamer')}">ATIVAR NOTIFICAÇÕES</button>
           </section>
 
           <section class="streamer-card-panel streamer-card-live">
