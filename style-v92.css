@@ -6751,3 +6751,87 @@ html, body { width:100%; max-width:100%; overflow-x:hidden; }
     font-size:18px!important;
   }
 }
+
+/* ============================================================
+   V92.18 — Streamers premium idênticos + país compacto + centro
+   ============================================================ */
+
+/* País compacto: apenas bandeira e sigla. */
+.team-country-value{
+  display:inline-flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  gap:7px!important;
+  min-width:58px;
+  width:max-content;
+  margin-inline:auto;
+  white-space:nowrap;
+}
+.team-country-value>span{font-size:1.18em!important;line-height:1}
+.team-country-value>b{font-size:.95em;letter-spacing:.7px;color:var(--text)}
+.team-inline-facts>div:has(.team-country-value){text-align:center}
+
+/* Seletor do topo reduzido para bandeira + sigla. */
+.tl-zone-button{
+  width:auto!important;
+  min-width:82px!important;
+  max-width:96px!important;
+  justify-content:center!important;
+  padding-inline:12px!important;
+}
+.tl-zone-button>span{white-space:nowrap!important;text-align:center!important}
+
+/* Todos os streamers seguem o mesmo card premium do primeiro. */
+.team-profile-grid{gap:28px!important}
+.premium-streamer-card{
+  --streamer-border:#73ff18;
+  border-color:color-mix(in srgb,var(--streamer-border) 48%,transparent)!important;
+  box-shadow:0 24px 70px rgba(0,0,0,.48),0 0 34px color-mix(in srgb,var(--streamer-border) 10%,transparent)!important;
+}
+.premium-streamer-card.tone-red{--streamer-border:#ff1736}
+.premium-streamer-card.tone-green{--streamer-border:#73ff18}
+.premium-streamer-card .ink31-status,
+.premium-streamer-card .ink31-preview{
+  border-color:color-mix(in srgb,var(--streamer-border) 58%,transparent)!important;
+}
+.premium-streamer-card .ink31-status{
+  color:var(--streamer-border)!important;
+  box-shadow:0 0 22px color-mix(in srgb,var(--streamer-border) 22%,transparent)!important;
+}
+.premium-streamer-card .ink31-status i,
+.premium-streamer-card .live-pulse{
+  background:var(--streamer-border)!important;
+  box-shadow:0 0 13px var(--streamer-border)!important;
+}
+.premium-streamer-card .ink31-profile-copy h2,
+.premium-streamer-card .ink31-profile-copy h2 span{
+  color:#f3eee8!important;
+  text-shadow:0 3px 0 rgba(255,255,255,.08)!important;
+}
+.premium-streamer-card .tag{
+  color:#73ff18!important;
+  text-shadow:0 0 8px rgba(115,255,24,.78),0 0 18px rgba(115,255,24,.22)!important;
+}
+.premium-streamer-card .premium-streamer-placeholder{
+  width:100%;height:100%;min-height:560px;display:grid;place-items:center;
+  background:radial-gradient(circle at 50% 30%,rgba(217,164,65,.14),transparent 40%),#070707;
+  font-size:64px;
+}
+.premium-streamer-card .ink31-preview .premium-streamer-placeholder{min-height:0;aspect-ratio:16/9}
+.premium-streamer-card .ink31-actions:has(.ink31-watch:only-child){grid-template-columns:1fr}
+
+/* Recalibra o centro real depois de compactar o seletor. */
+@media(min-width:901px){
+  .tl-header-v88 .tl-main-nav{
+    left:50%!important;
+    transform:translate(-50%,-50%)!important;
+    max-width:min(56vw,760px)!important;
+  }
+  .site-header .tl-global-tools{gap:9px!important}
+}
+@media(min-width:901px) and (max-width:1280px){
+  .tl-header-v88 .tl-main-nav{max-width:62vw!important}
+}
+@media(max-width:720px){
+  .premium-streamer-card .premium-streamer-placeholder{min-height:430px}
+}

@@ -22,17 +22,17 @@
     return `<span>${esc(label.charAt(0).toUpperCase())}</span>`;
   }
 
-  function countryFlag(country){
+  function countryInfo(country){
     const value=String(country||'').trim().toLowerCase();
-    const flags={
-      'brasil':'🇧🇷','brazil':'🇧🇷','portugal':'🇵🇹','espanha':'🇪🇸','spain':'🇪🇸',
-      'polónia':'🇵🇱','polonia':'🇵🇱','poland':'🇵🇱','frança':'🇫🇷','franca':'🇫🇷','france':'🇫🇷',
-      'alemanha':'🇩🇪','germany':'🇩🇪','itália':'🇮🇹','italia':'🇮🇹','italy':'🇮🇹',
-      'países baixos':'🇳🇱','paises baixos':'🇳🇱','holanda':'🇳🇱','netherlands':'🇳🇱',
-      'reino unido':'🇬🇧','united kingdom':'🇬🇧','inglaterra':'🇬🇧','england':'🇬🇧',
-      'estados unidos':'🇺🇸','usa':'🇺🇸','united states':'🇺🇸'
+    const countries={
+      'brasil':['🇧🇷','BR'],'brazil':['🇧🇷','BR'],'portugal':['🇵🇹','PT'],
+      'espanha':['🇪🇸','ES'],'spain':['🇪🇸','ES'],'polónia':['🇵🇱','PL'],'polonia':['🇵🇱','PL'],'poland':['🇵🇱','PL'],
+      'frança':['🇫🇷','FR'],'franca':['🇫🇷','FR'],'france':['🇫🇷','FR'],'alemanha':['🇩🇪','DE'],'germany':['🇩🇪','DE'],
+      'itália':['🇮🇹','IT'],'italia':['🇮🇹','IT'],'italy':['🇮🇹','IT'],'países baixos':['🇳🇱','NL'],'paises baixos':['🇳🇱','NL'],
+      'holanda':['🇳🇱','NL'],'netherlands':['🇳🇱','NL'],'reino unido':['🇬🇧','GB'],'united kingdom':['🇬🇧','GB'],
+      'inglaterra':['🇬🇧','GB'],'england':['🇬🇧','GB'],'estados unidos':['🇺🇸','US'],'usa':['🇺🇸','US'],'united states':['🇺🇸','US']
     };
-    return flags[value]||'🌍';
+    return countries[value]||['🌍','--'];
   }
 
   function facts(row){
@@ -62,7 +62,7 @@
     const nickLength=Math.min(16,Array.from(nickname).length);
     const factMarkup=facts(row).map(([label,value])=>{
       const shown=label==='País'
-        ? `<span class="team-country-value"><span aria-hidden="true">${countryFlag(value)}</span>${esc(value)}</span>`
+        ? (()=>{const [flag,code]=countryInfo(value);return `<span class="team-country-value"><span aria-hidden="true">${flag}</span><b>${code}</b></span>`})()
         : esc(value);
       return `<div><small>${esc(label)}</small><strong>${shown}</strong></div>`;
     }).join('');

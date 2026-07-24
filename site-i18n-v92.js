@@ -1,8 +1,8 @@
 (()=>{'use strict';
 const LANGS={
-'pt-BR':{label:'🇧🇷 Português — Brasil'},'pt-PT':{label:'🇵🇹 Português — Portugal'},
-'pl':{label:'🇵🇱 Polski'},'es':{label:'🇪🇸 Español'},'fr':{label:'🇫🇷 Français'},
-'en-US':{label:'🇺🇸 English — US'},'en-GB':{label:'🇬🇧 English — UK'}
+'pt-BR':{label:'🇧🇷 Português — Brasil',compact:'🇧🇷 BR'},'pt-PT':{label:'🇵🇹 Português — Portugal',compact:'🇵🇹 PT'},
+'pl':{label:'🇵🇱 Polski',compact:'🇵🇱 PL'},'es':{label:'🇪🇸 Español',compact:'🇪🇸 ES'},'fr':{label:'🇫🇷 Français',compact:'🇫🇷 FR'},
+'en-US':{label:'🇺🇸 English — US',compact:'🇺🇸 US'},'en-GB':{label:'🇬🇧 English — UK',compact:'🇬🇧 GB'}
 };
 const ZONES=[
  {country:'Portugal',flag:'🇵🇹',cities:[['Lisboa','Europe/Lisbon'],['Porto','Europe/Lisbon'],['Madeira','Atlantic/Madeira'],['Açores','Atlantic/Azores']]},
@@ -49,7 +49,7 @@ function zoneMenu(host,clock,label){
 function tickClock(clock){const opts={dateStyle:'short',timeStyle:'short'};if(zone.timeZone)opts.timeZone=zone.timeZone;try{clock.textContent=new Intl.DateTimeFormat(lang,opts).format(new Date())}catch(_){delete opts.timeZone;clock.textContent=new Intl.DateTimeFormat(lang,opts).format(new Date())}}
 function developmentBadge(){const page=(location.pathname.split('/').pop()||'').toLowerCase();if(!['eventos.html','conquistas.html','midia.html','loja.html'].includes(page))return;const main=document.querySelector('main');if(!main||main.querySelector('.tl-development-note'))return;const note=document.createElement('aside');note.className='tl-development-note';note.innerHTML='<span>EM DESENVOLVIMENTO</span><strong>por ElectricMagnetis &amp; Scho</strong><small>Estamos construindo esta área uma etapa de cada vez.</small>';main.prepend(note)}
 function tools(){if(document.querySelector('.tl-global-tools'))return;const box=document.createElement('div');box.className='tl-global-tools';
- const zoneWrap=document.createElement('div');zoneWrap.className='tl-zone-wrap';const zoneButton=document.createElement('button');zoneButton.type='button';zoneButton.className='tl-zone-button';const zoneLabel=document.createElement('span');zoneLabel.textContent=LANGS[lang]?.label||LANGS['pt-PT'].label;zoneButton.append(zoneLabel);const clock=document.createElement('time');clock.className='tl-local-clock';tickClock(clock);setInterval(()=>tickClock(clock),30000);const menu=zoneMenu(zoneWrap,clock,zoneLabel);zoneButton.onclick=()=>menu.hidden=!menu.hidden;zoneWrap.appendChild(zoneButton);
+ const zoneWrap=document.createElement('div');zoneWrap.className='tl-zone-wrap';const zoneButton=document.createElement('button');zoneButton.type='button';zoneButton.className='tl-zone-button';const zoneLabel=document.createElement('span');zoneLabel.textContent=LANGS[lang]?.compact||LANGS['pt-PT'].compact;zoneButton.append(zoneLabel);const clock=document.createElement('time');clock.className='tl-local-clock';tickClock(clock);setInterval(()=>tickClock(clock),30000);const menu=zoneMenu(zoneWrap,clock,zoneLabel);zoneButton.onclick=()=>menu.hidden=!menu.hidden;zoneWrap.appendChild(zoneButton);
  box.append(zoneWrap,clock);const header=document.querySelector('.site-header.tl-header-v88,.site-header');(header||document.body).appendChild(box);const existingKey=document.querySelector('.tl-admin-key');if(existingKey)box.appendChild(existingKey);
  document.addEventListener('click',e=>{if(!zoneWrap.contains(e.target))menu.hidden=true});let lastY=Math.max(0,scrollY),ticking=false;const updateTools=()=>{const y=Math.max(0,scrollY);if(y>lastY&&y>90)box.classList.add('tl-tools-hidden');else if(y<lastY-3||y<36)box.classList.remove('tl-tools-hidden');lastY=y;ticking=false};addEventListener('scroll',()=>{if(!ticking){requestAnimationFrame(updateTools);ticking=true}},{passive:true})}
 function boot(){tools();developmentBadge();apply();new MutationObserver(()=>apply()).observe(document.body,{childList:true,subtree:true})}if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot);else boot();window.TLI18n={getLanguage:()=>lang,getZone:()=>zone};})();
