@@ -29,16 +29,21 @@ function translateNode(node){if(node.nodeType!==Node.TEXT_NODE)return;const t=no
 function apply(){document.documentElement.lang=lang;const w=document.createTreeWalker(document.body,NodeFilter.SHOW_TEXT,{acceptNode:n=>/^(SCRIPT|STYLE|TEXTAREA|OPTION)$/.test(n.parentElement?.tagName)?NodeFilter.FILTER_REJECT:NodeFilter.FILTER_ACCEPT});let n;while(n=w.nextNode())translateNode(n);document.querySelectorAll('[placeholder]').forEach(el=>{el.dataset.tlOriginalPlaceholder||=(el.getAttribute('placeholder')||'');el.placeholder=(map[lang]||{})[el.dataset.tlOriginalPlaceholder]||el.dataset.tlOriginalPlaceholder})}
 function zoneMenu(host,clock,label){
  const menu=document.createElement('div');menu.className='tl-zone-menu';menu.hidden=true;
- menu.innerHTML=`<div class="tl-zone-menu-head"><strong>Idioma e horário</strong><button type="button" aria-label="Fechar">×</button></div><label class="tl-zone-language"><span>Idioma do site</span><select aria-label="Idioma do site"></select></label><div class="tl-zone-current"><small>Fuso selecionado</small><strong></strong></div><button class="tl-zone-device" type="button">⌖ Usar o fuso do dispositivo</button><div class="tl-zone-groups"></div>`;
+ menu.innerHTML=`<div class="tl-zone-menu-head"><strong>Idioma e horário</strong><button type="button" aria-label="Fechar">×</button></div><label class="tl-zone-language"><span>Idioma do site</span><select aria-label="Idioma do site"></select></label><div class="tl-zone-section-title">Fuso horário</div><button class="tl-zone-device" type="button">⌖ Usar o fuso do dispositivo</button><div class="tl-zone-groups"></div>`;
  const languageSelect=menu.querySelector('.tl-zone-language select');
  Object.entries(LANGS).forEach(([value,item])=>{const option=document.createElement('option');option.value=value;option.textContent=item.label;languageSelect.appendChild(option)});
  languageSelect.value=lang;
  languageSelect.onchange=()=>{lang=languageSelect.value;localStorage.setItem('tl_language',lang);location.reload()};
- menu.querySelector('.tl-zone-current strong').textContent=zone.timeZone?`${zone.flag} ${zone.country} — ${zone.city}`:'⌖ Fuso do dispositivo';
+ const deviceButton=menu.querySelector('.tl-zone-device');
+ const refreshSelection=()=>{
+   deviceButton.classList.toggle('is-active',!zone.timeZone);
+   menu.querySelectorAll('.tl-zone-country button').forEach(button=>button.classList.toggle('is-active',Boolean(zone.timeZone)&&button.dataset.country===zone.country&&button.dataset.city===zone.city));
+ };
  const groups=menu.querySelector('.tl-zone-groups');
- ZONES.forEach(group=>{const details=document.createElement('details');details.className='tl-zone-country';if(group.country===zone.country)details.open=true;details.innerHTML=`<summary>${group.flag} ${group.country}<span>›</span></summary><div></div>`;const list=details.querySelector('div');group.cities.forEach(([city,timeZone])=>{const b=document.createElement('button');b.type='button';b.textContent=city;if(zone.city===city&&zone.country===group.country)b.classList.add('is-active');b.onclick=()=>{zone={country:group.country,flag:group.flag,city,timeZone};localStorage.setItem('tl_clock_zone',JSON.stringify(zone));menu.querySelector('.tl-zone-current strong').textContent=`${zone.flag} ${zone.country} — ${zone.city}`;menu.hidden=true;tickClock(clock)};list.appendChild(b)});groups.appendChild(details)});
+ ZONES.forEach(group=>{const details=document.createElement('details');details.className='tl-zone-country';if(group.country===zone.country)details.open=true;details.innerHTML=`<summary>${group.flag} ${group.country}<span>›</span></summary><div></div>`;const list=details.querySelector('div');group.cities.forEach(([city,timeZone])=>{const b=document.createElement('button');b.type='button';b.textContent=city;b.dataset.country=group.country;b.dataset.city=city;b.onclick=()=>{zone={country:group.country,flag:group.flag,city,timeZone};localStorage.setItem('tl_clock_zone',JSON.stringify(zone));refreshSelection();menu.hidden=true;tickClock(clock)};list.appendChild(b)});groups.appendChild(details)});
  menu.querySelector('.tl-zone-menu-head button').onclick=()=>menu.hidden=true;
- menu.querySelector('.tl-zone-device').onclick=()=>{zone={country:'Dispositivo',flag:'⌖',city:'Local',timeZone:null};localStorage.setItem('tl_clock_zone',JSON.stringify(zone));menu.querySelector('.tl-zone-current strong').textContent='⌖ Fuso do dispositivo';menu.hidden=true;tickClock(clock)};
+ deviceButton.onclick=()=>{zone={country:'Dispositivo',flag:'⌖',city:'Local',timeZone:null};localStorage.setItem('tl_clock_zone',JSON.stringify(zone));refreshSelection();menu.hidden=true;tickClock(clock)};
+ refreshSelection();
  host.appendChild(menu);return menu;
 }
 function tickClock(clock){const opts={dateStyle:'short',timeStyle:'short'};if(zone.timeZone)opts.timeZone=zone.timeZone;try{clock.textContent=new Intl.DateTimeFormat(lang,opts).format(new Date())}catch(_){delete opts.timeZone;clock.textContent=new Intl.DateTimeFormat(lang,opts).format(new Date())}}
