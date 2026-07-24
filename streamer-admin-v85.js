@@ -8,6 +8,17 @@
   let currentSession = null;
   let currentProfile = null;
   let currentRows = [];
+  let scheduleRows = [];
+
+  const WEEK_DAYS = [
+    ['monday','Segunda-feira'],['tuesday','Terça-feira'],['wednesday','Quarta-feira'],
+    ['thursday','Quinta-feira'],['friday','Sexta-feira'],['saturday','Sábado'],['sunday','Domingo']
+  ];
+  const TIMEZONES = [
+    ['Europe/Lisbon','Portugal — Lisboa/Porto'],['Atlantic/Madeira','Portugal — Madeira'],['Atlantic/Azores','Portugal — Açores'],
+    ['America/Sao_Paulo','Brasil — Brasília/São Paulo'],['America/Manaus','Brasil — Manaus'],
+    ['Europe/Warsaw','Polónia'],['Europe/Paris','França'],['Europe/Berlin','Alemanha'],['Europe/Madrid','Espanha']
+  ];
 
   const fields = {
     display_name:'streamerDisplayName',
@@ -38,6 +49,86 @@
   const esc = value => String(value ?? '').replace(/[&<>"']/g, ch => ({
     '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
   })[ch]);
+
+  const timeOptions = () => {
+    const values=[];
+    for(let h=0;h<24;h++) for(let m=0;m<60;m+=10) values.push(`${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}`);
+    return values;
+  };
+
+  function normalizeScheduleRow(row={}) {
+    return {
+      id: row.id || crypto.randomUUID(),
+      type: row.type === 'date' ? 'date' : 'weekly',
+      start_day: row.start_day || 'tuesday',
+      end_day: row.end_day || row.start_day || 'tuesday',
+      date: row.date || '',
+      start_time: row.start_time || '16:00',
+      end_time: row.end_time || '18:00',
+      is_off: Boolean(row.is_off),
+      timezone: row.timezone || 'Europe/Lisbon'
+    };
+  }
+
+  function renderScheduleRows() {
+    const list=$('streamerScheduleList');
+    if(!list) return;
+    if(!scheduleRows.length){
+      list.innerHTML='<div class="streamer-schedule-admin-empty">Nenhum horário configurado.</div>';
+      return;
+    }
+    const dayOptions=WEEK_DAYS.map(([value,label])=>`<option value="${value}">${label}</option>`).join('');
+    const zoneOptions=TIMEZONES.map(([value,label])=>`<option value="${value}">${label}</option>`).join('');
+    const times=timeOptions().map(value=>`<option value="${value}">${value}</option>`).join('');
+    list.innerHTML=scheduleRows.map((row,index)=>`
+      <article class="streamer-schedule-admin-row" data-schedule-id="${row.id}">
+        <div class="streamer-schedule-row-head"><strong>Horário ${index+1}</strong><button type="button" data-remove-schedule="${row.id}">Remover</button></div>
+        <div class="streamer-schedule-row-grid">
+          <label>Tipo<select data-schedule-field="type"><option value="weekly">Semanal</option><option value="date">Data específica</option></select></label>
+          <label class="schedule-weekly-field">De<select data-schedule-field="start_day">${dayOptions}</select></label>
+          <label class="schedule-weekly-field">Até<select data-schedule-field="end_day">${dayOptions}</select></label>
+          <label class="schedule-date-field">Data<input type="date" data-schedule-field="date"></label>
+          <label>Início<select data-schedule-field="start_time">${times}</select></label>
+          <label>Fim<select data-schedule-field="end_time">${times}</select></label>
+          <label>Fuso<select data-schedule-field="timezone">${zoneOptions}</select></label>
+          <label class="streamer-schedule-off"><input type="checkbox" data-schedule-field="is_off"> Folga</label>
+        </div>
+      </article>
+    `).join('');
+
+    list.querySelectorAll('.streamer-schedule-admin-row').forEach(card=>{
+      const row=scheduleRows.find(item=>item.id===card.dataset.scheduleId);
+      if(!row) return;
+      card.querySelectorAll('[data-schedule-field]').forEach(el=>{
+        const key=el.dataset.scheduleField;
+        if(el.type==='checkbox') el.checked=Boolean(row[key]); else el.value=row[key] ?? '';
+        el.addEventListener('change',()=>{
+          row[key]=el.type==='checkbox'?el.checked:el.value;
+          if(key==='type') renderScheduleRows();
+          if(key==='is_off') renderScheduleRows();
+        });
+      });
+      card.classList.toggle('is-date',row.type==='date');
+      card.classList.toggle('is-off',row.is_off);
+    });
+    list.querySelectorAll('[data-remove-schedule]').forEach(btn=>btn.onclick=()=>{
+      scheduleRows=scheduleRows.filter(row=>row.id!==btn.dataset.removeSchedule);
+      renderScheduleRows();
+    });
+  }
+
+  function setScheduleRows(value) {
+    const rows=Array.isArray(value)?value:[];
+    scheduleRows=rows.map(normalizeScheduleRow);
+    renderScheduleRows();
+  }
+
+  function collectScheduleRows() {
+    return scheduleRows.map(({id,...row})=>row).filter(row=>{
+      if(row.type==='date' && !row.date) return false;
+      return true;
+    });
+  }
 
   function feedback(message, error=false) {
     const el = $('streamerAdminFeedback');
@@ -83,6 +174,7 @@
     $('streamerAllowChat').checked = true;
     $('streamerPublished').checked = true;
     clearStreamerPhoto();
+    setScheduleRows([]);
     $('streamerEditorMode').textContent = 'NOVO STREAMER';
     $('streamerEditorTitle').textContent = 'Adicionar streamer';
     feedback('');
@@ -104,6 +196,7 @@
         const el=$(id); if(el) el.checked = Boolean(row[key]);
       });
       setStreamerPhotoPreview(row.photo_url || '');
+      setScheduleRows(row.schedule_json || []);
       feedback('');
     }
     $('streamerEditor').scrollIntoView({behavior:'smooth',block:'start'});
@@ -148,6 +241,7 @@
       row[key] = key==='display_order' ? Number(value || 100) : (value || null);
     });
     Object.entries(boolFields).forEach(([key,id]) => row[key]=Boolean($(id)?.checked));
+    row.schedule_json = collectScheduleRows();
     row.auto_live = false;
     return row;
   }
@@ -292,6 +386,11 @@
   $('clearStreamerPhotoBtn')?.addEventListener('click',()=>{
     clearStreamerPhoto();
     feedback('Foto removida do formulário. Salve para aplicar.', false);
+  });
+
+  $('addStreamerScheduleBtn')?.addEventListener('click',()=>{
+    scheduleRows.push(normalizeScheduleRow());
+    renderScheduleRows();
   });
 
   let adminRefreshTimer = null;

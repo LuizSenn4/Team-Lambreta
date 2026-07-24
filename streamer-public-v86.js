@@ -83,6 +83,19 @@
     ].filter((item) => item.url);
   }
 
+  const DAY_LABELS={monday:'SEGUNDA',tuesday:'TERÇA',wednesday:'QUARTA',thursday:'QUINTA',friday:'SEXTA',saturday:'SÁBADO',sunday:'DOMINGO'};
+
+  function structuredScheduleMarkup(rows) {
+    if(!Array.isArray(rows) || !rows.length) return '';
+    return rows.map(row=>{
+      const label=row.type==='date' && row.date
+        ? new Intl.DateTimeFormat('pt-PT',{day:'2-digit',month:'2-digit',year:'numeric'}).format(new Date(`${row.date}T12:00:00`))
+        : (row.start_day===row.end_day ? DAY_LABELS[row.start_day] : `${DAY_LABELS[row.start_day]||''} A ${DAY_LABELS[row.end_day]||''}`);
+      const value=row.is_off?'Folga':`${row.start_time||'00:00'} — ${row.end_time||'00:00'}`;
+      return `<div class="streamer-schedule-row"><span>${esc(label)}</span><strong>${esc(value)}</strong></div>`;
+    }).join('');
+  }
+
   function parseSchedule(description, fallbackText = '') {
     const source = String(description || '').trim();
     const match = source.match(/hor[aá]rio(?:s)?\s+de\s+live(?:s)?\s*:\s*([\s\S]*)/i);
@@ -143,7 +156,9 @@
     const live = Boolean(row.force_live || row.manual_live || row.auto_live);
     const watchUrl = row.live_url || row.tiktok_url || row.twitch_url || row.youtube_url || row.instagram_url || '';
     const watchLabel = live ? 'ASSISTIR AGORA' : `ABRIR ${platformName(row).toUpperCase()}`;
-    const { cleanDescription, scheduleMarkup } = parseSchedule(row.description, row.schedule_text);
+    const parsedSchedule = parseSchedule(row.description, row.schedule_text);
+    const cleanDescription = parsedSchedule.cleanDescription;
+    const scheduleMarkup = structuredScheduleMarkup(row.schedule_json) || parsedSchedule.scheduleMarkup;
     const titleLine = row.title ? esc(row.title) : 'Streamer Oficial';
     const gameLine = row.main_game ? esc(row.main_game) : 'Fortnite';
     const mainPhoto = row.photo_url

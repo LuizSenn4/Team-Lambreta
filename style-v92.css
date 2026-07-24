@@ -7453,3 +7453,34 @@ html, body { width:100%; max-width:100%; overflow-x:hidden; }
     justify-content:center!important;
   }
 }
+
+
+/* V92.26 — identidade tipográfica unificada */
+.streamers-showcase-hero h1,
+.team-esports-hero h1,
+.page-hero-center h1,
+.forum-hero-v38 h1,
+.members-hero h1,
+.events-hero h1,
+.achievements-hero h1,
+.media-hero h1,
+.store-hero h1,
+.contact-hero h1,
+.help-hero h1,
+.hero-v22 h1,
+.team-category-head h2,
+.streamer-card-name,
+.team-inline-copy h2,
+.ink31-profile-copy h2{
+  font-family:"Road Rage",Impact,sans-serif!important;
+  font-weight:400!important;
+  letter-spacing:1px!important;
+}
+.streamers-showcase-tag,
+.page-title-badge,
+.forum-title-badge,
+.team-category-head .tag,
+.streamer-card-kicker{
+  font-family:"Road Rage",Impact,sans-serif!important;
+  letter-spacing:3px!important;
+}

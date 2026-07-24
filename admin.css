@@ -459,3 +459,24 @@ html.admin-pending body { visibility: hidden; }
     aspect-ratio:4/3;
   }
 }
+
+
+/* V92.26 — horários de live editáveis */
+.streamer-schedule-admin-fieldset{overflow:hidden}
+.streamer-schedule-admin-list{display:grid;gap:14px}
+.streamer-schedule-admin-empty{padding:18px;border:1px dashed rgba(217,164,65,.22);border-radius:14px;color:#9f9585;text-align:center}
+.streamer-schedule-admin-row{padding:16px;border:1px solid rgba(217,164,65,.2);border-radius:16px;background:rgba(255,255,255,.018)}
+.streamer-schedule-row-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:14px}
+.streamer-schedule-row-head strong{color:#f2df9c}
+.streamer-schedule-row-head button{padding:8px 11px;border:1px solid rgba(255,23,54,.35);border-radius:10px;background:rgba(255,23,54,.06);color:#ff6a7d}
+.streamer-schedule-row-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;align-items:end}
+.streamer-schedule-row-grid label{display:grid;gap:6px;color:#c6b896;font-size:12px;font-weight:800}
+.streamer-schedule-row-grid select,.streamer-schedule-row-grid input[type=date]{width:100%;min-height:42px;padding:8px 10px;border:1px solid rgba(217,164,65,.2);border-radius:11px;background:#090a09;color:#f3eee2}
+.streamer-schedule-off{display:flex!important;align-items:center!important;grid-template-columns:auto 1fr!important;min-height:42px;padding:0 12px;border:1px solid rgba(217,164,65,.16);border-radius:11px;background:rgba(255,255,255,.018)}
+.streamer-schedule-admin-row:not(.is-date) .schedule-date-field{display:none}
+.streamer-schedule-admin-row.is-date .schedule-weekly-field{display:none}
+.streamer-schedule-admin-row.is-off [data-schedule-field=start_time],.streamer-schedule-admin-row.is-off [data-schedule-field=end_time]{opacity:.38;pointer-events:none}
+.streamer-schedule-admin-actions{margin-top:14px}
+.streamer-schedule-admin-actions button{padding:10px 14px;border:1px solid rgba(115,255,24,.3);border-radius:12px;background:rgba(115,255,24,.05);color:#73ff18;font-weight:900}
+@media(max-width:900px){.streamer-schedule-row-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:560px){.streamer-schedule-row-grid{grid-template-columns:1fr}.streamer-schedule-admin-row{padding:12px}}
