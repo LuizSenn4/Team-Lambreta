@@ -9,6 +9,24 @@
     all:'Todas',geral:'Geral',suporte:'Suporte',loja:'Loja',sugestoes:'Sugestões',duvidas:'Dúvidas',ajuda:'Ajuda',
     candidaturas:'Candidaturas',eventos:'Eventos e Torneios',fortnite:'Fortnite',denuncias:'Denúncias'
   };
+  const ROOM_INFO={
+    geral:{icon:'💬',description:'Conversas gerais da comunidade Team Lambreta.'},
+    sugestoes:{icon:'💡',description:'Ideias para melhorar o site, o Team e a comunidade.'},
+    duvidas:{icon:'❓',description:'Perguntas gerais e respostas da comunidade.'},
+    ajuda:{icon:'🤝',description:'Pedidos de orientação e ajuda entre membros.'},
+    suporte:{icon:'🛠️',description:'Problemas técnicos, acesso, conta e funcionamento do site.'},
+    loja:{icon:'🛒',description:'Pedidos, pagamentos, entregas, trocas e tamanhos.'},
+    candidaturas:{icon:'🔒',description:'Candidaturas privadas para Team, Staff, Moderação e Streamers.'},
+    fortnite:{icon:'🎮',description:'Partidas, estratégias, equipas e novidades de Fortnite.'},
+    eventos:{icon:'🏆',description:'Torneios, inscrições, regras, resultados e premiações.'},
+    denuncias:{icon:'🔐',description:'Denúncias privadas, visíveis apenas ao autor e à moderação.'}
+  };
+  const ROOM_GROUPS=[
+    {title:'Comunidade',rooms:['geral','sugestoes','duvidas','ajuda']},
+    {title:'Suporte',rooms:['suporte','loja']},
+    {title:'Team Lambreta',rooms:['candidaturas','fortnite','eventos']},
+    {title:'Área privada',rooms:['denuncias']}
+  ];
   const PRIVATE_ROOMS=new Set(['candidaturas','denuncias']);
   const MOD_ROLES=new Set(['master','admin','moderator','staff']);
   const ROLE_LABEL={master:'DEV',admin:'ADMIN',moderator:'MODERADOR',staff:'STAFF',streamer:'STREAMER',vip1:'VIP I',vip2:'VIP II',vip3:'VIP III',member:'MEMBRO'};
@@ -16,11 +34,13 @@
   const $=id=>document.getElementById(id);
   const form=$('userTopicFormV90'),notice=$('forumLoginNotice'),identity=$('forumAuthorIdentity'),feedback=$('topicFeedback');
   let session=null,profile=null,filter='approved',room='all';
+  const profileMap=new Map();
 
   const esc=value=>String(value??'').replace(/[&<>"']/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
   const now=()=>new Date().toISOString();
   const roleOf=p=>p?.role||'member';
-  const isBoss=()=>/^(ink31|oklm_31_ink)$/i.test(String(profile?.game_nickname||profile?.full_name||''));
+  const isBossProfile=p=>/^(ink31|oklm_31_ink)$/i.test(String(p?.game_nickname||p?.full_name||''));
+  const isBoss=()=>isBossProfile(profile);
   const canModerate=()=>MOD_ROLES.has(roleOf(profile))||isBoss();
   const currentName=()=>profile?.game_nickname||profile?.full_name||session?.user?.email||'Utilizador';
   const uid=()=>session?.user?.id||'';
@@ -46,33 +66,88 @@
     if(!feedback)return;feedback.textContent=message;feedback.classList.toggle('error',error);feedback.classList.add('is-visible');
     setTimeout(()=>feedback.classList.remove('is-visible'),3500);
   }
+  function resolvedIdentity(userId,fallbackRole='member',fallbackName='Equipa'){
+    const found=userId?profileMap.get(userId):null;
+    const boss=isBossProfile(found);
+    return {
+      name:found?.game_nickname||found?.full_name||fallbackName,
+      role:boss?'boss':(found?.role||fallbackRole||'member'),
+      label:boss?'BOSS':roleLabel(found?.role||fallbackRole||'member'),
+      avatar:found?.avatar_url||''
+    };
+  }
+  function roleBadge(identityObj){
+    return `<span class="forum-role role-${roleClass(identityObj.role)}">${esc(identityObj.label)}</span>`;
+  }
   function updateAuth(){
     const logged=!!session;
     if(form)form.hidden=!logged;
     if(notice){notice.hidden=logged;notice.textContent='Entra com o Google para criar um tópico.'}
     if(identity&&logged){
-      const role=roleOf(profile);identity.innerHTML=`${profile?.avatar_url?`<img src="${esc(profile.avatar_url)}" alt="">`:''}<div><small>PUBLICAR COMO</small><strong>${esc(currentName())}</strong><span class="forum-role role-${roleClass(role)}">${esc(isBoss()?'BOSS':roleLabel(role))}</span></div>`;
+      const role=isBoss()?'boss':roleOf(profile);
+      const label=isBoss()?'BOSS':roleLabel(roleOf(profile));
+      identity.innerHTML=`${profile?.avatar_url?`<img src="${esc(profile.avatar_url)}" alt="">`:''}<div><small>PUBLICAR COMO</small><strong class="forum-user-name role-text-${roleClass(role)}">${esc(currentName())}</strong><span class="forum-role role-${roleClass(role)}">${esc(label)}</span></div>`;
     }
     document.querySelectorAll('[data-moderator-only]').forEach(el=>el.hidden=!canModerate());
     renderRooms();renderForumBoard();
   }
+  async function loadProfilesForForum(){
+    try{
+      const {data}=await sb.from('profiles').select('id,full_name,game_nickname,avatar_url,role');
+      profileMap.clear();(data||[]).forEach(item=>profileMap.set(item.id,item));
+    }catch(error){console.warn('Forum profiles:',error)}
+  }
   async function loadUser(){
     const result=await sb.auth.getSession();session=result.data.session;profile=null;
+    await loadProfilesForForum();
     if(session){
-      const res=await sb.from('profiles').select('full_name,game_nickname,avatar_url,role').eq('id',session.user.id).maybeSingle();profile=res.data||null;
+      const res=await sb.from('profiles').select('id,full_name,game_nickname,avatar_url,role').eq('id',session.user.id).maybeSingle();profile=res.data||null;
+      if(profile?.id) profileMap.set(profile.id,profile);
     }
     updateAuth();
   }
 
+  function topicPool(){
+    const data=getData()||{};
+    const approved=(data.forum||[]).map((t,i)=>normalizeTopic(t,i,false));
+    const pending=(data.pendingForum||[]).map((t,i)=>normalizeTopic(t,i,true));
+    return [...approved,...(canModerate()?pending:[])].filter(canSeeTopic);
+  }
+  function roomStats(key){
+    const items=topicPool().filter(t=>t.category===key);
+    const sorted=[...items].sort((a,b)=>String(b.createdAt).localeCompare(String(a.createdAt)));
+    const last=sorted[0]||null;
+    const who=last?resolvedIdentity(last.userId,last.authorRole,last.author):null;
+    return {count:items.length,last,who};
+  }
   function renderRooms(){
     const host=$('forumRooms');if(!host)return;
-    host.innerHTML=Object.entries(ROOMS).map(([key,label])=>`<button type="button" data-room="${key}" class="${room===key?'is-active':''}">${esc(label)}</button>`).join('');
-    host.querySelectorAll('[data-room]').forEach(btn=>btn.onclick=()=>{room=btn.dataset.room;renderRooms();renderForumBoard()});
+    host.innerHTML=ROOM_GROUPS.map(group=>`
+      <section class="forum-folder-group">
+        <header class="forum-folder-group-head"><span></span><h3>${esc(group.title)}</h3><span></span></header>
+        <div class="forum-folder-list">
+          ${group.rooms.map(key=>{
+            const meta=ROOM_INFO[key],stats=roomStats(key),active=room===key;
+            return `<button type="button" data-room="${key}" class="forum-folder ${active?'is-active':''}">
+              <span class="forum-folder-icon">${meta.icon}</span>
+              <span class="forum-folder-copy"><strong>${esc(ROOMS[key])}</strong><small>${esc(meta.description)}</small></span>
+              <span class="forum-folder-stats"><b>${stats.count}</b><small>${stats.count===1?'tópico':'tópicos'}</small></span>
+              <span class="forum-folder-last">${stats.last?`<small>Último tópico</small><strong>${esc(stats.last.title||'Sem título')}</strong><em class="role-text-${roleClass(stats.who.role)}">${esc(stats.who.name)}</em>`:'<small>Nenhum tópico ainda</small>'}</span>
+              <span class="forum-folder-arrow">›</span>
+            </button>`;
+          }).join('')}
+        </div>
+      </section>`).join('');
+    host.querySelectorAll('[data-room]').forEach(btn=>btn.onclick=()=>{
+      room=btn.dataset.room;renderRooms();renderForumBoard();
+      $('forumGrid')?.scrollIntoView({behavior:'smooth',block:'start'});
+    });
   }
   function replyMarkup(reply,t){
     if(reply.private&&!canModerate()&&t.userId!==uid())return'';
     const label=reply.private?'PRIVADA':'RESPOSTA';
-    return `<div class="forum-reply ${reply.private?'is-private':''}"><div class="forum-reply-head"><strong>${esc(reply.author||'Equipa')}</strong><span class="forum-role role-${roleClass(reply.authorRole)}">${esc(reply.authorLabel||roleLabel(reply.authorRole))}</span><small>${label}</small></div><p>${esc(reply.text||'')}</p></div>`;
+    const who=resolvedIdentity(reply.userId,reply.authorRole,reply.author||'Equipa');
+    return `<div class="forum-reply role-frame-${roleClass(who.role)}"><div class="forum-reply-head">${who.avatar?`<img src="${esc(who.avatar)}" alt="">`:''}<strong class="role-text-${roleClass(who.role)}">${esc(who.name)}</strong>${roleBadge(who)}<small>${label}</small></div><p>${esc(reply.text||'')}</p></div>`;
   }
   function controls(t,pending){
     if(!canModerate())return'';
@@ -80,10 +155,10 @@
     return `<div class="forum-mod-actions"><button data-action="reply">Responder</button><button data-action="private-reply">Privado</button><button data-action="edit">Editar</button><button data-action="move">Mover</button><button data-action="fix">${t.fixed?'Desfixar':'Fixar'}</button><button data-action="close">${t.status==='Fechado'?'Reabrir':'Fechar'}</button><button data-action="remove" class="danger">Remover</button></div>`;
   }
   function card(t,pending=false){
-    const role=t.authorRole||'member';
-    return `<article class="forum-topic ${t.fixed?'is-fixed':''} ${t.private?'is-private':''}" data-topic-id="${esc(t.id)}" data-pending="${pending?'1':'0'}">
+    const who=resolvedIdentity(t.userId,t.authorRole,t.author||'Equipa');
+    return `<article class="forum-topic role-frame-${roleClass(who.role)} ${t.fixed?'is-fixed':''} ${t.private?'is-private':''}" data-topic-id="${esc(t.id)}" data-pending="${pending?'1':'0'}">
       <div class="topic-meta"><span class="${pending?'pending':t.status==='Fechado'?'closed':'open'}">${pending?'Pendente':esc(t.status)}</span>${t.fixed?'<span class="fixed">FIXADO</span>':''}<span class="forum-room-pill">${esc(ROOMS[t.category]||'Geral')}</span>${t.private?'<span class="private-pill">PRIVADO</span>':''}</div>
-      <div class="forum-author-line"><strong>${esc(t.author||'Equipa')}</strong><span class="forum-role role-${roleClass(role)}">${esc(t.authorLabel||roleLabel(role))}</span></div>
+      <div class="forum-author-line">${who.avatar?`<img src="${esc(who.avatar)}" alt="">`:''}<strong class="role-text-${roleClass(who.role)}">${esc(who.name)}</strong>${roleBadge(who)}</div>
       <h3>${esc(t.title||'Sem título')}</h3><p>${esc(t.description||'Sem descrição')}</p>
       ${Array.isArray(t.replies)&&t.replies.length?`<div class="forum-replies">${t.replies.map(r=>replyMarkup(r,t)).join('')}</div>`:''}
       ${controls(t,pending)}
@@ -96,12 +171,13 @@
     if(filter==='fixed')items=items.filter(x=>x.t.fixed);else if(filter==='closed')items=items.filter(x=>x.t.status==='Fechado');else if(filter==='approved')items=items.filter(x=>x.t.status!=='Fechado');
     items=items.filter(x=>canSeeTopic(x.t)&&(room==='all'||x.t.category===room));
     items.sort((a,b)=>Number(b.t.fixed)-Number(a.t.fixed)||String(b.t.createdAt).localeCompare(String(a.t.createdAt)));
-    grid.innerHTML=items.length?items.map(x=>card(x.t,x.pending)).join(''):'<article class="empty-card safe-card"><h3>Nenhum tópico nesta sala</h3><p>Escolhe outra sala ou cria o primeiro tópico.</p></article>';
+    const roomTitle=room==='all'?'Todos os tópicos':ROOMS[room];
+    grid.innerHTML=`<div class="forum-current-room"><span>${room==='all'?'📚':ROOM_INFO[room]?.icon||'📁'}</span><div><small>SALA ATUAL</small><strong>${esc(roomTitle)}</strong></div></div>`+(items.length?items.map(x=>card(x.t,x.pending)).join(''):'<article class="empty-card safe-card"><h3>Nenhum tópico nesta sala</h3><p>Escolhe outra sala ou cria o primeiro tópico.</p></article>');
     bindActions(grid,data);
   }
   function askText(label,current=''){const value=window.prompt(label,current);return value===null?null:value.trim()}
   function chooseRoom(current){const list=Object.entries(ROOMS).filter(([k])=>k!=='all').map(([k,v])=>`${k} = ${v}`).join('\n');const value=window.prompt(`Mover para qual sala?\n${list}`,current||'geral');return value&&ROOMS[value]?value:null}
-  function addReply(t,privateReply){const text=askText(privateReply?'Resposta privada para o autor:':'Resposta pública:');if(!text)return false;t.replies.push({id:makeId(),text,private:privateReply,author:currentName(),authorRole:roleOf(profile),authorLabel:isBoss()?'BOSS':roleLabel(roleOf(profile)),createdAt:now()});return true}
+  function addReply(t,privateReply){const text=askText(privateReply?'Resposta privada para o autor:':'Resposta pública:');if(!text)return false;t.replies.push({id:makeId(),text,private:privateReply,author:currentName(),authorRole:roleOf(profile),authorLabel:isBoss()?'BOSS':roleLabel(roleOf(profile)),userId:uid(),createdAt:now()});return true}
   function bindActions(grid,data){
     grid.querySelectorAll('[data-action]').forEach(btn=>btn.onclick=()=>{
       const cardEl=btn.closest('[data-topic-id]'),id=cardEl.dataset.topicId,pending=cardEl.dataset.pending==='1';const list=pending?data.pendingForum:data.forum;const index=list.findIndex(t=>t.id===id);if(index<0)return;const t=list[index],action=btn.dataset.action;
@@ -122,10 +198,10 @@
     if(!title||!description)return showFeedback('Preenche o título e a descrição antes de enviar.',true);
     const data=getData();if(!data||!Array.isArray(data.pendingForum))return showFeedback('Não foi possível preparar o tópico agora.',true);
     data.pendingForum.push({id:makeId(),title,description,category,private:PRIVATE_ROOMS.has(category),author:currentName().slice(0,40),authorRole:roleOf(profile),authorLabel:isBoss()?'BOSS':roleLabel(roleOf(profile)),userId:uid(),status:'Aberto',fixed:false,approved:false,replies:[],createdAt:now()});
-    saveTeamData(data);$('topicTitle').value='';$('topicDescription').value='';showFeedback('Tópico enviado para aprovação.',false);renderForumBoard();
+    saveTeamData(data);$('topicTitle').value='';$('topicDescription').value='';showFeedback('Tópico enviado para aprovação.',false);renderRooms();renderForumBoard();
   });
 
   $('forumTabs')?.querySelectorAll('[data-forum-filter]').forEach(btn=>btn.onclick=()=>{filter=btn.dataset.forumFilter;$('forumTabs').querySelectorAll('button').forEach(x=>x.classList.toggle('active',x===btn));renderForumBoard()});
-  window.addEventListener('storage',renderForumBoard);
+  window.addEventListener('storage',()=>{renderRooms();renderForumBoard()});
   sb.auth.onAuthStateChange(loadUser);loadUser();
 })();
