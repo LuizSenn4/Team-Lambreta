@@ -7484,3 +7484,175 @@ html, body { width:100%; max-width:100%; overflow-x:hidden; }
   font-family:"Road Rage",Impact,sans-serif!important;
   letter-spacing:3px!important;
 }
+
+/* V92.27 — Fórum simétrico, enquadrado e sem estouro */
+.forum-page-shell{
+  width:min(1460px,100%);
+  margin:0 auto;
+  overflow-x:hidden;
+}
+
+.forum-page .forum-hero-v38{
+  width:100%;
+  max-width:100%;
+  box-sizing:border-box;
+}
+
+.forum-page .forum-board{
+  width:min(1220px,calc(100% - 32px));
+  max-width:100%;
+  margin:0 auto;
+  padding:clamp(28px,4vw,54px) 0;
+  grid-template-columns:minmax(300px,360px) minmax(0,1fr);
+  align-items:start;
+  gap:26px;
+  box-sizing:border-box;
+}
+
+.forum-page .forum-create-panel,
+.forum-page .forum-topic-panel{
+  width:100%;
+  max-width:100%;
+  min-width:0;
+  box-sizing:border-box;
+}
+
+.forum-page .forum-create-panel{
+  position:sticky;
+  top:104px;
+  padding:24px;
+}
+
+.forum-page .user-topic-form{
+  display:grid;
+  grid-template-columns:minmax(0,1fr);
+  gap:12px;
+  width:100%;
+  max-width:100%;
+  min-width:0;
+}
+
+.forum-page .user-topic-form > *,
+.forum-page .forum-author-identity,
+.forum-page .user-topic-form input,
+.forum-page .user-topic-form textarea,
+.forum-page .user-topic-form button{
+  grid-column:1!important;
+  width:100%;
+  max-width:100%;
+  min-width:0;
+  box-sizing:border-box;
+}
+
+.forum-page .forum-author-identity{
+  display:grid;
+  grid-template-columns:42px minmax(0,1fr);
+  align-items:center;
+  gap:10px;
+  overflow:hidden;
+}
+
+.forum-page .forum-author-identity > div,
+.forum-page .forum-author-identity strong,
+.forum-page .forum-author-identity small{
+  min-width:0;
+  max-width:100%;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+}
+
+.forum-page .user-topic-form input,
+.forum-page .user-topic-form textarea{
+  display:block;
+}
+
+.forum-page .user-topic-form textarea{
+  min-height:132px;
+  resize:vertical;
+}
+
+.forum-page .forum-topic-panel{
+  min-height:464px;
+  padding:24px;
+}
+
+.forum-page .forum-tabs{
+  justify-content:flex-start;
+  align-items:center;
+}
+
+.forum-page .forum-list,
+.forum-page .forum-list > *,
+.forum-page .forum-topic,
+.forum-page .empty-card{
+  width:100%;
+  max-width:100%;
+  min-width:0;
+  box-sizing:border-box;
+}
+
+.forum-page .forum-topic-panel .empty-card{
+  min-height:180px;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  padding:32px 38px;
+}
+
+@media(max-width:900px){
+  .forum-page .forum-board{
+    width:min(100%,calc(100% - 20px));
+    grid-template-columns:1fr;
+    gap:18px;
+    padding:22px 0 38px;
+  }
+
+  .forum-page .forum-create-panel{
+    position:static;
+    top:auto;
+  }
+
+  .forum-page .forum-create-panel,
+  .forum-page .forum-topic-panel{
+    padding:18px;
+    border-radius:20px;
+  }
+
+  .forum-page .forum-topic-panel{
+    min-height:360px;
+  }
+
+  .forum-page .forum-tabs{
+    justify-content:center;
+  }
+}
+
+@media(max-width:560px){
+  .forum-page .forum-board{
+    width:min(100%,calc(100% - 14px));
+  }
+
+  .forum-page .forum-create-panel,
+  .forum-page .forum-topic-panel{
+    padding:15px;
+  }
+
+  .forum-page .forum-tabs{
+    display:grid;
+    grid-template-columns:repeat(3,minmax(0,1fr));
+    gap:7px;
+  }
+
+  .forum-page .forum-tabs span{
+    min-width:0;
+    padding:9px 7px;
+    text-align:center;
+    white-space:nowrap;
+  }
+
+  .forum-page .forum-topic-panel .empty-card{
+    min-height:150px;
+    padding:24px 18px;
+  }
+}
