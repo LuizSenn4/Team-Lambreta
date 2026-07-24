@@ -7337,3 +7337,119 @@ html, body { width:100%; max-width:100%; overflow-x:hidden; }
   .streamer-card-facts{grid-template-columns:1fr}
   .streamer-social-chip{min-height:66px}
 }
+
+/* V92.24 — correção isolada sobre a base estável V92.20 */
+.streamers-page .streamer-unified-card .streamer-card-live{
+  display:flex!important;
+  flex-direction:column!important;
+  align-items:stretch!important;
+  justify-content:flex-start!important;
+  gap:0!important;
+  min-width:0!important;
+  width:auto!important;
+  margin:0!important;
+  padding:28px 26px 30px!important;
+  border-radius:0!important;
+  background:transparent!important;
+  text-decoration:none!important;
+}
+.streamers-page .streamer-unified-card .streamer-live-head{
+  display:flex!important;
+  align-items:center!important;
+  justify-content:space-between!important;
+  flex-wrap:wrap!important;
+  gap:12px!important;
+  width:100%!important;
+  margin:0 0 16px!important;
+}
+.streamers-page .streamer-unified-card .streamer-live-head h3{
+  display:flex!important;
+  align-items:center!important;
+  gap:10px!important;
+  min-width:0!important;
+  margin:0!important;
+}
+.streamers-page .streamer-unified-card .streamer-live-head>span{
+  margin-left:auto!important;
+  white-space:nowrap!important;
+}
+.streamers-page .streamer-unified-card .streamer-live-preview{
+  width:100%!important;
+  max-width:100%!important;
+  min-height:190px!important;
+  aspect-ratio:16/7.3!important;
+  display:block!important;
+  margin:0!important;
+}
+.streamers-page .streamer-unified-card .streamer-live-cta{
+  width:100%!important;
+  display:flex!important;
+  align-items:center!important;
+  justify-content:flex-start!important;
+  flex-wrap:wrap!important;
+  gap:12px!important;
+  margin-top:18px!important;
+}
+.streamers-page .streamer-unified-card .streamer-live-cta .streamer-panel-button{
+  width:auto!important;
+  max-width:100%!important;
+  flex:0 1 auto!important;
+}
+
+/* O perfil Google continua visível, mas não cobre a área de live. */
+.streamers-page .sb-auth-bar{
+  left:14px!important;
+  right:auto!important;
+  bottom:14px!important;
+  max-width:min(360px,calc(100vw - 28px))!important;
+}
+
+/* Blindagem contra scroll horizontal no telemóvel. */
+.streamers-page,
+.streamers-page #siteContent,
+.streamers-page .streamers-showcase-page,
+.streamers-page .streamers-showcase-list,
+.streamers-page .streamer-unified-grid,
+.streamers-page .streamer-unified-card{
+  max-width:100%!important;
+  min-width:0!important;
+}
+.streamers-page{overflow-x:hidden!important}
+
+@media(max-width:860px){
+  .streamers-page .streamer-unified-card .streamer-card-live{
+    padding:22px 18px 24px!important;
+  }
+  .streamers-page .streamer-unified-card .streamer-live-head{
+    align-items:flex-start!important;
+    flex-direction:column!important;
+    gap:8px!important;
+  }
+  .streamers-page .streamer-unified-card .streamer-live-head>span{
+    margin-left:0!important;
+    white-space:normal!important;
+  }
+  .streamers-page .streamer-unified-card .streamer-live-preview{
+    min-height:0!important;
+    aspect-ratio:16/9!important;
+  }
+  .streamers-page .streamer-unified-card .streamer-live-overlay{
+    padding:16px!important;
+  }
+  .streamers-page .streamer-unified-card .streamer-live-overlay strong{
+    font-size:clamp(21px,7vw,32px)!important;
+  }
+  .streamers-page .streamer-unified-card .streamer-live-cta{
+    justify-content:stretch!important;
+  }
+  .streamers-page .streamer-unified-card .streamer-live-cta .streamer-panel-button{
+    width:100%!important;
+  }
+  .streamers-page .sb-auth-bar{
+    left:10px!important;
+    right:10px!important;
+    bottom:10px!important;
+    max-width:none!important;
+    justify-content:center!important;
+  }
+}
