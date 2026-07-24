@@ -217,12 +217,25 @@
 
           <fieldset>
             <legend>Foto</legend>
-            <div class="streamer-photo-row">
-              <img id="streamerPhotoPreview" alt="Pré-visualização" hidden>
-              <div>
-                <label>Colar link da foto<input id="streamerPhotoUrl" type="url" placeholder="https://..."></label>
-                <label>Ou enviar do PC/telemóvel<input id="streamerPhotoFile" type="file" accept="image/*"></label>
-                <small>Se enviar um ficheiro, ele será guardado no Supabase Storage.</small>
+            <div class="streamer-photo-box">
+              <div class="streamer-photo-preview-shell">
+                <img id="streamerPhotoPreview" alt="Pré-visualização" hidden>
+                <div id="streamerPhotoEmpty" class="streamer-photo-empty">Sem foto</div>
+              </div>
+
+              <div class="streamer-photo-controls">
+                <label>Colar link da foto
+                  <div class="streamer-photo-url-row">
+                    <input id="streamerPhotoUrl" type="url" placeholder="https://...">
+                    <button id="clearStreamerPhotoBtn" type="button">Limpar</button>
+                  </div>
+                </label>
+
+                <label>Ou enviar do PC/telemóvel
+                  <input id="streamerPhotoFile" type="file" accept="image/*">
+                </label>
+
+                <small>Use link ou ficheiro. Ao escolher um, o outro será limpo automaticamente.</small>
               </div>
             </div>
           </fieldset>

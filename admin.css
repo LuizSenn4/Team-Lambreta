@@ -333,3 +333,129 @@ html.admin-pending body { visibility: hidden; }
   .team-avatar-stage{width:min(220px,72vw)}
   .team-avatar-controls{width:100%}
 }
+
+
+/* V92.25 — foto do streamer no Admin, isolada e sem conflitos */
+.streamer-photo-box{
+  display:grid;
+  grid-template-columns:150px minmax(0,1fr);
+  gap:18px;
+  align-items:center;
+  padding:14px;
+  border:1px solid rgba(217,164,65,.22);
+  border-radius:18px;
+  background:linear-gradient(145deg,rgba(115,255,24,.025),rgba(217,164,65,.025)),rgba(0,0,0,.18);
+}
+
+.streamer-photo-preview-shell{
+  position:relative;
+  width:150px;
+  height:150px;
+  overflow:hidden;
+  border:1px solid rgba(217,164,65,.28);
+  border-radius:18px;
+  background:#070707;
+  box-shadow:0 0 0 1px rgba(115,255,24,.1),0 0 22px rgba(0,0,0,.38);
+}
+
+.streamer-photo-preview-shell #streamerPhotoPreview{
+  width:100%!important;
+  height:100%!important;
+  max-width:none!important;
+  max-height:none!important;
+  min-width:0!important;
+  min-height:0!important;
+  display:block;
+  object-fit:contain!important;
+  object-position:center!important;
+  border:0!important;
+  border-radius:0!important;
+  background:#070707!important;
+  box-shadow:none!important;
+}
+
+.streamer-photo-preview-shell #streamerPhotoPreview[hidden]{display:none!important}
+
+.streamer-photo-empty{
+  position:absolute;
+  inset:0;
+  display:grid;
+  place-items:center;
+  color:#8f8575;
+  font-size:12px;
+  letter-spacing:1px;
+  text-transform:uppercase;
+}
+
+.streamer-photo-empty[hidden]{display:none!important}
+
+.streamer-photo-controls{
+  min-width:0;
+  display:grid;
+  gap:12px;
+}
+
+.streamer-photo-url-row{
+  display:grid;
+  grid-template-columns:minmax(0,1fr) auto;
+  gap:8px;
+  align-items:center;
+}
+
+.streamer-photo-url-row input{
+  min-width:0;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+}
+
+.streamer-photo-url-row button{
+  min-height:42px;
+  padding:0 14px;
+  border:1px solid rgba(255,82,103,.32);
+  border-radius:10px;
+  background:rgba(255,82,103,.06);
+  color:#ff8292;
+  cursor:pointer;
+  font-weight:850;
+}
+
+.streamer-photo-controls small{
+  color:#8f8575;
+  line-height:1.45;
+}
+
+@media(max-width:700px){
+  .streamer-photo-box{
+    grid-template-columns:104px minmax(0,1fr);
+    gap:12px;
+    padding:12px;
+    align-items:start;
+  }
+
+  .streamer-photo-preview-shell{
+    width:104px;
+    height:124px;
+    border-radius:14px;
+  }
+
+  .streamer-photo-url-row{
+    grid-template-columns:1fr;
+  }
+
+  .streamer-photo-url-row button{
+    width:100%;
+  }
+}
+
+@media(max-width:480px){
+  .streamer-photo-box{
+    grid-template-columns:1fr;
+  }
+
+  .streamer-photo-preview-shell{
+    width:100%;
+    height:auto;
+    aspect-ratio:4/3;
+  }
+}

@@ -46,6 +46,26 @@
     el.style.color = error ? '#ff5267' : '#73ff18';
   }
 
+  function setStreamerPhotoPreview(src='') {
+    const img = $('streamerPhotoPreview');
+    const empty = $('streamerPhotoEmpty');
+    const hasPhoto = Boolean(String(src || '').trim());
+    if (img) {
+      if (hasPhoto) img.src = src;
+      else img.removeAttribute('src');
+      img.hidden = !hasPhoto;
+    }
+    if (empty) empty.hidden = hasPhoto;
+  }
+
+  function clearStreamerPhoto() {
+    const urlInput = $('streamerPhotoUrl');
+    const fileInput = $('streamerPhotoFile');
+    if (urlInput) urlInput.value = '';
+    if (fileInput) fileInput.value = '';
+    setStreamerPhotoPreview('');
+  }
+
   async function ensureAdmin() {
     const { data } = await sb.auth.getSession();
     currentSession = data.session;
@@ -62,9 +82,7 @@
     $('streamerAllowEmbed').checked = true;
     $('streamerAllowChat').checked = true;
     $('streamerPublished').checked = true;
-    $('streamerPhotoPreview').hidden = true;
-    $('streamerPhotoPreview').removeAttribute('src');
-    $('streamerPhotoFile').value = '';
+    clearStreamerPhoto();
     $('streamerEditorMode').textContent = 'NOVO STREAMER';
     $('streamerEditorTitle').textContent = 'Adicionar streamer';
     feedback('');
@@ -85,8 +103,7 @@
       Object.entries(boolFields).forEach(([key,id]) => {
         const el=$(id); if(el) el.checked = Boolean(row[key]);
       });
-      const img=$('streamerPhotoPreview');
-      if(row.photo_url){ img.src=row.photo_url; img.hidden=false; } else { img.hidden=true; }
+      setStreamerPhotoPreview(row.photo_url || '');
       feedback('');
     }
     $('streamerEditor').scrollIntoView({behavior:'smooth',block:'start'});
@@ -260,15 +277,21 @@
     preview.hidden=false;
   });
   $('streamerPhotoUrl')?.addEventListener('input',event=>{
-    const img=$('streamerPhotoPreview');
     const url=event.target.value.trim();
-    img.src=url; img.hidden=!url;
+    if (url) $('streamerPhotoFile').value = '';
+    setStreamerPhotoPreview(url);
   });
+
   $('streamerPhotoFile')?.addEventListener('change',event=>{
     const file=event.target.files?.[0];
     if(!file) return;
-    const img=$('streamerPhotoPreview');
-    img.src=URL.createObjectURL(file); img.hidden=false;
+    $('streamerPhotoUrl').value = '';
+    setStreamerPhotoPreview(URL.createObjectURL(file));
+  });
+
+  $('clearStreamerPhotoBtn')?.addEventListener('click',()=>{
+    clearStreamerPhoto();
+    feedback('Foto removida do formulário. Salve para aplicar.', false);
   });
 
   let adminRefreshTimer = null;
