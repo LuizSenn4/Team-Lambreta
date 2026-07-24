@@ -6689,3 +6689,65 @@ html, body { width:100%; max-width:100%; overflow-x:hidden; }
     align-items:center!important;
   }
 }
+
+/* ============================================================
+   V92.17 — menu principal centralizado no cabeçalho
+   ============================================================ */
+@media(min-width:901px){
+  .site-header.tl-header-v88{
+    position:sticky!important;
+    top:0;
+    display:flex!important;
+    align-items:center!important;
+    justify-content:space-between!important;
+    min-height:84px;
+    padding-inline:clamp(24px,4vw,54px)!important;
+  }
+
+  .tl-header-v88 .brand{
+    position:relative;
+    z-index:122;
+    flex:0 0 auto;
+    margin:0!important;
+  }
+
+  .tl-header-v88 .tl-main-nav{
+    position:absolute!important;
+    left:50%!important;
+    top:50%!important;
+    transform:translate(-50%,-50%)!important;
+    z-index:121;
+    width:max-content;
+    max-width:min(52vw,720px);
+    margin:0!important;
+    flex-wrap:nowrap!important;
+    justify-content:center!important;
+    gap:clamp(12px,1.5vw,22px)!important;
+    white-space:nowrap;
+  }
+
+  .site-header .tl-global-tools{
+    position:relative!important;
+    z-index:122;
+    flex:0 0 auto;
+    margin-left:auto!important;
+  }
+}
+
+/* Em larguras intermediárias, preserva o centro sem colisão. */
+@media(min-width:901px) and (max-width:1280px){
+  .site-header.tl-header-v88{
+    padding-inline:16px!important;
+  }
+  .tl-header-v88 .brand{
+    display:none!important;
+  }
+  .tl-header-v88 .tl-main-nav{
+    max-width:58vw;
+    gap:clamp(9px,1vw,15px)!important;
+  }
+  .tl-main-nav a,
+  .tl-menu-toggle{
+    font-size:18px!important;
+  }
+}
