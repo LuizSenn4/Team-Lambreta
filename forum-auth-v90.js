@@ -221,7 +221,7 @@
   function card(topic, pending = false) {
     const person = resolvedIdentity(topic.userId, topic.authorRole, topic.author || 'Equipa');
     return `<article class="forum-topic role-frame-${roleClass(person.role)} ${topic.fixed ? 'is-fixed' : ''} ${topic.private ? 'is-private' : ''}" data-topic-id="${esc(topic.id)}" data-pending="${pending ? '1' : '0'}">
-      <div class="topic-meta"><span class="${pending ? 'pending' : topic.status === 'Fechado' ? 'closed' : 'open'}">${pending ? 'Pendente' : esc(topic.status)}</span>${topic.fixed ? '<span class="fixed">FIXADO</span>' : ''}<span class="forum-room-pill">${esc(ROOMS[topic.category] || 'Geral')}</span>${topic.private ? '<span class="private-pill">PRIVADO</span>' : ''}</div>
+      <div class="topic-meta"><span class="${pending ? 'pending' : topic.status === 'Fechado' ? 'closed' : 'open'}">${pending ? 'Pendente' : topic.status === 'Fechado' ? '🔒 FECHADO' : esc(topic.status)}</span>${topic.fixed ? '<span class="fixed">FIXADO</span>' : ''}<span class="forum-room-pill">${esc(ROOMS[topic.category] || 'Geral')}</span>${topic.private ? '<span class="private-pill">PRIVADO</span>' : ''}</div>
       <div class="forum-author-line">${person.avatar ? `<img src="${esc(person.avatar)}" alt="">` : ''}<strong class="role-text-${roleClass(person.role)}">${esc(person.name)}</strong>${roleBadge(person)}</div>
       <h3>${esc(topic.title || 'Sem título')}</h3><p>${esc(topic.description || 'Sem descrição')}</p>
       ${topic.editedAt ? `<div class="forum-edited-note">Editado pela moderação${topic.editedBy ? ` · ${esc(topic.editedBy)}` : ''}</div>` : ''}

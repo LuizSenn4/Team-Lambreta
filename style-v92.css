@@ -7929,84 +7929,6 @@ html, body { width:100%; max-width:100%; overflow-x:hidden; }
 }
 
 
-/* V92.35 — Team maior no desktop, mobile-first preservado, e fórum com cargos equivalentes */
-.team-esports-page{padding-inline:clamp(14px,3vw,52px)!important}
-.team-esports-hero,.team-esports-grid,.team-roster-pager{width:min(1380px,100%)!important;max-width:100%!important}
-.team-esports-grid{display:grid!important;grid-template-columns:1fr!important;gap:clamp(18px,2.2vw,28px)!important}
-.team-inline-profile{
-  display:grid!important;
-  grid-template-columns:minmax(320px,420px) minmax(0,1fr)!important;
-  align-items:stretch!important;
-  min-height:460px;
-}
-.team-inline-photo{
-  min-height:100%!important;
-  padding:20px!important;
-  align-items:stretch!important;
-  justify-content:stretch!important;
-}
-.team-inline-photo-frame{
-  width:100%!important;
-  height:100%!important;
-  min-height:420px!important;
-  border-radius:24px!important;
-  overflow:hidden!important;
-  background:#0a0a0a!important;
-}
-.team-inline-photo img,
-.team-inline-photo>span,
-.team-inline-photo-frame img,
-.team-inline-photo-frame>span{
-  width:100%!important;
-  height:100%!important;
-  min-height:420px!important;
-  display:block!important;
-  border-radius:24px!important;
-}
-.team-inline-photo img,
-.team-inline-photo-frame img{
-  object-fit:contain!important;
-  object-position:center center!important;
-  background:#0a0a0a!important;
-}
-.team-inline-copy{
-  min-height:460px!important;
-  padding:clamp(26px,3vw,42px)!important;
-  display:flex!important;
-  flex-direction:column!important;
-  justify-content:center!important;
-}
-.team-inline-copy h2{
-  font-size:clamp(42px,4.5vw,76px)!important;
-  line-height:.92!important;
-}
-.team-inline-role{font-size:clamp(24px,2.4vw,36px)!important}
-.team-inline-facts{display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:12px!important}
-.team-inline-facts strong{overflow-wrap:anywhere}
-.team-inline-bio{margin-top:2px!important;font-size:clamp(16px,1.15vw,18px)!important}
-.team-inline-links{grid-template-columns:repeat(auto-fit,minmax(150px,1fr))!important}
-@media (min-width:1200px){
-  .team-esports-hero h1{font-size:clamp(72px,7vw,118px)!important}
-}
-@media (max-width:1024px){
-  .team-esports-hero,.team-esports-grid,.team-roster-pager{width:100%!important}
-  .team-inline-profile{grid-template-columns:minmax(280px,360px) minmax(0,1fr)!important;min-height:420px!important}
-  .team-inline-photo-frame,.team-inline-photo img,.team-inline-photo>span,.team-inline-photo-frame img,.team-inline-photo-frame>span{min-height:380px!important}
-}
-@media (max-width:860px){
-  .team-inline-profile{grid-template-columns:1fr!important;min-height:0!important}
-  .team-inline-photo{padding:14px 14px 0!important;border-right:0!important;border-bottom:1px solid rgba(217,164,65,.13)!important}
-  .team-inline-photo-frame{min-height:0!important;aspect-ratio:4/3!important;border-radius:20px!important}
-  .team-inline-photo img,.team-inline-photo>span,.team-inline-photo-frame img,.team-inline-photo-frame>span{min-height:0!important;aspect-ratio:4/3!important;border-radius:20px!important}
-  .team-inline-copy{min-height:0!important;padding:22px 18px 24px!important}
-  .team-inline-copy h2{font-size:clamp(34px,10.5vw,54px)!important}
-  .team-inline-facts{grid-template-columns:repeat(2,minmax(0,1fr))!important}
-  .team-inline-links{grid-template-columns:1fr 1fr!important}
-}
-@media (max-width:560px){
-  .team-inline-links{grid-template-columns:1fr!important}
-}
-
 /* ============================================================
    V92.36 — Fórum refeito sem heranças de editor/mover antigos
    ============================================================ */
@@ -8194,3 +8116,234 @@ html, body { width:100%; max-width:100%; overflow-x:hidden; }
   .forum-admin-actions button{width:100%}
 }
 
+
+
+/* ============================================================
+   V92.37 — Team fiel ao modelo, streamers responsivos e cadeados
+   ============================================================ */
+
+/* Fórum: identificação visual de tópicos fechados */
+.forum-tabs [data-forum-filter="closed"] span{font-size:14px;line-height:1}
+.topic-meta .closed{
+  display:inline-flex!important;
+  align-items:center!important;
+  gap:6px!important;
+  color:#ffcf66!important;
+  border-color:rgba(255,207,102,.42)!important;
+  background:rgba(255,207,102,.07)!important;
+}
+.forum-topic:has(.topic-meta .closed){
+  border-color:rgba(255,207,102,.24)!important;
+}
+
+/* TEAM — cabeçalho sem caixas extras, fiel ao modelo fornecido */
+.team-esports-page{
+  width:100%;
+  max-width:none;
+  padding:clamp(28px,4vw,66px) clamp(16px,6vw,96px) 74px!important;
+  background:
+    radial-gradient(circle at 0 58%,rgba(62,145,29,.12),transparent 32%),
+    radial-gradient(circle at 100% 58%,rgba(165,20,28,.12),transparent 32%);
+}
+.team-esports-hero{
+  width:min(1450px,100%)!important;
+  margin:0 auto clamp(26px,3vw,38px)!important;
+  padding:0!important;
+  border:0!important;
+  border-radius:0!important;
+  background:none!important;
+  box-shadow:none!important;
+  text-align:center;
+}
+.team-hero-eyebrow{
+  display:grid;
+  grid-template-columns:minmax(80px,1fr) auto minmax(80px,1fr);
+  align-items:center;
+  gap:24px;
+  width:100%;
+  margin-bottom:20px;
+}
+.team-hero-eyebrow span{
+  height:1px;
+  background:linear-gradient(90deg,transparent,#d7a941 65%,transparent);
+}
+.team-hero-eyebrow span:last-child{background:linear-gradient(90deg,transparent,#e04747 35%,transparent)}
+.team-hero-eyebrow strong{
+  color:#e8bd59;
+  font-family:Arial,sans-serif;
+  font-size:clamp(11px,1.1vw,16px);
+  font-weight:950;
+  letter-spacing:2px;
+}
+.team-esports-hero h1{
+  margin:0!important;
+  color:#efbd4c!important;
+  font-family:Arial Black,Impact,Arial,sans-serif!important;
+  font-size:clamp(48px,5vw,82px)!important;
+  font-weight:950!important;
+  line-height:1!important;
+  letter-spacing:4px!important;
+  text-transform:uppercase!important;
+  text-shadow:0 3px 0 #624110,0 0 24px rgba(239,189,76,.12)!important;
+}
+.team-hero-divider{
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  gap:12px;
+  margin:17px auto 16px;
+  color:#d8a83d;
+}
+.team-hero-divider span{width:min(160px,20vw);height:1px;background:linear-gradient(90deg,transparent,#d8a83d)}
+.team-hero-divider span:last-child{transform:scaleX(-1)}
+.team-hero-divider b{font:900 13px Arial,sans-serif;letter-spacing:1px}
+.team-esports-hero>p:last-child{
+  margin:0!important;
+  max-width:none!important;
+  color:#d8b96d!important;
+  font-size:clamp(16px,1.4vw,22px)!important;
+  line-height:1.4!important;
+}
+.team-esports-grid{
+  width:min(1220px,100%)!important;
+  margin:0 auto!important;
+  display:grid!important;
+  grid-template-columns:repeat(2,minmax(0,1fr))!important;
+  gap:16px 48px!important;
+}
+.team-roster-card{
+  --roster-accent:#73ff18;
+  position:relative;
+  width:100%;
+  min-width:0;
+  min-height:134px;
+  display:grid;
+  grid-template-columns:118px minmax(0,1fr) 54px;
+  align-items:center;
+  gap:22px;
+  padding:15px 18px;
+  overflow:hidden;
+  border:1px solid rgba(217,164,65,.34);
+  border-radius:22px;
+  background:linear-gradient(100deg,rgba(12,13,12,.98),rgba(3,3,3,.98));
+  color:inherit;
+  text-align:left;
+  box-shadow:0 18px 36px rgba(0,0,0,.2),inset 0 1px rgba(255,255,255,.025);
+  cursor:pointer;
+}
+.team-roster-card.tone-red{--roster-accent:#ff334d}
+.team-roster-card:hover,.team-roster-card:focus-visible{
+  transform:translateY(-2px);
+  border-color:color-mix(in srgb,var(--roster-accent) 48%,#d9a441);
+  box-shadow:0 22px 42px rgba(0,0,0,.3),0 0 20px color-mix(in srgb,var(--roster-accent) 10%,transparent);
+  outline:none;
+}
+.team-roster-accent{position:absolute;left:0;top:15px;bottom:15px;width:3px;border-radius:0 4px 4px 0;background:var(--roster-accent);box-shadow:0 0 16px var(--roster-accent)}
+.team-roster-avatar{width:118px;height:102px;border:1px solid rgba(217,164,65,.28);border-radius:12px;overflow:hidden;background:#090909;display:grid;place-items:center}
+.team-roster-avatar img{width:100%;height:100%;display:block;object-fit:cover;object-position:center}
+.team-roster-avatar>span{font:400 58px 'Road Rage',Impact,sans-serif;color:var(--roster-accent)}
+.team-roster-copy{min-width:0;display:grid;gap:6px}
+.team-roster-copy strong{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:#f5f0e5;font-family:'Road Rage',Impact,Arial,sans-serif;font-size:clamp(27px,2.25vw,40px);font-weight:400;line-height:.95;letter-spacing:.5px}
+.team-roster-copy small{color:#73ff18;font-size:14px;font-weight:950;letter-spacing:1px;text-transform:uppercase}
+.team-roster-copy em{color:#d2c5a7;font-size:14px;font-style:normal}
+.team-roster-plus{justify-self:end;color:#efbd4c;font-size:39px;font-weight:300;line-height:1}
+
+/* Modal do Team: grande no desktop e realmente responsivo */
+.team-modal-open{overflow:hidden}
+.team-esports-modal{position:fixed!important;inset:0!important;z-index:100000!important;display:grid!important;place-items:center!important;padding:clamp(14px,3vw,42px)!important}
+.team-esports-modal[hidden]{display:none!important}
+.team-esports-backdrop{position:absolute!important;inset:0!important;background:rgba(0,0,0,.84)!important;backdrop-filter:blur(8px)!important}
+.team-esports-profile{
+  position:relative!important;
+  z-index:1!important;
+  width:min(1180px,calc(100vw - 32px))!important;
+  max-height:min(88vh,900px)!important;
+  overflow:auto!important;
+  display:grid!important;
+  grid-template-columns:minmax(330px,430px) minmax(0,1fr)!important;
+  gap:0!important;
+  padding:0!important;
+  border:1px solid rgba(217,164,65,.4)!important;
+  border-radius:26px!important;
+  background:linear-gradient(120deg,#151715,#080909 54%,#17090c)!important;
+  box-shadow:0 36px 100px rgba(0,0,0,.72)!important;
+}
+#teamProfileContent{display:contents}
+.team-esports-profile-photo{min-height:560px!important;padding:22px!important;background:radial-gradient(circle at 50% 30%,rgba(115,255,24,.12),transparent 38%),#090a09!important}
+.team-esports-profile-photo img,.team-esports-profile-photo>span{width:100%!important;height:100%!important;min-height:516px!important;display:block!important;border-radius:20px!important;object-fit:contain!important;background:#070807!important}
+.team-esports-profile-photo>span{display:grid!important;place-items:center!important;font:400 160px 'Road Rage',Impact,sans-serif;color:#73ff18!important}
+.team-esports-profile-copy{min-width:0!important;padding:clamp(34px,4vw,58px)!important;display:flex!important;flex-direction:column!important;justify-content:center!important}
+.team-esports-profile-copy .tag{margin:0 0 10px;color:#d9a441;font-size:12px;font-weight:950;letter-spacing:3px}
+.team-esports-profile-copy h2{margin:0!important;color:#f4eee2!important;font-family:'Road Rage',Impact,Arial,sans-serif!important;font-size:clamp(52px,6vw,86px)!important;font-weight:400!important;line-height:.9!important;overflow-wrap:anywhere}
+.team-esports-profile-copy>strong{margin:10px 0 0;color:#73ff18!important;font-size:clamp(22px,2vw,32px)!important;text-transform:uppercase}
+.team-esports-facts{display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:11px!important;margin:26px 0 20px!important}
+.team-esports-facts div{padding:13px;border:1px solid rgba(217,164,65,.2);border-radius:13px;background:rgba(255,255,255,.025)}
+.team-esports-facts small{display:block;color:#9e9278;font-size:9px;letter-spacing:1.3px;text-transform:uppercase}
+.team-esports-facts strong{display:block;margin-top:5px;color:#f0dfaa;font-size:15px;overflow-wrap:anywhere}
+.team-esports-bio{color:#c9bea7!important;font-size:17px!important;line-height:1.65!important}
+.team-esports-links{display:grid!important;grid-template-columns:repeat(auto-fit,minmax(130px,1fr))!important;gap:10px!important;margin-top:18px!important}
+.team-esports-links a{display:flex;align-items:center;justify-content:center;min-height:46px;border:1px solid rgba(217,164,65,.25);border-radius:12px;color:#73ff18;text-decoration:none;font-weight:900;background:rgba(0,0,0,.28)}
+.team-esports-close{position:absolute!important;top:14px!important;right:14px!important;z-index:3!important;width:43px!important;height:43px!important;border-radius:12px!important;background:#202228!important;color:#f5dfaa!important;border:1px solid rgba(217,164,65,.3)!important;font-size:26px!important}
+
+/* STREAMERS — o modelo premium volta grande no computador */
+.streamers-showcase-page{width:min(1540px,calc(100% - 36px))!important;max-width:none!important;margin-inline:auto!important;padding-top:42px!important}
+.streamer-unified-grid{gap:42px!important}
+.streamer-unified-card{width:100%!important;min-height:720px!important;border-radius:28px!important}
+.streamer-card-top{grid-template-columns:minmax(340px,430px) minmax(430px,1fr) minmax(280px,340px)!important}
+.streamer-card-photo-wrap{padding:28px!important}
+.streamer-card-photo{min-height:480px!important}
+.streamer-card-photo img{width:100%!important;height:100%!important;object-fit:contain!important;object-position:center!important;background:#080908!important}
+.streamer-card-main{padding:42px 36px!important}
+.streamer-card-name{font-size:clamp(54px,5vw,88px)!important;line-height:.9!important;overflow-wrap:anywhere!important}
+.streamer-card-name.is-medium{font-size:clamp(47px,4.4vw,76px)!important}
+.streamer-card-name.is-long{font-size:clamp(39px,3.6vw,62px)!important}
+.streamer-card-bio{font-size:18px!important;line-height:1.65!important}
+.streamer-card-socials{padding:38px 28px!important}
+.streamer-card-bottom{grid-template-columns:minmax(250px,.85fr) minmax(250px,.8fr) minmax(470px,1.55fr)!important}
+.streamer-card-panel{padding:30px!important}
+.streamer-live-preview{min-height:260px!important;aspect-ratio:16/8!important}
+
+@media(max-width:1180px){
+  .team-esports-grid{gap:14px 22px!important}
+  .team-roster-card{grid-template-columns:96px minmax(0,1fr) 42px;min-height:116px;padding:12px 14px;gap:16px}
+  .team-roster-avatar{width:96px;height:88px}
+  .streamer-card-top{grid-template-columns:340px minmax(0,1fr)!important}
+  .streamer-card-socials{grid-column:1/-1!important}
+  .streamer-card-bottom{grid-template-columns:1fr 1fr!important}
+  .streamer-card-live{grid-column:1/-1!important}
+}
+@media(max-width:860px){
+  .team-esports-page{padding:25px 12px 54px!important}
+  .team-hero-eyebrow{gap:10px}.team-hero-eyebrow strong{letter-spacing:1px}
+  .team-esports-hero h1{font-size:clamp(39px,11vw,60px)!important;letter-spacing:2px!important}
+  .team-esports-grid{grid-template-columns:1fr!important;gap:12px!important}
+  .team-roster-card{min-height:108px;grid-template-columns:84px minmax(0,1fr) 36px;border-radius:18px}
+  .team-roster-avatar{width:84px;height:80px}
+  .team-roster-copy strong{font-size:clamp(26px,8vw,38px)}
+  .team-roster-copy small{font-size:12px}
+  .team-roster-plus{font-size:31px}
+  .team-esports-profile{grid-template-columns:1fr!important;width:min(680px,calc(100vw - 22px))!important;max-height:92vh!important}
+  .team-esports-profile-photo{min-height:0!important;padding:16px!important}
+  .team-esports-profile-photo img,.team-esports-profile-photo>span{min-height:0!important;height:auto!important;aspect-ratio:4/3!important}
+  .team-esports-profile-copy{padding:25px 19px 28px!important}
+  .team-esports-profile-copy h2{font-size:clamp(43px,14vw,68px)!important}
+  .team-esports-facts{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+  .streamers-showcase-page{width:calc(100% - 16px)!important;padding-top:28px!important}
+  .streamer-unified-card{min-height:0!important;border-radius:22px!important}
+  .streamer-card-top{grid-template-columns:1fr!important}
+  .streamer-card-photo-wrap{padding:16px!important}
+  .streamer-card-photo{min-height:0!important;aspect-ratio:4/3!important}
+  .streamer-card-main,.streamer-card-socials{padding:22px 18px!important}
+  .streamer-card-name,.streamer-card-name.is-medium,.streamer-card-name.is-long{font-size:clamp(39px,12vw,60px)!important}
+  .streamer-card-bottom{grid-template-columns:1fr!important}
+  .streamer-card-live{grid-column:auto!important}
+  .streamer-card-panel{padding:22px 18px!important}
+  .streamer-live-preview{min-height:0!important;aspect-ratio:16/9!important}
+}
+@media(max-width:480px){
+  .team-roster-card{grid-template-columns:72px minmax(0,1fr) 30px;gap:12px;padding:11px}
+  .team-roster-avatar{width:72px;height:72px}
+  .team-roster-copy strong{font-size:29px}
+  .team-roster-copy small,.team-roster-copy em{font-size:11px}
+  .team-esports-facts{grid-template-columns:1fr 1fr!important}
+}
