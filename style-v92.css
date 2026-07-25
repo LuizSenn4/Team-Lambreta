@@ -8065,3 +8065,112 @@ body.team-modal-open{overflow:hidden}
     object-fit:cover;
   }
 }
+
+
+/* ============================================================
+   V92.38 — Ícones vetoriais flutuantes para setas e fechar
+   ============================================================ */
+.team-modal-arrow,
+.team-modal-close,
+.lb-arrow,
+.banner-arrow,
+.clean-banner-arrow,
+.image-preview-close,
+.forum-edit-close{
+  text-indent:-9999px !important;
+  overflow:hidden;
+  color:transparent !important;
+  background-color:transparent !important;
+  background-repeat:no-repeat !important;
+  background-position:center !important;
+  background-size:contain !important;
+  border:none !important;
+  box-shadow:none !important;
+}
+
+.team-modal-prev,
+.lb-left,
+.banner-arrow.left,
+.clean-banner-arrow.left{
+  background-image:url('img/ui/icon-arrow-left.png') !important;
+  filter:drop-shadow(0 0 10px rgba(245,223,170,.35));
+}
+.team-modal-next,
+.lb-right,
+.banner-arrow.right,
+.clean-banner-arrow.right{
+  background-image:url('img/ui/icon-arrow-right.png') !important;
+  filter:drop-shadow(0 0 10px rgba(115,255,24,.35));
+}
+.team-modal-close,
+.image-preview-close,
+.forum-edit-close{
+  background-image:url('img/ui/icon-close.png') !important;
+  filter:drop-shadow(0 0 10px rgba(245,223,170,.28));
+}
+
+.team-modal-arrow{
+  width:74px !important;
+  height:74px !important;
+  border-radius:0 !important;
+  padding:0 !important;
+}
+.team-modal-prev{left:-52px !important}
+.team-modal-next{right:-52px !important}
+.team-modal-close{
+  width:46px !important;
+  height:46px !important;
+  top:14px !important;
+  right:14px !important;
+  border-radius:0 !important;
+  padding:0 !important;
+}
+
+.lb-arrow,
+.banner-arrow,
+.clean-banner-arrow{
+  width:56px !important;
+  height:56px !important;
+  border-radius:0 !important;
+  padding:0 !important;
+}
+
+.image-preview-close,
+.forum-edit-close{
+  width:38px !important;
+  height:38px !important;
+  border-radius:0 !important;
+  padding:0 !important;
+}
+
+.team-modal-arrow:hover,
+.team-modal-close:hover,
+.lb-arrow:hover,
+.banner-arrow:hover,
+.clean-banner-arrow:hover,
+.image-preview-close:hover,
+.forum-edit-close:hover{
+  transform:translateY(-1px) scale(1.03);
+}
+
+@media(max-width:1100px){
+  .team-modal-prev{left:10px !important}
+  .team-modal-next{right:10px !important}
+}
+@media(max-width:700px){
+  .team-modal-arrow,
+  .lb-arrow,
+  .banner-arrow,
+  .clean-banner-arrow{
+    width:58px !important;
+    height:58px !important;
+  }
+  .team-modal-close,
+  .image-preview-close,
+  .forum-edit-close{
+    width:36px !important;
+    height:36px !important;
+  }
+  .team-modal-prev{left:8px !important}
+  .team-modal-next{right:8px !important}
+}
