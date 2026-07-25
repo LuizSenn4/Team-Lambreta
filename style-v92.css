@@ -8038,3 +8038,30 @@ body.team-modal-open{overflow:hidden}
 }
 .team-preview-grid-v36 .team-preview-card:before,
 .team-preview-grid-v36 .team-preview-card[class*="role-"]:before{background:#73ff18!important;box-shadow:0 0 14px rgba(115,255,24,.9)!important}
+
+
+/* ============================================================
+   V92.37 — Cabeçalho do Team fiel ao modelo aprovado
+   ============================================================ */
+.team-roster-image-hero-v37{
+  width:100%!important;
+  max-width:none!important;
+  margin:0!important;
+  padding:0!important;
+  overflow:hidden;
+  background:#020302;
+}
+.team-roster-image-hero-v37 img{
+  display:block;
+  width:100%;
+  height:auto;
+  max-height:250px;
+  object-fit:cover;
+  object-position:center;
+}
+@media(max-width:700px){
+  .team-roster-image-hero-v37 img{
+    min-height:150px;
+    object-fit:cover;
+  }
+}
