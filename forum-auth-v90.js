@@ -160,6 +160,7 @@
       <div class="topic-meta"><span class="${pending?'pending':t.status==='Fechado'?'closed':'open'}">${pending?'Pendente':esc(t.status)}</span>${t.fixed?'<span class="fixed">FIXADO</span>':''}<span class="forum-room-pill">${esc(ROOMS[t.category]||'Geral')}</span>${t.private?'<span class="private-pill">PRIVADO</span>':''}</div>
       <div class="forum-author-line">${who.avatar?`<img src="${esc(who.avatar)}" alt="">`:''}<strong class="role-text-${roleClass(who.role)}">${esc(who.name)}</strong>${roleBadge(who)}</div>
       <h3>${esc(t.title||'Sem título')}</h3><p>${esc(t.description||'Sem descrição')}</p>
+      ${t.editedAt?`<div class="forum-edited-note">Editado pela moderação${t.editedBy?` · ${esc(t.editedBy)}`:''}</div>`:''}
       ${Array.isArray(t.replies)&&t.replies.length?`<div class="forum-replies">${t.replies.map(r=>replyMarkup(r,t)).join('')}</div>`:''}
       ${controls(t,pending)}
     </article>`;
@@ -178,13 +179,85 @@
   function askText(label,current=''){const value=window.prompt(label,current);return value===null?null:value.trim()}
   function chooseRoom(current){const list=Object.entries(ROOMS).filter(([k])=>k!=='all').map(([k,v])=>`${k} = ${v}`).join('\n');const value=window.prompt(`Mover para qual sala?\n${list}`,current||'geral');return value&&ROOMS[value]?value:null}
   function addReply(t,privateReply){const text=askText(privateReply?'Resposta privada para o autor:':'Resposta pública:');if(!text)return false;t.replies.push({id:makeId(),text,private:privateReply,author:currentName(),authorRole:roleOf(profile),authorLabel:isBoss()?'BOSS':roleLabel(roleOf(profile)),userId:uid(),createdAt:now()});return true}
+
+  function ensureEditDialog(){
+    let dialog=$('forumEditDialog');
+    if(dialog)return dialog;
+    dialog=document.createElement('dialog');
+    dialog.id='forumEditDialog';
+    dialog.className='forum-edit-dialog';
+    dialog.innerHTML=`
+      <form method="dialog" class="forum-edit-form">
+        <div class="forum-edit-head">
+          <div><small>MODERAÇÃO</small><h3>Editar tópico</h3></div>
+          <button type="button" class="forum-edit-close" aria-label="Fechar">×</button>
+        </div>
+        <label>Sala
+          <select id="forumEditCategory">${Object.entries(ROOMS).filter(([key])=>key!=='all').map(([key,label])=>`<option value="${key}">${esc(label)}</option>`).join('')}</select>
+        </label>
+        <label>Título
+          <input id="forumEditTitle" type="text" maxlength="60" required>
+        </label>
+        <label>Mensagem
+          <textarea id="forumEditDescription" maxlength="1000" rows="8" required></textarea>
+        </label>
+        <p class="forum-edit-private-note" id="forumEditPrivateNote"></p>
+        <div class="forum-edit-actions">
+          <button type="button" class="secondary" data-edit-cancel>Cancelar</button>
+          <button type="submit" class="primary">Guardar alterações</button>
+        </div>
+      </form>`;
+    document.body.appendChild(dialog);
+    dialog.querySelector('.forum-edit-close').onclick=()=>dialog.close();
+    dialog.querySelector('[data-edit-cancel]').onclick=()=>dialog.close();
+    dialog.addEventListener('click',event=>{if(event.target===dialog)dialog.close()});
+    return dialog;
+  }
+
+  function editTopic(t,data){
+    const dialog=ensureEditDialog();
+    const category=dialog.querySelector('#forumEditCategory');
+    const title=dialog.querySelector('#forumEditTitle');
+    const description=dialog.querySelector('#forumEditDescription');
+    const note=dialog.querySelector('#forumEditPrivateNote');
+    const formEl=dialog.querySelector('form');
+    category.value=t.category||'geral';
+    title.value=t.title||'';
+    description.value=t.description||'';
+    const updatePrivateNote=()=>{
+      note.textContent=PRIVATE_ROOMS.has(category.value)?'Esta sala é privada: apenas o autor e a moderação podem ver o tópico.':'Esta sala é pública para a comunidade.';
+      note.classList.toggle('is-private',PRIVATE_ROOMS.has(category.value));
+    };
+    updatePrivateNote();
+    category.onchange=updatePrivateNote;
+    formEl.onsubmit=event=>{
+      event.preventDefault();
+      const nextTitle=title.value.trim();
+      const nextDescription=description.value.trim();
+      const nextCategory=category.value;
+      if(!nextTitle||!nextDescription)return;
+      t.title=nextTitle.slice(0,60);
+      t.description=nextDescription.slice(0,1000);
+      t.category=ROOMS[nextCategory]?nextCategory:'geral';
+      t.private=PRIVATE_ROOMS.has(t.category);
+      t.editedAt=now();
+      t.editedBy=currentName();
+      t.editedByRole=isBoss()?'boss':roleOf(profile);
+      dialog.close();
+      save(data,'Tópico atualizado por completo.');
+      renderRooms();
+    };
+    dialog.showModal();
+    setTimeout(()=>title.focus(),30);
+  }
+
   function bindActions(grid,data){
     grid.querySelectorAll('[data-action]').forEach(btn=>btn.onclick=()=>{
       const cardEl=btn.closest('[data-topic-id]'),id=cardEl.dataset.topicId,pending=cardEl.dataset.pending==='1';const list=pending?data.pendingForum:data.forum;const index=list.findIndex(t=>t.id===id);if(index<0)return;const t=list[index],action=btn.dataset.action;
       if(action==='approve'){list.splice(index,1);t.approved=true;t.status='Aberto';data.forum.push(t);return save(data,'Tópico aprovado.')}
       if(action==='reject'){if(confirm('Recusar este tópico?')){list.splice(index,1);save(data,'Tópico recusado.')}return}
       if(action==='remove'){if(confirm('Remover este tópico definitivamente?')){list.splice(index,1);save(data,'Tópico removido.')}return}
-      if(action==='edit'){const title=askText('Editar título:',t.title);if(title===null)return;const description=askText('Editar conteúdo:',t.description);if(description===null)return;t.title=title.slice(0,60);t.description=description.slice(0,1000);return save(data,'Tópico editado.')}
+      if(action==='edit'){editTopic(t,data);return}
       if(action==='move'){const next=chooseRoom(t.category);if(!next)return;t.category=next;t.private=PRIVATE_ROOMS.has(next);return save(data,'Tópico movido.')}
       if(action==='fix'){t.fixed=!t.fixed;return save(data,t.fixed?'Tópico fixado.':'Tópico desfixado.')}
       if(action==='close'){t.status=t.status==='Fechado'?'Aberto':'Fechado';return save(data,t.status==='Fechado'?'Tópico fechado.':'Tópico reaberto.')}
