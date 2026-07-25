@@ -8006,3 +8006,61 @@ html, body { width:100%; max-width:100%; overflow-x:hidden; }
 @media (max-width:560px){
   .team-inline-links{grid-template-columns:1fr!important}
 }
+
+/* ============================================================
+   V92.35.1 — Fórum com fundo cinza escuro elegante
+   ============================================================ */
+.forum-page .forum-board,
+.forum-page .forum-page-shell{
+  background:transparent;
+}
+
+.forum-page .forum-create-panel,
+.forum-page .forum-topic-panel,
+.forum-page .forum-topic,
+.forum-page .empty-card,
+.forum-page .forum-reply,
+.forum-page .forum-folder-group,
+.forum-page .forum-folder,
+.forum-page .forum-login-notice,
+.forum-page .forum-author-identity{
+  background:
+    linear-gradient(180deg, rgba(46,49,56,.92), rgba(27,29,34,.96)) !important;
+  border-color: rgba(217,164,65,.18) !important;
+  box-shadow:
+    0 14px 34px rgba(0,0,0,.24),
+    inset 0 1px 0 rgba(255,255,255,.02);
+}
+
+.forum-page .forum-create-panel,
+.forum-page .forum-topic-panel,
+.forum-page .forum-folder-group{
+  background:
+    linear-gradient(180deg, rgba(42,45,52,.95), rgba(24,26,31,.98)) !important;
+}
+
+.forum-page .user-topic-form input,
+.forum-page .user-topic-form textarea,
+.forum-page .forum-category-select,
+.forum-page .forum-edit-form input,
+.forum-page .forum-edit-form textarea,
+.forum-page .forum-edit-form select{
+  background: rgba(18,20,24,.96) !important;
+  border-color: rgba(217,164,65,.18) !important;
+  color: #f4eee2 !important;
+}
+
+.forum-page .forum-tabs button,
+.forum-page .forum-rooms button,
+.forum-page .forum-mod-actions button{
+  background: rgba(31,33,39,.94) !important;
+}
+
+.forum-page .forum-tabs button.active,
+.forum-page .forum-rooms button.is-active{
+  background: rgba(115,255,24,.09) !important;
+}
+
+.forum-page .forum-reply.is-private{
+  background: linear-gradient(180deg, rgba(54,38,72,.92), rgba(31,24,42,.96)) !important;
+}
