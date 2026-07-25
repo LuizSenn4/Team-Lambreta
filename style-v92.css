@@ -8347,3 +8347,84 @@ html, body { width:100%; max-width:100%; overflow-x:hidden; }
   .team-roster-copy small,.team-roster-copy em{font-size:11px}
   .team-esports-facts{grid-template-columns:1fr 1fr!important}
 }
+
+
+/* ============================================================
+   V92.38 — fonte unificada, modal sem scroll e editor visual
+   ============================================================ */
+.team-esports-page,
+.team-esports-page button,
+.team-esports-profile,
+.team-esports-profile button{
+  font-family:Inter,Arial,sans-serif!important;
+}
+.team-esports-hero h1,
+.team-roster-copy strong,
+.team-roster-copy small,
+.team-esports-profile-copy h2,
+.team-esports-profile-copy>strong{
+  font-family:Inter,Arial,sans-serif!important;
+}
+.team-roster-copy strong{font-weight:850!important;letter-spacing:-.5px!important}
+.team-roster-copy small{font-weight:900!important}
+.team-esports-profile-copy h2{font-weight:900!important;letter-spacing:-1.5px!important;line-height:.96!important}
+.team-esports-profile-copy>strong{font-weight:900!important;line-height:1.25!important}
+
+@media(min-width:861px){
+  .team-esports-profile{
+    height:min(760px,calc(100vh - 44px))!important;
+    max-height:none!important;
+    overflow:hidden!important;
+    grid-template-columns:minmax(370px,44%) minmax(0,1fr)!important;
+  }
+  .team-esports-profile-photo{
+    min-height:0!important;
+    height:100%!important;
+    padding:0!important;
+    overflow:hidden!important;
+    background:transparent!important;
+    border-radius:25px 0 0 25px!important;
+  }
+  .team-esports-profile-photo img,
+  .team-esports-profile-photo>span{
+    width:100%!important;
+    height:100%!important;
+    min-height:0!important;
+    border-radius:25px 0 0 25px!important;
+    object-fit:cover!important;
+    object-position:center!important;
+    background:transparent!important;
+  }
+  .team-esports-profile-copy{
+    height:100%!important;
+    min-height:0!important;
+    overflow:hidden!important;
+    padding:clamp(28px,3vw,48px)!important;
+  }
+  .team-esports-profile-copy h2{font-size:clamp(42px,4.5vw,72px)!important}
+  .team-esports-facts{margin:20px 0 16px!important}
+  .team-esports-bio{font-size:clamp(14px,1.1vw,17px)!important;line-height:1.52!important;margin:0!important}
+  .team-esports-links{margin-top:14px!important}
+}
+@media(max-width:860px){
+  .team-esports-profile{overflow:auto!important}
+  .team-esports-profile-photo{padding:0!important;background:transparent!important}
+  .team-esports-profile-photo img,.team-esports-profile-photo>span{border-radius:22px 22px 0 0!important;object-fit:cover!important;background:transparent!important}
+}
+
+.team-profile-rich-role p,.team-profile-rich-role div,
+.team-profile-rich-bio p,.team-profile-rich-bio div{margin:0}
+.team-profile-rich-bio{overflow-wrap:anywhere}
+
+/* Editor visual seguro no painel Team */
+.team-rich-source{position:absolute!important;width:1px!important;height:1px!important;opacity:0!important;pointer-events:none!important}
+.team-rich-editor{display:grid;gap:0;width:100%;min-width:0;border:1px solid rgba(217,164,65,.2);border-radius:13px;overflow:hidden;background:#080909}
+.team-rich-toolbar{display:flex;align-items:center;flex-wrap:wrap;gap:6px;padding:8px;background:#17191d;border-bottom:1px solid rgba(217,164,65,.16)}
+.team-rich-toolbar select,.team-rich-toolbar button{width:auto;min-height:34px;margin:0;padding:6px 9px;border:1px solid rgba(217,164,65,.2);border-radius:8px;background:#24272d;color:#f4eee2;font:700 12px Inter,Arial,sans-serif}
+.team-rich-toolbar select:first-child{min-width:112px}.team-rich-toolbar select:nth-child(2){min-width:76px}
+.team-rich-toolbar button{min-width:36px;cursor:pointer}
+.team-rich-toolbar button:hover,.team-rich-toolbar select:focus{border-color:#73ff18}
+.team-rich-area{min-height:54px;padding:12px 13px;color:#f4eee2;font:16px/1.5 Inter,Arial,sans-serif;outline:none;overflow-wrap:anywhere;background:#090a0b}
+#teamMemberBio+.team-rich-editor .team-rich-area{min-height:130px}
+.team-rich-area:focus{box-shadow:inset 0 0 0 2px rgba(115,255,24,.15)}
+@media(max-width:620px){.team-rich-toolbar{display:grid;grid-template-columns:1fr 84px repeat(3,38px);}.team-rich-toolbar [data-rich-clear]{grid-column:1/-1}}

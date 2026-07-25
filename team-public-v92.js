@@ -9,6 +9,40 @@
   const esc=value=>String(value??'').replace(/[&<>"']/g,char=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char]));
   let members=[]; let currentPage=1; const PAGE_SIZE=10;
 
+  function richText(value){
+    const template=document.createElement('template');
+    template.innerHTML=String(value||'');
+    const allowed=new Set(['B','STRONG','I','EM','U','SPAN','BR','DIV','P']);
+    const cleanNode=node=>{
+      [...node.childNodes].forEach(child=>{
+        if(child.nodeType===Node.ELEMENT_NODE){
+          if(!allowed.has(child.tagName)){
+            child.replaceWith(...child.childNodes);
+            return;
+          }
+          const source=String(child.getAttribute('style')||'');
+          [...child.attributes].forEach(attr=>child.removeAttribute(attr.name));
+          const style=child.style;
+          const font=source.match(/font-family\s*:\s*([^;]+)/i)?.[1]?.replace(/["']/g,'').trim();
+          const size=source.match(/font-size\s*:\s*([^;]+)/i)?.[1]?.trim();
+          if(font && /^(Inter|Arial|Cinzel|Road Rage|Impact|sans-serif|serif)(\s*,\s*(Arial|Impact|sans-serif|serif))*$/i.test(font)) style.fontFamily=font;
+          if(size && /^(12|14|16|18|20|22|24|28|32|36|40)px$/i.test(size)) style.fontSize=size;
+          if(/font-weight\s*:\s*(bold|[7-9]00)/i.test(source)) style.fontWeight='700';
+          if(/font-style\s*:\s*italic/i.test(source)) style.fontStyle='italic';
+          if(/text-decoration[^;]*underline/i.test(source)) style.textDecoration='underline';
+          cleanNode(child);
+        }
+      });
+    };
+    cleanNode(template.content);
+    return template.innerHTML;
+  }
+  function plainText(value){
+    const div=document.createElement('div');
+    div.innerHTML=String(value||'');
+    return div.textContent||div.innerText||'';
+  }
+
   function avatar(row){
     const label=row.nickname||row.name||'L';
     return row.image_url?`<img src="${esc(row.image_url)}" alt="${esc(row.name||label)}" loading="lazy">`:`<span>${esc(label.charAt(0).toUpperCase())}</span>`;
@@ -29,7 +63,7 @@
     return `<button type="button" class="team-roster-card tone-${index%2===0?'green':'red'}" data-member-index="${index}" aria-label="Abrir perfil de ${esc(nickname)}">
       <span class="team-roster-accent"></span>
       <span class="team-roster-avatar">${avatar(row)}</span>
-      <span class="team-roster-copy"><strong>${esc(nickname)}</strong><small>${esc(row.role||'MEMBRO')}</small><em><span aria-hidden="true">${flag}</span> ${code}</em></span>
+      <span class="team-roster-copy"><strong>${esc(nickname)}</strong><small>${esc(plainText(row.role||'MEMBRO'))}</small><em><span aria-hidden="true">${flag}</span> ${code}</em></span>
       <span class="team-roster-plus" aria-hidden="true">＋</span>
     </button>`;
   }
@@ -47,7 +81,7 @@
     const nickname=row.nickname||row.name||'Membro';
     const factMarkup=facts(row).map(([label,value])=>{const shown=label==='País'?(()=>{const [f,c]=countryInfo(value);return `<span class="team-country-value"><span>${f}</span><b>${c}</b></span>`})():esc(value);return `<div><small>${esc(label)}</small><strong>${shown}</strong></div>`}).join('');
     const linkMarkup=links(row).map(([label,url,type])=>`<a class="team-social-link is-${esc(type)}" href="${esc(url)}" target="_blank" rel="noopener">${esc(label)}</a>`).join('');
-    content.innerHTML=`<div class="team-esports-profile-photo">${avatar(row)}</div><div class="team-esports-profile-copy"><p class="tag">PERFIL OFICIAL</p><h2 id="teamProfileName">${esc(nickname)}</h2><strong>${esc(row.role||'MEMBRO')}</strong>${factMarkup?`<div class="team-esports-facts">${factMarkup}</div>`:''}<p class="team-esports-bio">${esc(row.bio||'Perfil oficial do Team Lambreta.')}</p>${linkMarkup?`<div class="team-esports-links">${linkMarkup}</div>`:''}</div>`;
+    content.innerHTML=`<div class="team-esports-profile-photo">${avatar(row)}</div><div class="team-esports-profile-copy"><p class="tag">PERFIL OFICIAL</p><h2 id="teamProfileName">${esc(nickname)}</h2><strong class="team-profile-rich-role">${richText(row.role||'MEMBRO')}</strong>${factMarkup?`<div class="team-esports-facts">${factMarkup}</div>`:''}<div class="team-esports-bio team-profile-rich-bio">${richText(row.bio||'Perfil oficial do Team Lambreta.')}</div>${linkMarkup?`<div class="team-esports-links">${linkMarkup}</div>`:''}</div>`;
     modal.hidden=false; document.body.classList.add('team-modal-open'); modal.querySelector('.team-esports-close')?.focus();
   }
   function closeModal(){const modal=document.getElementById('teamProfileModal'); if(!modal)return; modal.hidden=true; document.body.classList.remove('team-modal-open')}

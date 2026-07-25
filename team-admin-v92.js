@@ -135,6 +135,76 @@
     bindSocialSlots();
   }
 
+
+  const RICH_FONTS=['Inter','Arial','Cinzel','Road Rage'];
+  const RICH_SIZES=['14','16','18','20','24','28','32','36','40'];
+
+  function cleanRichHtml(html){
+    const template=document.createElement('template');
+    template.innerHTML=String(html||'');
+    const allowed=new Set(['B','STRONG','I','EM','U','SPAN','BR','DIV','P']);
+    const walk=node=>{
+      [...node.childNodes].forEach(child=>{
+        if(child.nodeType!==Node.ELEMENT_NODE) return;
+        if(!allowed.has(child.tagName)){child.replaceWith(...child.childNodes);return;}
+        const original=child.getAttribute('style')||'';
+        [...child.attributes].forEach(attr=>child.removeAttribute(attr.name));
+        const rules=[];
+        const font=original.match(/font-family\s*:\s*([^;]+)/i)?.[1]?.replace(/["']/g,'').trim();
+        const size=original.match(/font-size\s*:\s*([^;]+)/i)?.[1]?.trim();
+        if(font&&RICH_FONTS.some(item=>font.toLowerCase().startsWith(item.toLowerCase()))) rules.push(`font-family:${font}`);
+        if(size&&RICH_SIZES.includes(size.replace('px',''))) rules.push(`font-size:${size}`);
+        if(/font-weight\s*:\s*(bold|[7-9]00)/i.test(original)) rules.push('font-weight:700');
+        if(/font-style\s*:\s*italic/i.test(original)) rules.push('font-style:italic');
+        if(/text-decoration[^;]*underline/i.test(original)) rules.push('text-decoration:underline');
+        if(rules.length) child.setAttribute('style',rules.join(';'));
+        walk(child);
+      });
+    };
+    walk(template.content);
+    return template.innerHTML.trim();
+  }
+
+  function syncRichEditor(id){
+    const source=$(id),editor=document.querySelector(`[data-rich-for="${id}"]`);
+    if(source&&editor) source.value=cleanRichHtml(editor.innerHTML);
+  }
+
+  function syncAllRichEditors(){['teamMemberRole','teamMemberBio'].forEach(syncRichEditor)}
+
+  function setupRichEditor(id,label){
+    const source=$(id); if(!source||source.dataset.richReady==='1') return;
+    source.dataset.richReady='1'; source.classList.add('team-rich-source');
+    const shell=document.createElement('div'); shell.className='team-rich-editor';
+    shell.innerHTML=`<div class="team-rich-toolbar" aria-label="Ferramentas de edição de ${label}">
+      <select data-rich-font title="Fonte">${RICH_FONTS.map(font=>`<option value="${font}">${font}</option>`).join('')}</select>
+      <select data-rich-size title="Tamanho">${RICH_SIZES.map(size=>`<option value="${size}">${size}px</option>`).join('')}</select>
+      <button type="button" data-rich-command="bold" title="Negrito"><b>B</b></button>
+      <button type="button" data-rich-command="italic" title="Itálico"><i>I</i></button>
+      <button type="button" data-rich-command="underline" title="Sublinhado"><u>U</u></button>
+      <button type="button" data-rich-clear title="Limpar formatação">Limpar</button>
+    </div><div class="team-rich-area" data-rich-for="${id}" contenteditable="true" role="textbox" aria-label="${label}"></div>`;
+    source.insertAdjacentElement('afterend',shell);
+    const editor=shell.querySelector('[data-rich-for]'); editor.innerHTML=source.value||'';
+    const focus=()=>{editor.focus();};
+    shell.querySelectorAll('[data-rich-command]').forEach(button=>button.addEventListener('click',()=>{focus();document.execCommand(button.dataset.richCommand,false,null);syncRichEditor(id)}));
+    shell.querySelector('[data-rich-font]').addEventListener('change',event=>{
+      focus(); document.execCommand('fontName',false,event.target.value);
+      editor.querySelectorAll('font[face]').forEach(font=>{const span=document.createElement('span');span.style.fontFamily=font.getAttribute('face');span.innerHTML=font.innerHTML;font.replaceWith(span)});
+      syncRichEditor(id);
+    });
+    shell.querySelector('[data-rich-size]').addEventListener('change',event=>{
+      focus(); document.execCommand('fontSize',false,'7');
+      editor.querySelectorAll('font[size="7"]').forEach(font=>{const span=document.createElement('span');span.style.fontSize=`${event.target.value}px`;span.innerHTML=font.innerHTML;font.replaceWith(span)});
+      syncRichEditor(id);
+    });
+    shell.querySelector('[data-rich-clear]').addEventListener('click',()=>{focus();document.execCommand('removeFormat',false,null);syncRichEditor(id)});
+    editor.addEventListener('input',()=>syncRichEditor(id));
+  }
+
+  function refreshRichEditor(id,value=''){
+    const editor=document.querySelector(`[data-rich-for="${id}"]`); if(editor) editor.innerHTML=value||'';
+  }
   function feedback(message,error=false){
     const element=$('teamMemberFeedback');
     if(!element) return;
@@ -156,6 +226,7 @@
   function setValue(id,value=''){
     const element=$(id);
     if(element) element.value=value??'';
+    refreshRichEditor(id,value??'');
   }
 
   function reset(){
@@ -230,6 +301,7 @@
       return;
     }
 
+    syncAllRichEditors();
     const ageValue=$('teamMemberAge').value;
     const row={
       name:$('teamMemberName').value.trim(),
@@ -480,6 +552,8 @@
   const refresh=()=>{clearTimeout(timer);timer=setTimeout(load,120);};
 
   async function boot(){
+    setupRichEditor('teamMemberRole','Função ou cargo');
+    setupRichEditor('teamMemberBio','Sobre');
     renderSocialSlots();
     await load();
     sb.channel('team-admin-v89')
