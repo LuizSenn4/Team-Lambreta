@@ -6,8 +6,8 @@
   const sb=window.supabase?.createClient(URL,KEY);
   if(!sb) return;
 
-  const feature=document.getElementById('teamBossFeature');
   const grid=document.getElementById('teamRosterGrid');
+  const pager=document.getElementById('teamRosterPager');
   const modal=document.getElementById('teamProfileModal');
   const modalContent=document.getElementById('teamModalContent');
   const esc=value=>String(value??'').replace(/[&<>"']/g,char=>({
@@ -16,6 +16,8 @@
 
   let members=[];
   let currentIndex=0;
+  let currentPage=1;
+  let configuredPerPage=10;
   let lastFocus=null;
 
   function avatar(row,compact=false){
@@ -60,26 +62,6 @@
     if(value.includes('stream')) return 'streamer';
     if(value.includes('vip')) return 'vip';
     return 'member';
-  }
-
-  function featureMarkup(row,index){
-    const nickname=row.nickname||row.name||'INK31';
-    const [flag,code]=countryInfo(row.country);
-    return `<article class="team-boss-card role-${roleClass(row.role)}">
-      <div class="team-boss-photo">${avatar(row)}</div>
-      <div class="team-boss-copy">
-        <span class="team-boss-kicker">DESTAQUE DO TEAM</span>
-        <h2>${esc(nickname)}</h2>
-        <strong>${esc(row.role||'BOSS')}</strong>
-        <p>${esc(row.bio||'Perfil oficial do Team Lambreta.')}</p>
-        <div class="team-boss-meta">
-          ${row.country?`<span>${flag} ${code}</span>`:''}
-          ${row.main_game?`<span>${esc(row.main_game)}</span>`:''}
-          ${row.play_style?`<span>${esc(row.play_style)}</span>`:''}
-        </div>
-        <button type="button" class="team-open-profile" data-team-index="${index}">Ver perfil completo</button>
-      </div>
-    </article>`;
   }
 
   function cardMarkup(row,index){
@@ -139,26 +121,56 @@
     document.querySelectorAll('[data-team-index]').forEach(button=>button.addEventListener('click',()=>openModal(Number(button.dataset.teamIndex)||0)));
   }
 
+  function effectivePerPage(){
+    return matchMedia('(max-width: 600px)').matches ? Math.min(configuredPerPage,5) : configuredPerPage;
+  }
+
+  function renderPager(totalPages){
+    if(!pager) return;
+    if(totalPages<=1){pager.hidden=true;pager.innerHTML='';return;}
+    pager.hidden=false;
+    const buttons=[];
+    buttons.push(`<button type="button" data-page-step="-1" aria-label="Página anterior">‹</button>`);
+    for(let page=1;page<=totalPages;page++) buttons.push(`<button type="button" data-page="${page}" class="${page===currentPage?'is-active':''}" aria-label="Página ${page}">${page}</button>`);
+    buttons.push(`<button type="button" data-page-step="1" aria-label="Próxima página">›</button>`);
+    pager.innerHTML=buttons.join('');
+    pager.querySelectorAll('[data-page]').forEach(button=>button.addEventListener('click',()=>{currentPage=Number(button.dataset.page)||1;render();scrollToRoster();}));
+    pager.querySelectorAll('[data-page-step]').forEach(button=>button.addEventListener('click',()=>{currentPage=((currentPage-1+Number(button.dataset.pageStep)+totalPages)%totalPages)+1;render();scrollToRoster();}));
+  }
+
+  function scrollToRoster(){
+    document.querySelector('.team-roster-section')?.scrollIntoView({behavior:'smooth',block:'start'});
+  }
+
   function render(){
-    if(!grid||!feature) return;
+    if(!grid) return;
     if(!members.length){
-      feature.innerHTML='';
       grid.innerHTML='<article class="team-esports-empty"><h2>Nenhum perfil nesta área</h2></article>';
+      renderPager(0);
       return;
     }
-    const bossIndex=Math.max(0,members.findIndex(row=>row.is_featured||/boss/i.test(String(row.role||''))||/ink31/i.test(String(row.nickname||row.name||''))));
-    const boss=members[bossIndex];
-    feature.innerHTML=featureMarkup(boss,bossIndex);
-    grid.innerHTML=members.map((row,index)=>index===bossIndex?'':cardMarkup(row,index)).join('');
+    const perPage=effectivePerPage();
+    const totalPages=Math.max(1,Math.ceil(members.length/perPage));
+    currentPage=Math.min(Math.max(1,currentPage),totalPages);
+    const start=(currentPage-1)*perPage;
+    grid.innerHTML=members.slice(start,start+perPage).map((row,offset)=>cardMarkup(row,start+offset)).join('');
+    renderPager(totalPages);
     bindCards();
   }
 
+  async function loadSettings(){
+    try{
+      const {data}=await sb.from('team_display_settings').select('members_per_page').eq('id',1).maybeSingle();
+      configuredPerPage=Math.min(10,Math.max(1,Number(data?.members_per_page)||10));
+    }catch(_){configuredPerPage=10;}
+  }
+
   async function load(){
-    if(!grid||!feature) return;
+    if(!grid) return;
+    await loadSettings();
     const {data,error}=await sb.from('team_members').select('*').eq('is_published',true).eq('is_archived',false)
-      .order('is_featured',{ascending:false}).order('display_order').order('created_at');
+      .order('display_order').order('created_at');
     if(error){
-      feature.innerHTML='';
       grid.innerHTML=`<article class="team-esports-empty"><h2>Não foi possível carregar o Team</h2><p>${esc(error.message)}</p></article>`;
       return;
     }
@@ -179,7 +191,12 @@
   const refresh=()=>{clearTimeout(timer);timer=setTimeout(load,120);};
   async function boot(){
     await load();
-    sb.channel('team-public-v92').on('postgres_changes',{event:'*',schema:'public',table:'team_members'},refresh).subscribe();
+    sb.channel('team-public-v92')
+      .on('postgres_changes',{event:'*',schema:'public',table:'team_members'},refresh)
+      .on('postgres_changes',{event:'*',schema:'public',table:'team_display_settings'},refresh)
+      .subscribe();
+    let resizeTimer=null;
+    addEventListener('resize',()=>{clearTimeout(resizeTimer);resizeTimer=setTimeout(()=>{currentPage=1;render();},120);});
     addEventListener('focus',load);
     document.addEventListener('visibilitychange',()=>{if(!document.hidden)load();});
   }

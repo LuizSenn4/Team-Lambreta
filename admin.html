@@ -174,8 +174,28 @@
     </form>
   </div>
 
+  <section class="team-display-settings" aria-labelledby="teamDisplaySettingsTitle">
+    <div>
+      <h3 id="teamDisplaySettingsTitle">Exibição da equipa</h3>
+      <p class="hint">Escolha quantos membros aparecem por página no PC. No telemóvel, o limite automático é 5.</p>
+    </div>
+    <div class="team-per-page-options" role="radiogroup" aria-label="Membros por página">
+      <label><input type="radio" name="teamMembersPerPage" value="1"><span>1</span></label>
+      <label><input type="radio" name="teamMembersPerPage" value="2"><span>2</span></label>
+      <label><input type="radio" name="teamMembersPerPage" value="3"><span>3</span></label>
+      <label><input type="radio" name="teamMembersPerPage" value="4"><span>4</span></label>
+      <label><input type="radio" name="teamMembersPerPage" value="5"><span>5</span></label>
+      <label><input type="radio" name="teamMembersPerPage" value="6"><span>6</span></label>
+      <label><input type="radio" name="teamMembersPerPage" value="7"><span>7</span></label>
+      <label><input type="radio" name="teamMembersPerPage" value="8"><span>8</span></label>
+      <label><input type="radio" name="teamMembersPerPage" value="9"><span>9</span></label>
+      <label><input type="radio" name="teamMembersPerPage" value="10" checked><span>10</span></label>
+    </div>
+    <p id="teamDisplaySettingsFeedback" class="hint"></p>
+  </section>
+
   <div class="streamer-list-head">
-    <div><h3>Perfis na nuvem</h3><p class="hint team-sort-hint">☰ Segure e arraste para ordenar. A ordem é guardada automaticamente.</p></div>
+    <div><h3>Ordem dos membros</h3><p class="hint team-sort-hint">☰ Segure e arraste para definir exatamente quem aparece primeiro.</p></div>
     <button id="refreshTeamMembersBtn" type="button">Atualizar</button>
   </div>
   <div id="teamMembersCloudList" class="streamers-supabase-list">
