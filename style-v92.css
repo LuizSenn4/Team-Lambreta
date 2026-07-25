@@ -7927,7 +7927,7 @@ html, body { width:100%; max-width:100%; overflow-x:hidden; }
     height:52px;
   }
 }
-\n\n/* ============================================================\n   V92.34 — Editor completo de tópicos do fórum\n   ============================================================ */\n.forum-edit-dialog{\n  width:min(620px,calc(100vw - 28px));\n  max-height:min(86vh,760px);\n  padding:0;\n  border:1px solid rgba(217,164,65,.34);\n  border-radius:20px;\n  background:linear-gradient(145deg,rgba(8,14,5,.98),rgba(22,5,7,.98));\n  color:var(--text);\n  box-shadow:0 24px 80px rgba(0,0,0,.72),0 0 0 1px rgba(115,255,24,.05) inset;\n}\n.forum-edit-dialog::backdrop{background:rgba(0,0,0,.78);backdrop-filter:blur(5px)}\n.forum-edit-form{display:grid;gap:16px;padding:22px}\n.forum-edit-head{display:flex;align-items:center;justify-content:space-between;gap:18px;padding-bottom:12px;border-bottom:1px solid rgba(217,164,65,.18)}\n.forum-edit-head small{display:block;color:var(--gold);font-size:10px;letter-spacing:3px;font-weight:900}\n.forum-edit-head h3{margin:4px 0 0;font-family:Cinzel,serif;color:#fff0b0;font-size:24px}\n.forum-edit-close{width:38px;height:38px;border-radius:50%;border:1px solid rgba(217,164,65,.28);background:rgba(0,0,0,.34);color:#f5dfaa;font-size:25px;cursor:pointer}\n.forum-edit-form label{display:grid;gap:8px;color:#dcc58e;font-size:12px;font-weight:800;letter-spacing:.5px}\n.forum-edit-form input,.forum-edit-form textarea,.forum-edit-form select{width:100%;box-sizing:border-box;border:1px solid rgba(217,164,65,.25);border-radius:12px;background:rgba(0,0,0,.42);color:#f4eee2;padding:12px 13px;font:inherit;outline:none}\n.forum-edit-form textarea{resize:vertical;min-height:160px;line-height:1.55}\n.forum-edit-form input:focus,.forum-edit-form textarea:focus,.forum-edit-form select:focus{border-color:#73ff18;box-shadow:0 0 0 3px rgba(115,255,24,.09)}\n.forum-edit-private-note{margin:0;padding:10px 12px;border-radius:10px;background:rgba(217,164,65,.06);color:#cbb98f;font-size:12px}\n.forum-edit-private-note.is-private{background:rgba(187,120,255,.08);color:#d9b7ff;border:1px solid rgba(187,120,255,.2)}\n.forum-edit-actions{display:flex;justify-content:flex-end;gap:10px;padding-top:4px}\n.forum-edit-actions button{border-radius:11px;padding:11px 15px;font-weight:900;cursor:pointer}\n.forum-edit-actions .secondary{border:1px solid rgba(217,164,65,.24);background:rgba(0,0,0,.25);color:#d8c59a}\n.forum-edit-actions .primary{border:1px solid rgba(115,255,24,.45);background:rgba(115,255,24,.12);color:#8cff4a}\n.forum-edited-note{margin-top:10px;color:#9f9275;font-size:11px;font-style:italic;letter-spacing:.2px}\n@media(max-width:640px){\n  .forum-edit-form{padding:17px;gap:13px}\n  .forum-edit-head h3{font-size:21px}\n  .forum-edit-actions{display:grid;grid-template-columns:1fr 1fr}\n  .forum-edit-actions button{width:100%}\n}\n
+
 
 /* V92.35 — Team maior no desktop, mobile-first preservado, e fórum com cargos equivalentes */
 .team-esports-page{padding-inline:clamp(14px,3vw,52px)!important}
@@ -8008,59 +8008,189 @@ html, body { width:100%; max-width:100%; overflow-x:hidden; }
 }
 
 /* ============================================================
-   V92.35.1 — Fórum com fundo cinza escuro elegante
+   V92.36 — Fórum refeito sem heranças de editor/mover antigos
    ============================================================ */
-.forum-page .forum-board,
-.forum-page .forum-page-shell{
-  background:transparent;
+.forum-page{
+  --forum-panel:#26292f;
+  --forum-panel-deep:#1b1d22;
+  --forum-field:#17191e;
+  --forum-border:rgba(217,164,65,.22);
+  --forum-text:#f4eee2;
+  --forum-muted:#bfb39a;
 }
 
 .forum-page .forum-create-panel,
 .forum-page .forum-topic-panel,
+.forum-page .forum-folder-group,
 .forum-page .forum-topic,
 .forum-page .empty-card,
 .forum-page .forum-reply,
-.forum-page .forum-folder-group,
-.forum-page .forum-folder,
 .forum-page .forum-login-notice,
 .forum-page .forum-author-identity{
-  background:
-    linear-gradient(180deg, rgba(46,49,56,.92), rgba(27,29,34,.96)) !important;
-  border-color: rgba(217,164,65,.18) !important;
-  box-shadow:
-    0 14px 34px rgba(0,0,0,.24),
-    inset 0 1px 0 rgba(255,255,255,.02);
+  background:linear-gradient(180deg,var(--forum-panel),var(--forum-panel-deep))!important;
+  border-color:var(--forum-border)!important;
+  color:var(--forum-text)!important;
+  box-shadow:0 16px 36px rgba(0,0,0,.28),inset 0 1px rgba(255,255,255,.025)!important;
 }
 
-.forum-page .forum-create-panel,
-.forum-page .forum-topic-panel,
-.forum-page .forum-folder-group{
-  background:
-    linear-gradient(180deg, rgba(42,45,52,.95), rgba(24,26,31,.98)) !important;
+.forum-page .forum-folder{
+  background:rgba(35,38,44,.88)!important;
+  border-color:rgba(217,164,65,.12)!important;
+}
+.forum-page .forum-folder:hover,
+.forum-page .forum-folder.is-active{
+  background:linear-gradient(90deg,rgba(64,87,60,.9),rgba(35,38,44,.95))!important;
+}
+.forum-page .forum-reply.is-private{
+  background:linear-gradient(180deg,#342943,#211b2b)!important;
 }
 
 .forum-page .user-topic-form input,
 .forum-page .user-topic-form textarea,
-.forum-page .forum-category-select,
-.forum-page .forum-edit-form input,
-.forum-page .forum-edit-form textarea,
-.forum-page .forum-edit-form select{
-  background: rgba(18,20,24,.96) !important;
-  border-color: rgba(217,164,65,.18) !important;
-  color: #f4eee2 !important;
+.forum-page .forum-category-select{
+  background:var(--forum-field)!important;
+  color:var(--forum-text)!important;
+  border-color:var(--forum-border)!important;
 }
 
 .forum-page .forum-tabs button,
 .forum-page .forum-rooms button,
 .forum-page .forum-mod-actions button{
-  background: rgba(31,33,39,.94) !important;
+  background:#202329!important;
 }
-
 .forum-page .forum-tabs button.active,
 .forum-page .forum-rooms button.is-active{
-  background: rgba(115,255,24,.09) !important;
+  background:rgba(115,255,24,.09)!important;
 }
 
-.forum-page .forum-reply.is-private{
-  background: linear-gradient(180deg, rgba(54,38,72,.92), rgba(31,24,42,.96)) !important;
+.forum-admin-dialog{
+  width:min(640px,calc(100vw - 28px));
+  max-height:min(88vh,780px);
+  padding:0;
+  border:1px solid rgba(217,164,65,.34);
+  border-radius:22px;
+  background:linear-gradient(180deg,#30333a,#202228);
+  color:#f4eee2;
+  box-shadow:0 30px 90px rgba(0,0,0,.72),inset 0 1px rgba(255,255,255,.035);
+  overflow:hidden;
 }
+.forum-admin-dialog::backdrop{
+  background:rgba(0,0,0,.78);
+  backdrop-filter:blur(5px);
+}
+.forum-admin-form{
+  display:grid;
+  gap:16px;
+  padding:24px;
+  background:transparent;
+}
+.forum-admin-head{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:18px;
+  padding-bottom:14px;
+  border-bottom:1px solid rgba(217,164,65,.18);
+}
+.forum-admin-head small{
+  display:block;
+  color:#d9a441;
+  font-size:10px;
+  font-weight:900;
+  letter-spacing:3px;
+}
+.forum-admin-head h3{
+  margin:5px 0 0;
+  color:#fff0b0;
+  font-family:Cinzel,serif;
+  font-size:25px;
+}
+.forum-admin-close{
+  width:40px;
+  height:40px;
+  padding:0;
+  border:1px solid rgba(217,164,65,.28);
+  border-radius:12px;
+  background:#24272d;
+  color:#f5dfaa;
+  font-size:24px;
+  line-height:1;
+}
+.forum-admin-form label{
+  display:grid;
+  gap:8px;
+  color:#d9c99f;
+  font-size:12px;
+  font-weight:850;
+  letter-spacing:.5px;
+}
+.forum-admin-form input,
+.forum-admin-form textarea,
+.forum-admin-form select{
+  width:100%;
+  box-sizing:border-box;
+  border:1px solid rgba(217,164,65,.25);
+  border-radius:13px;
+  background:#17191e;
+  color:#f4eee2;
+  padding:13px 14px;
+  font:inherit;
+  outline:none;
+}
+.forum-admin-form textarea{
+  min-height:180px;
+  resize:vertical;
+  line-height:1.55;
+}
+.forum-admin-form input:focus,
+.forum-admin-form textarea:focus,
+.forum-admin-form select:focus{
+  border-color:#73ff18;
+  box-shadow:0 0 0 3px rgba(115,255,24,.09);
+}
+.forum-admin-note{
+  margin:0;
+  padding:11px 13px;
+  border:1px solid rgba(217,164,65,.12);
+  border-radius:11px;
+  background:#272a31;
+  color:#cfc2a4;
+  font-size:12px;
+}
+.forum-admin-note.is-private{
+  border-color:rgba(187,120,255,.24);
+  background:#30263d;
+  color:#dfc5ff;
+}
+.forum-admin-actions{
+  display:flex;
+  justify-content:flex-end;
+  gap:10px;
+  padding-top:4px;
+}
+.forum-admin-actions button{
+  min-height:42px;
+  padding:10px 16px;
+  border-radius:11px;
+  font-weight:900;
+}
+.forum-admin-actions .secondary{
+  border:1px solid rgba(217,164,65,.22);
+  background:#292c32;
+  color:#d8c59a;
+}
+.forum-admin-actions .primary{
+  border:1px solid rgba(115,255,24,.42);
+  background:rgba(115,255,24,.11);
+  color:#9cff64;
+}
+.forum-move-dialog{width:min(500px,calc(100vw - 28px))}
+.forum-move-dialog .forum-admin-form textarea{display:none}
+
+@media(max-width:640px){
+  .forum-admin-form{padding:18px;gap:13px}
+  .forum-admin-head h3{font-size:21px}
+  .forum-admin-actions{display:grid;grid-template-columns:1fr 1fr}
+  .forum-admin-actions button{width:100%}
+}
+
