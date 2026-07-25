@@ -7928,249 +7928,52 @@ html, body { width:100%; max-width:100%; overflow-x:hidden; }
   }
 }
 \n\n/* ============================================================\n   V92.34 — Editor completo de tópicos do fórum\n   ============================================================ */\n.forum-edit-dialog{\n  width:min(620px,calc(100vw - 28px));\n  max-height:min(86vh,760px);\n  padding:0;\n  border:1px solid rgba(217,164,65,.34);\n  border-radius:20px;\n  background:linear-gradient(145deg,rgba(8,14,5,.98),rgba(22,5,7,.98));\n  color:var(--text);\n  box-shadow:0 24px 80px rgba(0,0,0,.72),0 0 0 1px rgba(115,255,24,.05) inset;\n}\n.forum-edit-dialog::backdrop{background:rgba(0,0,0,.78);backdrop-filter:blur(5px)}\n.forum-edit-form{display:grid;gap:16px;padding:22px}\n.forum-edit-head{display:flex;align-items:center;justify-content:space-between;gap:18px;padding-bottom:12px;border-bottom:1px solid rgba(217,164,65,.18)}\n.forum-edit-head small{display:block;color:var(--gold);font-size:10px;letter-spacing:3px;font-weight:900}\n.forum-edit-head h3{margin:4px 0 0;font-family:Cinzel,serif;color:#fff0b0;font-size:24px}\n.forum-edit-close{width:38px;height:38px;border-radius:50%;border:1px solid rgba(217,164,65,.28);background:rgba(0,0,0,.34);color:#f5dfaa;font-size:25px;cursor:pointer}\n.forum-edit-form label{display:grid;gap:8px;color:#dcc58e;font-size:12px;font-weight:800;letter-spacing:.5px}\n.forum-edit-form input,.forum-edit-form textarea,.forum-edit-form select{width:100%;box-sizing:border-box;border:1px solid rgba(217,164,65,.25);border-radius:12px;background:rgba(0,0,0,.42);color:#f4eee2;padding:12px 13px;font:inherit;outline:none}\n.forum-edit-form textarea{resize:vertical;min-height:160px;line-height:1.55}\n.forum-edit-form input:focus,.forum-edit-form textarea:focus,.forum-edit-form select:focus{border-color:#73ff18;box-shadow:0 0 0 3px rgba(115,255,24,.09)}\n.forum-edit-private-note{margin:0;padding:10px 12px;border-radius:10px;background:rgba(217,164,65,.06);color:#cbb98f;font-size:12px}\n.forum-edit-private-note.is-private{background:rgba(187,120,255,.08);color:#d9b7ff;border:1px solid rgba(187,120,255,.2)}\n.forum-edit-actions{display:flex;justify-content:flex-end;gap:10px;padding-top:4px}\n.forum-edit-actions button{border-radius:11px;padding:11px 15px;font-weight:900;cursor:pointer}\n.forum-edit-actions .secondary{border:1px solid rgba(217,164,65,.24);background:rgba(0,0,0,.25);color:#d8c59a}\n.forum-edit-actions .primary{border:1px solid rgba(115,255,24,.45);background:rgba(115,255,24,.12);color:#8cff4a}\n.forum-edited-note{margin-top:10px;color:#9f9275;font-size:11px;font-style:italic;letter-spacing:.2px}\n@media(max-width:640px){\n  .forum-edit-form{padding:17px;gap:13px}\n  .forum-edit-head h3{font-size:21px}\n  .forum-edit-actions{display:grid;grid-template-columns:1fr 1fr}\n  .forum-edit-actions button{width:100%}\n}\n
-/* ============================================================
-   V92.35 — Team compacto com destaque + modal preview
-   ============================================================ */
-.team-boss-feature,.team-roster-section{width:min(1180px,100%);margin-inline:auto}
-.team-boss-feature{margin-bottom:34px}
-.team-boss-card{position:relative;display:grid;grid-template-columns:minmax(290px,390px) minmax(0,1fr);overflow:hidden;border:1px solid rgba(217,164,65,.38);border-radius:30px;background:linear-gradient(115deg,rgba(4,106,56,.10),rgba(3,3,3,.92) 42%,rgba(218,41,28,.07));box-shadow:0 28px 80px rgba(0,0,0,.42)}
-.team-boss-card:before{content:"";position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--gold);box-shadow:0 0 22px var(--gold)}
-.team-boss-photo{min-height:440px;display:grid;place-items:center;overflow:hidden;background:radial-gradient(circle at 50% 28%,rgba(217,164,65,.15),transparent 38%),#080908}
-.team-boss-photo img{width:100%;height:100%;object-fit:cover;object-position:center top}
-.team-boss-photo>span{font-family:"Road Rage",cursive;font-size:160px;color:var(--gold-light)}
-.team-boss-copy{display:flex;flex-direction:column;justify-content:center;padding:clamp(28px,5vw,62px)}
-.team-boss-kicker,.team-modal-kicker{font-size:10px;font-weight:900;letter-spacing:3px;color:var(--gold);text-transform:uppercase}
-.team-boss-copy h2{margin:8px 0 0;font-family:"Road Rage",cursive;font-size:clamp(60px,8vw,104px);font-weight:400;line-height:.86;color:#f5f2e9;text-transform:uppercase}
-.team-boss-copy>strong{font-family:"Road Rage",cursive;font-size:clamp(30px,3vw,42px);font-weight:400;color:var(--gold);text-shadow:0 0 16px rgba(217,164,65,.32)}
-.team-boss-copy p{max-width:660px;color:#cec3aa;line-height:1.65}
-.team-boss-meta{display:flex;gap:10px;flex-wrap:wrap;margin:8px 0 20px}
-.team-boss-meta span{padding:8px 11px;border:1px solid rgba(217,164,65,.2);border-radius:10px;color:var(--gold-light);background:rgba(255,255,255,.025);font-size:12px;font-weight:800}
-.team-open-profile{align-self:flex-start;padding:12px 18px;border:1px solid rgba(217,164,65,.45);border-radius:12px;background:rgba(217,164,65,.08);color:var(--gold-light);font-weight:900;cursor:pointer}
-.team-open-profile:hover{transform:translateY(-2px);box-shadow:0 0 24px rgba(217,164,65,.12)}
-.team-roster-heading{text-align:center;margin:0 auto 20px}
-.team-roster-heading .tag{margin:0;color:var(--green);font-family:"Road Rage",cursive;font-size:20px;letter-spacing:4px}
-.team-roster-heading h2{margin:5px 0;font-family:"Road Rage",cursive;font-size:clamp(42px,6vw,70px);font-weight:400;color:var(--gold-light)}
-.team-roster-heading>p:last-child{margin:0;color:var(--muted)}
-.team-preview-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px}
-.team-preview-card{position:relative;min-width:0;display:flex;align-items:center;gap:13px;padding:12px;text-align:left;border:1px solid rgba(217,164,65,.22);border-radius:18px;background:linear-gradient(145deg,rgba(255,255,255,.025),rgba(0,0,0,.76));color:inherit;cursor:pointer;overflow:hidden;transition:transform .2s ease,border-color .2s ease,box-shadow .2s ease}
-.team-preview-card:before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--green);box-shadow:0 0 12px var(--green)}
-.team-preview-card:hover,.team-preview-card:focus-visible{transform:translateY(-4px);border-color:rgba(115,255,24,.42);box-shadow:0 18px 38px rgba(0,0,0,.35),0 0 22px rgba(115,255,24,.07)}
-.team-preview-photo{width:72px;height:72px;flex:0 0 72px;display:grid;place-items:center;overflow:hidden;border-radius:14px;background:#090a09}
-.team-preview-photo img{width:100%;height:100%;object-fit:cover}
-.team-preview-photo>span{font-family:"Road Rage",cursive;font-size:42px;color:var(--gold-light)}
-.team-preview-copy{min-width:0;display:flex;flex-direction:column}
-.team-preview-copy strong{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:#f5f2e9;font-family:"Road Rage",cursive;font-size:27px;font-weight:400;line-height:1}
-.team-preview-copy small{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--green);font-size:10px;font-weight:900;letter-spacing:1px;text-transform:uppercase}
-.team-preview-copy span{margin-top:5px;color:var(--muted);font-size:11px}
-.team-preview-card>i{margin-left:auto;color:var(--gold);font-style:normal;font-size:24px}
-.team-preview-card.role-boss:before{background:#ffd65a;box-shadow:0 0 14px #ffd65a}.team-preview-card.role-dev:before{background:#5ef3ff;box-shadow:0 0 14px #5ef3ff}.team-preview-card.role-admin:before{background:#ff405a;box-shadow:0 0 14px #ff405a}.team-preview-card.role-moderator:before{background:#bb78ff;box-shadow:0 0 14px #bb78ff}.team-preview-card.role-staff:before{background:#65a9ff;box-shadow:0 0 14px #65a9ff}.team-preview-card.role-streamer:before{background:#ff72cf;box-shadow:0 0 14px #ff72cf}.team-preview-card.role-vip:before{background:#ffd65a;box-shadow:0 0 14px #ffd65a}
-body.team-modal-open{overflow:hidden}
-.team-profile-modal{position:fixed;inset:0;z-index:100000;display:grid;place-items:center;padding:18px}
-.team-profile-modal[hidden]{display:none!important}
-.team-modal-backdrop{position:absolute;inset:0;border:0;background:rgba(0,0,0,.82);backdrop-filter:blur(7px)}
-.team-modal-card{position:relative;z-index:1;width:min(1050px,calc(100vw - 36px));max-height:90dvh;border:1px solid rgba(217,164,65,.38);border-radius:26px;background:#080908;box-shadow:0 32px 100px rgba(0,0,0,.72);overflow:visible}
-.team-modal-content{display:grid;grid-template-columns:minmax(280px,390px) minmax(0,1fr);max-height:90dvh;overflow:auto;border-radius:26px;background:radial-gradient(circle at 12% 20%,rgba(115,255,24,.09),transparent 30%),radial-gradient(circle at 88% 18%,rgba(218,41,28,.08),transparent 34%),#080908}
-.team-modal-photo{min-height:560px;display:grid;place-items:center;overflow:hidden;background:#070807}
-.team-modal-photo img{width:100%;height:100%;object-fit:cover;object-position:center top}
-.team-modal-photo>span{font-family:"Road Rage",cursive;font-size:150px;color:var(--gold-light)}
-.team-modal-copy{min-width:0;padding:clamp(28px,4vw,50px)}
-.team-modal-copy h2{margin:8px 0 0;font-family:"Road Rage",cursive;font-size:clamp(54px,7vw,88px);font-weight:400;line-height:.88;color:#f5f2e9;text-transform:uppercase;overflow-wrap:anywhere}
-.team-modal-role{display:block;margin:4px 0 20px;font-family:"Road Rage",cursive;font-size:34px;font-weight:400;text-transform:uppercase}
-.team-modal-facts{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-bottom:18px}
-.team-modal-facts div{padding:11px;border:1px solid rgba(217,164,65,.18);border-radius:11px;background:rgba(255,255,255,.02)}
-.team-modal-facts small{display:block;color:var(--muted);font-size:9px;font-weight:900;letter-spacing:1px;text-transform:uppercase}
-.team-modal-facts strong{display:block;margin-top:4px;color:var(--gold-light);overflow-wrap:anywhere}
-.team-modal-copy>p{color:#cec3aa;line-height:1.7}
-.team-modal-links{display:flex;gap:9px;flex-wrap:wrap}
-.team-modal-links a{padding:10px 13px;border:1px solid rgba(115,255,24,.28);border-radius:10px;color:var(--green);text-decoration:none;font-weight:850}
-.team-modal-close{position:absolute;z-index:4;top:12px;right:12px;width:42px;height:42px;border:1px solid rgba(217,164,65,.35);border-radius:50%;background:rgba(0,0,0,.78);color:#fff;font-size:26px;cursor:pointer}
-.team-modal-arrow{position:absolute;z-index:4;top:50%;transform:translateY(-50%);width:48px;height:56px;border:1px solid rgba(217,164,65,.32);border-radius:15px;background:rgba(0,0,0,.82);color:var(--gold-light);font-size:44px;line-height:1;cursor:pointer;box-shadow:0 8px 24px rgba(0,0,0,.38)}
-.team-modal-prev{left:-66px}.team-modal-next{right:-66px}
-.team-modal-arrow:hover{border-color:rgba(115,255,24,.52);color:var(--green)}
-@media(max-width:1100px){.team-preview-grid{grid-template-columns:repeat(3,minmax(0,1fr))}.team-modal-prev{left:8px}.team-modal-next{right:8px}.team-modal-arrow{top:auto;bottom:12px;transform:none}}
-@media(max-width:800px){.team-boss-card{grid-template-columns:1fr}.team-boss-photo{min-height:320px;max-height:48dvh}.team-preview-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.team-modal-content{grid-template-columns:1fr}.team-modal-photo{min-height:280px;max-height:42dvh}.team-modal-copy{padding:24px 18px 78px}.team-modal-facts{grid-template-columns:1fr}.team-modal-card{width:min(680px,calc(100vw - 22px))}}
-@media(max-width:500px){.team-preview-grid{grid-template-columns:1fr}.team-boss-copy{padding:24px 18px 28px}.team-boss-copy h2{font-size:64px}.team-preview-card{min-height:92px}.team-modal-arrow{width:44px;height:48px;font-size:38px}.team-modal-prev{left:12px}.team-modal-next{right:12px}}
-
 
 /* ============================================================
-   V92.36 — Roster fiel, 10 por página e mobile até 5
+   V92.39 — TEAM reconstruído a partir do checkpoint V92.34
+   Escopo isolado: apenas team.html
    ============================================================ */
-.sr-only{position:absolute!important;width:1px!important;height:1px!important;padding:0!important;margin:-1px!important;overflow:hidden!important;clip:rect(0,0,0,0)!important;white-space:nowrap!important;border:0!important}
-.team-roster-v36{padding-top:0;background:radial-gradient(circle at 0 45%,rgba(44,86,0,.14),transparent 30%),radial-gradient(circle at 100% 45%,rgba(120,18,8,.13),transparent 30%),#020302}
-.team-roster-hero-v36{padding:42px 18px 22px!important;text-align:center}
-.team-roster-brandline,.team-roster-divider{display:flex;align-items:center;justify-content:center;gap:16px;width:min(1120px,100%);margin-inline:auto;color:var(--gold)}
-.team-roster-brandline span,.team-roster-divider span{height:1px;flex:1;background:linear-gradient(90deg,transparent,rgba(217,164,65,.55),transparent)}
-.team-roster-brandline span:first-child{background:linear-gradient(90deg,rgba(115,255,24,.55),rgba(217,164,65,.55),transparent)}
-.team-roster-brandline span:last-child{background:linear-gradient(90deg,transparent,rgba(217,164,65,.55),rgba(218,41,28,.55))}
-.team-roster-brandline strong{font-family:Inter,Arial,sans-serif;font-size:12px;letter-spacing:2px;color:var(--gold-light);white-space:nowrap}
-.team-roster-hero-v36 h1{margin:14px 0 8px;font-family:Inter,Arial,sans-serif;font-size:clamp(42px,6vw,72px);font-weight:900;letter-spacing:2px;line-height:1;color:var(--gold-light);text-transform:uppercase;text-shadow:0 2px 14px rgba(217,164,65,.18)}
-.team-roster-divider{max-width:480px;gap:10px}.team-roster-divider b{font-size:11px;color:var(--gold)}
-.team-roster-hero-v36>p{margin:14px 0 0;color:var(--gold);font-size:16px}
-.team-roster-v36 .team-roster-section{padding:0 18px 40px}
-.team-preview-grid-v36{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:14px 40px!important;width:min(1200px,100%);margin-inline:auto}
-.team-preview-grid-v36 .team-preview-card{min-height:148px;padding:16px 22px;border-radius:22px;border-color:rgba(217,164,65,.34);background:linear-gradient(110deg,rgba(8,10,8,.98),rgba(0,0,0,.88));box-shadow:0 12px 32px rgba(0,0,0,.28)}
-.team-preview-grid-v36 .team-preview-card:before{width:4px}
-.team-preview-grid-v36 .team-preview-photo{width:116px;height:116px;flex:0 0 116px;border-radius:14px;border:1px solid rgba(217,164,65,.25)}
-.team-preview-grid-v36 .team-preview-copy{gap:5px}
-.team-preview-grid-v36 .team-preview-copy strong{font-size:34px}
-.team-preview-grid-v36 .team-preview-copy small{font-size:13px;letter-spacing:1.2px}
-.team-preview-grid-v36 .team-preview-copy span{font-size:13px;margin-top:1px}
-.team-preview-grid-v36 .team-preview-card>i{font-size:34px;padding-right:4px}
-.team-roster-v36 .team-roster-pager{margin:26px auto 0}
-@media(max-width:900px){
-  .team-preview-grid-v36{gap:12px!important}
-  .team-preview-grid-v36 .team-preview-card{min-height:126px;padding:13px 16px}
-  .team-preview-grid-v36 .team-preview-photo{width:94px;height:94px;flex-basis:94px}
-  .team-preview-grid-v36 .team-preview-copy strong{font-size:28px}
-}
-@media(max-width:600px){
-  .team-roster-hero-v36{padding:30px 14px 18px!important}
-  .team-roster-brandline{gap:8px}.team-roster-brandline strong{font-size:9px;letter-spacing:1.4px}
-  .team-roster-hero-v36 h1{font-size:38px;letter-spacing:1px}
-  .team-roster-hero-v36>p{font-size:13px}
-  .team-roster-v36 .team-roster-section{padding-inline:10px}
-  .team-preview-grid-v36{grid-template-columns:1fr!important;gap:12px!important}
-  .team-preview-grid-v36 .team-preview-card{min-height:118px;padding:12px 14px;border-radius:18px}
-  .team-preview-grid-v36 .team-preview-photo{width:88px;height:88px;flex-basis:88px}
-  .team-preview-grid-v36 .team-preview-copy strong{font-size:27px}
-  .team-preview-grid-v36 .team-preview-copy small{font-size:11px}
-  .team-preview-grid-v36 .team-preview-card>i{font-size:28px}
-}
-.team-preview-grid-v36 .team-preview-card:before,
-.team-preview-grid-v36 .team-preview-card[class*="role-"]:before{background:#73ff18!important;box-shadow:0 0 14px rgba(115,255,24,.9)!important}
-
-
-/* ============================================================
-   V92.37 — Cabeçalho do Team fiel ao modelo aprovado
-   ============================================================ */
-.team-roster-image-hero-v37{
-  width:100%!important;
-  max-width:none!important;
-  margin:0!important;
-  padding:0!important;
+.team-roster-page-v39{
+  min-height:calc(100vh - 150px);
+  padding:0 0 48px;
+  background:
+    radial-gradient(circle at 0 45%,rgba(65,130,0,.17),transparent 34%),
+    radial-gradient(circle at 100% 45%,rgba(150,20,8,.14),transparent 34%),
+    #020302;
   overflow:hidden;
-  background:#020302;
 }
-.team-roster-image-hero-v37 img{
-  display:block;
-  width:100%;
-  height:auto;
-  max-height:250px;
-  object-fit:cover;
-  object-position:center;
+.team-roster-hero-v39{
+  width:min(760px,calc(100% - 34px));
+  margin:0 auto;
+  padding:28px 0 18px;
+  text-align:center;
 }
-@media(max-width:700px){
-  .team-roster-image-hero-v37 img{
-    min-height:150px;
-    object-fit:cover;
-  }
-}
-
-
-/* ============================================================
-   V92.38 — Ícones vetoriais flutuantes para setas e fechar
-   ============================================================ */
-.team-modal-arrow,
-.team-modal-close,
-.lb-arrow,
-.banner-arrow,
-.clean-banner-arrow,
-.image-preview-close,
-.forum-edit-close{
-  text-indent:-9999px !important;
-  overflow:hidden;
-  color:transparent !important;
-  background-color:transparent !important;
-  background-repeat:no-repeat !important;
-  background-position:center !important;
-  background-size:contain !important;
-  border:none !important;
-  box-shadow:none !important;
-}
-
-.team-modal-prev,
-.lb-left,
-.banner-arrow.left,
-.clean-banner-arrow.left{
-  background-image:url('img/ui/icon-arrow-left.png') !important;
-  filter:drop-shadow(0 0 10px rgba(245,223,170,.35));
-}
-.team-modal-next,
-.lb-right,
-.banner-arrow.right,
-.clean-banner-arrow.right{
-  background-image:url('img/ui/icon-arrow-right.png') !important;
-  filter:drop-shadow(0 0 10px rgba(115,255,24,.35));
-}
-.team-modal-close,
-.image-preview-close,
-.forum-edit-close{
-  background-image:url('img/ui/icon-close.png') !important;
-  filter:drop-shadow(0 0 10px rgba(245,223,170,.28));
-}
-
-.team-modal-arrow{
-  width:74px !important;
-  height:74px !important;
-  border-radius:0 !important;
-  padding:0 !important;
-}
-.team-modal-prev{left:-52px !important}
-.team-modal-next{right:-52px !important}
-.team-modal-close{
-  width:46px !important;
-  height:46px !important;
-  top:14px !important;
-  right:14px !important;
-  border-radius:0 !important;
-  padding:0 !important;
-}
-
-.lb-arrow,
-.banner-arrow,
-.clean-banner-arrow{
-  width:56px !important;
-  height:56px !important;
-  border-radius:0 !important;
-  padding:0 !important;
-}
-
-.image-preview-close,
-.forum-edit-close{
-  width:38px !important;
-  height:38px !important;
-  border-radius:0 !important;
-  padding:0 !important;
-}
-
-.team-modal-arrow:hover,
-.team-modal-close:hover,
-.lb-arrow:hover,
-.banner-arrow:hover,
-.clean-banner-arrow:hover,
-.image-preview-close:hover,
-.forum-edit-close:hover{
-  transform:translateY(-1px) scale(1.03);
-}
-
-@media(max-width:1100px){
-  .team-modal-prev{left:10px !important}
-  .team-modal-next{right:10px !important}
-}
-@media(max-width:700px){
-  .team-modal-arrow,
-  .lb-arrow,
-  .banner-arrow,
-  .clean-banner-arrow{
-    width:58px !important;
-    height:58px !important;
-  }
-  .team-modal-close,
-  .image-preview-close,
-  .forum-edit-close{
-    width:36px !important;
-    height:36px !important;
-  }
-  .team-modal-prev{left:8px !important}
-  .team-modal-next{right:8px !important}
-}
+.team-roster-brand-v39,
+.team-roster-divider-v39{display:flex;align-items:center;justify-content:center;gap:12px}
+.team-roster-brand-v39 span{height:1px;flex:1;background:linear-gradient(90deg,transparent,rgba(217,164,65,.82))}
+.team-roster-brand-v39 span:last-child{background:linear-gradient(90deg,rgba(217,164,65,.82),transparent)}
+.team-roster-brand-v39 strong{white-space:nowrap;color:#e6bd61;font:800 11px/1 Inter,Arial,sans-serif;letter-spacing:1.6px}
+.team-roster-brand-v39 strong b{margin-right:6px;font-size:9px;color:#f4cf73}
+.team-roster-hero-v39 h1{margin:12px 0 8px;color:#efc75f;font:900 clamp(30px,4.2vw,48px)/.95 Inter,Arial,sans-serif;letter-spacing:.5px;text-transform:uppercase;text-shadow:0 4px 20px rgba(217,164,65,.16)}
+.team-roster-divider-v39{width:min(250px,70%);margin:auto;gap:9px}.team-roster-divider-v39 span{height:1px;flex:1;background:linear-gradient(90deg,transparent,#789b00)}.team-roster-divider-v39 span:last-child{background:linear-gradient(90deg,#a62916,transparent)}.team-roster-divider-v39 b{font:900 8px/1 Inter;color:#d9a441}
+.team-roster-hero-v39 p{margin:11px 0 0;color:#d7b86d;font:400 13px/1.4 Inter,Arial,sans-serif}
+.team-roster-wrap-v39{width:min(650px,calc(100% - 34px));margin:0 auto}
+.team-roster-grid-v39{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px 20px}
+.team-member-card-v39{position:relative;display:flex;align-items:center;min-width:0;min-height:76px;padding:8px 14px 8px 8px;border:1px solid rgba(217,164,65,.38);border-radius:14px;background:linear-gradient(110deg,rgba(6,9,6,.98),rgba(0,0,0,.92));color:inherit;text-align:left;cursor:pointer;overflow:hidden;box-shadow:0 10px 30px rgba(0,0,0,.26);transition:transform .18s ease,border-color .18s ease}
+.team-member-card-v39:before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:#73ff18;box-shadow:0 0 13px rgba(115,255,24,.95)}
+.team-member-card-v39:hover,.team-member-card-v39:focus-visible{transform:translateY(-2px);border-color:rgba(115,255,24,.55);outline:none}
+.team-member-photo-v39{width:62px;height:62px;flex:0 0 62px;display:grid;place-items:center;border-radius:9px;overflow:hidden;background:#070807;border:1px solid rgba(217,164,65,.25)}
+.team-member-photo-v39 img{width:100%;height:100%;object-fit:cover}.team-member-photo-v39>span{font:400 36px/1 "Road Rage",cursive;color:#efc75f}
+.team-member-copy-v39{min-width:0;display:flex;flex-direction:column;margin-left:12px}.team-member-copy-v39 strong{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:#f4f0e6;font:600 15px/1.05 "Bebas Neue",Inter,sans-serif;letter-spacing:.2px}.team-member-copy-v39 small{margin-top:5px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:#73ff18;font:900 8px/1 Inter,sans-serif;letter-spacing:.5px;text-transform:uppercase}.team-member-copy-v39 span{margin-top:5px;color:#c4b89c;font:500 9px/1 Inter,sans-serif}.team-member-copy-v39 i{font-style:normal}
+.team-member-plus-v39{margin-left:auto;padding-left:8px;color:#e6b93f;font:500 22px/1 Inter,sans-serif}
+.team-roster-empty-v39{grid-column:1/-1;padding:48px;text-align:center;color:#cdbb91}
+.team-roster-pager-v39{display:flex;align-items:center;justify-content:center;gap:7px;margin:25px auto 0}.team-roster-pager-v39[hidden]{display:none!important}.team-roster-pager-v39 button{min-width:30px;height:30px;border:1px solid rgba(217,164,65,.28);border-radius:9px;background:rgba(0,0,0,.56);color:#cdbb91;cursor:pointer;font-weight:800}.team-roster-pager-v39 button.is-active{border-color:#73ff18;color:#73ff18;box-shadow:0 0 11px rgba(115,255,24,.18)}.team-roster-pager-v39 button:disabled{opacity:.3;cursor:default}
+body.team-modal-open-v39{overflow:hidden}.team-profile-modal-v39{position:fixed;inset:0;z-index:100000;display:grid;place-items:center;padding:22px}.team-profile-modal-v39[hidden]{display:none!important}.team-modal-backdrop-v39{position:absolute;inset:0;border:0;background:rgba(0,0,0,.84);backdrop-filter:blur(7px)}
+.team-modal-card-v39{position:relative;z-index:1;width:min(950px,calc(100vw - 48px));max-height:90dvh;border:1px solid rgba(217,164,65,.36);border-radius:22px;background:#070807;box-shadow:0 30px 100px rgba(0,0,0,.78)}
+.team-modal-content-v39{display:grid;grid-template-columns:minmax(250px,350px) minmax(0,1fr);max-height:90dvh;overflow:auto;border-radius:22px;background:radial-gradient(circle at 8% 20%,rgba(115,255,24,.09),transparent 34%),radial-gradient(circle at 95% 18%,rgba(190,30,12,.08),transparent 34%),#070807}
+.team-modal-photo-v39{min-height:500px;display:grid;place-items:center;overflow:hidden}.team-modal-photo-v39 img{width:100%;height:100%;object-fit:cover;object-position:center top}.team-modal-photo-v39>span{font:400 130px/1 "Road Rage",cursive;color:#efc75f}
+.team-modal-copy-v39{min-width:0;padding:38px}.team-modal-copy-v39>span{color:#d9a441;font:900 9px/1 Inter;letter-spacing:2.5px}.team-modal-copy-v39 h2{margin:8px 0 2px;color:#f4f0e6;font:400 clamp(48px,6vw,78px)/.9 "Road Rage",cursive;overflow-wrap:anywhere}.team-modal-copy-v39>strong{display:block;margin-bottom:20px;color:#73ff18;font:400 28px/1 "Road Rage",cursive;text-transform:uppercase}.team-modal-copy-v39>p{color:#cfc4aa;line-height:1.65}.team-modal-facts-v39{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px;margin-bottom:17px}.team-modal-facts-v39 div{padding:10px;border:1px solid rgba(217,164,65,.17);border-radius:10px;background:rgba(255,255,255,.018)}.team-modal-facts-v39 small{display:block;color:#8f846e;font-size:8px;font-weight:900;letter-spacing:1px;text-transform:uppercase}.team-modal-facts-v39 strong{display:block;margin-top:4px;color:#ead8a3;overflow-wrap:anywhere}.team-modal-links-v39{display:flex;gap:8px;flex-wrap:wrap}.team-modal-links-v39 a{padding:9px 12px;border:1px solid rgba(115,255,24,.26);border-radius:9px;color:#73ff18;text-decoration:none;font-weight:800}
+.team-modal-arrow-v39,.team-modal-close-v39{position:absolute;z-index:4;border:0;background-color:transparent;background-repeat:no-repeat;background-position:center;background-size:contain;cursor:pointer;filter:drop-shadow(0 7px 8px rgba(0,0,0,.85));transition:transform .18s ease}.team-modal-arrow-v39:hover,.team-modal-close-v39:hover{transform:translateY(-50%) scale(1.06)}
+.team-modal-arrow-v39{top:50%;width:66px;height:66px;transform:translateY(-50%)}.team-modal-prev-v39{left:-58px;background-image:url('img/ui/team-arrow-left.svg')}.team-modal-next-v39{right:-58px;background-image:url('img/ui/team-arrow-right.svg')}.team-modal-close-v39{top:10px;right:10px;width:44px;height:44px;background-image:url('img/ui/team-close.svg')}.team-modal-close-v39:hover{transform:scale(1.06)}
+@media(max-width:760px){.team-roster-wrap-v39{width:min(620px,calc(100% - 22px))}.team-roster-grid-v39{gap:8px 12px}.team-modal-card-v39{width:min(680px,calc(100vw - 22px))}.team-modal-content-v39{grid-template-columns:1fr}.team-modal-photo-v39{min-height:260px;max-height:42dvh}.team-modal-copy-v39{padding:24px 18px 76px}.team-modal-prev-v39{left:8px}.team-modal-next-v39{right:8px}.team-modal-arrow-v39{top:auto;bottom:9px;transform:none}.team-modal-arrow-v39:hover{transform:scale(1.06)}}
+@media(max-width:640px){.team-roster-hero-v39{padding-top:22px}.team-roster-brand-v39 strong{font-size:9px}.team-roster-hero-v39 h1{font-size:31px}.team-roster-hero-v39 p{font-size:12px}.team-roster-grid-v39{grid-template-columns:1fr;gap:9px}.team-member-card-v39{min-height:86px}.team-member-photo-v39{width:70px;height:70px;flex-basis:70px}.team-member-copy-v39 strong{font-size:18px}.team-member-copy-v39 small{font-size:9px}}

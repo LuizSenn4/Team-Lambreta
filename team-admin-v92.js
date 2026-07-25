@@ -415,36 +415,6 @@
     });
   }
 
-  function settingsFeedback(message,error=false){
-    const element=$('teamDisplaySettingsFeedback');
-    if(!element) return;
-    element.textContent=message;
-    element.style.color=error?'#ff5267':'#73ff18';
-  }
-
-  async function loadDisplaySettings(){
-    try{
-      const {data,error}=await sb.from('team_display_settings').select('members_per_page').eq('id',1).maybeSingle();
-      if(error) throw error;
-      const value=Math.min(10,Math.max(1,Number(data?.members_per_page)||10));
-      const radio=document.querySelector(`input[name="teamMembersPerPage"][value="${value}"]`);
-      if(radio) radio.checked=true;
-    }catch(error){
-      settingsFeedback('Execute o SQL da V92.36 para ativar esta configuração.',true);
-    }
-  }
-
-  async function saveDisplaySettings(value){
-    if(!(await isAdmin())) return;
-    const safe=Math.min(10,Math.max(1,Number(value)||10));
-    settingsFeedback('Guardando quantidade por página...');
-    const {error}=await sb.from('team_display_settings').update({
-      members_per_page:safe,updated_by:session.user.id,updated_at:new Date().toISOString()
-    }).eq('id',1);
-    if(error) settingsFeedback(error.message||'Não foi possível guardar.',true);
-    else settingsFeedback(`Exibição guardada: ${safe} por página no PC e até 5 no telemóvel.`);
-  }
-
   async function load(){
     const container=$('teamMembersCloudList');
     if(!container) return;
@@ -456,6 +426,7 @@
 
     const {data,error}=await sb.from('team_members').select('*')
       .order('is_archived')
+      .order('is_featured',{ascending:false})
       .order('display_order')
       .order('created_at');
 
@@ -474,7 +445,6 @@
   $('refreshTeamMembersBtn')?.addEventListener('click',load);
   $('teamMemberForm')?.addEventListener('submit',save);
   document.querySelectorAll('input[name="teamSocialCount"]')?.forEach(radio=>radio.addEventListener('change',()=>renderSocialSlots()));
-  document.querySelectorAll('input[name="teamMembersPerPage"]')?.forEach(radio=>radio.addEventListener('change',()=>saveDisplaySettings(radio.value)));
 
   $('teamMemberPhotoUrl')?.addEventListener('input',event=>{
     const value=event.target.value.trim();
@@ -511,11 +481,9 @@
 
   async function boot(){
     renderSocialSlots();
-    await loadDisplaySettings();
     await load();
     sb.channel('team-admin-v89')
       .on('postgres_changes',{event:'*',schema:'public',table:'team_members'},refresh)
-      .on('postgres_changes',{event:'*',schema:'public',table:'team_display_settings'},loadDisplaySettings)
       .subscribe();
     addEventListener('focus',load);
     document.addEventListener('visibilitychange',()=>{if(!document.hidden)load();});
