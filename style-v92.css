@@ -7928,3 +7928,65 @@ html, body { width:100%; max-width:100%; overflow-x:hidden; }
   }
 }
 \n\n/* ============================================================\n   V92.34 — Editor completo de tópicos do fórum\n   ============================================================ */\n.forum-edit-dialog{\n  width:min(620px,calc(100vw - 28px));\n  max-height:min(86vh,760px);\n  padding:0;\n  border:1px solid rgba(217,164,65,.34);\n  border-radius:20px;\n  background:linear-gradient(145deg,rgba(8,14,5,.98),rgba(22,5,7,.98));\n  color:var(--text);\n  box-shadow:0 24px 80px rgba(0,0,0,.72),0 0 0 1px rgba(115,255,24,.05) inset;\n}\n.forum-edit-dialog::backdrop{background:rgba(0,0,0,.78);backdrop-filter:blur(5px)}\n.forum-edit-form{display:grid;gap:16px;padding:22px}\n.forum-edit-head{display:flex;align-items:center;justify-content:space-between;gap:18px;padding-bottom:12px;border-bottom:1px solid rgba(217,164,65,.18)}\n.forum-edit-head small{display:block;color:var(--gold);font-size:10px;letter-spacing:3px;font-weight:900}\n.forum-edit-head h3{margin:4px 0 0;font-family:Cinzel,serif;color:#fff0b0;font-size:24px}\n.forum-edit-close{width:38px;height:38px;border-radius:50%;border:1px solid rgba(217,164,65,.28);background:rgba(0,0,0,.34);color:#f5dfaa;font-size:25px;cursor:pointer}\n.forum-edit-form label{display:grid;gap:8px;color:#dcc58e;font-size:12px;font-weight:800;letter-spacing:.5px}\n.forum-edit-form input,.forum-edit-form textarea,.forum-edit-form select{width:100%;box-sizing:border-box;border:1px solid rgba(217,164,65,.25);border-radius:12px;background:rgba(0,0,0,.42);color:#f4eee2;padding:12px 13px;font:inherit;outline:none}\n.forum-edit-form textarea{resize:vertical;min-height:160px;line-height:1.55}\n.forum-edit-form input:focus,.forum-edit-form textarea:focus,.forum-edit-form select:focus{border-color:#73ff18;box-shadow:0 0 0 3px rgba(115,255,24,.09)}\n.forum-edit-private-note{margin:0;padding:10px 12px;border-radius:10px;background:rgba(217,164,65,.06);color:#cbb98f;font-size:12px}\n.forum-edit-private-note.is-private{background:rgba(187,120,255,.08);color:#d9b7ff;border:1px solid rgba(187,120,255,.2)}\n.forum-edit-actions{display:flex;justify-content:flex-end;gap:10px;padding-top:4px}\n.forum-edit-actions button{border-radius:11px;padding:11px 15px;font-weight:900;cursor:pointer}\n.forum-edit-actions .secondary{border:1px solid rgba(217,164,65,.24);background:rgba(0,0,0,.25);color:#d8c59a}\n.forum-edit-actions .primary{border:1px solid rgba(115,255,24,.45);background:rgba(115,255,24,.12);color:#8cff4a}\n.forum-edited-note{margin-top:10px;color:#9f9275;font-size:11px;font-style:italic;letter-spacing:.2px}\n@media(max-width:640px){\n  .forum-edit-form{padding:17px;gap:13px}\n  .forum-edit-head h3{font-size:21px}\n  .forum-edit-actions{display:grid;grid-template-columns:1fr 1fr}\n  .forum-edit-actions button{width:100%}\n}\n
+/* ============================================================
+   V92.35 — Team compacto com destaque + modal preview
+   ============================================================ */
+.team-boss-feature,.team-roster-section{width:min(1180px,100%);margin-inline:auto}
+.team-boss-feature{margin-bottom:34px}
+.team-boss-card{position:relative;display:grid;grid-template-columns:minmax(290px,390px) minmax(0,1fr);overflow:hidden;border:1px solid rgba(217,164,65,.38);border-radius:30px;background:linear-gradient(115deg,rgba(4,106,56,.10),rgba(3,3,3,.92) 42%,rgba(218,41,28,.07));box-shadow:0 28px 80px rgba(0,0,0,.42)}
+.team-boss-card:before{content:"";position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--gold);box-shadow:0 0 22px var(--gold)}
+.team-boss-photo{min-height:440px;display:grid;place-items:center;overflow:hidden;background:radial-gradient(circle at 50% 28%,rgba(217,164,65,.15),transparent 38%),#080908}
+.team-boss-photo img{width:100%;height:100%;object-fit:cover;object-position:center top}
+.team-boss-photo>span{font-family:"Road Rage",cursive;font-size:160px;color:var(--gold-light)}
+.team-boss-copy{display:flex;flex-direction:column;justify-content:center;padding:clamp(28px,5vw,62px)}
+.team-boss-kicker,.team-modal-kicker{font-size:10px;font-weight:900;letter-spacing:3px;color:var(--gold);text-transform:uppercase}
+.team-boss-copy h2{margin:8px 0 0;font-family:"Road Rage",cursive;font-size:clamp(60px,8vw,104px);font-weight:400;line-height:.86;color:#f5f2e9;text-transform:uppercase}
+.team-boss-copy>strong{font-family:"Road Rage",cursive;font-size:clamp(30px,3vw,42px);font-weight:400;color:var(--gold);text-shadow:0 0 16px rgba(217,164,65,.32)}
+.team-boss-copy p{max-width:660px;color:#cec3aa;line-height:1.65}
+.team-boss-meta{display:flex;gap:10px;flex-wrap:wrap;margin:8px 0 20px}
+.team-boss-meta span{padding:8px 11px;border:1px solid rgba(217,164,65,.2);border-radius:10px;color:var(--gold-light);background:rgba(255,255,255,.025);font-size:12px;font-weight:800}
+.team-open-profile{align-self:flex-start;padding:12px 18px;border:1px solid rgba(217,164,65,.45);border-radius:12px;background:rgba(217,164,65,.08);color:var(--gold-light);font-weight:900;cursor:pointer}
+.team-open-profile:hover{transform:translateY(-2px);box-shadow:0 0 24px rgba(217,164,65,.12)}
+.team-roster-heading{text-align:center;margin:0 auto 20px}
+.team-roster-heading .tag{margin:0;color:var(--green);font-family:"Road Rage",cursive;font-size:20px;letter-spacing:4px}
+.team-roster-heading h2{margin:5px 0;font-family:"Road Rage",cursive;font-size:clamp(42px,6vw,70px);font-weight:400;color:var(--gold-light)}
+.team-roster-heading>p:last-child{margin:0;color:var(--muted)}
+.team-preview-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px}
+.team-preview-card{position:relative;min-width:0;display:flex;align-items:center;gap:13px;padding:12px;text-align:left;border:1px solid rgba(217,164,65,.22);border-radius:18px;background:linear-gradient(145deg,rgba(255,255,255,.025),rgba(0,0,0,.76));color:inherit;cursor:pointer;overflow:hidden;transition:transform .2s ease,border-color .2s ease,box-shadow .2s ease}
+.team-preview-card:before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--green);box-shadow:0 0 12px var(--green)}
+.team-preview-card:hover,.team-preview-card:focus-visible{transform:translateY(-4px);border-color:rgba(115,255,24,.42);box-shadow:0 18px 38px rgba(0,0,0,.35),0 0 22px rgba(115,255,24,.07)}
+.team-preview-photo{width:72px;height:72px;flex:0 0 72px;display:grid;place-items:center;overflow:hidden;border-radius:14px;background:#090a09}
+.team-preview-photo img{width:100%;height:100%;object-fit:cover}
+.team-preview-photo>span{font-family:"Road Rage",cursive;font-size:42px;color:var(--gold-light)}
+.team-preview-copy{min-width:0;display:flex;flex-direction:column}
+.team-preview-copy strong{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:#f5f2e9;font-family:"Road Rage",cursive;font-size:27px;font-weight:400;line-height:1}
+.team-preview-copy small{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--green);font-size:10px;font-weight:900;letter-spacing:1px;text-transform:uppercase}
+.team-preview-copy span{margin-top:5px;color:var(--muted);font-size:11px}
+.team-preview-card>i{margin-left:auto;color:var(--gold);font-style:normal;font-size:24px}
+.team-preview-card.role-boss:before{background:#ffd65a;box-shadow:0 0 14px #ffd65a}.team-preview-card.role-dev:before{background:#5ef3ff;box-shadow:0 0 14px #5ef3ff}.team-preview-card.role-admin:before{background:#ff405a;box-shadow:0 0 14px #ff405a}.team-preview-card.role-moderator:before{background:#bb78ff;box-shadow:0 0 14px #bb78ff}.team-preview-card.role-staff:before{background:#65a9ff;box-shadow:0 0 14px #65a9ff}.team-preview-card.role-streamer:before{background:#ff72cf;box-shadow:0 0 14px #ff72cf}.team-preview-card.role-vip:before{background:#ffd65a;box-shadow:0 0 14px #ffd65a}
+body.team-modal-open{overflow:hidden}
+.team-profile-modal{position:fixed;inset:0;z-index:100000;display:grid;place-items:center;padding:18px}
+.team-profile-modal[hidden]{display:none!important}
+.team-modal-backdrop{position:absolute;inset:0;border:0;background:rgba(0,0,0,.82);backdrop-filter:blur(7px)}
+.team-modal-card{position:relative;z-index:1;width:min(1050px,calc(100vw - 36px));max-height:90dvh;border:1px solid rgba(217,164,65,.38);border-radius:26px;background:#080908;box-shadow:0 32px 100px rgba(0,0,0,.72);overflow:visible}
+.team-modal-content{display:grid;grid-template-columns:minmax(280px,390px) minmax(0,1fr);max-height:90dvh;overflow:auto;border-radius:26px;background:radial-gradient(circle at 12% 20%,rgba(115,255,24,.09),transparent 30%),radial-gradient(circle at 88% 18%,rgba(218,41,28,.08),transparent 34%),#080908}
+.team-modal-photo{min-height:560px;display:grid;place-items:center;overflow:hidden;background:#070807}
+.team-modal-photo img{width:100%;height:100%;object-fit:cover;object-position:center top}
+.team-modal-photo>span{font-family:"Road Rage",cursive;font-size:150px;color:var(--gold-light)}
+.team-modal-copy{min-width:0;padding:clamp(28px,4vw,50px)}
+.team-modal-copy h2{margin:8px 0 0;font-family:"Road Rage",cursive;font-size:clamp(54px,7vw,88px);font-weight:400;line-height:.88;color:#f5f2e9;text-transform:uppercase;overflow-wrap:anywhere}
+.team-modal-role{display:block;margin:4px 0 20px;font-family:"Road Rage",cursive;font-size:34px;font-weight:400;text-transform:uppercase}
+.team-modal-facts{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-bottom:18px}
+.team-modal-facts div{padding:11px;border:1px solid rgba(217,164,65,.18);border-radius:11px;background:rgba(255,255,255,.02)}
+.team-modal-facts small{display:block;color:var(--muted);font-size:9px;font-weight:900;letter-spacing:1px;text-transform:uppercase}
+.team-modal-facts strong{display:block;margin-top:4px;color:var(--gold-light);overflow-wrap:anywhere}
+.team-modal-copy>p{color:#cec3aa;line-height:1.7}
+.team-modal-links{display:flex;gap:9px;flex-wrap:wrap}
+.team-modal-links a{padding:10px 13px;border:1px solid rgba(115,255,24,.28);border-radius:10px;color:var(--green);text-decoration:none;font-weight:850}
+.team-modal-close{position:absolute;z-index:4;top:12px;right:12px;width:42px;height:42px;border:1px solid rgba(217,164,65,.35);border-radius:50%;background:rgba(0,0,0,.78);color:#fff;font-size:26px;cursor:pointer}
+.team-modal-arrow{position:absolute;z-index:4;top:50%;transform:translateY(-50%);width:48px;height:56px;border:1px solid rgba(217,164,65,.32);border-radius:15px;background:rgba(0,0,0,.82);color:var(--gold-light);font-size:44px;line-height:1;cursor:pointer;box-shadow:0 8px 24px rgba(0,0,0,.38)}
+.team-modal-prev{left:-66px}.team-modal-next{right:-66px}
+.team-modal-arrow:hover{border-color:rgba(115,255,24,.52);color:var(--green)}
+@media(max-width:1100px){.team-preview-grid{grid-template-columns:repeat(3,minmax(0,1fr))}.team-modal-prev{left:8px}.team-modal-next{right:8px}.team-modal-arrow{top:auto;bottom:12px;transform:none}}
+@media(max-width:800px){.team-boss-card{grid-template-columns:1fr}.team-boss-photo{min-height:320px;max-height:48dvh}.team-preview-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.team-modal-content{grid-template-columns:1fr}.team-modal-photo{min-height:280px;max-height:42dvh}.team-modal-copy{padding:24px 18px 78px}.team-modal-facts{grid-template-columns:1fr}.team-modal-card{width:min(680px,calc(100vw - 22px))}}
+@media(max-width:500px){.team-preview-grid{grid-template-columns:1fr}.team-boss-copy{padding:24px 18px 28px}.team-boss-copy h2{font-size:64px}.team-preview-card{min-height:92px}.team-modal-arrow{width:44px;height:48px;font-size:38px}.team-modal-prev{left:12px}.team-modal-next{right:12px}}

@@ -66,12 +66,30 @@
     <p>Perfis da família, jogadores, suporte e desenvolvimento. Perfis completos da família, organizados para leitura rápida em qualquer ecrã.</p>
   </section>
 
-  <section id="teamRosterGrid" class="team-esports-grid" aria-live="polite">
-    <article class="team-esports-empty">
-      <h2>Carregando Team...</h2>
-    </article>
+  <section id="teamBossFeature" class="team-boss-feature" aria-live="polite">
+    <article class="team-esports-empty"><h2>Carregando destaque...</h2></article>
   </section>
-  <nav id="teamRosterPager" class="team-roster-pager" aria-label="Paginação do Team" hidden></nav>
+
+  <section class="team-roster-section" aria-labelledby="teamRosterTitle">
+    <div class="team-roster-heading">
+      <p class="tag">FAMÍLIA LAMBRETA</p>
+      <h2 id="teamRosterTitle">Conheça o Team</h2>
+      <p>Clica num membro para abrir o perfil completo.</p>
+    </div>
+    <section id="teamRosterGrid" class="team-preview-grid" aria-live="polite">
+      <article class="team-esports-empty"><h2>Carregando Team...</h2></article>
+    </section>
+  </section>
+
+  <div id="teamProfileModal" class="team-profile-modal" hidden aria-hidden="true">
+    <button class="team-modal-backdrop" type="button" data-team-close aria-label="Fechar perfil"></button>
+    <section class="team-modal-card" role="dialog" aria-modal="true" aria-labelledby="teamModalName">
+      <button class="team-modal-close" type="button" data-team-close aria-label="Fechar">×</button>
+      <button class="team-modal-arrow team-modal-prev" type="button" data-team-prev aria-label="Perfil anterior">‹</button>
+      <div id="teamModalContent" class="team-modal-content"></div>
+      <button class="team-modal-arrow team-modal-next" type="button" data-team-next aria-label="Próximo perfil">›</button>
+    </section>
+  </div>
 </main>
 
     <footer class="site-footer">
