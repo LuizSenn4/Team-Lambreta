@@ -7819,3 +7819,84 @@ html, body { width:100%; max-width:100%; overflow-x:hidden; }
   .forum-folder-copy strong{font-size:15px}.forum-folder-copy small{font-size:12px}
   .forum-folder-arrow{font-size:24px}
 }
+
+
+/* ============================================================
+   V92.31 — Marca empilhada + caixa publicar como compacta
+   ============================================================ */
+.brand .brand-stacked{
+  display:flex;
+  flex-direction:column;
+  align-items:flex-start;
+  line-height:.82;
+  font-family:"Road Rage",cursive;
+  font-size:clamp(26px,2.2vw,34px);
+  font-weight:400;
+  letter-spacing:1px;
+  text-transform:none;
+  color:var(--gold);
+}
+.brand .brand-stacked .brand-top{
+  display:block;
+}
+.brand .brand-stacked .brand-bottom{
+  display:block;
+  margin-top:-6px;
+  margin-left:34px;
+}
+.brand #publicSlogan{
+  display:block;
+  margin-top:2px;
+}
+@media (max-width:900px){
+  .brand .brand-stacked{font-size:30px;}
+  .brand .brand-stacked .brand-bottom{margin-left:28px;}
+}
+
+.forum-page .forum-author-identity{
+  display:flex;
+  flex-direction:column;
+  align-items:flex-start;
+  gap:8px;
+  padding:12px 14px;
+  overflow:visible;
+}
+.forum-page .forum-author-identity > small{
+  color:var(--muted);
+  font-size:10px;
+  letter-spacing:3px;
+  line-height:1;
+}
+.forum-page .forum-author-inline{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  min-width:0;
+  width:100%;
+}
+.forum-page .forum-author-inline img{
+  width:48px;
+  height:48px;
+  flex:0 0 48px;
+  border-radius:50%;
+  object-fit:cover;
+  border:1px solid rgba(115,255,24,.24);
+}
+.forum-page .forum-author-inline .forum-user-name{
+  display:inline-block;
+  min-width:0;
+  max-width:100%;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+  font-size:clamp(18px,2vw,22px);
+  line-height:1;
+}
+.forum-page .forum-author-inline .forum-role{
+  margin-left:2px;
+  flex:0 0 auto;
+}
+@media (max-width:640px){
+  .forum-page .forum-author-inline{flex-wrap:wrap;row-gap:8px;}
+  .forum-page .forum-author-inline .forum-user-name{max-width:calc(100% - 64px);}
+}

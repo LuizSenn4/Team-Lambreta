@@ -86,7 +86,7 @@
     if(identity&&logged){
       const role=isBoss()?'boss':roleOf(profile);
       const label=isBoss()?'BOSS':roleLabel(roleOf(profile));
-      identity.innerHTML=`${profile?.avatar_url?`<img src="${esc(profile.avatar_url)}" alt="">`:''}<div><small>PUBLICAR COMO</small><strong class="forum-user-name role-text-${roleClass(role)}">${esc(currentName())}</strong><span class="forum-role role-${roleClass(role)}">${esc(label)}</span></div>`;
+      identity.innerHTML=`<small>PUBLICAR COMO</small><div class="forum-author-inline">${profile?.avatar_url?`<img src="${esc(profile.avatar_url)}" alt="">`:''}<strong class="forum-user-name role-text-${roleClass(role)}">${esc(currentName())}</strong><span class="forum-role role-${roleClass(role)}">${esc(label)}</span></div>`;
     }
     document.querySelectorAll('[data-moderator-only]').forEach(el=>el.hidden=!canModerate());
     renderRooms();renderForumBoard();

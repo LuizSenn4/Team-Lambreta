@@ -121,7 +121,13 @@ function renderSocials(data){
 
 function renderPublicSite(){
   const data=getTeamData();
-  document.querySelectorAll("#publicTeamName").forEach(el => el.textContent=data.general.teamName);
+  document.querySelectorAll("#publicTeamName").forEach(el => {
+    const teamName=(data.general.teamName||"TEAM LAMBRETA").trim();
+    const parts=teamName.split(/\s+/);
+    const top=parts.shift()||"TEAM";
+    const bottom=parts.join(" ")||"Lambreta";
+    el.innerHTML=`<span class="brand-top">${top}</span><span class="brand-bottom">${bottom.charAt(0).toUpperCase()+bottom.slice(1).toLowerCase()}</span>`;
+  });
   document.querySelectorAll("#publicSlogan").forEach(el => el.textContent=data.general.slogan);
   const heroTitle = document.getElementById("publicHeroTitle");
   const heroText = document.getElementById("publicHeroText");
