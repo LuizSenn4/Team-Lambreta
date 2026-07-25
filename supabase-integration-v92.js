@@ -26,16 +26,17 @@
 
   const $ = id => document.getElementById(id);
   const esc = value => String(value ?? '').replace(/[&<>'"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]));
+  const normalizeRole = role => ({dev:'master',developer:'master',owner:'master',boss:'master',administrador:'admin',mod:'moderator',moderador:'moderator',helper:'staff',suporte:'staff',user:'member'}[String(role||'').trim().toLowerCase()] || String(role||'member').trim().toLowerCase() || 'member');
   const teamRoles = new Set(['moderator','staff','admin','master']);
-  const moderationRoles = new Set(['moderator','admin','master']);
+  const moderationRoles = new Set(['moderator','staff','admin','master']);
   const roleRank = { member:0, staff:1, moderator:2, admin:3, master:4 };
-  const isTeam = () => teamRoles.has(profile?.role);
-  const canModerate = () => moderationRoles.has(profile?.role);
-  const canManageRoles = () => ['admin','master'].includes(profile?.role);
+  const isTeam = () => teamRoles.has(normalizeRole(profile?.role));
+  const canModerate = () => moderationRoles.has(normalizeRole(profile?.role));
+  const canManageRoles = () => ['admin','master'].includes(normalizeRole(profile?.role));
   const statusDb = v => ({busy:'busy',away:'away',online:'online'}[v] || 'online');
   const statusUi = v => ({busy:'busy',away:'away',online:'online',offline:'offline'}[v] || 'offline');
-  const roleClass = role => ['master','admin','moderator','staff','member'].includes(role) ? role : 'member';
-  const roleLabel = role => ({master:'DEV',admin:'ADMIN',moderator:'MODERADOR',staff:'STAFF',member:'MEMBRO'}[role] || 'MEMBRO');
+  const roleClass = role => { const mapped = normalizeRole(role); return ['master','admin','moderator','staff','member'].includes(mapped) ? mapped : 'member'; };
+  const roleLabel = role => ({master:'DEV',admin:'ADMIN',moderator:'MODERADOR',staff:'STAFF',member:'MEMBRO'}[normalizeRole(role)] || 'MEMBRO');
   const isVip = p => Boolean(p?.vip_until && Number.isFinite(new Date(p.vip_until).getTime()) && new Date(p.vip_until).getTime() > Date.now());
   const isStreamer = p => p?.is_streamer === true || String(p?.is_streamer).toLowerCase() === 'true';
   const extraBadges = p => isStreamer(p) ? '<small class="streamer-badge">STREAMER</small>' : (isVip(p) ? '<small class="vip-badge">VIP</small>' : '');

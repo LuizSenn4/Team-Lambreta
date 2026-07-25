@@ -7929,51 +7929,80 @@ html, body { width:100%; max-width:100%; overflow-x:hidden; }
 }
 \n\n/* ============================================================\n   V92.34 — Editor completo de tópicos do fórum\n   ============================================================ */\n.forum-edit-dialog{\n  width:min(620px,calc(100vw - 28px));\n  max-height:min(86vh,760px);\n  padding:0;\n  border:1px solid rgba(217,164,65,.34);\n  border-radius:20px;\n  background:linear-gradient(145deg,rgba(8,14,5,.98),rgba(22,5,7,.98));\n  color:var(--text);\n  box-shadow:0 24px 80px rgba(0,0,0,.72),0 0 0 1px rgba(115,255,24,.05) inset;\n}\n.forum-edit-dialog::backdrop{background:rgba(0,0,0,.78);backdrop-filter:blur(5px)}\n.forum-edit-form{display:grid;gap:16px;padding:22px}\n.forum-edit-head{display:flex;align-items:center;justify-content:space-between;gap:18px;padding-bottom:12px;border-bottom:1px solid rgba(217,164,65,.18)}\n.forum-edit-head small{display:block;color:var(--gold);font-size:10px;letter-spacing:3px;font-weight:900}\n.forum-edit-head h3{margin:4px 0 0;font-family:Cinzel,serif;color:#fff0b0;font-size:24px}\n.forum-edit-close{width:38px;height:38px;border-radius:50%;border:1px solid rgba(217,164,65,.28);background:rgba(0,0,0,.34);color:#f5dfaa;font-size:25px;cursor:pointer}\n.forum-edit-form label{display:grid;gap:8px;color:#dcc58e;font-size:12px;font-weight:800;letter-spacing:.5px}\n.forum-edit-form input,.forum-edit-form textarea,.forum-edit-form select{width:100%;box-sizing:border-box;border:1px solid rgba(217,164,65,.25);border-radius:12px;background:rgba(0,0,0,.42);color:#f4eee2;padding:12px 13px;font:inherit;outline:none}\n.forum-edit-form textarea{resize:vertical;min-height:160px;line-height:1.55}\n.forum-edit-form input:focus,.forum-edit-form textarea:focus,.forum-edit-form select:focus{border-color:#73ff18;box-shadow:0 0 0 3px rgba(115,255,24,.09)}\n.forum-edit-private-note{margin:0;padding:10px 12px;border-radius:10px;background:rgba(217,164,65,.06);color:#cbb98f;font-size:12px}\n.forum-edit-private-note.is-private{background:rgba(187,120,255,.08);color:#d9b7ff;border:1px solid rgba(187,120,255,.2)}\n.forum-edit-actions{display:flex;justify-content:flex-end;gap:10px;padding-top:4px}\n.forum-edit-actions button{border-radius:11px;padding:11px 15px;font-weight:900;cursor:pointer}\n.forum-edit-actions .secondary{border:1px solid rgba(217,164,65,.24);background:rgba(0,0,0,.25);color:#d8c59a}\n.forum-edit-actions .primary{border:1px solid rgba(115,255,24,.45);background:rgba(115,255,24,.12);color:#8cff4a}\n.forum-edited-note{margin-top:10px;color:#9f9275;font-size:11px;font-style:italic;letter-spacing:.2px}\n@media(max-width:640px){\n  .forum-edit-form{padding:17px;gap:13px}\n  .forum-edit-head h3{font-size:21px}\n  .forum-edit-actions{display:grid;grid-template-columns:1fr 1fr}\n  .forum-edit-actions button{width:100%}\n}\n
 
-/* ============================================================
-   V92.39 — TEAM reconstruído a partir do checkpoint V92.34
-   Escopo isolado: apenas team.html
-   ============================================================ */
-.team-roster-page-v39{
-  min-height:calc(100vh - 150px);
-  padding:0 0 48px;
-  background:
-    radial-gradient(circle at 0 45%,rgba(65,130,0,.17),transparent 34%),
-    radial-gradient(circle at 100% 45%,rgba(150,20,8,.14),transparent 34%),
-    #020302;
-  overflow:hidden;
+/* V92.35 — Team maior no desktop, mobile-first preservado, e fórum com cargos equivalentes */
+.team-esports-page{padding-inline:clamp(14px,3vw,52px)!important}
+.team-esports-hero,.team-esports-grid,.team-roster-pager{width:min(1380px,100%)!important;max-width:100%!important}
+.team-esports-grid{display:grid!important;grid-template-columns:1fr!important;gap:clamp(18px,2.2vw,28px)!important}
+.team-inline-profile{
+  display:grid!important;
+  grid-template-columns:minmax(320px,420px) minmax(0,1fr)!important;
+  align-items:stretch!important;
+  min-height:460px;
 }
-.team-roster-hero-v39{
-  width:min(760px,calc(100% - 34px));
-  margin:0 auto;
-  padding:28px 0 18px;
-  text-align:center;
+.team-inline-photo{
+  min-height:100%!important;
+  padding:20px!important;
+  align-items:stretch!important;
+  justify-content:stretch!important;
 }
-.team-roster-brand-v39,
-.team-roster-divider-v39{display:flex;align-items:center;justify-content:center;gap:12px}
-.team-roster-brand-v39 span{height:1px;flex:1;background:linear-gradient(90deg,transparent,rgba(217,164,65,.82))}
-.team-roster-brand-v39 span:last-child{background:linear-gradient(90deg,rgba(217,164,65,.82),transparent)}
-.team-roster-brand-v39 strong{white-space:nowrap;color:#e6bd61;font:800 11px/1 Inter,Arial,sans-serif;letter-spacing:1.6px}
-.team-roster-brand-v39 strong b{margin-right:6px;font-size:9px;color:#f4cf73}
-.team-roster-hero-v39 h1{margin:12px 0 8px;color:#efc75f;font:900 clamp(30px,4.2vw,48px)/.95 Inter,Arial,sans-serif;letter-spacing:.5px;text-transform:uppercase;text-shadow:0 4px 20px rgba(217,164,65,.16)}
-.team-roster-divider-v39{width:min(250px,70%);margin:auto;gap:9px}.team-roster-divider-v39 span{height:1px;flex:1;background:linear-gradient(90deg,transparent,#789b00)}.team-roster-divider-v39 span:last-child{background:linear-gradient(90deg,#a62916,transparent)}.team-roster-divider-v39 b{font:900 8px/1 Inter;color:#d9a441}
-.team-roster-hero-v39 p{margin:11px 0 0;color:#d7b86d;font:400 13px/1.4 Inter,Arial,sans-serif}
-.team-roster-wrap-v39{width:min(650px,calc(100% - 34px));margin:0 auto}
-.team-roster-grid-v39{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px 20px}
-.team-member-card-v39{position:relative;display:flex;align-items:center;min-width:0;min-height:76px;padding:8px 14px 8px 8px;border:1px solid rgba(217,164,65,.38);border-radius:14px;background:linear-gradient(110deg,rgba(6,9,6,.98),rgba(0,0,0,.92));color:inherit;text-align:left;cursor:pointer;overflow:hidden;box-shadow:0 10px 30px rgba(0,0,0,.26);transition:transform .18s ease,border-color .18s ease}
-.team-member-card-v39:before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:#73ff18;box-shadow:0 0 13px rgba(115,255,24,.95)}
-.team-member-card-v39:hover,.team-member-card-v39:focus-visible{transform:translateY(-2px);border-color:rgba(115,255,24,.55);outline:none}
-.team-member-photo-v39{width:62px;height:62px;flex:0 0 62px;display:grid;place-items:center;border-radius:9px;overflow:hidden;background:#070807;border:1px solid rgba(217,164,65,.25)}
-.team-member-photo-v39 img{width:100%;height:100%;object-fit:cover}.team-member-photo-v39>span{font:400 36px/1 "Road Rage",cursive;color:#efc75f}
-.team-member-copy-v39{min-width:0;display:flex;flex-direction:column;margin-left:12px}.team-member-copy-v39 strong{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:#f4f0e6;font:600 15px/1.05 "Bebas Neue",Inter,sans-serif;letter-spacing:.2px}.team-member-copy-v39 small{margin-top:5px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:#73ff18;font:900 8px/1 Inter,sans-serif;letter-spacing:.5px;text-transform:uppercase}.team-member-copy-v39 span{margin-top:5px;color:#c4b89c;font:500 9px/1 Inter,sans-serif}.team-member-copy-v39 i{font-style:normal}
-.team-member-plus-v39{margin-left:auto;padding-left:8px;color:#e6b93f;font:500 22px/1 Inter,sans-serif}
-.team-roster-empty-v39{grid-column:1/-1;padding:48px;text-align:center;color:#cdbb91}
-.team-roster-pager-v39{display:flex;align-items:center;justify-content:center;gap:7px;margin:25px auto 0}.team-roster-pager-v39[hidden]{display:none!important}.team-roster-pager-v39 button{min-width:30px;height:30px;border:1px solid rgba(217,164,65,.28);border-radius:9px;background:rgba(0,0,0,.56);color:#cdbb91;cursor:pointer;font-weight:800}.team-roster-pager-v39 button.is-active{border-color:#73ff18;color:#73ff18;box-shadow:0 0 11px rgba(115,255,24,.18)}.team-roster-pager-v39 button:disabled{opacity:.3;cursor:default}
-body.team-modal-open-v39{overflow:hidden}.team-profile-modal-v39{position:fixed;inset:0;z-index:100000;display:grid;place-items:center;padding:22px}.team-profile-modal-v39[hidden]{display:none!important}.team-modal-backdrop-v39{position:absolute;inset:0;border:0;background:rgba(0,0,0,.84);backdrop-filter:blur(7px)}
-.team-modal-card-v39{position:relative;z-index:1;width:min(950px,calc(100vw - 48px));max-height:90dvh;border:1px solid rgba(217,164,65,.36);border-radius:22px;background:#070807;box-shadow:0 30px 100px rgba(0,0,0,.78)}
-.team-modal-content-v39{display:grid;grid-template-columns:minmax(250px,350px) minmax(0,1fr);max-height:90dvh;overflow:auto;border-radius:22px;background:radial-gradient(circle at 8% 20%,rgba(115,255,24,.09),transparent 34%),radial-gradient(circle at 95% 18%,rgba(190,30,12,.08),transparent 34%),#070807}
-.team-modal-photo-v39{min-height:500px;display:grid;place-items:center;overflow:hidden}.team-modal-photo-v39 img{width:100%;height:100%;object-fit:cover;object-position:center top}.team-modal-photo-v39>span{font:400 130px/1 "Road Rage",cursive;color:#efc75f}
-.team-modal-copy-v39{min-width:0;padding:38px}.team-modal-copy-v39>span{color:#d9a441;font:900 9px/1 Inter;letter-spacing:2.5px}.team-modal-copy-v39 h2{margin:8px 0 2px;color:#f4f0e6;font:400 clamp(48px,6vw,78px)/.9 "Road Rage",cursive;overflow-wrap:anywhere}.team-modal-copy-v39>strong{display:block;margin-bottom:20px;color:#73ff18;font:400 28px/1 "Road Rage",cursive;text-transform:uppercase}.team-modal-copy-v39>p{color:#cfc4aa;line-height:1.65}.team-modal-facts-v39{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px;margin-bottom:17px}.team-modal-facts-v39 div{padding:10px;border:1px solid rgba(217,164,65,.17);border-radius:10px;background:rgba(255,255,255,.018)}.team-modal-facts-v39 small{display:block;color:#8f846e;font-size:8px;font-weight:900;letter-spacing:1px;text-transform:uppercase}.team-modal-facts-v39 strong{display:block;margin-top:4px;color:#ead8a3;overflow-wrap:anywhere}.team-modal-links-v39{display:flex;gap:8px;flex-wrap:wrap}.team-modal-links-v39 a{padding:9px 12px;border:1px solid rgba(115,255,24,.26);border-radius:9px;color:#73ff18;text-decoration:none;font-weight:800}
-.team-modal-arrow-v39,.team-modal-close-v39{position:absolute;z-index:4;border:0;background-color:transparent;background-repeat:no-repeat;background-position:center;background-size:contain;cursor:pointer;filter:drop-shadow(0 7px 8px rgba(0,0,0,.85));transition:transform .18s ease}.team-modal-arrow-v39:hover,.team-modal-close-v39:hover{transform:translateY(-50%) scale(1.06)}
-.team-modal-arrow-v39{top:50%;width:66px;height:66px;transform:translateY(-50%)}.team-modal-prev-v39{left:-58px;background-image:url('img/ui/team-arrow-left.svg')}.team-modal-next-v39{right:-58px;background-image:url('img/ui/team-arrow-right.svg')}.team-modal-close-v39{top:10px;right:10px;width:44px;height:44px;background-image:url('img/ui/team-close.svg')}.team-modal-close-v39:hover{transform:scale(1.06)}
-@media(max-width:760px){.team-roster-wrap-v39{width:min(620px,calc(100% - 22px))}.team-roster-grid-v39{gap:8px 12px}.team-modal-card-v39{width:min(680px,calc(100vw - 22px))}.team-modal-content-v39{grid-template-columns:1fr}.team-modal-photo-v39{min-height:260px;max-height:42dvh}.team-modal-copy-v39{padding:24px 18px 76px}.team-modal-prev-v39{left:8px}.team-modal-next-v39{right:8px}.team-modal-arrow-v39{top:auto;bottom:9px;transform:none}.team-modal-arrow-v39:hover{transform:scale(1.06)}}
-@media(max-width:640px){.team-roster-hero-v39{padding-top:22px}.team-roster-brand-v39 strong{font-size:9px}.team-roster-hero-v39 h1{font-size:31px}.team-roster-hero-v39 p{font-size:12px}.team-roster-grid-v39{grid-template-columns:1fr;gap:9px}.team-member-card-v39{min-height:86px}.team-member-photo-v39{width:70px;height:70px;flex-basis:70px}.team-member-copy-v39 strong{font-size:18px}.team-member-copy-v39 small{font-size:9px}}
+.team-inline-photo-frame{
+  width:100%!important;
+  height:100%!important;
+  min-height:420px!important;
+  border-radius:24px!important;
+  overflow:hidden!important;
+  background:#0a0a0a!important;
+}
+.team-inline-photo img,
+.team-inline-photo>span,
+.team-inline-photo-frame img,
+.team-inline-photo-frame>span{
+  width:100%!important;
+  height:100%!important;
+  min-height:420px!important;
+  display:block!important;
+  border-radius:24px!important;
+}
+.team-inline-photo img,
+.team-inline-photo-frame img{
+  object-fit:contain!important;
+  object-position:center center!important;
+  background:#0a0a0a!important;
+}
+.team-inline-copy{
+  min-height:460px!important;
+  padding:clamp(26px,3vw,42px)!important;
+  display:flex!important;
+  flex-direction:column!important;
+  justify-content:center!important;
+}
+.team-inline-copy h2{
+  font-size:clamp(42px,4.5vw,76px)!important;
+  line-height:.92!important;
+}
+.team-inline-role{font-size:clamp(24px,2.4vw,36px)!important}
+.team-inline-facts{display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:12px!important}
+.team-inline-facts strong{overflow-wrap:anywhere}
+.team-inline-bio{margin-top:2px!important;font-size:clamp(16px,1.15vw,18px)!important}
+.team-inline-links{grid-template-columns:repeat(auto-fit,minmax(150px,1fr))!important}
+@media (min-width:1200px){
+  .team-esports-hero h1{font-size:clamp(72px,7vw,118px)!important}
+}
+@media (max-width:1024px){
+  .team-esports-hero,.team-esports-grid,.team-roster-pager{width:100%!important}
+  .team-inline-profile{grid-template-columns:minmax(280px,360px) minmax(0,1fr)!important;min-height:420px!important}
+  .team-inline-photo-frame,.team-inline-photo img,.team-inline-photo>span,.team-inline-photo-frame img,.team-inline-photo-frame>span{min-height:380px!important}
+}
+@media (max-width:860px){
+  .team-inline-profile{grid-template-columns:1fr!important;min-height:0!important}
+  .team-inline-photo{padding:14px 14px 0!important;border-right:0!important;border-bottom:1px solid rgba(217,164,65,.13)!important}
+  .team-inline-photo-frame{min-height:0!important;aspect-ratio:4/3!important;border-radius:20px!important}
+  .team-inline-photo img,.team-inline-photo>span,.team-inline-photo-frame img,.team-inline-photo-frame>span{min-height:0!important;aspect-ratio:4/3!important;border-radius:20px!important}
+  .team-inline-copy{min-height:0!important;padding:22px 18px 24px!important}
+  .team-inline-copy h2{font-size:clamp(34px,10.5vw,54px)!important}
+  .team-inline-facts{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+  .team-inline-links{grid-template-columns:1fr 1fr!important}
+}
+@media (max-width:560px){
+  .team-inline-links{grid-template-columns:1fr!important}
+}

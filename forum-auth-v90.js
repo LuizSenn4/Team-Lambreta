@@ -29,7 +29,7 @@
   ];
   const PRIVATE_ROOMS=new Set(['candidaturas','denuncias']);
   const MOD_ROLES=new Set(['master','admin','moderator','staff']);
-  const ROLE_LABEL={master:'DEV',admin:'ADMIN',moderator:'MODERADOR',staff:'STAFF',streamer:'STREAMER',vip1:'VIP I',vip2:'VIP II',vip3:'VIP III',member:'MEMBRO'};
+  const ROLE_LABEL={master:'DEV',dev:'DEV',developer:'DEV',owner:'DEV',boss:'BOSS',admin:'ADMIN',administrador:'ADMIN',moderator:'MODERADOR',moderador:'MODERADOR',mod:'MODERADOR',staff:'STAFF',helper:'STAFF',suporte:'STAFF',streamer:'STREAMER',vip1:'VIP I',vip2:'VIP II',vip3:'VIP III',member:'MEMBRO',user:'MEMBRO'};
 
   const $=id=>document.getElementById(id);
   const form=$('userTopicFormV90'),notice=$('forumLoginNotice'),identity=$('forumAuthorIdentity'),feedback=$('topicFeedback');
@@ -38,14 +38,15 @@
 
   const esc=value=>String(value??'').replace(/[&<>"']/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
   const now=()=>new Date().toISOString();
-  const roleOf=p=>p?.role||'member';
+  const normalizeRole=role=>({dev:'master',developer:'master',owner:'master',boss:'master',administrador:'admin',mod:'moderator',moderador:'moderator',helper:'staff',suporte:'staff',user:'member'}[String(role||'').trim().toLowerCase()]||String(role||'member').trim().toLowerCase()||'member');
+  const roleOf=p=>normalizeRole(p?.role||'member');
   const isBossProfile=p=>/^(ink31|oklm_31_ink)$/i.test(String(p?.game_nickname||p?.full_name||''));
   const isBoss=()=>isBossProfile(profile);
   const canModerate=()=>MOD_ROLES.has(roleOf(profile))||isBoss();
   const currentName=()=>profile?.game_nickname||profile?.full_name||session?.user?.email||'Utilizador';
   const uid=()=>session?.user?.id||'';
-  const roleLabel=role=>ROLE_LABEL[role]||'MEMBRO';
-  const roleClass=role=>String(role||'member').replace(/[^a-z0-9_-]/gi,'');
+  const roleLabel=role=>ROLE_LABEL[normalizeRole(role)]||'MEMBRO';
+  const roleClass=role=>normalizeRole(role).replace(/[^a-z0-9_-]/gi,'');
   const makeId=()=>`forum_${Date.now()}_${Math.random().toString(36).slice(2,8)}`;
 
   function getData(){return typeof getTeamData==='function'?getTeamData():null}
@@ -71,8 +72,8 @@
     const boss=isBossProfile(found);
     return {
       name:found?.game_nickname||found?.full_name||fallbackName,
-      role:boss?'boss':(found?.role||fallbackRole||'member'),
-      label:boss?'BOSS':roleLabel(found?.role||fallbackRole||'member'),
+      role:boss?'boss':roleOf(found)||normalizeRole(fallbackRole||'member'),
+      label:boss?'BOSS':roleLabel(roleOf(found)||normalizeRole(fallbackRole||'member')),
       avatar:found?.avatar_url||''
     };
   }

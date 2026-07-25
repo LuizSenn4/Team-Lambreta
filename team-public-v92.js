@@ -8,22 +8,18 @@
 
   const grid=document.getElementById('teamRosterGrid');
   const pager=document.getElementById('teamRosterPager');
-  const modal=document.getElementById('teamProfileModal');
-  const modalContent=document.getElementById('teamModalContent');
-  const esc=value=>String(value??'').replace(/[&<>"']/g,char=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char]));
+  const esc=value=>String(value??'').replace(/[&<>"']/g,char=>({
+    '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
+  }[char]));
 
   let members=[];
   let currentPage=1;
-  let currentIndex=0;
-
-  const isMobile=()=>matchMedia('(max-width: 640px)').matches;
-  const pageSize=()=>isMobile()?5:8;
+  const PAGE_SIZE=5;
 
   function avatar(row){
     const label=row.nickname||row.name||'L';
-    return row.image_url
-      ? `<img src="${esc(row.image_url)}" alt="${esc(row.name||label)}" loading="lazy">`
-      : `<span>${esc(label.charAt(0).toUpperCase())}</span>`;
+    if(row.image_url) return `<img src="${esc(row.image_url)}" alt="${esc(row.name||label)}" loading="lazy">`;
+    return `<span>${esc(label.charAt(0).toUpperCase())}</span>`;
   }
 
   function countryInfo(country){
@@ -32,129 +28,108 @@
       'brasil':['🇧🇷','BR'],'brazil':['🇧🇷','BR'],'portugal':['🇵🇹','PT'],
       'espanha':['🇪🇸','ES'],'spain':['🇪🇸','ES'],'polónia':['🇵🇱','PL'],'polonia':['🇵🇱','PL'],'poland':['🇵🇱','PL'],
       'frança':['🇫🇷','FR'],'franca':['🇫🇷','FR'],'france':['🇫🇷','FR'],'alemanha':['🇩🇪','DE'],'germany':['🇩🇪','DE'],
-      'itália':['🇮🇹','IT'],'italia':['🇮🇹','IT'],'italy':['🇮🇹','IT'],'holanda':['🇳🇱','NL'],'netherlands':['🇳🇱','NL'],
-      'reino unido':['🇬🇧','GB'],'united kingdom':['🇬🇧','GB'],'estados unidos':['🇺🇸','US'],'usa':['🇺🇸','US']
+      'itália':['🇮🇹','IT'],'italia':['🇮🇹','IT'],'italy':['🇮🇹','IT'],'países baixos':['🇳🇱','NL'],'paises baixos':['🇳🇱','NL'],
+      'holanda':['🇳🇱','NL'],'netherlands':['🇳🇱','NL'],'reino unido':['🇬🇧','GB'],'united kingdom':['🇬🇧','GB'],
+      'inglaterra':['🇬🇧','GB'],'england':['🇬🇧','GB'],'estados unidos':['🇺🇸','US'],'usa':['🇺🇸','US'],'united states':['🇺🇸','US']
     };
     return countries[value]||['🌍','--'];
   }
 
-  function roleClass(role){
-    return String(role||'member').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]+/g,'-');
-  }
-
-  function card(row,index){
-    const nickname=row.nickname||row.name||'Membro';
-    const [flag,code]=countryInfo(row.country);
-    return `<button type="button" class="team-member-card-v39" data-team-index="${index}" aria-label="Abrir perfil de ${esc(nickname)}">
-      <span class="team-member-photo-v39">${avatar(row)}</span>
-      <span class="team-member-copy-v39">
-        <strong>${esc(nickname)}</strong>
-        <small>${esc(row.role||'Membro')}</small>
-        <span><i aria-hidden="true">${flag}</i> ${code}</span>
-      </span>
-      <b class="team-member-plus-v39" aria-hidden="true">+</b>
-    </button>`;
-  }
-
   function facts(row){
-    return [['Idade',row.age?`${row.age} anos`:''],['Jogo',row.main_game],['Modo',row.favorite_mode],['Armas',row.favorite_weapons],['Estilo',row.play_style],['País',row.country]].filter(([,v])=>v);
+    return [
+      ['Idade',row.age ? `${row.age} anos` : ''],
+      ['Jogo',row.main_game],
+      ['Modo',row.favorite_mode],
+      ['Tipo de armas',row.favorite_weapons],
+      ['Estilo',row.play_style],
+      ['País',row.country]
+    ].filter(([,value])=>value);
   }
 
   function links(row){
-    const dynamic=Array.isArray(row.social_links)?row.social_links.filter(x=>x&&x.label&&x.url).slice(0,4):[];
-    if(dynamic.length) return dynamic.map(x=>[x.label,x.url]);
-    return [['Instagram',row.instagram_url],['TikTok',row.tiktok_url],['Facebook',row.facebook_url]].filter(([,u])=>u);
+    const dynamic=Array.isArray(row.social_links)?row.social_links.filter(item=>item&&item.label&&item.url).slice(0,4):[];
+    if(dynamic.length) return dynamic.map(item=>[item.label,item.url,item.type||'other']);
+    return [
+      ['Instagram',row.instagram_url,'instagram'],
+      ['TikTok',row.tiktok_url,'tiktok'],
+      ['Facebook',row.facebook_url,'facebook']
+    ].filter(([,url])=>url);
   }
 
-  function modalMarkup(row){
+  function profile(row,index){
     const nickname=row.nickname||row.name||'Membro';
-    const factMarkup=facts(row).map(([l,v])=>`<div><small>${esc(l)}</small><strong>${esc(v)}</strong></div>`).join('');
-    const linkMarkup=links(row).map(([l,u])=>`<a href="${esc(u)}" target="_blank" rel="noopener">${esc(l)}</a>`).join('');
-    return `<div class="team-modal-photo-v39">${avatar(row)}</div>
-      <div class="team-modal-copy-v39">
-        <span>PERFIL OFICIAL</span>
-        <h2 id="teamModalName">${esc(nickname)}</h2>
-        <strong class="role-${roleClass(row.role)}">${esc(row.role||'Membro')}</strong>
-        ${factMarkup?`<div class="team-modal-facts-v39">${factMarkup}</div>`:''}
-        <p>${esc(row.bio||'Perfil oficial do Team Lambreta.')}</p>
-        ${linkMarkup?`<div class="team-modal-links-v39">${linkMarkup}</div>`:''}
-      </div>`;
-  }
+    const identity=row.role||'';
+    const nickLength=Math.min(16,Array.from(nickname).length);
+    const factMarkup=facts(row).map(([label,value])=>{
+      const shown=label==='País'
+        ? (()=>{const [flag,code]=countryInfo(value);return `<span class="team-country-value"><span aria-hidden="true">${flag}</span><b>${code}</b></span>`})()
+        : esc(value);
+      return `<div><small>${esc(label)}</small><strong>${shown}</strong></div>`;
+    }).join('');
+    const linkMarkup=links(row).map(([label,url,type])=>
+      `<a class="team-social-link is-${esc(type||'other')}" href="${esc(url)}" target="_blank" rel="noopener">${esc(label)}</a>`
+    ).join('');
 
-  function openModal(index){
-    if(!members.length||!modal||!modalContent) return;
-    currentIndex=((index%members.length)+members.length)%members.length;
-    modalContent.innerHTML=modalMarkup(members[currentIndex]);
-    modal.hidden=false;
-    modal.setAttribute('aria-hidden','false');
-    document.body.classList.add('team-modal-open-v39');
-    modal.querySelector('.team-modal-close-v39')?.focus();
+    return `<article class="team-inline-profile tone-${index%2===0?'green':'red'} ${row.is_featured?'is-featured':''}">
+      <div class="team-inline-photo">
+        <div class="team-inline-photo-frame">${avatar(row)}</div>
+      </div>
+      <div class="team-inline-copy">
+        <h2 title="${esc(nickname)}" style="--nick-length:${nickLength}">${esc(nickname)}</h2>
+        ${identity?`<strong class="team-inline-role">${esc(identity)}</strong>`:''}
+        ${factMarkup?`<div class="team-inline-facts">${factMarkup}</div>`:''}
+        <p class="team-inline-bio">${esc(row.bio||'Perfil oficial do Team Lambreta.')}</p>
+        ${linkMarkup?`<div class="team-inline-links">${linkMarkup}</div>`:''}
+      </div>
+    </article>`;
   }
-
-  function closeModal(){
-    if(!modal) return;
-    modal.hidden=true;
-    modal.setAttribute('aria-hidden','true');
-    document.body.classList.remove('team-modal-open-v39');
-  }
-
-  function moveModal(step){ openModal(currentIndex+step); }
 
   function renderPager(totalPages){
     if(!pager) return;
-    if(totalPages<=1){pager.hidden=true;pager.innerHTML='';return;}
+    if(totalPages<=1){ pager.innerHTML=''; pager.hidden=true; return; }
     pager.hidden=false;
-    const previous=`<button type="button" data-page="${Math.max(1,currentPage-1)}" aria-label="Página anterior" ${currentPage===1?'disabled':''}>‹</button>`;
-    const pages=Array.from({length:totalPages},(_,i)=>i+1).map(page=>`<button type="button" data-page="${page}" class="${page===currentPage?'is-active':''}">${page}</button>`).join('');
-    const next=`<button type="button" data-page="${Math.min(totalPages,currentPage+1)}" aria-label="Próxima página" ${currentPage===totalPages?'disabled':''}>›</button>`;
-    pager.innerHTML=previous+pages+next;
-    pager.querySelectorAll('[data-page]').forEach(btn=>btn.addEventListener('click',()=>{
-      currentPage=Number(btn.dataset.page)||1;render();document.querySelector('.team-roster-hero-v39')?.scrollIntoView({behavior:'smooth',block:'start'});
+    pager.innerHTML=Array.from({length:totalPages},(_,i)=>i+1).map(page=>
+      `<button type="button" class="${page===currentPage?'is-active':''}" data-page="${page}">${page}</button>`
+    ).join('');
+    pager.querySelectorAll('[data-page]').forEach(button=>button.addEventListener('click',()=>{
+      currentPage=Number(button.dataset.page)||1;
+      render();
+      document.querySelector('.team-esports-hero')?.scrollIntoView({behavior:'smooth',block:'start'});
     }));
-  }
-
-  function bindCards(){
-    grid?.querySelectorAll('[data-team-index]').forEach(btn=>btn.addEventListener('click',()=>openModal(Number(btn.dataset.teamIndex)||0)));
   }
 
   function render(){
     if(!grid) return;
-    const size=pageSize();
-    const totalPages=Math.max(1,Math.ceil(members.length/size));
-    currentPage=Math.min(currentPage,totalPages);
-    const start=(currentPage-1)*size;
-    const rows=members.slice(start,start+size);
-    grid.innerHTML=rows.length?rows.map((row,i)=>card(row,start+i)).join(''):`<article class="team-roster-empty-v39">Nenhum membro publicado.</article>`;
-    bindCards();
+    const totalPages=Math.max(1,Math.ceil(members.length/PAGE_SIZE));
+    if(currentPage>totalPages) currentPage=totalPages;
+    const start=(currentPage-1)*PAGE_SIZE;
+    const pageRows=members.slice(start,start+PAGE_SIZE);
+    grid.innerHTML=pageRows.length
+      ? pageRows.map((row,i)=>profile(row,start+i)).join('')
+      : `<article class="team-esports-empty"><h2>Nenhum perfil nesta área</h2></article>`;
     renderPager(totalPages);
   }
 
   async function load(){
     if(!grid) return;
-    const {data,error}=await sb.from('team_members').select('*').eq('is_published',true).eq('is_archived',false).order('is_featured',{ascending:false}).order('display_order').order('created_at');
-    if(error){grid.innerHTML=`<article class="team-roster-empty-v39">Não foi possível carregar o Team.</article>`;return;}
-    members=data||[];render();
+    const {data,error}=await sb.from('team_members').select('*')
+      .eq('is_published',true).eq('is_archived',false)
+      .order('is_featured',{ascending:false}).order('display_order').order('created_at');
+    if(error){
+      grid.innerHTML=`<article class="team-esports-empty"><h2>Não foi possível carregar o Team</h2><p>${esc(error.message)}</p></article>`;
+      return;
+    }
+    members=data||[];
+    render();
   }
 
-  modal?.querySelectorAll('[data-team-close]').forEach(btn=>btn.addEventListener('click',closeModal));
-  modal?.querySelector('[data-team-prev]')?.addEventListener('click',()=>moveModal(-1));
-  modal?.querySelector('[data-team-next]')?.addEventListener('click',()=>moveModal(1));
-  document.addEventListener('keydown',event=>{
-    if(modal?.hidden!==false) return;
-    if(event.key==='Escape') closeModal();
-    if(event.key==='ArrowLeft') moveModal(-1);
-    if(event.key==='ArrowRight') moveModal(1);
-  });
-  let resizeTimer;
-  addEventListener('resize',()=>{clearTimeout(resizeTimer);resizeTimer=setTimeout(()=>{currentPage=1;render();},150)});
-
-  let timer;
-  const refresh=()=>{clearTimeout(timer);timer=setTimeout(load,120)};
+  let timer=null;
+  const refresh=()=>{clearTimeout(timer);timer=setTimeout(load,120);};
   async function boot(){
     await load();
-    sb.channel('team-public-v39').on('postgres_changes',{event:'*',schema:'public',table:'team_members'},refresh).subscribe();
+    sb.channel('team-public-v92').on('postgres_changes',{event:'*',schema:'public',table:'team_members'},refresh).subscribe();
     addEventListener('focus',load);
-    document.addEventListener('visibilitychange',()=>{if(!document.hidden)load()});
+    document.addEventListener('visibilitychange',()=>{if(!document.hidden)load();});
   }
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',boot); else boot();
 })();
