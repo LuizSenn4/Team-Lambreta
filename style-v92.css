@@ -8451,3 +8451,32 @@ html, body { width:100%; max-width:100%; overflow-x:hidden; }
 .buddy-preview button{cursor:pointer}
 .buddy-preview-trigger{cursor:help}
 .buddy-person>button{position:relative;z-index:2}
+
+/* V92.39.3 — conversa Buddy funcional e responsiva */
+.buddy-action-icon{margin-right:4px;font-size:13px;vertical-align:-1px}
+.buddy-chat-back{display:none}
+.buddy-group-add{min-width:44px;font-size:17px!important;white-space:nowrap}
+@media(max-width:760px){
+  .buddy-app{display:block;min-height:0}
+  .buddy-main{margin-top:14px;min-height:68vh}
+  .buddy-app.conversation-open .buddy-sidebar{display:none}
+  .buddy-app:not(.conversation-open) .buddy-main{display:none}
+  .buddy-app.conversation-open .buddy-main{display:block;margin-top:0}
+  .buddy-chat-back{display:inline-grid;place-items:center;min-width:38px;padding:8px!important;font-size:20px!important}
+  .buddy-main header{display:grid;grid-template-columns:auto 44px minmax(0,1fr) auto auto;gap:8px}
+  .buddy-main header img{grid-column:2}
+  .buddy-main header div{grid-column:3}
+  .buddy-main header [data-group]{grid-column:4}
+  .buddy-main header [data-profile]{grid-column:5}
+  .buddy-main header [data-block],.buddy-main header [data-delete]{display:none}
+  .buddy-messages{min-height:52vh;max-height:58vh}
+}
+
+
+/* V92.39.3.1 — toque móvel confiável no botão Conversar */
+.buddy-person [data-quick]{touch-action:manipulation;-webkit-tap-highlight-color:transparent;user-select:none}
+@media(max-width:760px){
+  .buddy-person [data-quick]{min-height:42px;width:100%}
+  .buddy-app.conversation-open .buddy-main{display:block!important}
+  .buddy-app.conversation-open .buddy-sidebar{display:none!important}
+}

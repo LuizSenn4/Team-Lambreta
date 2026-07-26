@@ -10,6 +10,8 @@
   let session = null;
   let profile = null;
   let chatChannel = null;
+  let chatRefreshTimer = null;
+  let chatChannelStatus = 'CLOSED';
   let inboxChannel = null;
   let selectedTargetId = null;
   let unreadChat = 0;
@@ -651,7 +653,8 @@
 
   function subscribe() {
     chatChannel?.unsubscribe(); inboxChannel?.unsubscribe();
-    if ($('chatMessages')) chatChannel=sb.channel('team-chat-ui')
+    clearInterval(chatRefreshTimer); chatRefreshTimer=null;
+    if ($('chatMessages')) chatChannel=sb.channel('team-chat-ui-v92393')
       .on('postgres_changes',{event:'INSERT',schema:'public',table:'chat_messages'},async payload=>{
         const row=payload.new;
         if(initialChatLoaded && Number(row.id)>lastKnownMessageId && row.user_id!==session?.user?.id){
@@ -664,7 +667,8 @@
         lastKnownMessageId=Math.max(lastKnownMessageId,Number(row.id)||0); await renderChat();
       })
       .on('postgres_changes',{event:'UPDATE',schema:'public',table:'chat_messages'},renderChat)
-      .on('postgres_changes',{event:'UPDATE',schema:'public',table:'profiles'},renderChat).subscribe();
+      .on('postgres_changes',{event:'UPDATE',schema:'public',table:'profiles'},renderChat).subscribe(status=>{chatChannelStatus=status;if(status==='SUBSCRIBED')renderChat();});
+    if ($('chatMessages')) chatRefreshTimer=setInterval(()=>{if(!document.hidden)renderChat();},1800);
     if ($('supabasePrivateInbox')||$('supabaseInboxBadge')) inboxChannel=sb.channel('team-inbox-ui').on('postgres_changes',{event:'*',schema:'public',table:'contact_messages'},renderInbox).subscribe();
   }
 
@@ -673,6 +677,9 @@
     if(session){ manualPresence=profile?.presence==='busy'?'busy':'online'; lastActivityAt=Date.now(); await ensureNickname(); await setPresence(manualPresence,{manual:false}); startPresenceTracking(); }
     bindChat(); bindContact(); bindPwdAccess(); await renderChat(); await renderInbox(); subscribe();
     sb.auth.onAuthStateChange(async (_event,newSession)=>{session=newSession;await loadProfile();renderAuth();if(session){manualPresence=profile?.presence==='busy'?'busy':'online';lastActivityAt=Date.now();startPresenceTracking();}await renderChat();await renderInbox();subscribe();});
+    document.addEventListener('visibilitychange',()=>{if(!document.hidden)renderChat();});
+    window.addEventListener('focus',()=>renderChat());
+    window.addEventListener('online',()=>{subscribe();renderChat();});
     window.addEventListener('beforeunload',()=>{ if(session) sb.from('profiles').update({presence:'offline',last_seen:new Date().toISOString()}).eq('id',session.user.id); });
   }
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',boot); else boot();
