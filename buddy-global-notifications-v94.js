@@ -1,0 +1,17 @@
+(()=>{'use strict';
+const URL='https://ahiatqnokyhfpailobjx.supabase.co',KEY='sb_publishable_qgwMhZPrB_3cFv3yCMcToA_9nDvHz-O';
+if(!window.supabase)return;
+const sb=window.supabase.createClient(URL,KEY,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:false}});
+let uid=null,channel=null,unread=0,profiles=new Map();
+const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+function ensureUi(){
+ if(!document.getElementById('buddyGlobalToastStack')){const x=document.createElement('div');x.id='buddyGlobalToastStack';x.className='buddy-global-toast-stack';document.body.appendChild(x)}
+ document.querySelectorAll('a').forEach(a=>{const text=(a.textContent||'').trim().toLowerCase(),href=a.getAttribute('href')||'';if((href.includes('buddy.html')||text==='buddy'||text.includes('comunidade'))&&!a.querySelector('.buddy-global-badge')){const b=document.createElement('span');b.className='buddy-global-badge';b.hidden=true;a.appendChild(b)}});
+}
+function paint(){ensureUi();document.querySelectorAll('.buddy-global-badge').forEach(b=>{b.textContent=unread>99?'99+':String(unread);b.hidden=unread<1});document.title=document.title.replace(/^\(\d+\)\s*/,'');if(unread>0)document.title=`(${unread}) ${document.title}`;window.dispatchEvent(new CustomEvent('buddy:unread',{detail:{count:unread}}));}
+async function refresh(){if(!uid)return;const {count}=await sb.from('private_messages').select('id',{count:'exact',head:true}).eq('receiver_id',uid).is('read_at',null).eq('hidden_by_receiver',false);unread=count||0;paint()}
+async function profile(id){if(profiles.has(id))return profiles.get(id);const {data}=await sb.from('profiles').select('id,full_name,game_nickname,game_nickname_public,avatar_url,custom_avatar_url').eq('id',id).maybeSingle();profiles.set(id,data||{});return data||{}}
+async function toast(row){if(location.pathname.endsWith('/buddy.html')&&window.TeamBuddy?.isConversationOpenWith?.(row.sender_id))return;const p=await profile(row.sender_id),name=p.game_nickname_public||p.game_nickname||p.full_name||'Buddy',avatar=p.custom_avatar_url||p.avatar_url||'';ensureUi();const box=document.getElementById('buddyGlobalToastStack'),el=document.createElement('button');el.type='button';el.className='buddy-global-toast';el.innerHTML=`${avatar?`<img src="${esc(avatar)}" alt="">`:''}<span><strong>${esc(name)}</strong><small>${esc((row.body||'Nova mensagem').slice(0,90))}</small></span>`;el.onclick=()=>location.href=`buddy.html?chat=${encodeURIComponent(row.sender_id)}`;box.appendChild(el);requestAnimationFrame(()=>el.classList.add('show'));setTimeout(()=>{el.classList.remove('show');setTimeout(()=>el.remove(),260)},5000)}
+async function init(){ensureUi();const {data}=await sb.auth.getSession();uid=data.session?.user?.id;if(!uid)return;await refresh();channel=sb.channel(`buddy-global-${uid}-${Date.now()}`).on('postgres_changes',{event:'INSERT',schema:'public',table:'private_messages',filter:`receiver_id=eq.${uid}`},payload=>{const r=payload.new||{};if(r.read_at)return;unread+=1;paint();toast(r)}).on('postgres_changes',{event:'UPDATE',schema:'public',table:'private_messages',filter:`receiver_id=eq.${uid}`},refresh).subscribe();window.addEventListener('focus',refresh);window.addEventListener('online',refresh);document.addEventListener('visibilitychange',()=>!document.hidden&&refresh());window.addEventListener('buddy:messages-read',refresh)}
+init();
+})();
