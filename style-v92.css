@@ -8554,3 +8554,6 @@ html, body { width:100%; max-width:100%; overflow-x:hidden; }
   .buddy-quick-action{max-width:104px;padding:8px 9px!important;}
   .buddy-quick-action.is-add-only{width:40px;min-width:40px;padding:0!important;}
 }
+
+/* V92.39.4.2 — som de mensagens por conversa */
+.buddy-bell.is-on{border-color:#73ff18!important;color:#73ff18!important;box-shadow:0 0 12px rgba(115,255,24,.28)}
