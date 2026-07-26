@@ -8445,18 +8445,9 @@ html, body { width:100%; max-width:100%; overflow-x:hidden; }
 @media(max-width:850px){.buddy-app{grid-template-columns:1fr}.buddy-sidebar{max-height:none}.buddy-list{max-height:420px}.buddy-main{min-height:560px}.buddy-profile-modal article{grid-template-columns:1fr;max-height:92vh;overflow:auto}.buddy-profile-modal article>img{height:260px;min-height:0}.buddy-profile-modal article>div{padding:24px 18px}.buddy-main header{flex-wrap:wrap}.buddy-main header div{min-width:180px}.buddy-messages p{max-width:88%}}
 @media(max-width:520px){.buddy-shell{width:calc(100% - 14px)}.buddy-tabs{grid-template-columns:1fr 1fr}.buddy-person{grid-template-columns:44px minmax(0,1fr) 32px}.buddy-person>[data-quick]{grid-column:1/-1}.buddy-person .buddy-bell{grid-column:3;grid-row:1}.buddy-profile-modal dl{grid-template-columns:1fr}.buddy-preview{left:8px!important;right:8px!important;width:auto}}
 
-/* V92.39.1 — preview Buddy utilizável: ponte segura e fechamento suave */
-.buddy-preview{
-  pointer-events:auto;
-}
-.buddy-preview::before{
-  content:"";
-  position:absolute;
-  left:0;
-  right:0;
-  top:-10px;
-  height:12px;
-  background:transparent;
-}
+/* V92.39.2 — preview Buddy sem bloquear as ações da lista */
+.buddy-preview{pointer-events:auto}
 .buddy-preview[hidden]{display:none!important}
 .buddy-preview button{cursor:pointer}
+.buddy-preview-trigger{cursor:help}
+.buddy-person>button{position:relative;z-index:2}
