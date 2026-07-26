@@ -8642,3 +8642,8 @@ html, body { width:100%; max-width:100%; overflow-x:hidden; }
  .buddy-chat-back .buddy-svg{width:22px;height:22px}
  .buddy-main header [data-group] .buddy-svg,.buddy-main header [data-profile] .buddy-svg{width:18px;height:18px}
 }
+
+/* V92.39.4.5 — áudio compatível e voltar mobile */
+.buddy-chat-back{touch-action:manipulation;-webkit-tap-highlight-color:transparent;position:relative;z-index:8}
+.buddy-sound-status{display:block;min-height:1.2em;margin:-4px 0 10px;text-align:center;font-weight:800;color:#ff6868}
+.buddy-sound-status[data-ok="1"]{color:#73ff18}

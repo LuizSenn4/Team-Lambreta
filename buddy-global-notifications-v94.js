@@ -2,15 +2,18 @@
 const URL='https://ahiatqnokyhfpailobjx.supabase.co',KEY='sb_publishable_qgwMhZPrB_3cFv3yCMcToA_9nDvHz-O';
 if(!window.supabase)return;
 const sb=window.supabase.createClient(URL,KEY,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:false}});
-let uid=null,channel=null,unread=0,profiles=new Map(),me=null,audio=null,audioUnlocked=false;
+let uid=null,channel=null,unread=0,profiles=new Map(),me=null,audio=null,audioUnlocked=false,audioCtx=null;
 const SOUND_SRC=new URL('assets/sounds/buddy-message.wav',document.baseURI).href;
 const soundKey=id=>`tl_buddy_sound_${uid||'anon'}_${id}`;
 const soundEnabled=id=>localStorage.getItem(soundKey(id))==='1';
 const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 function busy(){return ['busy','ocupado','do-not-disturb','dnd'].includes(String(me?.presence||me?.presence_status||'').toLowerCase())}
 function getAudio(){if(!audio){audio=new Audio(SOUND_SRC);audio.preload='auto';audio.volume=.6}return audio}
-async function unlockAudio(){if(audioUnlocked)return true;try{const a=getAudio();const old=a.volume;a.volume=0;await a.play();a.pause();a.currentTime=0;a.volume=old;audioUnlocked=true;return true}catch(_){return false}}
-async function playMessageSound(senderId,force=false){if(!force&&(!soundEnabled(senderId)||busy()))return false;try{const a=getAudio();a.currentTime=0;a.volume=.6;await a.play();audioUnlocked=true;return true}catch(_){return false}}
+function getAudioContext(){if(!audioCtx){const Ctx=window.AudioContext||window.webkitAudioContext;if(Ctx)audioCtx=new Ctx()}return audioCtx}
+async function unlockAudio(){try{const ctx=getAudioContext();if(ctx&&ctx.state==='suspended')await ctx.resume();audioUnlocked=!!ctx&&ctx.state==='running';return audioUnlocked}catch(_){return false}}
+async function playSynthSound(){try{const ctx=getAudioContext();if(!ctx)return false;if(ctx.state==='suspended')await ctx.resume();const now=ctx.currentTime;const gain=ctx.createGain();const osc=ctx.createOscillator();osc.type='sine';osc.frequency.setValueAtTime(880,now);osc.frequency.exponentialRampToValueAtTime(620,now+.12);gain.gain.setValueAtTime(.0001,now);gain.gain.exponentialRampToValueAtTime(.18,now+.01);gain.gain.exponentialRampToValueAtTime(.0001,now+.22);osc.connect(gain);gain.connect(ctx.destination);osc.start(now);osc.stop(now+.24);audioUnlocked=true;return true}catch(_){return false}}
+async function playFileSound(){try{const a=getAudio();a.currentTime=0;a.volume=.6;await a.play();audioUnlocked=true;return true}catch(_){return false}}
+async function playMessageSound(senderId,force=false){if(!force&&(!soundEnabled(senderId)||busy()))return false;return await playSynthSound()||await playFileSound()}
 ['pointerdown','touchend','keydown'].forEach(ev=>document.addEventListener(ev,unlockAudio,{once:true,passive:true}));
 function ensureUi(){
  if(!document.getElementById('buddyGlobalToastStack')){const x=document.createElement('div');x.id='buddyGlobalToastStack';x.className='buddy-global-toast-stack';document.body.appendChild(x)}
