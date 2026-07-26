@@ -8480,3 +8480,22 @@ html, body { width:100%; max-width:100%; overflow-x:hidden; }
   .buddy-app.conversation-open .buddy-main{display:block!important}
   .buddy-app.conversation-open .buddy-sidebar{display:none!important}
 }
+
+
+/* V92.39.3.2 — conversa mobile sem zoom + realtime visual imediato */
+.buddy-app,.buddy-sidebar,.buddy-main,.buddy-main>div,.buddy-main header,.buddy-messages,.buddy-message-form{box-sizing:border-box;min-width:0;max-width:100%}
+.buddy-page{overflow-x:hidden}
+.buddy-message-form input{min-width:0;width:100%;font-size:16px}
+@media(max-width:760px){
+  .buddy-shell{overflow-x:hidden}
+  .buddy-app.conversation-open{width:100%;max-width:100%;overflow:hidden}
+  .buddy-app.conversation-open .buddy-main{width:100%;max-width:100%;padding:12px;overflow:hidden}
+  .buddy-main #buddyConversation{width:100%;max-width:100%;min-width:0}
+  .buddy-main header{width:100%;grid-template-columns:38px 42px minmax(0,1fr) 44px 58px;overflow:hidden}
+  .buddy-main header div{min-width:0!important;overflow:hidden}
+  .buddy-main header strong,.buddy-main header small{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .buddy-main header button{min-width:0;padding:8px!important}
+  .buddy-messages{width:100%;min-height:50dvh;max-height:58dvh;padding:14px 4px;overscroll-behavior:contain}
+  .buddy-message-form{width:100%;grid-template-columns:minmax(0,1fr) 48px}
+  .buddy-message-form input{font-size:16px!important;transform:none!important;zoom:1!important}
+}
