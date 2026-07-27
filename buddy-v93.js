@@ -53,12 +53,42 @@ function startMessagePolling(){
   stopMessagePolling();
   // Fallback leve: o Realtime continua sendo a fonte principal.
   // Se o canal falhar ou o navegador suspender eventos, atualiza a conversa aberta.
-  messagePollTimer=setInterval(()=>{if(selected&&!document.hidden)loadMessages(false)},700);
+  messagePollTimer=setInterval(()=>{if(selected)loadMessages(false)},450);
 }
 async function loadMessages(force=false){if(!selected)return;const selectedId=selected.id;const {data,error}=await sb.from('private_messages').select('*').or(`and(sender_id.eq.${session.user.id},receiver_id.eq.${selectedId}),and(sender_id.eq.${selectedId},receiver_id.eq.${session.user.id})`).order('created_at');if(error||!selected||selected.id!==selectedId)return;const visible=(data||[]).filter(m=>!(m.sender_id===session.user.id?m.hidden_by_sender:m.hidden_by_receiver));const signature=visible.map(m=>`${m.id}:${m.created_at}:${m.hidden_by_sender}:${m.hidden_by_receiver}`).join('|');if(!force&&signature===lastMessageSignature)return;lastMessageSignature=signature;const box=$('buddyMessages'),wasNearBottom=box.scrollHeight-box.scrollTop-box.clientHeight<90;renderedMessageIds=new Set(visible.map(m=>String(m.id)));box.innerHTML=visible.map(messageMarkup).join('');if(force||wasNearBottom)box.scrollTop=box.scrollHeight;await markOpenConversationRead()}
 $('buddyMessageForm').onsubmit=async e=>{e.preventDefault();const input=$('buddyMessageInput'),body=input.value.trim();if(!body||!selected)return;const receiverId=selected.id,inputBody=body;input.value='';const {error}=await sb.from('private_messages').insert({sender_id:session.user.id,receiver_id:receiverId,body:inputBody});if(error){input.value=inputBody;return alert(error.message)}await loadMessages(true)};
 async function blockUser(id){if(!confirm('Bloquear este utilizador?'))return;await sb.from('user_blocks').upsert({blocker_id:session.user.id,blocked_id:id});const r=relationWith(id);if(r)await sb.from('buddy_relations').delete().eq('id',r.id);$('buddyProfileModal').hidden=true;closeConversation();load()}
 async function deleteConversation(){if(!selected||!confirm('Apagar esta conversa apenas para ti?'))return;const {data}=await sb.from('private_messages').select('id,sender_id,receiver_id').or(`and(sender_id.eq.${session.user.id},receiver_id.eq.${selected.id}),and(sender_id.eq.${selected.id},receiver_id.eq.${session.user.id})`);for(const m of data||[])await sb.from('private_messages').update(m.sender_id===session.user.id?{hidden_by_sender:true}:{hidden_by_receiver:true}).eq('id',m.id);loadMessages()}
 function reportUser(id){const p=profiles.find(x=>x.id===id),box=$('buddyReportModal');box.innerHTML=`<div class="buddy-modal-backdrop" data-close></div><form><button type="button" data-close>×</button><h3>Reportar ${esc(name(p))}</h3><select required><option value="">Motivo</option><option value="assedio">Assédio</option><option value="spam">Spam</option><option value="ameaca">Ameaça</option><option value="conteudo_improprio">Conteúdo impróprio</option><option value="perfil_falso">Perfil falso</option><option value="outro">Outro</option></select><textarea maxlength="1000" placeholder="Detalhes opcionais"></textarea><button>Enviar denúncia</button></form>`;box.hidden=false;box.querySelectorAll('[data-close]').forEach(x=>x.onclick=()=>box.hidden=true);box.querySelector('form').onsubmit=async e=>{e.preventDefault();await sb.from('user_reports').insert({reporter_id:session.user.id,reported_id:id,reason:e.target.querySelector('select').value,details:e.target.querySelector('textarea').value.trim()||null});box.hidden=true;alert('Denúncia enviada.')}}
-function subscribePrivateRealtime(){if(!session)return;if(privateChannel)sb.removeChannel(privateChannel);privateChannel=sb.channel(`buddy-private-${session.user.id}-${Date.now()}`).on('postgres_changes',{event:'INSERT',schema:'public',table:'private_messages'},payload=>{const row=payload.new||{};appendRealtimeMessage(row);setTimeout(()=>messageBelongsToOpenChat(row)&&loadMessages(false),180)}).on('postgres_changes',{event:'UPDATE',schema:'public',table:'private_messages'},payload=>{const row=payload.new||payload.old||{};if(messageBelongsToOpenChat(row))loadMessages(true)}).on('postgres_changes',{event:'UPDATE',schema:'public',table:'profiles'},payload=>{const row=payload.new||{};const i=profiles.findIndex(p=>p.id===row.id);if(i>=0)profiles[i]={...profiles[i],...row};if(selected?.id===row.id)selected=profiles[i];render()}).subscribe(status=>{if(status==='SUBSCRIBED'){if(selected)loadMessages(false)}else if(status==='CHANNEL_ERROR'||status==='TIMED_OUT'||status==='CLOSED'){startMessagePolling()}})}
-document.querySelectorAll('[data-tab]').forEach(b=>b.onclick=()=>{if(innerWidth<=760&&selected)closeConversation();tab=b.dataset.tab;$('buddyTestSound')?.addEventListener('click',async()=>{const btn=$('buddyTestSound');btn.disabled=true;const ok=await window.TeamBuddyNotifications?.testSound?.();let note=$('buddySoundStatus');if(!note){note=document.createElement('small');note.id='buddySoundStatus';note.className='buddy-sound-status';btn.insertAdjacentElement('afterend',note)}note.textContent=ok?'✓ Som reproduzido':'Não foi possível reproduzir o som';note.dataset.ok=ok?'1':'0';setTimeout(()=>note.textContent='',3500);btn.disabled=false});document.querySelectorAll('[data-tab]').forEach(x=>x.classList.toggle('active',x===b));render()});$('buddySearch').oninput=render;document.addEventListener('visibilitychange',()=>{if(!document.hidden&&selected)loadMessages(true)});window.addEventListener('focus',()=>selected&&loadMessages(true));window.addEventListener('online',()=>{subscribePrivateRealtime();if(selected)loadMessages(true)});window.TeamBuddy={isConversationOpenWith:id=>!!(selected&&selected.id===id),openChat};(async()=>{await load();const id=new URLSearchParams(location.search).get('chat');if(id&&profiles.some(p=>p.id===id))openChat(id)})();})();
+function subscribePrivateRealtime(){
+  if(!session)return;
+  if(privateChannel)sb.removeChannel(privateChannel);
+  const uid=session.user.id;
+  const onInsert=payload=>{
+    const row=payload.new||{};
+    appendRealtimeMessage(row);
+    if(messageBelongsToOpenChat(row))setTimeout(()=>loadMessages(false),80);
+  };
+  privateChannel=sb.channel(`buddy-private-${uid}-${Date.now()}`)
+    .on('postgres_changes',{event:'INSERT',schema:'public',table:'private_messages',filter:`receiver_id=eq.${uid}`},onInsert)
+    .on('postgres_changes',{event:'INSERT',schema:'public',table:'private_messages',filter:`sender_id=eq.${uid}`},onInsert)
+    .on('postgres_changes',{event:'UPDATE',schema:'public',table:'private_messages'},payload=>{
+      const row=payload.new||payload.old||{};
+      if(messageBelongsToOpenChat(row))loadMessages(true);
+    })
+    .on('postgres_changes',{event:'UPDATE',schema:'public',table:'profiles'},payload=>{
+      const row=payload.new||{};
+      const i=profiles.findIndex(p=>p.id===row.id);
+      if(i>=0)profiles[i]={...profiles[i],...row};
+      if(selected?.id===row.id)selected=profiles[i];
+      render();
+    })
+    .subscribe(status=>{
+      if(status==='SUBSCRIBED'){
+        if(selected)loadMessages(true);
+      }else if(status==='CHANNEL_ERROR'||status==='TIMED_OUT'||status==='CLOSED'){
+        startMessagePolling();
+      }
+    });
+}
+document.querySelectorAll('[data-tab]').forEach(b=>b.onclick=()=>{if(innerWidth<=760&&selected)closeConversation();tab=b.dataset.tab;$('buddyTestSound')?.addEventListener('click',async()=>{const btn=$('buddyTestSound');btn.disabled=true;const ok=await window.TeamBuddyNotifications?.testSound?.();let note=$('buddySoundStatus');if(!note){note=document.createElement('small');note.id='buddySoundStatus';note.className='buddy-sound-status';btn.insertAdjacentElement('afterend',note)}note.textContent=ok?'✓ Som reproduzido':'Não foi possível reproduzir o som';note.dataset.ok=ok?'1':'0';setTimeout(()=>note.textContent='',3500);btn.disabled=false});document.querySelectorAll('[data-tab]').forEach(x=>x.classList.toggle('active',x===b));render()});$('buddySearch').oninput=render;document.addEventListener('visibilitychange',()=>{if(!document.hidden){subscribePrivateRealtime();if(selected)loadMessages(true)}});window.addEventListener('focus',()=>{subscribePrivateRealtime();if(selected)loadMessages(true)});window.addEventListener('pageshow',()=>{subscribePrivateRealtime();if(selected)loadMessages(true)});window.addEventListener('online',()=>{subscribePrivateRealtime();if(selected)loadMessages(true)});window.TeamBuddy={isConversationOpenWith:id=>!!(selected&&selected.id===id),openChat};(async()=>{await load();const id=new URLSearchParams(location.search).get('chat');if(id&&profiles.some(p=>p.id===id))openChat(id)})();})();
