@@ -81,6 +81,10 @@
     item.status = item.status === 'Fechado' ? 'Fechado' : 'Aberto';
     item.fixed = Boolean(item.fixed);
     item.createdAt = item.createdAt || now();
+    item.reactions = item.reactions && typeof item.reactions === 'object' ? item.reactions : {};
+    item.reactions.likes = Array.isArray(item.reactions.likes) ? item.reactions.likes : [];
+    item.reactions.dislikes = Array.isArray(item.reactions.dislikes) ? item.reactions.dislikes : [];
+    item.reactions.shares = Number.isFinite(Number(item.reactions.shares)) ? Number(item.reactions.shares) : 0;
     return item;
   }
 
@@ -210,6 +214,60 @@
     return `<div class="forum-reply ${reply.private ? 'is-private' : ''} role-frame-${roleClass(person.role)}"><div class="forum-reply-head">${person.avatar ? `<img src="${esc(person.avatar)}" alt="">` : ''}<strong class="role-text-${roleClass(person.role)}">${esc(person.name)}</strong>${roleBadge(person)}<small>${reply.private ? 'PRIVADA' : 'RESPOSTA'}</small></div><p>${esc(reply.text || '')}</p></div>`;
   }
 
+
+
+  function reactionSvg(type) {
+    if (type === 'like') return '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7.4 10.2 11 3.8c.5-.9 1.7-1.2 2.5-.6.6.4.9 1.2.7 1.9l-.9 3.5h4.9c1.7 0 2.9 1.6 2.4 3.2l-1.8 6.1c-.3 1.1-1.3 1.8-2.4 1.8H7.4V10.2Z"/><path d="M3.2 10.2h4.2v9.5H3.2z"/></svg>';
+    if (type === 'dislike') return '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7.4 13.8 11 20.2c.5.9 1.7 1.2 2.5.6.6-.4.9-1.2.7-1.9l-.9-3.5h4.9c1.7 0 2.9-1.6 2.4-3.2l-1.8-6.1c-.3-1.1-1.3-1.8-2.4-1.8H7.4v9.5Z"/><path d="M3.2 4.3h4.2v9.5H3.2z"/></svg>';
+    return '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14.3 5.2 20 10.7l-5.7 5.5v-3.3c-5.8 0-8.5 2.1-10.3 5.1.5-5.7 3.9-9.2 10.3-9.2V5.2Z"/></svg>';
+  }
+
+  function reactionBar(topic, pending) {
+    if (pending || topic.private) return '';
+    const likes = topic.reactions?.likes || [];
+    const dislikes = topic.reactions?.dislikes || [];
+    const me = uid();
+    return `<div class="forum-reaction-bar" aria-label="Reações e partilha">
+      <button type="button" class="forum-reaction-button ${me && likes.includes(me) ? 'is-active is-like' : ''}" data-reaction="like" title="Gostei" aria-label="Gostei">${reactionSvg('like')}<span>${likes.length}</span></button>
+      <button type="button" class="forum-reaction-button ${me && dislikes.includes(me) ? 'is-active is-dislike' : ''}" data-reaction="dislike" title="Não gostei" aria-label="Não gostei">${reactionSvg('dislike')}<span>${dislikes.length}</span></button>
+      <button type="button" class="forum-reaction-button forum-share-button" data-reaction="share" title="Compartilhar link" aria-label="Compartilhar link">${reactionSvg('share')}<span>${Number(topic.reactions?.shares || 0)}</span></button>
+    </div>`;
+  }
+
+  function forumReactionTotals() {
+    const topics = approvedTopics();
+    return topics.reduce((acc, topic) => {
+      acc.likes += topic.reactions?.likes?.length || 0;
+      acc.dislikes += topic.reactions?.dislikes?.length || 0;
+      acc.shares += Number(topic.reactions?.shares || 0);
+      return acc;
+    }, { likes: 0, dislikes: 0, shares: 0 });
+  }
+
+  function renderReactionStats() {
+    const host = $('forumReactionStats');
+    if (!host) return;
+    const totals = forumReactionTotals();
+    host.innerHTML = `<article><span class="forum-stat-icon is-like">${reactionSvg('like')}</span><div><b>${totals.likes}</b><small>Likes</small></div></article>
+      <article><span class="forum-stat-icon is-dislike">${reactionSvg('dislike')}</span><div><b>${totals.dislikes}</b><small>Deslikes</small></div></article>
+      <article><span class="forum-stat-icon is-share">${reactionSvg('share')}</span><div><b>${totals.shares}</b><small>Partilhas</small></div></article>`;
+  }
+
+  async function shareTopic(topic) {
+    const url = new URL(window.location.href);
+    url.hash = `topic-${topic.id}`;
+    const shareData = { title: topic.title || 'Team Lambreta', text: topic.description || 'Tópico do Team Lambreta', url: url.toString() };
+    try {
+      if (navigator.share) await navigator.share(shareData);
+      else await navigator.clipboard.writeText(url.toString());
+      topic.reactions.shares = Number(topic.reactions.shares || 0) + 1;
+      const data = getData();
+      save(data, navigator.share ? 'Link compartilhado.' : 'Link copiado.');
+    } catch (error) {
+      if (error?.name !== 'AbortError') showFeedback('Não foi possível compartilhar agora.', true);
+    }
+  }
+
   function controls(topic, pending) {
     if (!canModerate()) return '';
     if (pending) {
@@ -226,6 +284,7 @@
       <h3>${esc(topic.title || 'Sem título')}</h3><p>${esc(topic.description || 'Sem descrição')}</p>
       ${topic.editedAt ? `<div class="forum-edited-note">Editado pela moderação${topic.editedBy ? ` · ${esc(topic.editedBy)}` : ''}</div>` : ''}
       ${topic.replies.length ? `<div class="forum-replies">${topic.replies.map(reply => replyMarkup(reply, topic)).join('')}</div>` : ''}
+      ${reactionBar(topic, pending)}
       ${controls(topic, pending)}
     </article>`;
   }
@@ -263,6 +322,9 @@
       (items.length ? items.map(item => card(item.topic, item.pending)).join('') : '<article class="empty-card safe-card"><h3>Nenhum tópico nesta sala</h3><p>Escolhe outra sala ou cria o primeiro tópico.</p></article>');
 
     bindActions(grid, data);
+    renderReactionStats();
+    const targetId = String(location.hash || '').replace('#topic-', '');
+    if (targetId) setTimeout(() => grid.querySelector(`[data-topic-id="${CSS.escape(targetId)}"]`)?.scrollIntoView({ behavior: 'smooth', block: 'center' }), 50);
   }
 
   function askText(label) {
@@ -380,6 +442,29 @@
   }
 
   function bindActions(grid, data) {
+    grid.querySelectorAll('[data-reaction]').forEach(button => {
+      button.onclick = async () => {
+        const cardEl = button.closest('[data-topic-id]');
+        const id = cardEl?.dataset.topicId;
+        const topic = (data.forum || []).find(item => item.id === id);
+        if (!topic) return;
+        topic.reactions = topic.reactions || { likes: [], dislikes: [], shares: 0 };
+        topic.reactions.likes = Array.isArray(topic.reactions.likes) ? topic.reactions.likes : [];
+        topic.reactions.dislikes = Array.isArray(topic.reactions.dislikes) ? topic.reactions.dislikes : [];
+        if (button.dataset.reaction === 'share') return shareTopic(topic);
+        if (!session) return showFeedback('Entra com o Google para reagir.', true);
+        const me = uid();
+        const own = button.dataset.reaction === 'like' ? topic.reactions.likes : topic.reactions.dislikes;
+        const other = button.dataset.reaction === 'like' ? topic.reactions.dislikes : topic.reactions.likes;
+        const index = own.indexOf(me);
+        if (index >= 0) own.splice(index, 1); else {
+          const otherIndex = other.indexOf(me);
+          if (otherIndex >= 0) other.splice(otherIndex, 1);
+          own.push(me);
+        }
+        save(data);
+      };
+    });
     grid.querySelectorAll('[data-action]').forEach(button => {
       button.onclick = () => {
         const cardEl = button.closest('[data-topic-id]');
