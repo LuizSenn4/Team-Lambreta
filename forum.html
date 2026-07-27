@@ -1,128 +1,113 @@
 <!DOCTYPE html>
+
 <html lang="pt-PT">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Fórum - Team Lambreta</title>
-  <link rel="stylesheet" href="style-v92.css?v=92.40.1" />
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Fórum - Team Lambreta</title>
+<link href="style-v92.css?v=92.40.1" rel="stylesheet"/><link href="site-shell-v97.css?v=97.0" rel="stylesheet"/>
 </head>
 <body>
-  <section id="siteContent" class="site-content forum-page">
-    <header class="site-header tl-header-v88">
-  <a href="home.html" class="brand brand-logo-link" aria-label="Team Lambreta — página inicial">
-    <img class="brand-logo-image" src="img/team-lambreta-header-logo.svg" alt="Team Lambreta — Lambreta é uma família">
-  </a>
-
-  <button id="tlMenuButton" class="tl-mobile-menu-button" type="button"
-          aria-label="Abrir menu" aria-expanded="false" aria-controls="tlMainNav">
-    <span></span><span></span><span></span>
-  </button>
-
-  <div id="tlMenuBackdrop" class="tl-mobile-menu-backdrop" hidden></div>
-
-  <nav id="tlMainNav" class="tl-main-nav" aria-label="Menu principal">
-    <a class="tl-menu-link" href="home.html"><span>Início</span></a>
-
-    <div class="tl-menu-group">
-      <button class="tl-menu-toggle" type="button" aria-expanded="false">
-        <span>Lambreta</span><b aria-hidden="true">⌄</b>
-      </button>
-      <div class="tl-submenu">
-        <a href="team.html"><span>Team</span></a>
-        <a href="streamers.html"><span>Streamers</span></a>
-      </div>
-    </div>
-
-    <div class="tl-menu-group">
-      <button class="tl-menu-toggle" type="button" aria-expanded="false">
-        <span>Comunidade</span><b aria-hidden="true">⌄</b>
-      </button>
-      <div class="tl-submenu">
-        <a href="forum.html"><span>Fórum</span></a>
-        <a href="buddy.html"><span>Buddy</span></a>
-        <a href="ajuda.html"><span>Ajuda</span></a>
-        <a href="contacto.html"><span>Contacto</span></a>
-      </div>
-    </div>
-
-    <div class="tl-menu-group">
-      <button class="tl-menu-toggle" type="button" aria-expanded="false">
-        <span>Destaques</span><b aria-hidden="true">⌄</b>
-      </button>
-      <div class="tl-submenu">
-        <a href="eventos.html"><span>Eventos</span></a>
-        <a href="conquistas.html"><span>Conquistas</span></a>
-        <a href="midia.html"><span>Mídia</span></a>
-      </div>
-    </div>
-
-    <a class="tl-menu-link" href="loja.html"><span>Loja</span></a>
-  </nav>
+<section class="site-content forum-page" id="siteContent">
+<header class="site-header tl-header-v88">
+<a aria-label="Team Lambreta — página inicial" class="brand brand-logo-link" href="home.html">
+<img alt="Team Lambreta — Lambreta é uma família" class="brand-logo-image" src="img/team-lambreta-header-logo.svg"/>
+</a>
+<button aria-controls="tlMainNav" aria-expanded="false" aria-label="Abrir menu" class="tl-mobile-menu-button" id="tlMenuButton" type="button">
+<span></span><span></span><span></span>
+</button>
+<div class="tl-mobile-menu-backdrop" hidden="" id="tlMenuBackdrop"></div>
+<nav aria-label="Menu principal" class="tl-main-nav" id="tlMainNav">
+<a class="tl-menu-link" href="home.html"><span>Início</span></a>
+<div class="tl-menu-group">
+<button aria-expanded="false" class="tl-menu-toggle" type="button">
+<span>Lambreta</span><b aria-hidden="true">⌄</b>
+</button>
+<div class="tl-submenu">
+<a href="team.html"><span>Team</span></a>
+<a href="streamers.html"><span>Streamers</span></a>
+</div>
+</div>
+<div class="tl-menu-group">
+<button aria-expanded="false" class="tl-menu-toggle" type="button">
+<span>Comunidade</span><b aria-hidden="true">⌄</b>
+</button>
+<div class="tl-submenu">
+<a class="is-current" href="forum.html"><span>Fórum</span></a>
+<a href="buddy.html"><span>Buddy</span></a>
+<a href="ajuda.html"><span>Ajuda</span></a>
+<a href="contacto.html"><span>Contacto</span></a>
+</div>
+</div>
+<div class="tl-menu-group">
+<button aria-expanded="false" class="tl-menu-toggle" type="button">
+<span>Destaques</span><b aria-hidden="true">⌄</b>
+</button>
+<div class="tl-submenu">
+<a href="eventos.html"><span>Eventos</span></a>
+<a href="conquistas.html"><span>Hall da Fama</span></a>
+<a href="midia.html"><span>Mídia</span></a>
+</div>
+</div>
+<a class="tl-menu-link" href="loja.html"><span>Loja</span></a>
+</nav>
 </header>
-    
 <main class="forum-page-shell">
-  <section class="forum-hero forum-hero-v38">
-    <div class="forum-title-badge">Fórum</div>
-    <h1>Tópicos da equipa</h1>
-    <p>Cria sugestões, acompanha discussões e espera aprovação da administração.</p>
-  </section>
-
-  <section class="forum-board">
-    <aside class="forum-create-panel">
-      <h2>Criar tópico</h2>
-      <p>O tópico fica pendente até o admin aprovar.</p>
-
-      <div id="forumLoginNotice" class="forum-login-notice">Entra com o Google para criar um tópico.</div>
-      <form id="userTopicFormV90" class="user-topic-form" hidden>
-        <div id="forumAuthorIdentity" class="forum-author-identity"></div>
-        <label class="forum-field-label" for="topicCategory">Sala</label>
-        <select id="topicCategory" class="forum-category-select">
-          <option value="geral">Geral</option>
-          <option value="suporte">Suporte</option>
-          <option value="loja">Loja</option>
-          <option value="sugestoes">Sugestões</option>
-          <option value="duvidas">Dúvidas</option>
-          <option value="ajuda">Ajuda</option>
-          <option value="candidaturas">Candidaturas — privada</option>
-          <option value="eventos">Eventos e Torneios</option>
-          <option value="fortnite">Fortnite</option>
-          <option value="denuncias">Denúncias — privada</option>
-        </select>
-        <input id="topicTitle" type="text" placeholder="Título do tópico" maxlength="60"><small class="field-counter" data-for="topicTitle"></small>
-        <textarea id="topicDescription" placeholder="Explica o tópico..." maxlength="280"></textarea><small class="field-counter full" data-for="topicDescription"></small>
-        <button type="submit">Enviar para aprovação</button>
-      </form>
-
-      <p id="topicFeedback" class="topic-feedback"></p>
-    </aside>
-
-    <section class="forum-topic-panel">
-      <div id="forumTabs" class="forum-tabs">
-        <button class="active" type="button" data-forum-filter="approved">Aprovados</button>
-        <button type="button" data-forum-filter="fixed">Fixados</button>
-        <button type="button" data-forum-filter="closed"><span aria-hidden="true">🔒</span> Fechados</button>
-        <button type="button" data-forum-filter="pending" data-moderator-only hidden>Pendentes</button>
-      </div>
-      <section id="forumReactionStats" class="forum-reaction-stats" aria-label="Estatísticas de reações do fórum"></section>
-      <div id="forumRooms" class="forum-rooms" aria-label="Salas do fórum"></div>
-      <div id="forumGrid" class="forum-list"></div>
-    </section>
-  </section>
+<section class="forum-hero forum-hero-v38">
+<div class="forum-title-badge">Fórum</div>
+<h1>Tópicos da equipa</h1>
+<p>Cria sugestões, acompanha discussões e espera aprovação da administração.</p>
+</section>
+<section class="forum-board">
+<aside class="forum-create-panel">
+<h2>Criar tópico</h2>
+<p>O tópico fica pendente até o admin aprovar.</p>
+<div class="forum-login-notice" id="forumLoginNotice">Entra com o Google para criar um tópico.</div>
+<form class="user-topic-form" hidden="" id="userTopicFormV90">
+<div class="forum-author-identity" id="forumAuthorIdentity"></div>
+<label class="forum-field-label" for="topicCategory">Sala</label>
+<select class="forum-category-select" id="topicCategory">
+<option value="geral">Geral</option>
+<option value="suporte">Suporte</option>
+<option value="loja">Loja</option>
+<option value="sugestoes">Sugestões</option>
+<option value="duvidas">Dúvidas</option>
+<option value="ajuda">Ajuda</option>
+<option value="candidaturas">Candidaturas — privada</option>
+<option value="eventos">Eventos e Torneios</option>
+<option value="fortnite">Fortnite</option>
+<option value="denuncias">Denúncias — privada</option>
+</select>
+<input id="topicTitle" maxlength="60" placeholder="Título do tópico" type="text"/><small class="field-counter" data-for="topicTitle"></small>
+<textarea id="topicDescription" maxlength="280" placeholder="Explica o tópico..."></textarea><small class="field-counter full" data-for="topicDescription"></small>
+<button type="submit">Enviar para aprovação</button>
+</form>
+<p class="topic-feedback" id="topicFeedback"></p>
+</aside>
+<section class="forum-topic-panel">
+<div class="forum-tabs" id="forumTabs">
+<button class="active" data-forum-filter="approved" type="button">Aprovados</button>
+<button data-forum-filter="fixed" type="button">Fixados</button>
+<button data-forum-filter="closed" type="button"><span aria-hidden="true">🔒</span> Fechados</button>
+<button data-forum-filter="pending" data-moderator-only="" hidden="" type="button">Pendentes</button>
+</div>
+<section aria-label="Estatísticas de reações do fórum" class="forum-reaction-stats" id="forumReactionStats"></section>
+<div aria-label="Salas do fórum" class="forum-rooms" id="forumRooms"></div>
+<div class="forum-list" id="forumGrid"></div>
+</section>
+</section>
 </main>
-
-    <footer class="site-footer">
-      <p>© <span id="year"></span> Team Lambreta — Juntos somos mais fortes.</p>
-    </footer>
-  </section>
-
-  <script src="data.js"></script>
-  <script src="script-v89.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="supabase-integration-v92.js"></script>
-  <script src="forum-auth-v90.js?v=92.40.1"></script>
-  <script src="buddy-presence-v95.js?v=92.39.4.5"></script><script src="buddy-global-notifications-v94.js?v=92.39.4.5"></script><script src="navigation-v88.js"></script>
-
-  <script src="error-codes-v92.js"></script>
-  <script src="site-i18n-v92.js"></script>
+<footer class="site-footer">
+<p>© <span id="year"></span> Team Lambreta — Juntos somos mais fortes.</p>
+</footer>
+</section>
+<script src="data.js"></script>
+<script src="script-v89.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="supabase-integration-v92.js"></script>
+<script src="forum-auth-v90.js?v=92.40.1"></script>
+<script src="buddy-presence-v95.js?v=92.39.4.5"></script><script src="buddy-global-notifications-v94.js?v=92.39.4.5"></script><script src="navigation-v88.js"></script>
+<script src="error-codes-v92.js"></script>
+<script src="site-i18n-v92.js"></script>
 </body>
 </html>

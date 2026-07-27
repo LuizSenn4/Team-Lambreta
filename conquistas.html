@@ -1,111 +1,131 @@
 <!DOCTYPE html>
+
 <html lang="pt-PT">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Hall da Fama - Team Lambreta</title>
-  <link rel="stylesheet" href="style-v92.css?v=92.40.1" />
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Hall da Fama - Team Lambreta</title>
+<link href="style-v92.css?v=92.40.1" rel="stylesheet"/><link href="site-shell-v97.css?v=97.0" rel="stylesheet"/>
 </head>
 <body>
-  <section id="siteContent" class="site-content hall-page">
-    <header class="site-header tl-header-v88">
-      <a href="home.html" class="brand brand-logo-link" aria-label="Team Lambreta — página inicial">
-        <img class="brand-logo-image" src="img/team-lambreta-header-logo.svg" alt="Team Lambreta — Lambreta é uma família">
-      </a>
-      <button id="tlMenuButton" class="tl-mobile-menu-button" type="button" aria-label="Abrir menu" aria-expanded="false" aria-controls="tlMainNav"><span></span><span></span><span></span></button>
-      <div id="tlMenuBackdrop" class="tl-mobile-menu-backdrop" hidden></div>
-      <nav id="tlMainNav" class="tl-main-nav" aria-label="Menu principal">
-        <a class="tl-menu-link" href="home.html"><span>Início</span></a>
-        <div class="tl-menu-group"><button class="tl-menu-toggle" type="button" aria-expanded="false"><span>Lambreta</span><b aria-hidden="true">⌄</b></button><div class="tl-submenu"><a href="team.html"><span>Team</span></a><a href="streamers.html"><span>Streamers</span></a></div></div>
-        <div class="tl-menu-group"><button class="tl-menu-toggle" type="button" aria-expanded="false"><span>Comunidade</span><b aria-hidden="true">⌄</b></button><div class="tl-submenu"><a href="forum.html"><span>Fórum</span></a><a href="buddy.html"><span>Buddy</span></a><a href="ajuda.html"><span>Ajuda</span></a><a href="contacto.html"><span>Contacto</span></a></div></div>
-        <div class="tl-menu-group"><button class="tl-menu-toggle" type="button" aria-expanded="true"><span>Destaques</span><b aria-hidden="true">⌄</b></button><div class="tl-submenu"><a href="eventos.html"><span>Eventos</span></a><a class="is-current" href="conquistas.html"><span>Hall da Fama</span></a><a href="midia.html"><span>Mídia</span></a></div></div>
-        <a class="tl-menu-link" href="loja.html"><span>Loja</span></a>
-      </nav>
-    </header>
-
-    <main class="hall-shell">
-      <section class="hall-hero">
-        <div>
-          <span class="hall-kicker">HISTÓRIA DA FAMÍLIA</span>
-          <h1>Hall da Fama</h1>
-          <p>Tempo ativo, participação, eventos, fórum, lives e conquistas especiais — tudo reunido numa evolução única dentro do Team Lambreta.</p>
-        </div>
-        <div class="hall-emblem" aria-hidden="true">
-          <span class="hall-emblem-ring"></span>
-          <strong>★</strong>
-          <small>HALL</small>
-        </div>
-      </section>
-
-      <section class="hall-status-note" aria-label="Estado da funcionalidade">
-        <span class="hall-live-dot"></span>
-        <div><strong>Estrutura visual ativa</strong><p>Os dados desta primeira versão são demonstrativos. Nas próximas fases ligamos cada contador ao Supabase, fórum, eventos e lives.</p></div>
-      </section>
-
-      <section class="hall-top-grid" aria-label="Destaques do Hall da Fama">
-        <article class="hall-champion-card" data-accent="hall">
-          <span class="hall-rank">#1</span>
-          <div class="hall-avatar hall-avatar-main">L</div>
-          <div class="hall-champion-info">
-            <span class="hall-role hall-role-dev">DEV</span>
-            <h2>LuizSenn4</h2>
-            <p>Fundador · Nível 27</p>
-          </div>
-          <div class="hall-xp"><span style="--progress:82%"></span></div>
-          <div class="hall-card-stats"><span><b>128h</b> ativo</span><span><b>34</b> conquistas</span><span><b>18</b> eventos</span></div>
-        </article>
-
-        <div class="hall-ranking-panel">
-          <div class="hall-section-head"><div><span>RANKING</span><h2>Lenda da semana</h2></div><button id="hallRankingInfo" type="button" class="hall-info-button" aria-label="Como funciona o ranking">?</button></div>
-          <div id="hallRankingList" class="hall-ranking-list"></div>
-        </div>
-      </section>
-
-      <section class="hall-metrics">
-        <article><span>◉</span><div><b id="hallActiveHours">284</b><small>Horas ativas</small></div></article>
-        <article><span>✦</span><div><b id="hallAchievementTotal">76</b><small>Conquistas obtidas</small></div></article>
-        <article><span>⚑</span><div><b id="hallEventTotal">31</b><small>Eventos disputados</small></div></article>
-        <article><span>☾</span><div><b id="hallAfkTotal">19</b><small>Momentos AFK lendários</small></div></article>
-      </section>
-
-      <section class="hall-achievements-section">
-        <div class="hall-section-head hall-section-head-wide"><div><span>CONQUISTAS</span><h2>Caminhos para entrar na história</h2></div><div class="hall-filter-row" id="hallFilters"><button class="is-active" data-filter="all">Todas</button><button data-filter="activity">Atividade</button><button data-filter="community">Comunidade</button><button data-filter="events">Eventos</button><button data-filter="special">Especiais</button></div></div>
-        <div id="hallAchievementGrid" class="hall-achievement-grid"></div>
-      </section>
-
-      <section class="hall-roadmap">
-        <div><span>PRÓXIMAS LIGAÇÕES</span><h2>Como esta página vai evoluir</h2></div>
-        <ol>
-          <li><b>01</b><span>Tempo ativo real com proteção anti-AFK</span></li>
-          <li><b>02</b><span>Tópicos, respostas e agradecimentos do fórum</span></li>
-          <li><b>03</b><span>Participação em eventos e horas de live</span></li>
-          <li><b>04</b><span>XP, níveis, medalhas e entrada oficial no Hall</span></li>
-        </ol>
-      </section>
-    </main>
-
-    <footer class="site-footer"><p>© <span id="year"></span> Team Lambreta — Juntos somos mais fortes.</p></footer>
-  </section>
-
-  <div id="hallModal" class="hall-modal" hidden>
-    <div class="hall-modal-backdrop" data-close-hall></div>
-    <article class="hall-modal-card" role="dialog" aria-modal="true" aria-labelledby="hallModalTitle">
-      <button type="button" class="hall-modal-close" data-close-hall aria-label="Fechar">×</button>
-      <div id="hallModalIcon" class="hall-modal-icon">★</div>
-      <span id="hallModalCategory">HALL DA FAMA</span>
-      <h2 id="hallModalTitle">Como funciona</h2>
-      <p id="hallModalText"></p>
-    </article>
-  </div>
-
-  <script src="data.js"></script>
-  <script src="script-v89.js"></script>
-  <script src="navigation-v88.js"></script>
-  <script src="hall-da-fama-v96.js?v=92.40.1"></script>
-  <script src="error-codes-v92.js"></script>
-  <script src="site-i18n-v92.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="buddy-presence-v95.js?v=92.39.4.5"></script>
-  <script src="buddy-global-notifications-v94.js?v=92.39.4.5"></script>
+<section class="site-content hall-page" id="siteContent">
+<header class="site-header tl-header-v88">
+<a aria-label="Team Lambreta — página inicial" class="brand brand-logo-link" href="home.html">
+<img alt="Team Lambreta — Lambreta é uma família" class="brand-logo-image" src="img/team-lambreta-header-logo.svg"/>
+</a>
+<button aria-controls="tlMainNav" aria-expanded="false" aria-label="Abrir menu" class="tl-mobile-menu-button" id="tlMenuButton" type="button">
+<span></span><span></span><span></span>
+</button>
+<div class="tl-mobile-menu-backdrop" hidden="" id="tlMenuBackdrop"></div>
+<nav aria-label="Menu principal" class="tl-main-nav" id="tlMainNav">
+<a class="tl-menu-link" href="home.html"><span>Início</span></a>
+<div class="tl-menu-group">
+<button aria-expanded="false" class="tl-menu-toggle" type="button">
+<span>Lambreta</span><b aria-hidden="true">⌄</b>
+</button>
+<div class="tl-submenu">
+<a href="team.html"><span>Team</span></a>
+<a href="streamers.html"><span>Streamers</span></a>
+</div>
+</div>
+<div class="tl-menu-group">
+<button aria-expanded="false" class="tl-menu-toggle" type="button">
+<span>Comunidade</span><b aria-hidden="true">⌄</b>
+</button>
+<div class="tl-submenu">
+<a href="forum.html"><span>Fórum</span></a>
+<a href="buddy.html"><span>Buddy</span></a>
+<a href="ajuda.html"><span>Ajuda</span></a>
+<a href="contacto.html"><span>Contacto</span></a>
+</div>
+</div>
+<div class="tl-menu-group">
+<button aria-expanded="false" class="tl-menu-toggle" type="button">
+<span>Destaques</span><b aria-hidden="true">⌄</b>
+</button>
+<div class="tl-submenu">
+<a href="eventos.html"><span>Eventos</span></a>
+<a class="is-current" href="conquistas.html"><span>Hall da Fama</span></a>
+<a href="midia.html"><span>Mídia</span></a>
+</div>
+</div>
+<a class="tl-menu-link" href="loja.html"><span>Loja</span></a>
+</nav>
+</header>
+<main class="hall-shell">
+<section class="hall-hero">
+<div>
+<span class="hall-kicker">HISTÓRIA DA FAMÍLIA</span>
+<h1>Hall da Fama</h1>
+<p>Tempo ativo, participação, eventos, fórum, lives e conquistas especiais — tudo reunido numa evolução única dentro do Team Lambreta.</p>
+</div>
+<div aria-hidden="true" class="hall-emblem">
+<span class="hall-emblem-ring"></span>
+<strong>★</strong>
+<small>HALL</small>
+</div>
+</section>
+<section aria-label="Estado da funcionalidade" class="hall-status-note">
+<span class="hall-live-dot"></span>
+<div><strong>Estrutura visual ativa</strong><p>Os dados desta primeira versão são demonstrativos. Nas próximas fases ligamos cada contador ao Supabase, fórum, eventos e lives.</p></div>
+</section>
+<section aria-label="Destaques do Hall da Fama" class="hall-top-grid">
+<article class="hall-champion-card" data-accent="hall">
+<span class="hall-rank">#1</span>
+<div class="hall-avatar hall-avatar-main">L</div>
+<div class="hall-champion-info">
+<span class="hall-role hall-role-dev">DEV</span>
+<h2>LuizSenn4</h2>
+<p>Fundador · Nível 27</p>
+</div>
+<div class="hall-xp"><span style="--progress:82%"></span></div>
+<div class="hall-card-stats"><span><b>128h</b> ativo</span><span><b>34</b> conquistas</span><span><b>18</b> eventos</span></div>
+</article>
+<div class="hall-ranking-panel">
+<div class="hall-section-head"><div><span>RANKING</span><h2>Lenda da semana</h2></div><button aria-label="Como funciona o ranking" class="hall-info-button" id="hallRankingInfo" type="button">?</button></div>
+<div class="hall-ranking-list" id="hallRankingList"></div>
+</div>
+</section>
+<section class="hall-metrics">
+<article><span>◉</span><div><b id="hallActiveHours">284</b><small>Horas ativas</small></div></article>
+<article><span>✦</span><div><b id="hallAchievementTotal">76</b><small>Conquistas obtidas</small></div></article>
+<article><span>⚑</span><div><b id="hallEventTotal">31</b><small>Eventos disputados</small></div></article>
+<article><span>☾</span><div><b id="hallAfkTotal">19</b><small>Momentos AFK lendários</small></div></article>
+</section>
+<section class="hall-achievements-section">
+<div class="hall-section-head hall-section-head-wide"><div><span>CONQUISTAS</span><h2>Caminhos para entrar na história</h2></div><div class="hall-filter-row" id="hallFilters"><button class="is-active" data-filter="all">Todas</button><button data-filter="activity">Atividade</button><button data-filter="community">Comunidade</button><button data-filter="events">Eventos</button><button data-filter="special">Especiais</button></div></div>
+<div class="hall-achievement-grid" id="hallAchievementGrid"></div>
+</section>
+<section class="hall-roadmap">
+<div><span>PRÓXIMAS LIGAÇÕES</span><h2>Como esta página vai evoluir</h2></div>
+<ol>
+<li><b>01</b><span>Tempo ativo real com proteção anti-AFK</span></li>
+<li><b>02</b><span>Tópicos, respostas e agradecimentos do fórum</span></li>
+<li><b>03</b><span>Participação em eventos e horas de live</span></li>
+<li><b>04</b><span>XP, níveis, medalhas e entrada oficial no Hall</span></li>
+</ol>
+</section>
+</main>
+<footer class="site-footer"><p>© <span id="year"></span> Team Lambreta — Juntos somos mais fortes.</p></footer>
+</section>
+<div class="hall-modal" hidden="" id="hallModal">
+<div class="hall-modal-backdrop" data-close-hall=""></div>
+<article aria-labelledby="hallModalTitle" aria-modal="true" class="hall-modal-card" role="dialog">
+<button aria-label="Fechar" class="hall-modal-close" data-close-hall="" type="button">×</button>
+<div class="hall-modal-icon" id="hallModalIcon">★</div>
+<span id="hallModalCategory">HALL DA FAMA</span>
+<h2 id="hallModalTitle">Como funciona</h2>
+<p id="hallModalText"></p>
+</article>
+</div>
+<script src="data.js"></script>
+<script src="script-v89.js"></script>
+<script src="navigation-v88.js"></script>
+<script src="hall-da-fama-v96.js?v=92.40.1"></script>
+<script src="error-codes-v92.js"></script>
+<script src="site-i18n-v92.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="buddy-presence-v95.js?v=92.39.4.5"></script>
+<script src="buddy-global-notifications-v94.js?v=92.39.4.5"></script>
 </body>
 </html>

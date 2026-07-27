@@ -1,107 +1,92 @@
 <!DOCTYPE html>
+
 <html lang="pt-PT">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Início - Team Lambreta</title>
-  <link rel="stylesheet" href="style-v92.css" />
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Início - Team Lambreta</title>
+<link href="style-v92.css" rel="stylesheet"/><link href="site-shell-v97.css?v=97.0" rel="stylesheet"/>
 </head>
 <body>
-  <div id="supabaseAuthBar" class="sb-auth-bar"></div>
-  <section id="siteContent" class="site-content home-page">
-    <header class="site-header tl-header-v88">
-  <a href="home.html" class="brand brand-logo-link" aria-label="Team Lambreta — página inicial">
-    <img class="brand-logo-image" src="img/team-lambreta-header-logo.svg" alt="Team Lambreta — Lambreta é uma família">
-  </a>
-
-  <button id="tlMenuButton" class="tl-mobile-menu-button" type="button"
-          aria-label="Abrir menu" aria-expanded="false" aria-controls="tlMainNav">
-    <span></span><span></span><span></span>
-  </button>
-
-  <div id="tlMenuBackdrop" class="tl-mobile-menu-backdrop" hidden></div>
-
-  <nav id="tlMainNav" class="tl-main-nav" aria-label="Menu principal">
-    <a class="tl-menu-link" href="home.html"><span>Início</span></a>
-
-    <div class="tl-menu-group">
-      <button class="tl-menu-toggle" type="button" aria-expanded="false">
-        <span>Lambreta</span><b aria-hidden="true">⌄</b>
-      </button>
-      <div class="tl-submenu">
-        <a href="team.html"><span>Team</span></a>
-        <a href="streamers.html"><span>Streamers</span></a>
-      </div>
-    </div>
-
-    <div class="tl-menu-group">
-      <button class="tl-menu-toggle" type="button" aria-expanded="false">
-        <span>Comunidade</span><b aria-hidden="true">⌄</b>
-      </button>
-      <div class="tl-submenu">
-        <a href="forum.html"><span>Fórum</span></a>
-        <a href="buddy.html"><span>Buddy</span></a>
-        <a href="ajuda.html"><span>Ajuda</span></a>
-        <a href="contacto.html"><span>Contacto</span></a>
-      </div>
-    </div>
-
-    <div class="tl-menu-group">
-      <button class="tl-menu-toggle" type="button" aria-expanded="false">
-        <span>Destaques</span><b aria-hidden="true">⌄</b>
-      </button>
-      <div class="tl-submenu">
-        <a href="eventos.html"><span>Eventos</span></a>
-        <a href="conquistas.html"><span>Conquistas</span></a>
-        <a href="midia.html"><span>Mídia</span></a>
-      </div>
-    </div>
-
-    <a class="tl-menu-link" href="loja.html"><span>Loja</span></a>
-  </nav>
+<div class="sb-auth-bar" id="supabaseAuthBar"></div>
+<section class="site-content home-page" id="siteContent">
+<header class="site-header tl-header-v88">
+<a aria-label="Team Lambreta — página inicial" class="brand brand-logo-link is-current" href="home.html">
+<img alt="Team Lambreta — Lambreta é uma família" class="brand-logo-image" src="img/team-lambreta-header-logo.svg"/>
+</a>
+<button aria-controls="tlMainNav" aria-expanded="false" aria-label="Abrir menu" class="tl-mobile-menu-button" id="tlMenuButton" type="button">
+<span></span><span></span><span></span>
+</button>
+<div class="tl-mobile-menu-backdrop" hidden="" id="tlMenuBackdrop"></div>
+<nav aria-label="Menu principal" class="tl-main-nav" id="tlMainNav">
+<a class="tl-menu-link is-current" href="home.html"><span>Início</span></a>
+<div class="tl-menu-group">
+<button aria-expanded="false" class="tl-menu-toggle" type="button">
+<span>Lambreta</span><b aria-hidden="true">⌄</b>
+</button>
+<div class="tl-submenu">
+<a href="team.html"><span>Team</span></a>
+<a href="streamers.html"><span>Streamers</span></a>
+</div>
+</div>
+<div class="tl-menu-group">
+<button aria-expanded="false" class="tl-menu-toggle" type="button">
+<span>Comunidade</span><b aria-hidden="true">⌄</b>
+</button>
+<div class="tl-submenu">
+<a href="forum.html"><span>Fórum</span></a>
+<a href="buddy.html"><span>Buddy</span></a>
+<a href="ajuda.html"><span>Ajuda</span></a>
+<a href="contacto.html"><span>Contacto</span></a>
+</div>
+</div>
+<div class="tl-menu-group">
+<button aria-expanded="false" class="tl-menu-toggle" type="button">
+<span>Destaques</span><b aria-hidden="true">⌄</b>
+</button>
+<div class="tl-submenu">
+<a href="eventos.html"><span>Eventos</span></a>
+<a href="conquistas.html"><span>Hall da Fama</span></a>
+<a href="midia.html"><span>Mídia</span></a>
+</div>
+</div>
+<a class="tl-menu-link" href="loja.html"><span>Loja</span></a>
+</nav>
 </header>
-    
-<main id="home" class="home-v22">
-  <section class="home-main">
-    <div class="hero-v22">
-      <div>
-        <p class="tag">LOBBY OFICIAL</p>
-        <h1 id="publicHeroTitle">Bem-vindo ao Team Lambreta</h1>
-        <p id="publicHeroText">Foco, garra, lealdade, disciplina e família. Este é o lobby oficial do Team Lambreta.</p>
-
-        <div class="lobby-actions">
-          <a href="forum.html">Entrar no fórum</a>
-          <a href="team.html">Ver team</a>
-        </div>
-      </div>
-    </div>
-
-    <section class="lb-banner-final" id="lbBannerFinal">
-      <button class="lb-arrow lb-left" type="button" onclick="lbBannerMove(-1)" aria-label="Banner anterior">‹</button>
-      <button class="lb-arrow lb-right" type="button" onclick="lbBannerMove(1)" aria-label="Próximo banner">›</button>
-
-      <div class="lb-slide is-active">
-        <h2>Torneio interno em breve</h2>
-        <p>Campeonatos, horários, regras rápidas e inscrições do Team Lambreta.</p>
-      </div>
-
-      <div class="lb-slide">
-        <h2>Drop oficial da loja</h2>
-        <p>Camisolas, hoodies e peças exclusivas da marca Lambreta.</p>
-      </div>
-
-      <div class="lb-slide">
-        <h2>Recados da administração</h2>
-        <p>Avisos importantes, calendário, decisões e novidades da comunidade.</p>
-      </div>
-
-      <div class="lb-dots">
-        <button class="is-active" type="button" onclick="lbBannerGo(0)" aria-label="Banner 1"></button>
-        <button type="button" onclick="lbBannerGo(1)" aria-label="Banner 2"></button>
-        <button type="button" onclick="lbBannerGo(2)" aria-label="Banner 3"></button>
-      </div>
-
-      <script>
+<main class="home-v22" id="home">
+<section class="home-main">
+<div class="hero-v22">
+<div>
+<p class="tag">LOBBY OFICIAL</p>
+<h1 id="publicHeroTitle">Bem-vindo ao Team Lambreta</h1>
+<p id="publicHeroText">Foco, garra, lealdade, disciplina e família. Este é o lobby oficial do Team Lambreta.</p>
+<div class="lobby-actions">
+<a href="forum.html">Entrar no fórum</a>
+<a href="team.html">Ver team</a>
+</div>
+</div>
+</div>
+<section class="lb-banner-final" id="lbBannerFinal">
+<button aria-label="Banner anterior" class="lb-arrow lb-left" onclick="lbBannerMove(-1)" type="button">‹</button>
+<button aria-label="Próximo banner" class="lb-arrow lb-right" onclick="lbBannerMove(1)" type="button">›</button>
+<div class="lb-slide is-active">
+<h2>Torneio interno em breve</h2>
+<p>Campeonatos, horários, regras rápidas e inscrições do Team Lambreta.</p>
+</div>
+<div class="lb-slide">
+<h2>Drop oficial da loja</h2>
+<p>Camisolas, hoodies e peças exclusivas da marca Lambreta.</p>
+</div>
+<div class="lb-slide">
+<h2>Recados da administração</h2>
+<p>Avisos importantes, calendário, decisões e novidades da comunidade.</p>
+</div>
+<div class="lb-dots">
+<button aria-label="Banner 1" class="is-active" onclick="lbBannerGo(0)" type="button"></button>
+<button aria-label="Banner 2" onclick="lbBannerGo(1)" type="button"></button>
+<button aria-label="Banner 3" onclick="lbBannerGo(2)" type="button"></button>
+</div>
+<script>
         window.lbBannerIndex = 0;
         window.lbBannerTimer = null;
 
@@ -157,93 +142,80 @@
         window.lbBannerRender(0);
         window.lbBannerRestart();
       </script>
-    </section>
-  </section>
-
-  <aside class="online-chat">
-    <div class="chat-head">
-      <div>
-        <p>CHAT ONLINE</p>
-        <h2>Lobby ao vivo</h2>
-      </div>
-      <div class="status-picker" data-status="online">
-        <span id="onlineDot" class="online-dot online"></span>
-        <span id="chatUnreadBadge" class="chat-unread-badge" hidden>0</span>
-        <select id="userStatus" aria-label="Escolher status">
-          <option value="online">Online</option>
-          <option value="busy">Ocupado</option>
-          <option value="away">Ausente</option>
-        </select>
-      </div>
-    </div>
-
-    <div class="chat-auth-box chat-auth-compact" id="chatAuthBox">
-      <button id="googleLoginBtn" class="google-login-btn" type="button">Entrar com Google</button>
-    </div>
-
-    <div id="chatMessages" class="chat-messages"></div>
-
-    <form id="chatForm" class="chat-form tl-chat-compose">
-      <div class="tl-chat-compose-box">
-        <textarea id="chatInput" maxlength="240" rows="1" placeholder="Escreve no lobby..." autocomplete="off"></textarea>
-        <button class="tl-chat-send tl-chat-send-svg" type="submit" aria-label="Enviar mensagem" title="Enviar"><svg viewBox="0 0 48 48" aria-hidden="true"><path d="M5 6.8 43 24 5 41.2l5.6-14.1L30.5 24l-19.9-3.1L5 6.8Z"/></svg></button>
-      </div>
-      <label class="tl-enter-toggle">
-        <input id="enterBreakToggle" type="checkbox">
-        <span class="tl-toggle-track" aria-hidden="true"><i></i></span>
-        <span>Enter quebra linha</span>
-      </label>
-    </form>
-
-    <p id="chatDelayInfo" class="chat-delay-info"></p>
-    <p id="chatModerationInfo" class="chat-moderation-info"></p>
-
-
-    <div id="moderationPanel" class="moderation-panel">
-      <strong id="moderationTarget">Usuário</strong>
-      <button type="button" data-mod-action="block-1">Bloquear 1 min</button>
-      <button type="button" data-mod-action="block-5">Bloquear 5 min</button>
-      <button type="button" data-mod-action="block-15">Bloquear 15 min</button>
-      <button type="button" data-mod-action="unblock">Remover silêncio</button>
-      <button type="button" data-mod-action="ban">Bloquear permanentemente</button>
-      <button type="button" data-mod-action="unban">Remover bloqueio permanente</button>
-      <button type="button" data-mod-action="lock-chat">Lock chat</button>
-      <button type="button" data-mod-action="unlock-chat">Unlock chat</button>
-
-      <div class="role-assign-box">
-        <span>Atribuir cargo</span>
-        <button type="button" data-role-set="master">Admin Master</button>
-        <button type="button" data-role-set="admin">Admin</button>
-        <button type="button" data-role-set="staff">Staff</button>
-        <button type="button" data-role-set="moderator">Moderador</button>
-        <button type="button" data-badge-set="streamer" data-enabled="true">Dar STREAMER</button>
-        <button type="button" data-badge-set="streamer" data-enabled="false">Remover STREAMER</button>
-        <button type="button" data-badge-set="vip" data-enabled="true">Dar VIP por 365 dias</button>
-        <button type="button" data-badge-set="vip" data-enabled="false">Remover VIP</button>
-        <button type="button" data-role-set="user">Usuário</button>
-      </div>
-
-      <button type="button" data-mod-action="close">Fechar</button>
-    </div>
-
-  </aside>
+</section>
+</section>
+<aside class="online-chat">
+<div class="chat-head">
+<div>
+<p>CHAT ONLINE</p>
+<h2>Lobby ao vivo</h2>
+</div>
+<div class="status-picker" data-status="online">
+<span class="online-dot online" id="onlineDot"></span>
+<span class="chat-unread-badge" hidden="" id="chatUnreadBadge">0</span>
+<select aria-label="Escolher status" id="userStatus">
+<option value="online">Online</option>
+<option value="busy">Ocupado</option>
+<option value="away">Ausente</option>
+</select>
+</div>
+</div>
+<div class="chat-auth-box chat-auth-compact" id="chatAuthBox">
+<button class="google-login-btn" id="googleLoginBtn" type="button">Entrar com Google</button>
+</div>
+<div class="chat-messages" id="chatMessages"></div>
+<form class="chat-form tl-chat-compose" id="chatForm">
+<div class="tl-chat-compose-box">
+<textarea autocomplete="off" id="chatInput" maxlength="240" placeholder="Escreve no lobby..." rows="1"></textarea>
+<button aria-label="Enviar mensagem" class="tl-chat-send tl-chat-send-svg" title="Enviar" type="submit"><svg aria-hidden="true" viewbox="0 0 48 48"><path d="M5 6.8 43 24 5 41.2l5.6-14.1L30.5 24l-19.9-3.1L5 6.8Z"></path></svg></button>
+</div>
+<label class="tl-enter-toggle">
+<input id="enterBreakToggle" type="checkbox"/>
+<span aria-hidden="true" class="tl-toggle-track"><i></i></span>
+<span>Enter quebra linha</span>
+</label>
+</form>
+<p class="chat-delay-info" id="chatDelayInfo"></p>
+<p class="chat-moderation-info" id="chatModerationInfo"></p>
+<div class="moderation-panel" id="moderationPanel">
+<strong id="moderationTarget">Usuário</strong>
+<button data-mod-action="block-1" type="button">Bloquear 1 min</button>
+<button data-mod-action="block-5" type="button">Bloquear 5 min</button>
+<button data-mod-action="block-15" type="button">Bloquear 15 min</button>
+<button data-mod-action="unblock" type="button">Remover silêncio</button>
+<button data-mod-action="ban" type="button">Bloquear permanentemente</button>
+<button data-mod-action="unban" type="button">Remover bloqueio permanente</button>
+<button data-mod-action="lock-chat" type="button">Lock chat</button>
+<button data-mod-action="unlock-chat" type="button">Unlock chat</button>
+<div class="role-assign-box">
+<span>Atribuir cargo</span>
+<button data-role-set="master" type="button">Admin Master</button>
+<button data-role-set="admin" type="button">Admin</button>
+<button data-role-set="staff" type="button">Staff</button>
+<button data-role-set="moderator" type="button">Moderador</button>
+<button data-badge-set="streamer" data-enabled="true" type="button">Dar STREAMER</button>
+<button data-badge-set="streamer" data-enabled="false" type="button">Remover STREAMER</button>
+<button data-badge-set="vip" data-enabled="true" type="button">Dar VIP por 365 dias</button>
+<button data-badge-set="vip" data-enabled="false" type="button">Remover VIP</button>
+<button data-role-set="user" type="button">Usuário</button>
+</div>
+<button data-mod-action="close" type="button">Fechar</button>
+</div>
+</aside>
 <!-- V44 slider debug active -->
 </main>
-
-    <footer class="site-footer">
-      <p>© <span id="year"></span> Team Lambreta — Juntos somos mais fortes.</p>
-    </footer>
-  </section>
-
-  <script>window.TEAM_SUPABASE_MODE = true;</script>
-  <script src="data.js"></script>
-  <script src="script-v89.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="supabase-integration-v92.js"></script>
-  <script src="buddy-presence-v95.js?v=92.39.4.5"></script><script src="buddy-global-notifications-v94.js?v=92.39.4.5"></script><script src="navigation-v88.js"></script>
-
-  <script src="error-codes-v92.js"></script>
-  <script src="site-i18n-v92.js"></script>
-  <script src="chat-translate-v92.js"></script>
+<footer class="site-footer">
+<p>© <span id="year"></span> Team Lambreta — Juntos somos mais fortes.</p>
+</footer>
+</section>
+<script>window.TEAM_SUPABASE_MODE = true;</script>
+<script src="data.js"></script>
+<script src="script-v89.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="supabase-integration-v92.js"></script>
+<script src="buddy-presence-v95.js?v=92.39.4.5"></script><script src="buddy-global-notifications-v94.js?v=92.39.4.5"></script><script src="navigation-v88.js"></script>
+<script src="error-codes-v92.js"></script>
+<script src="site-i18n-v92.js"></script>
+<script src="chat-translate-v92.js"></script>
 </body>
 </html>
