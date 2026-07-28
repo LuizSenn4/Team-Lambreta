@@ -1,0 +1,19 @@
+TEAM LAMBRETA — CARGOS PELO CHAT
+
+1. Abra o Supabase > SQL Editor.
+2. Cole e execute o arquivo SUPABASE-CARGOS-V93.1.sql UMA VEZ.
+3. Publique estes arquivos no Git/Vercel.
+4. Entre no site com sua conta DEV.
+5. No chat, escreva exatamente:
+
+/cargo @NicknameDoBoss admin
+
+Cargos disponíveis:
+member, supporter/apoiador, vip, staff, moderator/moderador, admin e master/dev.
+
+Proteções:
+- ADMIN não altera DEV.
+- ADMIN não cria DEV.
+- Ninguém altera o próprio cargo pelo chat.
+- Toda mudança fica registrada em role_audit_log.
+- APOIADOR usa a cor verde.

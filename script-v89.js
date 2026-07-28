@@ -520,6 +520,11 @@ function bindModeration(){
 }
 
 function bindChat(){
+  // No modo Supabase, o chat real é controlado exclusivamente por
+  // supabase-integration-v92.js. Evita dois listeners enviarem a mesma
+  // mensagem ou tratarem comandos administrativos como texto comum.
+  if (window.TEAM_SUPABASE_MODE) return;
+
   const form=document.getElementById("chatForm");
   const select=document.getElementById("userStatus");
 

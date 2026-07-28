@@ -1,0 +1,10 @@
+TEAM LAMBRETA V93.1.1
+
+CORREÇÃO:
+- O chat antigo não intercepta mais mensagens no modo Supabase.
+- /cargo não é mais publicado como mensagem normal.
+- Formato aceito: /cargo @INK31 admin
+- Também aceita: /cargo INK31 admin
+- Retorno esperado: ✅ @INK31 agora é ADMIN.
+
+Depois do deploy, faça Ctrl+F5 para limpar o JavaScript antigo do navegador.

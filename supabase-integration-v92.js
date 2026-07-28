@@ -28,17 +28,17 @@
 
   const $ = id => document.getElementById(id);
   const esc = value => String(value ?? '').replace(/[&<>'"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]));
-  const normalizeRole = role => ({dev:'master',developer:'master',owner:'master',boss:'master',administrador:'admin',mod:'moderator',moderador:'moderator',helper:'staff',suporte:'staff',user:'member'}[String(role||'').trim().toLowerCase()] || String(role||'member').trim().toLowerCase() || 'member');
+  const normalizeRole = role => ({dev:'master',developer:'master',owner:'master',boss:'master',administrador:'admin',mod:'moderator',moderador:'moderator',helper:'staff',suporte:'staff',apoiador:'supporter',support:'supporter',user:'member',usuario:'member',membro:'member'}[String(role||'').trim().toLowerCase()] || String(role||'member').trim().toLowerCase() || 'member');
   const teamRoles = new Set(['moderator','staff','admin','master']);
   const moderationRoles = new Set(['moderator','staff','admin','master']);
-  const roleRank = { member:0, staff:1, moderator:2, admin:3, master:4 };
+  const roleRank = { member:0, supporter:0, vip:0, staff:1, moderator:2, admin:3, master:4 };
   const isTeam = () => teamRoles.has(normalizeRole(profile?.role));
   const canModerate = () => moderationRoles.has(normalizeRole(profile?.role));
   const canManageRoles = () => ['admin','master'].includes(normalizeRole(profile?.role));
   const statusDb = v => ({busy:'busy',away:'away',online:'online'}[v] || 'online');
   const statusUi = v => ({busy:'busy',away:'away',online:'online',offline:'offline'}[v] || 'offline');
-  const roleClass = role => { const mapped = normalizeRole(role); return ['master','admin','moderator','staff','member'].includes(mapped) ? mapped : 'member'; };
-  const roleLabel = role => ({master:'DEV',admin:'ADMIN',moderator:'MODERADOR',staff:'STAFF',member:'MEMBRO'}[normalizeRole(role)] || 'MEMBRO');
+  const roleClass = role => { const mapped = normalizeRole(role); return ['master','admin','moderator','staff','vip','supporter','member'].includes(mapped) ? mapped : 'member'; };
+  const roleLabel = role => ({master:'DEV',admin:'ADMIN',moderator:'MODERADOR',staff:'STAFF',vip:'VIP',supporter:'APOIADOR',member:'MEMBRO'}[normalizeRole(role)] || 'MEMBRO');
   const isVip = p => Boolean(p?.vip_until && Number.isFinite(new Date(p.vip_until).getTime()) && new Date(p.vip_until).getTime() > Date.now());
   const isStreamer = p => p?.is_streamer === true || String(p?.is_streamer).toLowerCase() === 'true';
   const extraBadges = p => isStreamer(p) ? '<small class="streamer-badge">STREAMER</small>' : (isVip(p) ? '<small class="vip-badge">VIP</small>' : '');
@@ -47,6 +47,8 @@
     if (role === 'master' || role === 'admin') return 'admin';
     if (role === 'staff') return 'staff';
     if (role === 'moderator') return 'moderator';
+    if (role === 'supporter') return 'supporter';
+    if (role === 'vip') return 'vip';
     if (isStreamer(p)) return 'streamer';
     if (isVip(p)) return 'vip';
     return 'member';
@@ -57,6 +59,7 @@
     moderator: { color:'#75b8ff', rgb:'117,184,255' },
     streamer: { color:'#ff74ec', rgb:'255,116,236' },
     vip: { color:'#ffd45d', rgb:'255,212,93' },
+    supporter: { color:'#73ff18', rgb:'115,255,24' },
     member: { color:'#f6f8fb', rgb:'246,248,251' }
   };
   const effectivePresence = p => {
@@ -355,7 +358,7 @@
     const panel=$('moderationPanel'); if (!panel) return;
     panel.querySelectorAll('[data-role-set]').forEach(btn => {
       const desired = btn.dataset.roleSet === 'user' ? 'member' : btn.dataset.roleSet;
-      btn.hidden = !['member','staff','moderator','admin'].includes(desired) || !canManageRoles();
+      btn.hidden = !['member','supporter','vip','staff','moderator','admin'].includes(desired) || !canManageRoles();
       btn.onclick = async () => {
         if (!selectedTargetId) return;
         const { error }=await sb.rpc('set_profile_identity',{target_user_id:selectedTargetId,new_identity:desired});
@@ -476,6 +479,36 @@
     }
   }
 
+  async function executeRoleCommand(rawMessage) {
+    const match = String(rawMessage || '').trim().match(/^\/cargo\s+@?([^\s]+)\s+(dev|admin|moderador|moderator|staff|vip|apoiador|supporter|membro|member)\s*$/i);
+    if (!match) {
+      const looksLikeCargo = /^\/cargo\b/i.test(String(rawMessage || '').trim());
+      return looksLikeCargo
+        ? { handled:true, ok:false, message:'Formato correto: /cargo @nickname cargo' }
+        : { handled:false };
+    }
+
+    const actorRole = normalizeRole(profile?.role);
+    if (!['master','admin'].includes(actorRole)) {
+      return { handled:true, ok:false, message:'Apenas DEV ou ADMIN podem atribuir cargos.' };
+    }
+
+    const nickname = match[1].trim();
+    const requested = normalizeRole(match[2]);
+    const { data, error } = await sb.rpc('assign_role_by_nickname', {
+      target_nickname: nickname,
+      new_role: requested
+    });
+
+    if (error) return { handled:true, ok:false, message:error.message };
+    const result = Array.isArray(data) ? data[0] : data;
+    return {
+      handled:true,
+      ok:true,
+      message:`✅ @${result?.nickname || nickname} agora é ${roleLabel(result?.assigned_role || result?.role || requested)}.`
+    };
+  }
+
   function bindChat() {
     const form=$('chatForm'); if (!form) return;
     const input=$('chatInput');
@@ -518,6 +551,23 @@
       if (!(await ensureNickname())) return;
       const message=input?.value.trim();
       const nowMs=Date.now(); recentSendTimes=recentSendTimes.filter(t=>nowMs-t<10000); if(recentSendTimes.length>=5){ $('chatDelayInfo').textContent='Calma 😅 aguarda 30 segundos antes de continuar.'; setTimeout(()=>{ if($('chatDelayInfo')) $('chatDelayInfo').textContent=''; },30000); return; } if (!message) return; if (message.length > 240) { alert('A mensagem pode ter no máximo 240 caracteres.'); return; }
+      if (message.startsWith('/cargo')) {
+        const commandResult = await executeRoleCommand(message);
+        if (commandResult.handled) {
+          const info = $('chatModerationInfo');
+          if (info) {
+            info.textContent = commandResult.message;
+            info.classList.toggle('error', !commandResult.ok);
+          }
+          if (commandResult.ok) {
+            input.value='';
+            resizeComposer();
+            await loadProfile();
+            await renderChat();
+          }
+          return;
+        }
+      }
       const check=moderateText(message);
       if(!check.ok){ $('chatModerationInfo').textContent=check.reason; $('chatModerationInfo').classList.add('error'); return; }
       $('chatModerationInfo').textContent=''; $('chatModerationInfo').classList.remove('error');
