@@ -8819,29 +8819,31 @@ html, body { width:100%; max-width:100%; overflow-x:hidden; }
 }
 
 
-/* V93.3 — hero da home simplificado: apenas banner, sem texto herdado */
+/* V93.3.1 — hero da home preenchendo toda a box, sem distância dupla */
 .home-page .hero-v22.hero-v22--banner-only{
   grid-template-columns:1fr!important;
   min-height:auto;
-  padding:clamp(20px,3.2vw,30px);
+  padding:0;
   gap:0;
+  overflow:hidden;
 }
 
 .home-page .hero-v22.hero-v22--banner-only::before{
-  inset:16px;
+  content:none;
 }
 
 .home-page .hero-v22.hero-v22--banner-only .hero-v22-visual--banner-only{
   position:relative;
   z-index:2;
   display:flex;
-  align-items:center;
-  justify-content:center;
+  align-items:stretch;
+  justify-content:stretch;
   width:100%;
   min-height:0;
   padding:0;
+  margin:0;
   border:0;
-  border-radius:20px;
+  border-radius:inherit;
   background:transparent;
   box-shadow:none;
   overflow:hidden;
@@ -8857,25 +8859,15 @@ html, body { width:100%; max-width:100%; overflow-x:hidden; }
   max-width:100%;
   height:auto;
   max-height:none;
-  object-fit:contain;
+  object-fit:cover;
   object-position:center;
-  border-radius:16px;
-  filter:drop-shadow(0 16px 28px rgba(0,0,0,.34));
+  border-radius:inherit;
+  filter:none;
   animation:none;
 }
 
 @media (max-width: 760px){
   .home-page .hero-v22.hero-v22--banner-only{
-    padding:14px;
     border-radius:22px;
-  }
-
-  .home-page .hero-v22.hero-v22--banner-only::before{
-    inset:10px;
-    border-radius:16px;
-  }
-
-  .home-page .hero-v22.hero-v22--banner-only .hero-v22-visual--banner-only img{
-    border-radius:12px;
   }
 }
