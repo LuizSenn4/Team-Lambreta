@@ -293,6 +293,15 @@
   async function renderChat() {
     const box = $('chatMessages');
     if (!box) return;
+
+    // Preserva a leitura de mensagens antigas. Só acompanha o fim quando
+    // o utilizador já estava perto do fundo ou no primeiro carregamento.
+    const previousScrollTop = box.scrollTop;
+    const previousScrollHeight = box.scrollHeight;
+    const distanceFromBottom = previousScrollHeight - previousScrollTop - box.clientHeight;
+    const wasNearBottom = distanceFromBottom <= 80;
+    const shouldFollowBottom = !initialChatLoaded || wasNearBottom;
+
     if (!session) { box.innerHTML = '<div class="sb-login-required">Entra com Google para ver e escrever no chat.</div>'; return; }
     // Busca sempre as 30 mensagens MAIS RECENTES.
     // A consulta vem em ordem decrescente para o limite funcionar corretamente,
@@ -327,7 +336,13 @@
         <p class="tl-chat-text">${esc(row.message)}</p>
       </article>`;
     }).join('') || '<p class="sb-login-required">Ainda não há mensagens. Manda a primeira 😎</p>';
-    box.scrollTop = box.scrollHeight;
+    if (shouldFollowBottom) {
+      box.scrollTop = box.scrollHeight;
+    } else {
+      // Mantém exatamente a posição escolhida mesmo após polling, clique
+      // em utilizador, atualização de presença ou nova renderização.
+      box.scrollTop = Math.min(previousScrollTop, Math.max(0, box.scrollHeight - box.clientHeight));
+    }
     bindModerationTargets();
     bindQuickStatusDots();
     const maxId = rows.reduce((m,r)=>Math.max(m,Number(r.id)||0),0);

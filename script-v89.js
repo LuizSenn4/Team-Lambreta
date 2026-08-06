@@ -265,6 +265,9 @@ function canAssignRoles(){
 function renderChat(){
   const box=document.getElementById("chatMessages");
   if(!box)return;
+  const previousScrollTop=box.scrollTop;
+  const wasNearBottom=(box.scrollHeight-box.scrollTop-box.clientHeight)<=80;
+  const hadContent=box.childElementCount>0;
   const messages=getChatMessages();
   box.innerHTML=messages.map(m=>`
     <article class="chat-msg ${statusClass(m.status)} role-${roleClass(getAssignedRole(m.name) || m.role)}">
@@ -276,7 +279,11 @@ function renderChat(){
       <p>${m.text}</p>
     </article>
   `).join("");
-  box.scrollTop=box.scrollHeight;
+  if(!hadContent||wasNearBottom){
+    box.scrollTop=box.scrollHeight;
+  }else{
+    box.scrollTop=Math.min(previousScrollTop,Math.max(0,box.scrollHeight-box.clientHeight));
+  }
 }
 
 function isChatAuthReady(){
