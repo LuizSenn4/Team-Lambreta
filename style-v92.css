@@ -8719,3 +8719,101 @@ html, body { width:100%; max-width:100%; overflow-x:hidden; }
 .role-text-vip,.forum-role.role-vip{color:#ffd65a!important;text-shadow:0 0 10px rgba(255,212,93,.4)}
 .role-frame-vip::before{background:#ffd65a!important;box-shadow:0 0 14px #ffd65a!important}
 .forum-role.role-vip{background:rgba(255,212,93,.06);border-color:#ffd65a}
+
+/* V93.2 — hero de boas-vindas com arte enquadrada e responsiva */
+.home-page .hero-v22.hero-v22--welcome{
+  grid-template-columns:minmax(0,1.05fr) minmax(320px,560px)!important;
+  align-items:center;
+  gap:clamp(18px,3vw,34px);
+  min-height:420px;
+}
+
+.home-page .hero-v22.hero-v22--welcome > .hero-v22-copy{
+  max-width:640px;
+}
+
+.home-page .hero-v22.hero-v22--welcome h1{
+  max-width:10ch;
+  margin-bottom:20px;
+}
+
+.home-page .hero-v22.hero-v22--welcome p:not(.tag){
+  max-width:60ch;
+}
+
+.home-page .hero-v22.hero-v22--welcome .hero-v22-visual{
+  position:relative;
+  z-index:2;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  min-height:340px;
+  padding:18px;
+  border:1px solid rgba(217,164,65,.14);
+  border-radius:24px;
+  background:linear-gradient(135deg,rgba(255,255,255,.035),rgba(0,0,0,.26));
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,.025);
+  overflow:hidden;
+}
+
+.home-page .hero-v22.hero-v22--welcome .hero-v22-visual::before{
+  content:"";
+  position:absolute;
+  inset:14px;
+  border:1px solid rgba(217,164,65,.08);
+  border-radius:18px;
+  pointer-events:none;
+}
+
+.home-page .hero-v22.hero-v22--welcome .hero-v22-visual img{
+  display:block!important;
+  width:100%;
+  height:auto;
+  max-width:100%;
+  max-height:360px;
+  object-fit:contain;
+  object-position:center;
+  border-radius:18px;
+  filter:drop-shadow(0 18px 28px rgba(0,0,0,.42));
+  animation:none;
+}
+
+@media (max-width: 980px){
+  .home-page .hero-v22.hero-v22--welcome{
+    grid-template-columns:1fr!important;
+    min-height:auto;
+  }
+
+  .home-page .hero-v22.hero-v22--welcome > .hero-v22-copy,
+  .home-page .hero-v22.hero-v22--welcome h1,
+  .home-page .hero-v22.hero-v22--welcome p:not(.tag){
+    max-width:none;
+  }
+
+  .home-page .hero-v22.hero-v22--welcome .hero-v22-visual{
+    min-height:0;
+    padding:14px;
+  }
+
+  .home-page .hero-v22.hero-v22--welcome .hero-v22-visual img{
+    max-height:min(52vw,360px);
+  }
+}
+
+@media (max-width: 760px){
+  .home-page .hero-v22.hero-v22--welcome{
+    text-align:center;
+  }
+
+  .home-page .hero-v22.hero-v22--welcome .hero-v22-copy{
+    order:1;
+  }
+
+  .home-page .hero-v22.hero-v22--welcome .hero-v22-visual{
+    order:2;
+  }
+
+  .home-page .hero-v22.hero-v22--welcome .lobby-actions{
+    justify-content:center;
+  }
+}
