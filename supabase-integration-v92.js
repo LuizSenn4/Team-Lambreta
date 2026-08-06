@@ -99,14 +99,34 @@
 
   function updateMentionBadge(rows) {
     const badge = $('chatMentionBadge');
-    if (!badge || !profile) return;
-    const nickname = profile.game_nickname || profile.full_name || '';
+    if (!badge) return;
+
+    const nickname = String(
+      profile?.game_nickname ||
+      session?.user?.user_metadata?.game_nickname ||
+      session?.user?.user_metadata?.preferred_username ||
+      ''
+    ).trim();
+
+    if (!session?.user?.id || !nickname) {
+      currentMentionRows = [];
+      badge.hidden = true;
+      badge.textContent = '';
+      return;
+    }
+
     const readIds = getReadMentionIds();
-    currentMentionRows = (rows || []).filter(row => row.user_id !== session?.user?.id && messageMentionsNickname(row.message,nickname));
+    currentMentionRows = (rows || []).filter(row =>
+      String(row.user_id) !== String(session.user.id) &&
+      messageMentionsNickname(row.message, nickname)
+    );
+
     const unread = currentMentionRows.filter(row => !readIds.has(String(row.id)));
     badge.hidden = unread.length === 0;
+    badge.classList.toggle('is-visible', unread.length > 0);
     badge.textContent = unread.length ? `@ ${unread.length}` : '';
     badge.setAttribute('aria-label', unread.length === 1 ? '1 menção nova' : `${unread.length} menções novas`);
+    badge.title = unread.length === 1 ? 'Ir para a menção' : `Ver ${unread.length} menções`;
   }
 
   function openNextMention() {
@@ -263,6 +283,7 @@
     if (!session?.user) return;
     const { data, error } = await sb.from('profiles').select('*').eq('id', session.user.id).single();
     if (!error) profile = data;
+    if (currentMentionRows.length) updateMentionBadge(currentMentionRows);
   }
 
   async function ensureNickname() {

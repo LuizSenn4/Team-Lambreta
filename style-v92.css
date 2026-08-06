@@ -9039,3 +9039,97 @@ html, body { width:100%; max-width:100%; overflow-x:hidden; }
   0%,100%{box-shadow:inherit}
   20%,70%{box-shadow:inset 5px 0 0 #73ff18,0 0 0 2px rgba(115,255,24,.85),0 0 30px rgba(115,255,24,.42)!important}
 }
+
+/* V93.4.5 — seta limpa dentro da caixa + badge de menção visível */
+.tl-chat-compose-box{
+  position:relative!important;
+  display:grid!important;
+  grid-template-columns:minmax(0,1fr) 44px!important;
+  align-items:center!important;
+  padding:4px 10px 4px 12px!important;
+  overflow:visible!important;
+}
+
+.tl-chat-compose-box .tl-chat-send-svg{
+  position:relative!important;
+  inset:auto!important;
+  right:auto!important;
+  top:auto!important;
+  transform:none!important;
+  justify-self:end!important;
+  margin:0!important;
+  width:36px!important;
+  min-width:36px!important;
+  height:36px!important;
+  padding:0!important;
+  border:0!important;
+  border-radius:0!important;
+  outline:0!important;
+  background:transparent!important;
+  box-shadow:none!important;
+  filter:none!important;
+  appearance:none!important;
+  -webkit-appearance:none!important;
+}
+
+.tl-chat-compose-box .tl-chat-send-svg::before,
+.tl-chat-compose-box .tl-chat-send-svg::after{
+  display:none!important;
+  content:none!important;
+}
+
+.tl-chat-compose-box .tl-chat-send-svg svg{
+  display:block!important;
+  width:30px!important;
+  height:30px!important;
+  margin:0!important;
+  transform:none!important;
+  fill:#73ff18!important;
+  filter:drop-shadow(0 0 6px rgba(115,255,24,.88))!important;
+}
+
+.tl-chat-compose-box .tl-chat-send-svg:hover,
+.tl-chat-compose-box .tl-chat-send-svg:focus-visible{
+  transform:none!important;
+  background:transparent!important;
+  box-shadow:none!important;
+}
+
+.tl-chat-compose-box .tl-chat-send-svg:hover svg,
+.tl-chat-compose-box .tl-chat-send-svg:focus-visible svg{
+  transform:translateX(1px) scale(1.06)!important;
+}
+
+.tl-mention-badge{
+  position:sticky;
+  bottom:8px;
+  z-index:80;
+  align-self:flex-end;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  min-width:46px;
+  min-height:34px;
+  margin:8px 8px 2px auto;
+  padding:7px 12px;
+  border:1px solid rgba(115,255,24,.66);
+  border-radius:999px;
+  background:rgba(8,18,6,.96);
+  color:#73ff18;
+  font-weight:900;
+  cursor:pointer;
+  box-shadow:0 0 18px rgba(115,255,24,.28);
+}
+
+.tl-mention-badge[hidden]{
+  display:none!important;
+}
+
+.tl-mention-badge.is-visible{
+  animation:tlMentionBadgePulse 1.4s ease-in-out infinite alternate;
+}
+
+@keyframes tlMentionBadgePulse{
+  from{box-shadow:0 0 10px rgba(115,255,24,.18)}
+  to{box-shadow:0 0 24px rgba(115,255,24,.48)}
+}
