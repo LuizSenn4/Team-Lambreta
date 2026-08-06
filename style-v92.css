@@ -8918,3 +8918,37 @@ html, body { width:100%; max-width:100%; overflow-x:hidden; }
     padding:54px 68px 72px;
   }
 }
+
+
+/* V93.4.1 — sliders preenchendo toda a box sem margem interna */
+.lb-banner-final{
+  overflow:hidden;
+}
+
+.lb-banner-final::before{
+  content:none;
+}
+
+.lb-slide.lb-slide--media{
+  padding:0!important;
+  inset:0;
+  border-radius:inherit;
+  overflow:hidden;
+}
+
+.lb-slide.lb-slide--media img{
+  width:100%!important;
+  height:100%!important;
+  min-height:100%;
+  max-width:none;
+  object-fit:cover!important;
+  object-position:center;
+  border-radius:inherit!important;
+  box-shadow:none!important;
+}
+
+@media (max-width:760px){
+  .lb-slide.lb-slide--media{
+    padding:0!important;
+  }
+}
