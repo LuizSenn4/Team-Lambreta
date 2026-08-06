@@ -25,6 +25,9 @@
   let recentSendTimes = [];
   const AWAY_AFTER_MS = 5 * 60 * 1000;
   const OFFLINE_AFTER_MS = 150 * 1000;
+  let mentionProfiles = [];
+  let mentionActiveIndex = 0;
+  let currentMentionRows = [];
 
   const $ = id => document.getElementById(id);
   const esc = value => String(value ?? '').replace(/[&<>'"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]));
@@ -68,6 +71,117 @@
     if (!seen || Date.now() - seen > OFFLINE_AFTER_MS) return 'offline';
     return statusUi(p.presence);
   };
+
+
+  function mentionStorageKey() {
+    return `tl_mentions_read_${session?.user?.id || 'guest'}`;
+  }
+
+  function getReadMentionIds() {
+    try { return new Set(JSON.parse(localStorage.getItem(mentionStorageKey()) || '[]').map(String)); }
+    catch (_) { return new Set(); }
+  }
+
+  function saveReadMentionIds(ids) {
+    localStorage.setItem(mentionStorageKey(), JSON.stringify([...ids].slice(-200)));
+  }
+
+  function messageMentionsNickname(message, nickname) {
+    if (!message || !nickname) return false;
+    const escaped = String(nickname).replace(/[.*+?^${}()|[\]\\]/g,'\\$&');
+    return new RegExp(`(^|\\s)@${escaped}(?=\\s|$|[.,!?;:])`, 'i').test(String(message));
+  }
+
+  function formatChatMessage(message) {
+    const escapedMessage = esc(message);
+    return escapedMessage.replace(/(^|\s)@([A-Za-z0-9_.-]{2,32})/g, '$1<span class="tl-chat-mention">@$2</span>');
+  }
+
+  function updateMentionBadge(rows) {
+    const badge = $('chatMentionBadge');
+    if (!badge || !profile) return;
+    const nickname = profile.game_nickname || profile.full_name || '';
+    const readIds = getReadMentionIds();
+    currentMentionRows = (rows || []).filter(row => row.user_id !== session?.user?.id && messageMentionsNickname(row.message,nickname));
+    const unread = currentMentionRows.filter(row => !readIds.has(String(row.id)));
+    badge.hidden = unread.length === 0;
+    badge.textContent = unread.length ? `@ ${unread.length}` : '';
+    badge.setAttribute('aria-label', unread.length === 1 ? '1 menção nova' : `${unread.length} menções novas`);
+  }
+
+  function openNextMention() {
+    const badge = $('chatMentionBadge');
+    if (!badge) return;
+    const readIds = getReadMentionIds();
+    const unread = currentMentionRows.filter(row => !readIds.has(String(row.id)));
+    const target = unread[0] || currentMentionRows[0];
+    if (!target) return;
+    const card = document.querySelector(`[data-message-id="${CSS.escape(String(target.id))}"]`);
+    if (!card) return;
+    card.scrollIntoView({behavior:'smooth',block:'center'});
+    card.classList.add('tl-chat-mention-focus');
+    setTimeout(()=>card.classList.remove('tl-chat-mention-focus'),1800);
+    readIds.add(String(target.id));
+    saveReadMentionIds(readIds);
+    updateMentionBadge(currentMentionRows);
+  }
+
+  async function loadMentionProfiles() {
+    if (!session) return [];
+    const {data,error}=await sb.from('profiles')
+      .select('id,game_nickname,full_name,role,presence,last_seen')
+      .not('game_nickname','is',null)
+      .order('game_nickname',{ascending:true})
+      .limit(100);
+    if (error) return mentionProfiles;
+    mentionProfiles=(data||[]).filter(p=>p.game_nickname);
+    return mentionProfiles;
+  }
+
+  function activeMentionQuery(input) {
+    const value=String(input?.value||'');
+    const caret=input?.selectionStart ?? value.length;
+    const before=value.slice(0,caret);
+    const match=before.match(/(?:^|\s)@([A-Za-z0-9_.-]*)$/);
+    return match ? {query:match[1],start:caret-match[1].length-1,end:caret} : null;
+  }
+
+  function closeMentionSuggestions() {
+    const box=$('chatMentionSuggestions');
+    if(box){box.hidden=true;box.innerHTML='';}
+    mentionActiveIndex=0;
+  }
+
+  function chooseMention(input,item) {
+    const token=activeMentionQuery(input);
+    if(!token) return;
+    const value=input.value;
+    input.value=`${value.slice(0,token.start)}@${item.game_nickname} ${value.slice(token.end)}`;
+    const caret=token.start+item.game_nickname.length+2;
+    input.setSelectionRange(caret,caret);
+    input.dispatchEvent(new Event('input',{bubbles:true}));
+    input.focus();
+    closeMentionSuggestions();
+  }
+
+  async function renderMentionSuggestions(input) {
+    const box=$('chatMentionSuggestions');
+    if(!box) return;
+    const token=activeMentionQuery(input);
+    if(!token){closeMentionSuggestions();return;}
+    if(!mentionProfiles.length) await loadMentionProfiles();
+    const q=token.query.toLowerCase();
+    const matches=mentionProfiles.filter(p=>String(p.game_nickname).toLowerCase().startsWith(q)).slice(0,8);
+    if(!matches.length){closeMentionSuggestions();return;}
+    mentionActiveIndex=Math.min(mentionActiveIndex,matches.length-1);
+    box.innerHTML=matches.map((p,i)=>`<button type="button" class="tl-mention-option ${i===mentionActiveIndex?'is-active':''}" data-mention-index="${i}"><strong>@${esc(p.game_nickname)}</strong><small>${roleLabel(p.role)}</small></button>`).join('');
+    box.hidden=false;
+    box.querySelectorAll('[data-mention-index]').forEach(btn=>{
+      btn.onmousedown=e=>e.preventDefault();
+      btn.onclick=()=>chooseMention(input,matches[Number(btn.dataset.mentionIndex)]);
+    });
+    box._matches=matches;
+  }
 
   // Filtro preventivo: normaliza acentos, leetspeak, símbolos e letras repetidas.
   const blockedCanonical = new Set([
@@ -333,7 +447,7 @@
             ${canModerate()?'<button class="tl-chat-action" type="button" title="Opções da mensagem" aria-label="Opções da mensagem">⋮</button>':''}
           </div>
         </header>
-        <p class="tl-chat-text">${esc(row.message)}</p>
+        <p class="tl-chat-text">${formatChatMessage(row.message)}</p>
       </article>`;
     }).join('') || '<p class="sb-login-required">Ainda não há mensagens. Manda a primeira 😎</p>';
     if (shouldFollowBottom) {
@@ -343,6 +457,7 @@
       // em utilizador, atualização de presença ou nova renderização.
       box.scrollTop = Math.min(previousScrollTop, Math.max(0, box.scrollHeight - box.clientHeight));
     }
+    updateMentionBadge(rows);
     bindModerationTargets();
     bindQuickStatusDots();
     const maxId = rows.reduce((m,r)=>Math.max(m,Number(r.id)||0),0);
@@ -536,18 +651,45 @@
     };
 
     if (input) {
-      input.addEventListener('input', resizeComposer);
+      input.addEventListener('input', () => {
+        resizeComposer();
+        renderMentionSuggestions(input);
+      });
       input.addEventListener('keydown', event => {
+        const suggestions=$('chatMentionSuggestions');
+        const matches=suggestions?._matches||[];
+        if (!suggestions?.hidden && matches.length) {
+          if (event.key === 'ArrowDown') {
+            event.preventDefault();
+            mentionActiveIndex=(mentionActiveIndex+1)%matches.length;
+            renderMentionSuggestions(input);
+            return;
+          }
+          if (event.key === 'ArrowUp') {
+            event.preventDefault();
+            mentionActiveIndex=(mentionActiveIndex-1+matches.length)%matches.length;
+            renderMentionSuggestions(input);
+            return;
+          }
+          if (event.key === 'Escape') {
+            event.preventDefault();
+            closeMentionSuggestions();
+            return;
+          }
+          if ((event.key === 'Enter' || event.key === 'Tab') && !event.shiftKey) {
+            event.preventDefault();
+            chooseMention(input,matches[mentionActiveIndex]);
+            return;
+          }
+        }
+
         if (event.key !== 'Enter' || event.isComposing) return;
-
         const enterBreaksLine = Boolean(enterToggle?.checked);
-
-        // Shift+Enter sempre quebra linha.
         if (event.shiftKey || enterBreaksLine) return;
-
         event.preventDefault();
         form.requestSubmit();
       });
+      input.addEventListener('blur',()=>setTimeout(closeMentionSuggestions,140));
     }
 
     if (enterToggle) {
@@ -559,6 +701,7 @@
     }
 
     bindQuickStatusDots();
+    $('chatMentionBadge')?.addEventListener('click',openNextMention);
 
     form.addEventListener('submit', async ev => {
       ev.preventDefault(); ev.stopImmediatePropagation();
