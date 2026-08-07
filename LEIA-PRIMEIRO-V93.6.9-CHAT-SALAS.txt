@@ -1,0 +1,16 @@
+V93.6.9 — CHAT POR SALAS
+
+1. Execute SUPABASE-CHAT-SALAS-V93.6.9.sql no Supabase SQL Editor.
+2. Home usa automaticamente a sala: lobby
+3. Cada live usa automaticamente: live:<usuario_tiktok>
+
+Exemplos:
+live.html?user=rv3113&name=INK31&game=Fortnite -> live:rv3113
+live.html?user=outrocanal&name=Outro -> live:outrocanal
+
+TESTE
+- Envie 'HOME TESTE' na Home.
+- Abra uma live e confirme que a mensagem não aparece.
+- Envie 'LIVE TESTE' na live.
+- Volte à Home: a mensagem da live não pode aparecer.
+- Abra outra live com outro ?user=: ela também deve ter histórico separado.

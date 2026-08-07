@@ -7,6 +7,15 @@
   if (!sb) { console.error('[Team Lambreta] Supabase SDK não carregou.'); return; }
   window.teamSupabase = sb;
 
+  // V93.6.9 — salas de chat isoladas.
+  // Home usa 'lobby'; páginas de live definem window.TL_CHAT_ROOM antes deste script.
+  const CHAT_ROOM = (() => {
+    const raw = String(window.TL_CHAT_ROOM || document.body?.dataset?.chatRoom || 'lobby').trim().toLowerCase();
+    const safe = raw.replace(/[^a-z0-9:_-]/g, '').slice(0, 80);
+    return safe || 'lobby';
+  })();
+  window.TeamLambretaChatRoom = CHAT_ROOM;
+
   let session = null;
   let profile = null;
   let chatChannel = null;
@@ -616,6 +625,7 @@
     const { data, error } = await sb.from('chat_messages')
       .select('id,message,created_at,user_id,profiles!chat_messages_user_id_fkey(full_name,game_nickname,role,presence,last_seen,avatar_url,donation_total,vip_until,is_streamer)')
       .eq('is_deleted',false)
+      .eq('room',CHAT_ROOM)
       .order('created_at',{ascending:false})
       .limit(30);
     if (error) { box.innerHTML = `<p>${esc(error.message)}</p>`; return; }
@@ -945,12 +955,12 @@
           console.warn('[TL-TR-002]',error); window.TLNotify?.('warning','Mensagem enviada no idioma original. A tradução não está disponível.','TL-TR-002');
         }
       }
-      let payload={user_id:session.user.id,message:translatedMessage||safeMessage};
+      let payload={user_id:session.user.id,message:translatedMessage||safeMessage,room:CHAT_ROOM};
       if(translatedMessage){payload.original_message=safeMessage;payload.translated_message=translatedMessage;payload.source_language=sourceLanguage;payload.target_language=targetLanguage;}
       let { error }=await sb.from('chat_messages').insert(payload);
       if(error && translatedMessage){
         console.warn('[TL-DB-001] Colunas de tradução ainda não instaladas; usando mensagem traduzida no campo principal.',error);
-        ({error}=await sb.from('chat_messages').insert({user_id:session.user.id,message:translatedMessage||safeMessage}));
+        ({error}=await sb.from('chat_messages').insert({user_id:session.user.id,message:translatedMessage||safeMessage,room:CHAT_ROOM}));
       }
 
       form.dataset.sending='0';
@@ -1170,8 +1180,8 @@
   function subscribe() {
     chatChannel?.unsubscribe(); inboxChannel?.unsubscribe();
     clearInterval(chatRefreshTimer); chatRefreshTimer=null;
-    if ($('chatMessages')) chatChannel=sb.channel('team-chat-ui-v92393')
-      .on('postgres_changes',{event:'INSERT',schema:'public',table:'chat_messages'},async payload=>{
+    if ($('chatMessages')) chatChannel=sb.channel(`team-chat-${CHAT_ROOM}-${Date.now()}`)
+      .on('postgres_changes',{event:'INSERT',schema:'public',table:'chat_messages',filter:`room=eq.${CHAT_ROOM}`},async payload=>{
         const row=payload.new;
         if(initialChatLoaded && Number(row.id)>lastKnownMessageId && row.user_id!==session?.user?.id){
           const {data:p}=await sb.from('profiles').select('role').eq('id',row.user_id).single();
@@ -1182,7 +1192,7 @@
         }
         lastKnownMessageId=Math.max(lastKnownMessageId,Number(row.id)||0); await renderChat();
       })
-      .on('postgres_changes',{event:'UPDATE',schema:'public',table:'chat_messages'},renderChat)
+      .on('postgres_changes',{event:'UPDATE',schema:'public',table:'chat_messages',filter:`room=eq.${CHAT_ROOM}`},renderChat)
       .on('postgres_changes',{event:'UPDATE',schema:'public',table:'profiles'},renderChat).subscribe(status=>{chatChannelStatus=status;if(status==='SUBSCRIBED')renderChat();});
     if ($('chatMessages')) chatRefreshTimer=setInterval(()=>{if(!document.hidden)renderChat();},1800);
     if ($('supabasePrivateInbox')||$('supabaseInboxBadge')) inboxChannel=sb.channel('team-inbox-ui').on('postgres_changes',{event:'*',schema:'public',table:'contact_messages'},renderInbox).subscribe();
