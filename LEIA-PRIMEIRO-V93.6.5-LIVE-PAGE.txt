@@ -1,0 +1,21 @@
+TEAM LAMBRETA V93.6.5 — LIVE PAGE
+
+O que entrou:
+- live.html: página própria com player TikTok LIVE 16:9 + chat Team Lambreta.
+- Player começa mutado.
+- Chat reutiliza o sistema oficial do lobby: login, menções, moderação, bloqueio e denúncias.
+- Streamer INK31 (@rv3113) tenta detectar reprodução do LIVE Embed oficial.
+- Quando o player entra em playing/buffering, o card de Streamers mostra "ASSISTIR AQUI".
+- Offline/erro: mantém a capa/fallback.
+
+IMPORTANTE:
+O TikTok LIVE Embed exige que team-lambreta.vercel.app esteja aprovado/allowlisted pelo TikTok.
+Sem a aprovação, o iframe pode mostrar Blocked e o site mantém o fallback.
+
+Teste:
+1. Suba a pasta.
+2. Ctrl+F5.
+3. Abra streamers.html e veja o card INK31.
+4. Se a live for reconhecida, aparece ASSISTIR AQUI.
+5. Abra live.html?user=rv3113&name=INK31&game=Fortnite
+6. O player deve iniciar mutado e o chat deve funcionar ao lado.

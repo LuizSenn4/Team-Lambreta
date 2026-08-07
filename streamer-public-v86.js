@@ -30,6 +30,9 @@
     main_game: 'Fortnite',
     live_platform: 'tiktok',
     live_url: 'https://www.tiktok.com/@rv3113/live',
+    tiktok_username: 'rv3113',
+    live_page_url: 'live.html?user=rv3113&name=INK31&game=Fortnite',
+    auto_probe_live: true,
     tiktok_url: 'https://www.tiktok.com/@rv3113',
     twitch_url: 'https://www.twitch.tv/oklm31rv',
     schedule_text: 'Terça a Domingo · horários variáveis · acompanha nas redes para saber quando abrir live.',
@@ -216,25 +219,75 @@
             ${watchUrl ? `<a class="streamer-panel-button streamer-panel-button--notify" href="${esc(watchUrl)}" target="_blank" rel="noopener noreferrer">ATIVAR NOTIFICAÇÕES</a>` : '<span class="streamer-panel-button streamer-panel-button--ghost">EM BREVE</span>'}
           </section>
 
-          <section class="streamer-card-panel streamer-card-live">
+          <section class="streamer-card-panel streamer-card-live" ${row.auto_probe_live && row.tiktok_username ? `data-live-probe="tiktok" data-tiktok-user="${esc(row.tiktok_username)}"` : ''}>
             <div class="streamer-live-head">
-              <h3><span class="live-dot"></span>AO VIVO AGORA</h3>
+              <h3><span class="live-dot"></span><span data-live-label>${live ? 'AO VIVO AGORA' : 'LIVE'}</span></h3>
               <span>${esc(row.main_game || 'Fortnite')}</span>
             </div>
             <div class="streamer-live-preview">
-              ${previewPhoto}
-              <div class="streamer-live-overlay">
-                <span>${esc(row.display_name || 'STREAMER')}</span>
-                <strong>${live ? 'Acompanha a transmissão' : 'Veja quando estiver ao vivo'}</strong>
+              <div class="streamer-live-fallback" data-live-fallback>
+                ${previewPhoto}
+                <div class="streamer-live-overlay">
+                  <span>${esc(row.display_name || 'STREAMER')}</span>
+                  <strong data-live-status-text>${live ? 'Acompanha a transmissão' : 'Veja quando estiver ao vivo'}</strong>
+                </div>
               </div>
+              ${row.auto_probe_live && row.tiktok_username ? `<iframe class="streamer-live-probe-frame" data-live-frame hidden src="https://www.tiktok.com/embed/live/@${esc(row.tiktok_username)}?autoplay=1&muted=1&controls=1&embed_domain=${encodeURIComponent(location.hostname)}" allow="autoplay; fullscreen" allowfullscreen loading="lazy" title="TikTok LIVE de ${esc(row.display_name || 'streamer')}"></iframe>` : ''}
             </div>
             <div class="streamer-live-cta">
-              ${watchUrl ? `<a class="streamer-panel-button streamer-panel-button--watch" href="${esc(watchUrl)}" target="_blank" rel="noopener noreferrer">${watchLabel}</a>` : '<span class="streamer-panel-button streamer-panel-button--ghost">LIVE EM BREVE</span>'}
+              ${row.live_page_url ? `<a class="streamer-panel-button streamer-panel-button--watch" data-watch-here href="${esc(row.live_page_url)}" ${live ? '' : 'hidden'}>ASSISTIR AQUI</a>` : ''}
+              ${watchUrl ? `<a class="streamer-panel-button streamer-panel-button--secondary" data-open-platform href="${esc(watchUrl)}" target="_blank" rel="noopener noreferrer">${watchLabel}</a>` : '<span class="streamer-panel-button streamer-panel-button--ghost">LIVE EM BREVE</span>'}
             </div>
           </section>
         </div>
       </article>
     `;
+  }
+
+  function setupTikTokLiveProbes() {
+    const probeCards = document.querySelectorAll('[data-live-probe="tiktok"]');
+    probeCards.forEach(section => {
+      const iframe = section.querySelector('[data-live-frame]');
+      const fallback = section.querySelector('[data-live-fallback]');
+      const label = section.querySelector('[data-live-label]');
+      const statusText = section.querySelector('[data-live-status-text]');
+      const watchHere = section.querySelector('[data-watch-here]');
+      const openPlatform = section.querySelector('[data-open-platform]');
+      if (!iframe || iframe.dataset.bound === '1') return;
+      iframe.dataset.bound = '1';
+
+      const setLive = () => {
+        section.closest('.streamer-unified-card')?.classList.add('is-live');
+        iframe.hidden = false;
+        if (fallback) fallback.hidden = true;
+        if (label) label.textContent = 'AO VIVO AGORA';
+        if (statusText) statusText.textContent = 'Acompanha a transmissão';
+        if (watchHere) watchHere.hidden = false;
+        if (openPlatform) openPlatform.textContent = 'ABRIR TIKTOK';
+      };
+
+      const setOffline = () => {
+        iframe.hidden = true;
+        if (fallback) fallback.hidden = false;
+        if (label) label.textContent = 'LIVE';
+        if (statusText) statusText.textContent = 'Veja quando estiver ao vivo';
+        if (watchHere) watchHere.hidden = true;
+      };
+
+      const listener = event => {
+        if (event.source !== iframe.contentWindow) return;
+        const message = event.data;
+        if (!message || message['x-tiktok-player'] !== true) return;
+        if (message.type === 'onStateChange') {
+          if (Number(message.value) === 1 || Number(message.value) === 3) setLive();
+        }
+        if (message.type === 'onPlayerError') setOffline();
+      };
+      window.addEventListener('message', listener);
+      setTimeout(() => {
+        try { iframe.contentWindow?.postMessage({'x-tiktok-player':true,type:'play'}, '*'); } catch (_) {}
+      }, 1500);
+    });
   }
 
   function getPageRows() {
@@ -265,6 +318,7 @@
     grid.innerHTML = rows.length
       ? rows.map((row, index) => buildCard(row, (currentPage === 1 ? index : index + PAGE_SIZE))).join('')
       : '<article class="empty-card"><h3>Mais streamers em breve</h3><p>Os perfis adicionados pelo painel aparecerão aqui.</p></article>';
+    requestAnimationFrame(setupTikTokLiveProbes);
 
     if (!pager) return;
     if (totalPages <= 1) {
