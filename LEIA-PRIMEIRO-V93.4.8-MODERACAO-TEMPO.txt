@@ -1,0 +1,23 @@
+TEAM LAMBRETA V93.4.8 — MODERAÇÃO COM TEMPO ESCOLHIDO
+
+O QUE MUDOU
+- O botão fixo “Silenciar 15 min” virou “Silenciar”.
+- A moderação escolhe a duração antes de aplicar:
+  5 min, 15 min, 30 min, 1 hora, 6 horas, 24 horas, 3 dias, 7 dias ou Personalizado.
+- Personalizado aceita de 1 minuto até 30 dias.
+- O utilizador recebe o aviso administrativo obrigatório com a duração exata escolhida.
+- A denúncia continua sem punir automaticamente: a decisão fica com a moderação.
+
+ANTES DE TESTAR
+1. Supabase > SQL Editor.
+2. Executa SUPABASE-MODERACAO-TEMPO-V93.4.8.sql uma vez.
+3. Faz deploy/commit.
+4. Atualiza o site (Ctrl+R; se necessário Ctrl+F5).
+
+TESTE
+1. Cria/envia uma denúncia de teste.
+2. Painel Admin > Denúncias do chat.
+3. Escolhe uma duração no seletor ao lado de “Silenciar”.
+4. Clica “Silenciar” e confirma.
+5. Atualiza a conta denunciada.
+6. O aviso obrigatório deve informar a duração escolhida e mostrar o comentário denunciado.

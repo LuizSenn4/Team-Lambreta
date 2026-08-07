@@ -487,3 +487,30 @@ html.admin-pending body { visibility: hidden; }
 .tl-report-message{padding:12px 14px;border-radius:10px;background:rgba(0,0,0,.22);color:#f1e8d1;line-height:1.5}
 .tl-report-meta{display:flex;flex-wrap:wrap;gap:8px 18px;color:#a99d84;font-size:12px}
 .tl-report-actions{display:flex;flex-wrap:wrap;gap:8px}
+
+/* V93.4.8 — duração de silenciamento escolhida pela moderação */
+.tl-report-mute-control{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  flex-wrap:wrap;
+}
+.tl-report-mute-duration{
+  min-height:42px;
+  padding:0 34px 0 12px;
+  border:1px solid rgba(217,164,65,.42);
+  border-radius:12px;
+  background:#0b0c0c;
+  color:#f4e7bd;
+  font:700 13px/1 system-ui,sans-serif;
+  outline:none;
+}
+.tl-report-mute-duration:focus{
+  border-color:#73ff18;
+  box-shadow:0 0 0 2px rgba(115,255,24,.12);
+}
+@media(max-width:720px){
+  .tl-report-mute-control{width:100%}
+  .tl-report-mute-duration{flex:1;min-width:150px}
+  .tl-report-mute-control button{flex:1}
+}

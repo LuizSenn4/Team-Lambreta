@@ -170,9 +170,13 @@ $$;
 -- AÇÃO DA ADMINISTRAÇÃO SOBRE UMA DENÚNCIA
 -- Cria o aviso obrigatório automaticamente.
 -- ---------------------------------------------------------------------
-create or replace function public.admin_apply_chat_report_action(
+drop function if exists public.admin_apply_chat_report_action(bigint,text);
+drop function if exists public.admin_apply_chat_report_action(bigint,text,integer);
+
+create function public.admin_apply_chat_report_action(
   target_report_id bigint,
-  moderation_action text
+  moderation_action text,
+  mute_minutes integer default null
 )
 returns jsonb
 language plpgsql
@@ -221,9 +225,14 @@ begin
   snapshot_message := coalesce(snapshot_message, '[mensagem indisponível]');
   action_reason := coalesce(nullif(trim(r.reason),''), 'Violação das regras de utilização do chat');
 
-  if clean_action = 'mute_15' then
+  if clean_action in ('mute','mute_15') then
+    mute_minutes := coalesce(mute_minutes, case when clean_action='mute_15' then 15 else null end);
+    if mute_minutes is null or mute_minutes < 1 or mute_minutes > 43200 then
+      raise exception 'Duração inválida. Escolhe entre 1 minuto e 30 dias.';
+    end if;
+
     update public.profiles
-    set muted_until = now() + interval '15 minutes', updated_at = now()
+    set muted_until = now() + make_interval(mins => mute_minutes), updated_at = now()
     where id = r.reported_user_id;
 
     insert into public.admin_user_notices(
@@ -231,7 +240,7 @@ begin
       duration_minutes, reason, admin_note, created_by
     ) values (
       r.reported_user_id, r.id, r.message_id, snapshot_message, 'mute',
-      15, action_reason, r.details, actor
+      mute_minutes, action_reason, r.details, actor
     );
 
     update public.chat_reports
@@ -307,10 +316,10 @@ revoke all on function public.get_my_chat_terms_status(text) from public;
 revoke all on function public.accept_chat_terms(text) from public;
 revoke all on function public.get_my_admin_notices() from public;
 revoke all on function public.acknowledge_admin_notice(bigint) from public;
-revoke all on function public.admin_apply_chat_report_action(bigint,text) from public;
+revoke all on function public.admin_apply_chat_report_action(bigint,text,integer) from public;
 
 grant execute on function public.get_my_chat_terms_status(text) to authenticated;
 grant execute on function public.accept_chat_terms(text) to authenticated;
 grant execute on function public.get_my_admin_notices() to authenticated;
 grant execute on function public.acknowledge_admin_notice(bigint) to authenticated;
-grant execute on function public.admin_apply_chat_report_action(bigint,text) to authenticated;
+grant execute on function public.admin_apply_chat_report_action(bigint,text,integer) to authenticated;

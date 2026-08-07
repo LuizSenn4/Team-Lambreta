@@ -1060,6 +1060,14 @@
   }
 
 
+  function formatMuteDuration(minutes) {
+    const m = Number(minutes) || 0;
+    if (m < 60) return `${m} minuto${m === 1 ? '' : 's'}`;
+    if (m % 1440 === 0) { const d=m/1440; return `${d} dia${d === 1 ? '' : 's'}`; }
+    if (m % 60 === 0) { const h=m/60; return `${h} hora${h === 1 ? '' : 's'}`; }
+    return `${m} minutos`;
+  }
+
   async function renderAdminChatReports() {
     const target = $('chatReportsAdminList');
     const badge = $('chatReportsBadge');
@@ -1093,7 +1101,20 @@
         </div>
         ${row.details ? `<p><b>Detalhes:</b> ${esc(row.details)}</p>` : ''}
         ${row.status === 'pending' ? `<div class="pending-actions tl-report-actions">
-          <button type="button" data-report-action="mute">Silenciar 15 min</button>
+          <span class="tl-report-mute-control">
+            <select class="tl-report-mute-duration" aria-label="Duração do silenciamento">
+              <option value="5">5 min</option>
+              <option value="15" selected>15 min</option>
+              <option value="30">30 min</option>
+              <option value="60">1 hora</option>
+              <option value="360">6 horas</option>
+              <option value="1440">24 horas</option>
+              <option value="4320">3 dias</option>
+              <option value="10080">7 dias</option>
+              <option value="custom">Personalizado</option>
+            </select>
+            <button type="button" data-report-action="mute">Silenciar</button>
+          </span>
           <button type="button" data-report-action="delete">Apagar mensagem</button>
           <button type="button" class="danger" data-report-action="ban">Banir</button>
           <button type="button" data-report-action="resolve">Advertir e resolver</button>
@@ -1109,7 +1130,21 @@
         button.disabled = true;
         let error = null;
         if (action === 'mute') {
-          ({error} = await sb.rpc('admin_apply_chat_report_action',{target_report_id:Number(item.dataset.reportId),moderation_action:'mute_15'}));
+          const select = item.querySelector('.tl-report-mute-duration');
+          let minutes = select?.value || '15';
+          if (minutes === 'custom') {
+            const custom = prompt('Por quantos minutos queres silenciar este utilizador?\nEx.: 120 = 2 horas, 2880 = 2 dias');
+            if (custom === null) { button.disabled=false; return; }
+            minutes = custom.trim();
+          }
+          const muteMinutes = Number(minutes);
+          if (!Number.isInteger(muteMinutes) || muteMinutes < 1 || muteMinutes > 43200) {
+            alert('Escolhe uma duração entre 1 minuto e 30 dias.');
+            button.disabled=false;
+            return;
+          }
+          if (!confirm(`Silenciar este utilizador por ${formatMuteDuration(muteMinutes)}?`)) { button.disabled=false; return; }
+          ({error} = await sb.rpc('admin_apply_chat_report_action',{target_report_id:Number(item.dataset.reportId),moderation_action:'mute',mute_minutes:muteMinutes}));
         } else if (action === 'delete') {
           if (!confirm('Apagar esta mensagem e enviar um aviso administrativo ao autor?')) { button.disabled=false; return; }
           ({error} = await sb.rpc('admin_apply_chat_report_action',{target_report_id:Number(item.dataset.reportId),moderation_action:'delete'}));
