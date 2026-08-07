@@ -23,6 +23,7 @@
       <a href="#pendentes">Pendentes</a>
       <a href="#candidaturas">Candidaturas</a>
       <a href="#mensagens">Mensagens</a>
+      <a href="#denuncias">Denúncias do chat</a>
       <a href="#usuarios">Usuários</a>
       <a href="#eventos">Eventos</a>
       <a href="#conquistas">Conquistas</a>
@@ -347,6 +348,12 @@
       <p class="hint">Centro preparado para notícias, eventos, respostas dos admins e contactos privados.</p>
       <div id="supabasePrivateInbox" class="admin-list"></div>
       <div id="privateInboxAdminList" class="admin-list"></div>
+    </section>
+
+    <section id="denuncias" class="admin-card tl-admin-reports-card">
+      <div class="card-head"><h2>Denúncias do chat <span id="chatReportsBadge" class="sb-inbox-badge">0</span></h2><button id="refreshChatReports" type="button">Atualizar</button></div>
+      <p class="hint">Denúncias feitas pelos membros. Ao denunciar, o autor da mensagem é bloqueado automaticamente apenas para quem denunciou.</p>
+      <div id="chatReportsAdminList" class="admin-list"><div class="empty-admin">A carregar denúncias…</div></div>
     </section>
 
     <section id="usuarios" class="admin-card">

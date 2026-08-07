@@ -425,6 +425,178 @@
     heartbeatTimer=setInterval(presenceHeartbeat,45000);
   }
 
+
+  async function getBlockedChatUserIds() {
+    if (!session?.user?.id) return new Set();
+    const { data, error } = await sb.rpc('get_my_blocked_chat_users');
+    if (error) {
+      // Compatibilidade enquanto o SQL V93.4.6 ainda não tiver sido executado.
+      console.warn('[Team Lambreta] Bloqueios pessoais indisponíveis:', error.message);
+      return new Set();
+    }
+    return new Set((data || []).map(item => String(item.blocked_id)));
+  }
+
+  function ensureChatMessageMenu() {
+    let menu = $('tlChatMessageMenu');
+    if (menu) return menu;
+    menu = document.createElement('div');
+    menu.id = 'tlChatMessageMenu';
+    menu.className = 'tl-chat-message-menu';
+    menu.hidden = true;
+    document.body.appendChild(menu);
+
+    document.addEventListener('pointerdown', event => {
+      if (menu.hidden) return;
+      if (!menu.contains(event.target) && !event.target.closest('.tl-chat-action')) menu.hidden = true;
+    });
+    window.addEventListener('resize', () => { menu.hidden = true; }, {passive:true});
+    return menu;
+  }
+
+  function replyToChatUser(nickname) {
+    const input = $('chatInput');
+    if (!input || !nickname) return;
+    const token = `@${nickname} `;
+    const current = String(input.value || '');
+    if (!current.toLowerCase().includes(`@${String(nickname).toLowerCase()}`)) {
+      input.value = current ? `${token}${current}` : token;
+    }
+    input.focus();
+    const caret = input.value.length;
+    input.setSelectionRange(caret, caret);
+    input.dispatchEvent(new Event('input',{bubbles:true}));
+  }
+
+  async function copyChatMessage(message) {
+    try {
+      await navigator.clipboard.writeText(String(message || ''));
+      const info = $('chatModerationInfo');
+      if (info) { info.textContent = 'Mensagem copiada.'; info.classList.remove('error'); }
+    } catch (_) {
+      alert('Não foi possível copiar a mensagem.');
+    }
+  }
+
+  function ensureChatReportModal() {
+    let modal = $('tlChatReportModal');
+    if (modal) return modal;
+    modal = document.createElement('div');
+    modal.id = 'tlChatReportModal';
+    modal.className = 'tl-chat-report-modal';
+    modal.hidden = true;
+    modal.innerHTML = `
+      <div class="tl-chat-report-backdrop" data-report-close></div>
+      <form class="tl-chat-report-card" id="tlChatReportForm">
+        <button class="tl-chat-report-close" type="button" data-report-close aria-label="Fechar">×</button>
+        <small>SEGURANÇA DA COMUNIDADE</small>
+        <h3>Denunciar mensagem</h3>
+        <p id="tlChatReportPreview"></p>
+        <label>Motivo
+          <select id="tlChatReportReason" required>
+            <option value="">Selecionar motivo</option>
+            <option value="Preconceito">Preconceito</option>
+            <option value="Xenofobia">Xenofobia</option>
+            <option value="Racismo">Racismo</option>
+            <option value="Ofensa / insulto">Ofensa / insulto</option>
+            <option value="Assédio">Assédio</option>
+            <option value="Spam">Spam</option>
+            <option value="Outro">Outro</option>
+          </select>
+        </label>
+        <label>Detalhes (opcional)
+          <textarea id="tlChatReportDetails" maxlength="500" rows="3" placeholder="Explica rapidamente o que aconteceu..."></textarea>
+        </label>
+        <div class="tl-chat-report-note">Ao denunciar, este utilizador também será bloqueado para ti automaticamente.</div>
+        <button class="tl-chat-report-submit" type="submit">Enviar denúncia e bloquear</button>
+      </form>`;
+    document.body.appendChild(modal);
+    modal.querySelectorAll('[data-report-close]').forEach(el => el.addEventListener('click',()=>{ modal.hidden=true; }));
+    return modal;
+  }
+
+  function openChatReportModal(article) {
+    if (!article || !session) return;
+    const modal = ensureChatReportModal();
+    modal.dataset.messageId = article.dataset.messageId || '';
+    modal.dataset.userId = article.dataset.userId || '';
+    $('tlChatReportReason').value = '';
+    $('tlChatReportDetails').value = '';
+    $('tlChatReportPreview').textContent = `@${article.dataset.nickname || 'utilizador'}: ${article.dataset.rawMessage || ''}`;
+    modal.hidden = false;
+  }
+
+  async function submitChatReport(event) {
+    event.preventDefault();
+    const modal = $('tlChatReportModal');
+    if (!modal) return;
+    const messageId = Number(modal.dataset.messageId);
+    const reason = $('tlChatReportReason')?.value || '';
+    const details = $('tlChatReportDetails')?.value.trim() || null;
+    if (!messageId || !reason) return;
+    const button = modal.querySelector('.tl-chat-report-submit');
+    if (button) button.disabled = true;
+    const { error } = await sb.rpc('report_and_block_chat_message', {
+      target_message_id: messageId,
+      report_reason: reason,
+      report_details: details
+    });
+    if (button) button.disabled = false;
+    if (error) {
+      alert(`Não foi possível enviar a denúncia: ${error.message}`);
+      return;
+    }
+    modal.hidden = true;
+    const info = $('chatModerationInfo');
+    if (info) { info.textContent = 'Denúncia enviada. O utilizador foi bloqueado para ti.'; info.classList.remove('error'); }
+    await renderChat();
+  }
+
+  async function blockChatUser(article) {
+    if (!article || !session) return;
+    const nickname = article.dataset.nickname || 'este utilizador';
+    if (!confirm(`Bloquear @${nickname}? As mensagens desta pessoa deixarão de aparecer para ti.`)) return;
+    const { error } = await sb.rpc('block_chat_user',{ target_user_id: article.dataset.userId });
+    if (error) { alert(error.message); return; }
+    const info = $('chatModerationInfo');
+    if (info) { info.textContent = `@${nickname} foi bloqueado para ti.`; info.classList.remove('error'); }
+    await renderChat();
+  }
+
+  function openChatMessageMenu(button) {
+    const article = button.closest('.tl-chat-card');
+    if (!article) return;
+    const isOwn = String(article.dataset.userId) === String(session?.user?.id);
+    const menu = ensureChatMessageMenu();
+    menu.innerHTML = `
+      <button type="button" data-chat-menu-action="copy">Copiar</button>
+      ${!isOwn ? '<button type="button" data-chat-menu-action="reply">Responder</button>' : ''}
+      ${!isOwn ? '<button type="button" data-chat-menu-action="report" class="is-warning">Denunciar</button>' : ''}
+      ${!isOwn ? '<button type="button" data-chat-menu-action="block" class="is-danger">Bloquear</button>' : ''}
+      ${canModerate() ? '<button type="button" data-chat-menu-action="delete" class="is-danger">Apagar mensagem</button>' : ''}`;
+    const rect = button.getBoundingClientRect();
+    menu.hidden = false;
+    const menuRect = menu.getBoundingClientRect();
+    menu.style.left = `${Math.min(window.innerWidth-menuRect.width-8, Math.max(8, rect.right-menuRect.width))}px`;
+    menu.style.top = `${Math.min(window.innerHeight-menuRect.height-8, rect.bottom+6)}px`;
+
+    menu.querySelectorAll('[data-chat-menu-action]').forEach(actionButton => {
+      actionButton.onclick = async () => {
+        const action = actionButton.dataset.chatMenuAction;
+        menu.hidden = true;
+        if (action === 'copy') return copyChatMessage(article.dataset.rawMessage || '');
+        if (action === 'reply') return replyToChatUser(article.dataset.nickname || '');
+        if (action === 'report') return openChatReportModal(article);
+        if (action === 'block') return blockChatUser(article);
+        if (action === 'delete') {
+          if (!confirm('Apagar esta mensagem?')) return;
+          const { error }=await sb.rpc('moderate_chat_message',{target_message_id:Number(article.dataset.messageId)});
+          if (error) alert(error.message); else await renderChat();
+        }
+      };
+    });
+  }
+
   async function renderChat() {
     const box = $('chatMessages');
     if (!box) return;
@@ -447,7 +619,8 @@
       .order('created_at',{ascending:false})
       .limit(30);
     if (error) { box.innerHTML = `<p>${esc(error.message)}</p>`; return; }
-    const rows = [...(data || [])].reverse();
+    const blockedIds = await getBlockedChatUserIds();
+    const rows = [...(data || [])].reverse().filter(row => !blockedIds.has(String(row.user_id)));
     box.innerHTML = rows.map(row => {
       const p=row.profiles||{};
       const name=p.game_nickname||p.full_name||'Jogador';
@@ -457,7 +630,7 @@
       const statusLabel = presence==='busy'?'Ocupado':presence==='away'?'Ausente':presence==='online'?'Online':'Offline';
       const identityStyle=`--identity:${palette.color};--identity-rgb:${palette.rgb};border-color:rgba(${palette.rgb},.56)!important;box-shadow:inset 5px 0 0 ${palette.color},0 0 18px rgba(${palette.rgb},.10)!important;`;
       const nameStyle=`color:${palette.color}!important;text-shadow:0 0 12px rgba(${palette.rgb},.62)!important;`;
-      return `<article class="tl-chat-card tl-chat-${identity} tl-presence-${presence} ${canModerate()?'tl-has-actions':''}" style="${identityStyle}" data-identity="${identity}" data-message-id="${row.id}" data-user-id="${esc(row.user_id)}">
+      return `<article class="tl-chat-card tl-chat-${identity} tl-presence-${presence} tl-has-actions" style="${identityStyle}" data-identity="${identity}" data-message-id="${row.id}" data-user-id="${esc(row.user_id)}" data-nickname="${esc(name)}" data-raw-message="${esc(row.message)}">
         <header class="tl-chat-header">
           <strong class="tl-chat-name" style="${nameStyle}" data-user-id="${esc(row.user_id)}">${esc(name)}</strong>
           <div class="tl-chat-meta">
@@ -465,7 +638,7 @@
               ? `<button class="tl-chat-dot tl-own-status-dot ${presence}" type="button" title="Mudar status: ${statusLabel}" aria-label="Mudar status atual: ${statusLabel}" data-quick-status="1"></button>`
               : `<span class="tl-chat-dot ${presence}" title="${statusLabel}" aria-label="${statusLabel}"></span>`}
             <time class="tl-chat-time">${new Date(row.created_at).toLocaleTimeString('pt-PT',{hour:'2-digit',minute:'2-digit'})}</time>
-            ${canModerate()?'<button class="tl-chat-action" type="button" title="Opções da mensagem" aria-label="Opções da mensagem">⋮</button>':''}
+            <button class="tl-chat-action" type="button" title="Opções da mensagem" aria-label="Opções da mensagem">⋮</button>
           </div>
         </header>
         <p class="tl-chat-text">${formatChatMessage(row.message)}</p>
@@ -496,11 +669,10 @@
       };
     });
     document.querySelectorAll('.tl-chat-action').forEach(btn => {
-      btn.onclick = async () => {
-        const article=btn.closest('[data-message-id]');
-        if (!article || !confirm('Apagar esta mensagem?')) return;
-        const { error }=await sb.rpc('moderate_chat_message',{target_message_id:Number(article.dataset.messageId)});
-        if (error) alert(error.message); else renderChat();
+      btn.onclick = event => {
+        event.preventDefault();
+        event.stopPropagation();
+        openChatMessageMenu(btn);
       };
     });
   }
@@ -723,6 +895,12 @@
 
     bindQuickStatusDots();
     $('chatMentionBadge')?.addEventListener('click',openNextMention);
+    const reportModal = ensureChatReportModal();
+    const reportForm = $('tlChatReportForm');
+    if (reportForm && reportForm.dataset.bound !== '1') {
+      reportForm.dataset.bound = '1';
+      reportForm.addEventListener('submit', submitChatReport);
+    }
 
     form.addEventListener('submit', async ev => {
       ev.preventDefault(); ev.stopImmediatePropagation();
@@ -880,6 +1058,80 @@
     target?.querySelectorAll('[data-status]').forEach(btn=>btn.onclick=async()=>{const item=btn.closest('[data-id]');const status=btn.dataset.status;const patch={status};if(status==='read')patch.read_at=new Date().toISOString();if(status==='answered'){patch.answered_at=new Date().toISOString();patch.answered_by=session.user.id;}await sb.from('contact_messages').update(patch).eq('id',item.dataset.id);renderInbox();});
   }
 
+
+  async function renderAdminChatReports() {
+    const target = $('chatReportsAdminList');
+    const badge = $('chatReportsBadge');
+    if (!target && !badge) return;
+    if (!session) {
+      if (target) target.innerHTML = '<div class="empty-admin">Entra com a conta administrativa.</div>';
+      if (badge) badge.textContent = '0';
+      return;
+    }
+    const { data, error } = await sb.rpc('admin_list_chat_reports');
+    if (error) {
+      if (target) target.innerHTML = `<div class="empty-admin">${esc(error.message)}<br><small>Se ainda não executaste o SQL V93.4.6, executa-o no Supabase.</small></div>`;
+      if (badge) badge.textContent = '0';
+      return;
+    }
+    const rows = data || [];
+    const pending = rows.filter(row => row.status === 'pending').length;
+    if (badge) badge.textContent = String(pending);
+    if (!target) return;
+    target.innerHTML = rows.length ? rows.map(row => `
+      <article class="admin-item tl-report-item ${row.status === 'pending' ? 'is-pending' : ''}" data-report-id="${row.report_id}" data-message-id="${row.message_id}" data-target-user-id="${esc(row.reported_user_id)}">
+        <div class="item-top">
+          <strong>${esc(row.reason)}</strong>
+          <span class="pill">${row.status === 'pending' ? 'Pendente' : row.status === 'resolved' ? 'Resolvida' : 'Ignorada'}</span>
+        </div>
+        <p class="tl-report-message">“${esc(row.message_text || '')}”</p>
+        <div class="tl-report-meta">
+          <span><b>Autor:</b> @${esc(row.reported_nickname || 'Utilizador')}</span>
+          <span><b>Denunciado por:</b> @${esc(row.reporter_nickname || 'Utilizador')}</span>
+          <span><b>Data:</b> ${new Date(row.created_at).toLocaleString('pt-PT')}</span>
+        </div>
+        ${row.details ? `<p><b>Detalhes:</b> ${esc(row.details)}</p>` : ''}
+        <div class="pending-actions tl-report-actions">
+          <button type="button" data-report-action="mute">Silenciar 15 min</button>
+          <button type="button" data-report-action="delete">Apagar mensagem</button>
+          <button type="button" class="danger" data-report-action="ban">Banir</button>
+          <button type="button" data-report-action="resolve">Resolver</button>
+          <button type="button" data-report-action="dismiss">Ignorar</button>
+        </div>
+      </article>`).join('') : '<div class="empty-admin">Nenhuma denúncia recebida.</div>';
+
+    target.querySelectorAll('[data-report-action]').forEach(button => {
+      button.onclick = async () => {
+        const item = button.closest('[data-report-id]');
+        const action = button.dataset.reportAction;
+        if (!item) return;
+        button.disabled = true;
+        let error = null;
+        if (action === 'mute') {
+          ({error} = await sb.rpc('moderate_user',{target_user_id:item.dataset.targetUserId,mute_minutes:15}));
+        } else if (action === 'delete') {
+          if (!confirm('Apagar esta mensagem denunciada?')) { button.disabled=false; return; }
+          ({error} = await sb.rpc('moderate_chat_message',{target_message_id:Number(item.dataset.messageId)}));
+        } else if (action === 'ban') {
+          if (!confirm('Banir este utilizador do chat?')) { button.disabled=false; return; }
+          ({error} = await sb.rpc('set_chat_ban',{target_user_id:item.dataset.targetUserId,banned:true}));
+        } else if (action === 'resolve' || action === 'dismiss') {
+          ({error} = await sb.rpc('admin_resolve_chat_report',{
+            target_report_id:Number(item.dataset.reportId),
+            new_status:action === 'resolve' ? 'resolved' : 'dismissed'
+          }));
+        }
+        button.disabled = false;
+        if (error) { alert(error.message); return; }
+        await renderAdminChatReports();
+      };
+    });
+  }
+
+  function bindAdminChatReports() {
+    $('refreshChatReports')?.addEventListener('click', renderAdminChatReports);
+  }
+
   function subscribe() {
     chatChannel?.unsubscribe(); inboxChannel?.unsubscribe();
     clearInterval(chatRefreshTimer); chatRefreshTimer=null;
@@ -904,8 +1156,8 @@
   async function boot() {
     const { data }=await sb.auth.getSession(); session=data.session; await loadProfile(); renderAuth();
     if(session){ manualPresence=profile?.presence==='busy'?'busy':'online'; lastActivityAt=Date.now(); await ensureNickname(); await setPresence(manualPresence,{manual:false}); startPresenceTracking(); }
-    bindChat(); bindContact(); bindPwdAccess(); await renderChat(); await renderInbox(); subscribe();
-    sb.auth.onAuthStateChange(async (_event,newSession)=>{session=newSession;await loadProfile();renderAuth();if(session){manualPresence=profile?.presence==='busy'?'busy':'online';lastActivityAt=Date.now();startPresenceTracking();}await renderChat();await renderInbox();subscribe();});
+    bindChat(); bindContact(); bindPwdAccess(); bindAdminChatReports(); await renderChat(); await renderInbox(); await renderAdminChatReports(); subscribe();
+    sb.auth.onAuthStateChange(async (_event,newSession)=>{session=newSession;await loadProfile();renderAuth();if(session){manualPresence=profile?.presence==='busy'?'busy':'online';lastActivityAt=Date.now();startPresenceTracking();}await renderChat();await renderInbox();await renderAdminChatReports();subscribe();});
     document.addEventListener('visibilitychange',()=>{if(!document.hidden)renderChat();});
     window.addEventListener('focus',()=>renderChat());
     window.addEventListener('online',()=>{subscribe();renderChat();});

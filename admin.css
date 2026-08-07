@@ -480,3 +480,10 @@ html.admin-pending body { visibility: hidden; }
 .streamer-schedule-admin-actions button{padding:10px 14px;border:1px solid rgba(115,255,24,.3);border-radius:12px;background:rgba(115,255,24,.05);color:#73ff18;font-weight:900}
 @media(max-width:900px){.streamer-schedule-row-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:560px){.streamer-schedule-row-grid{grid-template-columns:1fr}.streamer-schedule-admin-row{padding:12px}}
+
+/* V93.4.6 — denúncias do chat no painel */
+.tl-admin-reports-card .tl-report-item{border-color:rgba(255,102,121,.18)}
+.tl-admin-reports-card .tl-report-item.is-pending{box-shadow:inset 4px 0 0 #ff6679}
+.tl-report-message{padding:12px 14px;border-radius:10px;background:rgba(0,0,0,.22);color:#f1e8d1;line-height:1.5}
+.tl-report-meta{display:flex;flex-wrap:wrap;gap:8px 18px;color:#a99d84;font-size:12px}
+.tl-report-actions{display:flex;flex-wrap:wrap;gap:8px}

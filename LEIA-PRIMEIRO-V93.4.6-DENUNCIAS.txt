@@ -1,0 +1,17 @@
+TEAM LAMBRETA V93.4.6 — DENÚNCIAS DO CHAT
+
+1) Antes de publicar, abre o Supabase > SQL Editor.
+2) Executa TODO o arquivo:
+   SUPABASE-DENUNCIAS-CHAT-V93.4.6.sql
+3) Depois publica esta pasta no Git/Vercel.
+
+MENU DOS 3 PONTINHOS
+- Copiar
+- Responder -> coloca @nickname na caixa do chat
+- Denunciar -> abre motivos e, ao confirmar, bloqueia o autor para quem denunciou
+- Bloquear -> esconde as mensagens daquele utilizador apenas para quem bloqueou
+- Admin/Moderador também mantém a opção de apagar mensagem
+
+PAINEL ADMIN
+Nova área: Denúncias do chat
+Ações: Silenciar 15 min, Apagar mensagem, Banir, Resolver, Ignorar.
