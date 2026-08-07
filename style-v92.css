@@ -9485,3 +9485,69 @@ html.tl-modal-lock,html.tl-modal-lock body{overflow:hidden!important}
     object-position:center center;
   }
 }
+
+
+/* V93.6.2 — chat compacto: status menor + sessão encaixada sem aumentar a box */
+.online-chat{
+  min-height:0!important;
+}
+
+.chat-head{
+  min-height:46px!important;
+  align-items:center!important;
+}
+
+.chat-head h2{
+  top:20px!important;
+  font-size:clamp(17px,1.55vw,21px)!important;
+}
+
+.status-picker{
+  gap:7px!important;
+  padding:6px 9px!important;
+  min-height:30px!important;
+  border-radius:999px!important;
+}
+
+.status-picker .online-dot,
+.status-picker #onlineDot{
+  width:10px!important;
+  height:10px!important;
+}
+
+.status-picker select{
+  min-width:78px!important;
+  width:auto!important;
+  font-size:12px!important;
+  line-height:1!important;
+}
+
+.chat-auth-footer{
+  order:20!important;
+  margin:6px 0 0!important;
+  padding:6px 0 0!important;
+  min-height:0!important;
+  border-top:1px solid rgba(217,164,65,.08)!important;
+}
+
+.chat-auth-compact .google-login-btn{
+  min-height:28px!important;
+  padding:5px 10px!important;
+  border-radius:9px!important;
+  font-size:11px!important;
+  line-height:1.1!important;
+}
+
+/* deixa o espaço útil no histórico, em vez de criar área vazia no rodapé */
+.chat-messages{
+  max-height:none!important;
+}
+
+@media(max-width:900px){
+  .online-chat{min-height:0!important;height:auto!important}
+  .chat-head{min-height:44px!important}
+  .chat-head h2{top:19px!important;font-size:18px!important}
+  .status-picker{padding:5px 8px!important;gap:6px!important}
+  .status-picker select{min-width:72px!important;font-size:11px!important}
+  .chat-auth-footer{margin-top:5px!important;padding-top:5px!important}
+}
