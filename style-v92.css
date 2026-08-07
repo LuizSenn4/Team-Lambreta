@@ -9487,38 +9487,32 @@ html.tl-modal-lock,html.tl-modal-lock body{overflow:hidden!important}
 }
 
 
-/* V93.6.2 — chat compacto: status menor + sessão encaixada sem aumentar a box */
-.online-chat{
-  min-height:0!important;
-}
-
+/* V93.6.3 — chat compacto sem alterar a geometria/altura da home */
 .chat-head{
-  min-height:46px!important;
   align-items:center!important;
 }
 
 .chat-head h2{
-  top:20px!important;
   font-size:clamp(17px,1.55vw,21px)!important;
 }
 
 .status-picker{
-  gap:7px!important;
-  padding:6px 9px!important;
-  min-height:30px!important;
+  gap:6px!important;
+  padding:5px 8px!important;
+  min-height:28px!important;
   border-radius:999px!important;
 }
 
 .status-picker .online-dot,
 .status-picker #onlineDot{
-  width:10px!important;
-  height:10px!important;
+  width:9px!important;
+  height:9px!important;
 }
 
 .status-picker select{
-  min-width:78px!important;
+  min-width:72px!important;
   width:auto!important;
-  font-size:12px!important;
+  font-size:11px!important;
   line-height:1!important;
 }
 
@@ -9531,23 +9525,17 @@ html.tl-modal-lock,html.tl-modal-lock body{overflow:hidden!important}
 }
 
 .chat-auth-compact .google-login-btn{
-  min-height:28px!important;
-  padding:5px 10px!important;
+  min-height:27px!important;
+  padding:5px 9px!important;
   border-radius:9px!important;
   font-size:11px!important;
   line-height:1.1!important;
 }
 
-/* deixa o espaço útil no histórico, em vez de criar área vazia no rodapé */
-.chat-messages{
-  max-height:none!important;
-}
-
+/* IMPORTANTE: não altera .online-chat nem .chat-messages.
+   As alturas/scroll continuam controlados pelas regras-base do layout. */
 @media(max-width:900px){
-  .online-chat{min-height:0!important;height:auto!important}
-  .chat-head{min-height:44px!important}
-  .chat-head h2{top:19px!important;font-size:18px!important}
-  .status-picker{padding:5px 8px!important;gap:6px!important}
-  .status-picker select{min-width:72px!important;font-size:11px!important}
+  .status-picker{padding:4px 7px!important;gap:5px!important}
+  .status-picker select{min-width:68px!important;font-size:10px!important}
   .chat-auth-footer{margin-top:5px!important;padding-top:5px!important}
 }
