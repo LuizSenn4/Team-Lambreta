@@ -46,14 +46,14 @@
       <section class="hall-top-grid" aria-label="Destaques do Hall da Fama">
         <article class="hall-champion-card" data-accent="hall">
           <span class="hall-rank">#1</span>
-          <div class="hall-avatar hall-avatar-main">L</div>
+          <div id="hallChampionAvatar" class="hall-avatar hall-avatar-main">—</div>
           <div class="hall-champion-info">
-            <span class="hall-role hall-role-dev">DEV</span>
-            <h2>LuizSenn4</h2>
-            <p>Fundador · Nível 27</p>
+            <span id="hallChampionRole" class="hall-role hall-role-member">MEMBRO</span>
+            <h2 id="hallChampionName">A carregar...</h2>
+            <p id="hallChampionLevel">Nível 1 · 0 XP</p>
           </div>
-          <div class="hall-xp"><span style="--progress:82%"></span></div>
-          <div class="hall-card-stats"><span><b>128h</b> ativo</span><span><b>34</b> conquistas</span><span><b>18</b> eventos</span></div>
+          <div class="hall-xp"><span id="hallChampionXpBar" style="--progress:0%"></span></div>
+          <div class="hall-card-stats"><span><b id="hallChampionActive">0h</b> ativo</span><span><b id="hallChampionAchievements">0</b> conquistas</span><span><b id="hallChampionEvents">0</b> eventos</span></div>
         </article>
 
         <div class="hall-ranking-panel">
@@ -63,10 +63,10 @@
       </section>
 
       <section class="hall-metrics">
-        <article><span>◉</span><div><b id="hallActiveHours">284</b><small>Horas ativas</small></div></article>
-        <article><span>✦</span><div><b id="hallAchievementTotal">76</b><small>Conquistas obtidas</small></div></article>
-        <article><span>⚑</span><div><b id="hallEventTotal">31</b><small>Eventos disputados</small></div></article>
-        <article><span>☾</span><div><b id="hallAfkTotal">19</b><small>Momentos AFK lendários</small></div></article>
+        <article><span>◉</span><div><b id="hallActiveHours">0</b><small>Horas ativas</small></div></article>
+        <article><span>✦</span><div><b id="hallAchievementTotal">0</b><small>Conquistas obtidas</small></div></article>
+        <article><span>⚑</span><div><b id="hallEventTotal">0</b><small>Eventos disputados</small></div></article>
+        <article><span>☾</span><div><b id="hallAfkTotal">0</b><small>Momentos AFK lendários</small></div></article>
       </section>
 
       <section class="hall-achievements-section">
@@ -102,7 +102,7 @@
   <script src="data.js"></script>
   <script src="script-v89.js"></script>
   <script src="navigation-v93.js?v=93.0"></script>
-  <script src="hall-da-fama-v96.js?v=92.40.1"></script>
+  <script src="hall-da-fama-v96.js?v=93.8.2"></script>
   <script src="error-codes-v92.js"></script>
   <script src="site-i18n-v92.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>

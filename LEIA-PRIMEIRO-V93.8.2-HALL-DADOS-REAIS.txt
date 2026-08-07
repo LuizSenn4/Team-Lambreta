@@ -1,0 +1,11 @@
+V93.8.2 — Hall sem números fictícios
+
+- Remove os números antigos fixos do HTML (128h, nível 27, 284, 76, 31, 19 etc.).
+- O card #1 agora é preenchido pelo líder real de community_progress.
+- Métricas do topo começam em 0 e só exibem dados vindos do Supabase.
+- O reset V93.8.1 continua válido; não é necessário rodar outro SQL para esta correção.
+
+Teste:
+1. Faça Ctrl+F5 em conquistas.html.
+2. Após o reset, espere apenas o carregamento normal (segundos, não minutos).
+3. Nível deve ser 1 / XP 0 e métricas zeradas até novas ações reais.

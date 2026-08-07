@@ -26,6 +26,41 @@
     ];
   }
 
+  function renderChampion(){
+    const champion=progress[0]||null;
+    const avatarEl=document.getElementById('hallChampionAvatar');
+    const roleEl=document.getElementById('hallChampionRole');
+    const nameEl=document.getElementById('hallChampionName');
+    const levelEl=document.getElementById('hallChampionLevel');
+    const xpBar=document.getElementById('hallChampionXpBar');
+    const activeEl=document.getElementById('hallChampionActive');
+    const achievementsEl=document.getElementById('hallChampionAchievements');
+    const eventsEl=document.getElementById('hallChampionEvents');
+    if(!champion){
+      if(avatarEl)avatarEl.textContent='—';
+      if(roleEl){roleEl.textContent='MEMBRO';roleEl.className='hall-role hall-role-member';}
+      if(nameEl)nameEl.textContent='Ainda sem ranking';
+      if(levelEl)levelEl.textContent='Nível 1 · 0 XP';
+      if(xpBar)xpBar.style.setProperty('--progress','0%');
+      if(activeEl)activeEl.textContent='0h';
+      if(achievementsEl)achievementsEl.textContent='0';
+      if(eventsEl)eventsEl.textContent='0';
+      return;
+    }
+    const pr=profiles.find(x=>x.id===champion.user_id)||{};
+    const displayName=name(pr);
+    const role=String(pr.role||'MEMBRO').toUpperCase();
+    const achievements=achievementList(champion).filter(a=>a.progress===100).length;
+    if(avatarEl)avatarEl.textContent=(displayName.charAt(0)||'—').toUpperCase();
+    if(roleEl){roleEl.textContent=role;roleEl.className=`hall-role hall-role-${roleClass(pr.role)}`;}
+    if(nameEl)nameEl.textContent=displayName;
+    if(levelEl)levelEl.textContent=`Nível ${champion.level||1} · ${champion.xp||0} XP`;
+    if(xpBar)xpBar.style.setProperty('--progress',`${Math.round(((champion.xp||0)%250)/250*100)}%`);
+    if(activeEl)activeEl.textContent=`${hours(champion.active_seconds)}h`;
+    if(achievementsEl)achievementsEl.textContent=String(achievements);
+    if(eventsEl)eventsEl.textContent=String(Number(champion.event_participations||0));
+  }
+
   function renderRanking(){
     if(!rankingEl)return;
     const top=progress.slice(0,5);
@@ -53,12 +88,12 @@
   function closeModal(){if(!modal)return;modal.classList.remove('is-open');setTimeout(()=>modal.hidden=true,180);}
 
   async function load(){
-    if(!sb){renderAchievements();return;}
+    if(!sb){renderChampion();renderRanking();renderAchievements();renderMetrics();return;}
     const sess=await sb.auth.getSession();
     if(sess.data.session){const r=await sb.from('profiles').select('id,game_nickname,full_name,role,avatar_url').order('game_nickname');profiles=r.data||[];me=profiles.find(p=>p.id===sess.data.session.user.id)||null;}
     const pr=await sb.from('community_progress').select('*').order('xp',{ascending:false}).order('active_seconds',{ascending:false}).limit(100);
     progress=pr.data||[];
-    renderRanking();renderAchievements();renderMetrics();
+    renderChampion();renderRanking();renderAchievements();renderMetrics();
   }
 
   document.getElementById('hallFilters')?.addEventListener('click',e=>{const b=e.target.closest('[data-filter]');if(!b)return;document.querySelectorAll('#hallFilters [data-filter]').forEach(x=>x.classList.toggle('is-active',x===b));renderAchievements(b.dataset.filter);});
