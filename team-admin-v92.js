@@ -336,8 +336,8 @@
     syncAllRichEditors();
     const ageValue=$('teamMemberAge').value;
     const row={
-      name:capitaliseFirst($('teamMemberName').value.trim()),
-      nickname:capitaliseFirst($('teamMemberNickname').value.trim())||null,
+      name:$('teamMemberName').value.trim(),
+      nickname:$('teamMemberNickname').value.trim()||null,
       age:ageValue?Number(ageValue):null,
       role:serialiseTeamRoles(),
       member_group:$('teamMemberGroup').value,
