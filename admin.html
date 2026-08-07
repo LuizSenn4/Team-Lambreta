@@ -83,19 +83,20 @@
           <label>Nome de exibição *<input id="teamMemberName" required maxlength="70"></label>
           <label>Nickname<input id="teamMemberNickname" maxlength="16" placeholder="electricmagneti"></label>
           <label>Idade<input id="teamMemberAge" type="number" min="1" max="120"></label>
-          <label>Função / cargo
-            <select id="teamMemberRole" required>
-              <option value="MEMBRO">MEMBRO</option>
-              <option value="DEV">DEV</option>
-              <option value="ADMIN">ADMIN</option>
-              <option value="STAFF">STAFF</option>
-              <option value="BOSS">BOSS</option>
-              <option value="STREAMER">STREAMER</option>
-              <option value="MODERADOR">MODERADOR</option>
-              <option value="APOIADOR">APOIADOR</option>
-              <option value="VIP">VIP</option>
-            </select>
-          </label>
+          <div class="team-role-picker full" id="teamMemberRolePicker">
+            <span class="team-role-picker-label">Função / cargo <small>(pode selecionar mais de um)</small></span>
+            <div class="team-role-options" role="group" aria-label="Selecionar cargos do perfil">
+              <label class="role-option role-dev"><input type="checkbox" value="DEV"> <span>DEV</span></label>
+              <label class="role-option role-member"><input type="checkbox" value="MEMBRO" checked> <span>MEMBRO</span></label>
+              <label class="role-option role-admin"><input type="checkbox" value="ADMIN"> <span>ADMIN</span></label>
+              <label class="role-option role-staff"><input type="checkbox" value="STAFF"> <span>STAFF</span></label>
+              <label class="role-option role-boss"><input type="checkbox" value="BOSS"> <span>BOSS</span></label>
+              <label class="role-option role-streamer"><input type="checkbox" value="STREAMER"> <span>STREAMER</span></label>
+              <label class="role-option role-moderador"><input type="checkbox" value="MODERADOR"> <span>MODERADOR</span></label>
+              <label class="role-option role-apoiador"><input type="checkbox" value="APOIADOR"> <span>APOIADOR</span></label>
+              <label class="role-option role-vip"><input type="checkbox" value="VIP"> <span>VIP</span></label>
+            </div>
+          </div>
           <label>Área
             <select id="teamMemberGroup">
               <option value="Gamers">Gamers</option>

@@ -1,0 +1,19 @@
+TEAM LAMBRETA V93.5.2 — MÚLTIPLOS CARGOS
+
+O que mudou:
+- O perfil do Team agora aceita vários cargos ao mesmo tempo.
+- No painel Admin, marque um ou mais cargos e guarde.
+- MEMBRO é removido automaticamente quando outro cargo é escolhido.
+- Exemplos: BOSS + STREAMER; MODERADOR + STREAMER; ADMIN + BOSS.
+- Cada cargo aparece como badge própria e com cor específica no card e no modal do perfil.
+- APOIADOR continua verde.
+- Este campo é visual do perfil do Team e não altera as permissões reais de acesso ao painel administrativo.
+
+Não precisa executar SQL novo.
+
+Teste:
+1. Painel Admin > Team > Editar perfil.
+2. Marque dois cargos, por exemplo BOSS e STREAMER.
+3. Clique em Guardar perfil.
+4. Abra a página Team e atualize com Ctrl+R.
+5. O card deve mostrar as duas badges com cores diferentes.

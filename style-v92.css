@@ -9274,3 +9274,21 @@ html.tl-modal-lock,html.tl-modal-lock body{overflow:hidden!important}
   .team-roster-copy small,.team-roster-copy em{font-size:10px!important}
   .team-roster-plus{font-size:26px!important}
 }
+
+/* V93.5.2 — badges coloridas para múltiplos cargos no Team */
+.team-role-badges{display:flex;flex-wrap:wrap;gap:7px;align-items:center;margin:6px 0 4px}
+.team-role-badges.is-compact{gap:5px;margin:0}
+.team-role-badge{--role-color:#f1eee5;display:inline-flex;align-items:center;min-height:22px;padding:3px 8px;border:1px solid color-mix(in srgb,var(--role-color) 46%,transparent);border-radius:999px;background:color-mix(in srgb,var(--role-color) 8%,transparent);color:var(--role-color);font:900 11px/1 Inter,Arial,sans-serif;letter-spacing:.55px;text-transform:uppercase;text-shadow:0 0 9px color-mix(in srgb,var(--role-color) 48%,transparent);white-space:nowrap}
+.team-role-badge.role-dev{--role-color:#58f5ff}
+.team-role-badge.role-admin{--role-color:#ff4c67}
+.team-role-badge.role-boss{--role-color:#f6c94a}
+.team-role-badge.role-moderador{--role-color:#5aa7ff}
+.team-role-badge.role-staff{--role-color:#ff8a3d}
+.team-role-badge.role-streamer{--role-color:#ff4fd8}
+.team-role-badge.role-vip{--role-color:#ffd85a}
+.team-role-badge.role-apoiador{--role-color:#73ff18}
+.team-role-badge.role-membro{--role-color:#f1eee5}
+.team-roster-copy .team-role-badges{max-width:100%;overflow:hidden}
+.team-roster-copy .team-role-badge{font-size:10px;min-height:20px;padding:3px 7px}
+.team-profile-rich-role{display:block;margin:5px 0 10px}
+@media(max-width:560px){.team-role-badges.is-compact{gap:4px}.team-roster-copy .team-role-badge{font-size:9px;padding:3px 6px;min-height:18px}.team-role-badges{gap:5px}}

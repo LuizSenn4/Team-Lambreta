@@ -229,11 +229,42 @@
     refreshRichEditor(id,value??'');
   }
 
+  const TEAM_ROLE_ORDER=['DEV','ADMIN','BOSS','MODERADOR','STAFF','STREAMER','VIP','APOIADOR','MEMBRO'];
+
+  function parseTeamRoles(value=''){
+    const parts=String(value||'')
+      .split(/[|,;/]+/)
+      .map(item=>item.trim().toUpperCase())
+      .filter(Boolean);
+    const unique=[...new Set(parts.filter(role=>TEAM_ROLE_ORDER.includes(role)))];
+    return unique.length?unique:['MEMBRO'];
+  }
+
+  function selectedTeamRoles(){
+    const checked=[...document.querySelectorAll('#teamMemberRolePicker input[type="checkbox"]:checked')]
+      .map(input=>String(input.value||'').trim().toUpperCase())
+      .filter(role=>TEAM_ROLE_ORDER.includes(role));
+    const unique=[...new Set(checked)];
+    if(unique.length>1) return unique.filter(role=>role!=='MEMBRO');
+    return unique.length?unique:['MEMBRO'];
+  }
+
+  function setSelectedTeamRoles(value='MEMBRO'){
+    const wanted=new Set(parseTeamRoles(value));
+    document.querySelectorAll('#teamMemberRolePicker input[type="checkbox"]').forEach(input=>{
+      input.checked=wanted.has(String(input.value||'').toUpperCase());
+    });
+  }
+
+  function serialiseTeamRoles(){
+    return selectedTeamRoles().join('|');
+  }
+
   function reset(){
     $('teamMemberForm')?.reset();
     setValue('teamMemberId');
     setValue('teamMemberOrder',100);
-    setValue('teamMemberRole','MEMBRO');
+    setSelectedTeamRoles('MEMBRO');
     setSocialCount(1);
     $('teamMemberPublished').checked=true;
     $('teamMemberFeatured').checked=false;
@@ -258,7 +289,7 @@
       setValue('teamMemberName',row.name);
       setValue('teamMemberNickname',row.nickname);
       setValue('teamMemberAge',row.age);
-      setValue('teamMemberRole',String(row.role||'MEMBRO').toUpperCase());
+      setSelectedTeamRoles(row.role||'MEMBRO');
       setValue('teamMemberGroup',row.member_group||'Gamers');
       setValue('teamMemberCountry',row.country);
       setValue('teamMemberMainGame',row.main_game);
@@ -308,7 +339,7 @@
       name:$('teamMemberName').value.trim(),
       nickname:$('teamMemberNickname').value.trim()||null,
       age:ageValue?Number(ageValue):null,
-      role:String($('teamMemberRole').value||'MEMBRO').trim().toUpperCase(),
+      role:serialiseTeamRoles(),
       member_group:$('teamMemberGroup').value,
       country:$('teamMemberCountry').value.trim()||null,
       main_game:$('teamMemberMainGame').value.trim()||null,
@@ -407,7 +438,7 @@
             : `<span>${esc((row.nickname||row.name||'M').charAt(0).toUpperCase())}</span>`}
           <div>
             <strong>${esc(row.nickname||row.name)}</strong>
-            <small>${esc(row.role||'Membro')} • ${esc(row.favorite_mode||row.member_group||'Team')}</small>
+            <small>${esc(parseTeamRoles(row.role||'MEMBRO').join(' · '))} • ${esc(row.favorite_mode||row.member_group||'Team')}</small>
           </div>
         </div>
         <div class="streamer-admin-flags">
@@ -545,6 +576,17 @@
   $('refreshTeamMembersBtn')?.addEventListener('click',load);
   $('teamMemberForm')?.addEventListener('submit',save);
   document.querySelectorAll('input[name="teamSocialCount"]')?.forEach(radio=>radio.addEventListener('change',()=>renderSocialSlots()));
+  document.querySelectorAll('#teamMemberRolePicker input[type="checkbox"]').forEach(input=>input.addEventListener('change',()=>{
+    const checked=[...document.querySelectorAll('#teamMemberRolePicker input[type="checkbox"]:checked')];
+    const member=document.querySelector('#teamMemberRolePicker input[value="MEMBRO"]');
+    if(input.value==='MEMBRO' && input.checked){
+      checked.filter(item=>item!==input).forEach(item=>item.checked=false);
+      return;
+    }
+    if(input.checked && member) member.checked=false;
+    const remaining=[...document.querySelectorAll('#teamMemberRolePicker input[type="checkbox"]:checked')];
+    if(!remaining.length && member) member.checked=true;
+  }));
 
   $('teamMemberPhotoUrl')?.addEventListener('input',event=>{
     const value=event.target.value.trim();

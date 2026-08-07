@@ -43,6 +43,24 @@
     return div.textContent||div.innerText||'';
   }
 
+  const TEAM_ROLE_ORDER=['DEV','ADMIN','BOSS','MODERADOR','STAFF','STREAMER','VIP','APOIADOR','MEMBRO'];
+  const TEAM_ROLE_CLASS={
+    DEV:'dev', ADMIN:'admin', BOSS:'boss', MODERADOR:'moderador', STAFF:'staff',
+    STREAMER:'streamer', VIP:'vip', APOIADOR:'apoiador', MEMBRO:'membro'
+  };
+  function parseRoles(value=''){
+    const roles=String(plainText(value)||'')
+      .split(/[|,;/]+/)
+      .map(role=>role.trim().toUpperCase())
+      .filter(role=>TEAM_ROLE_ORDER.includes(role));
+    const unique=[...new Set(roles)];
+    return unique.length?unique:['MEMBRO'];
+  }
+  function rolesMarkup(value='',compact=false){
+    const roles=parseRoles(value);
+    return `<span class="team-role-badges${compact?' is-compact':''}">${roles.map(role=>`<span class="team-role-badge role-${TEAM_ROLE_CLASS[role]||'membro'}">${esc(role)}</span>`).join('')}</span>`;
+  }
+
   function avatar(row){
     const label=row.nickname||row.name||'L';
     return row.image_url?`<img src="${esc(row.image_url)}" alt="${esc(row.name||label)}" loading="lazy">`:`<span>${esc(label.charAt(0).toUpperCase())}</span>`;
@@ -64,7 +82,7 @@
     return `<button type="button" class="team-roster-card tone-${index%2===0?'green':'red'}" data-member-index="${index}" aria-label="Abrir perfil de ${esc(nickname)}">
       <span class="team-roster-accent"></span>
       <span class="team-roster-avatar">${avatar(row)}</span>
-      <span class="team-roster-copy"><strong class="${nameClass}">${esc(nickname)}</strong><small>${esc(plainText(row.role||'MEMBRO'))}</small><em><span aria-hidden="true">${flag}</span> ${code}</em></span>
+      <span class="team-roster-copy"><strong class="${nameClass}">${esc(nickname)}</strong>${rolesMarkup(row.role||'MEMBRO',true)}<em><span aria-hidden="true">${flag}</span> ${code}</em></span>
       <span class="team-roster-plus" aria-hidden="true">＋</span>
     </button>`;
   }
@@ -82,7 +100,7 @@
     const nickname=row.nickname||row.name||'Membro';
     const factMarkup=facts(row).map(([label,value])=>{const shown=label==='País'?(()=>{const [f,c]=countryInfo(value);return `<span class="team-country-value"><span>${f}</span><b>${c}</b></span>`})():esc(value);return `<div><small>${esc(label)}</small><strong>${shown}</strong></div>`}).join('');
     const linkMarkup=links(row).map(([label,url,type])=>`<a class="team-social-link is-${esc(type)}" href="${esc(url)}" target="_blank" rel="noopener">${esc(label)}</a>`).join('');
-    content.innerHTML=`<div class="team-esports-profile-photo">${avatar(row)}</div><div class="team-esports-profile-copy"><p class="tag">PERFIL OFICIAL</p><h2 id="teamProfileName">${esc(nickname)}</h2><strong class="team-profile-rich-role">${richText(row.role||'MEMBRO')}</strong>${factMarkup?`<div class="team-esports-facts">${factMarkup}</div>`:''}<div class="team-esports-bio team-profile-rich-bio">${richText(row.bio||'Perfil oficial do Team Lambreta.')}</div>${linkMarkup?`<div class="team-esports-links">${linkMarkup}</div>`:''}</div>`;
+    content.innerHTML=`<div class="team-esports-profile-photo">${avatar(row)}</div><div class="team-esports-profile-copy"><p class="tag">PERFIL OFICIAL</p><h2 id="teamProfileName">${esc(nickname)}</h2><div class="team-profile-rich-role">${rolesMarkup(row.role||'MEMBRO')}</div>${factMarkup?`<div class="team-esports-facts">${factMarkup}</div>`:''}<div class="team-esports-bio team-profile-rich-bio">${richText(row.bio||'Perfil oficial do Team Lambreta.')}</div>${linkMarkup?`<div class="team-esports-links">${linkMarkup}</div>`:''}</div>`;
     modal.hidden=false; document.body.classList.add('team-modal-open'); modal.querySelector('.team-esports-close')?.focus();
   }
   function closeModal(){const modal=document.getElementById('teamProfileModal'); if(!modal)return; modal.hidden=true; document.body.classList.remove('team-modal-open')}
