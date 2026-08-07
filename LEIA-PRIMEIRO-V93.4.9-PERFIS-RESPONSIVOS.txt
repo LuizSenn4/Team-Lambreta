@@ -1,0 +1,20 @@
+TEAM LAMBRETA V93.4.9
+
+ALTERAÇÕES
+- Adicionado botão "Excluir perfil" no painel administrativo do Team.
+- A exclusão é definitiva e remove o registo de public.team_members no Supabase.
+- Mantido "Arquivar" para esconder sem apagar.
+- Nomes dos cards agora reduzem automaticamente conforme o comprimento.
+- Corrigido corte inferior de letras como G, g, j, p e y.
+- Ajustado layout para telemóveis estreitos.
+
+TESTE
+1. Painel Admin > gestão dos membros/Team.
+2. Localize o perfil duplicado.
+3. Clique "Excluir perfil" e confirme.
+4. Abra a página Team e confirme que sobrou apenas um card.
+5. Teste no telefone: nomes longos devem aparecer menores e o G não deve ficar cortado.
+
+NOTA
+O projeto já possui política RLS para Admin/Admin Master poder apagar team_members.
+Não é necessário executar SQL novo para esta atualização se o SQL base do Team já foi instalado.

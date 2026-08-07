@@ -514,3 +514,15 @@ html.admin-pending body { visibility: hidden; }
   .tl-report-mute-duration{flex:1;min-width:150px}
   .tl-report-mute-control button{flex:1}
 }
+
+/* V93.4.9 — exclusão definitiva de perfil do Team */
+.team-delete-member{
+  border-color:rgba(255,23,54,.58)!important;
+  color:#ff7284!important;
+  background:rgba(255,23,54,.07)!important;
+}
+.team-delete-member:hover,.team-delete-member:focus-visible{
+  border-color:#ff1736!important;
+  color:#fff!important;
+  background:rgba(255,23,54,.16)!important;
+}

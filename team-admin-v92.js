@@ -365,6 +365,23 @@
     else load();
   }
 
+
+  async function removeMember(id){
+    const row=rows.find(item=>item.id===id);
+    const label=row?.nickname||row?.name||'este perfil';
+    if(!confirm(`REMOVER DEFINITIVAMENTE ${label}?\n\nEsta ação apaga o perfil da página e do Supabase e não pode ser desfeita.`)) return;
+    if(!(await isAdmin())) return;
+
+    const {error}=await sb.from('team_members').delete().eq('id',id);
+    if(error){
+      alert(error.message);
+      return;
+    }
+
+    feedback(`Perfil ${label} removido definitivamente.`);
+    await load();
+  }
+
   function render(){
     const container=$('teamMembersCloudList');
     if(!container) return;
@@ -395,6 +412,7 @@
           ${row.is_archived
             ? `<button data-restore="${row.id}">Restaurar</button>`
             : `<button data-archive="${row.id}">Arquivar</button>`}
+          <button class="team-delete-member" data-delete="${row.id}">Excluir perfil</button>
         </div>
       </article>
     `).join('');
@@ -407,6 +425,9 @@
     });
     container.querySelectorAll('[data-restore]').forEach(button=>{
       button.onclick=()=>archive(button.dataset.restore,false);
+    });
+    container.querySelectorAll('[data-delete]').forEach(button=>{
+      button.onclick=()=>removeMember(button.dataset.delete);
     });
     bindMemberSorting(container);
   }

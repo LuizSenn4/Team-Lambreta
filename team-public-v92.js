@@ -60,10 +60,11 @@
   }
   function compactCard(row,index){
     const nickname=row.nickname||row.name||'Membro'; const [flag,code]=countryInfo(row.country);
+    const nameClass=nickname.length>=18?'is-very-long':nickname.length>=13?'is-long':'';
     return `<button type="button" class="team-roster-card tone-${index%2===0?'green':'red'}" data-member-index="${index}" aria-label="Abrir perfil de ${esc(nickname)}">
       <span class="team-roster-accent"></span>
       <span class="team-roster-avatar">${avatar(row)}</span>
-      <span class="team-roster-copy"><strong>${esc(nickname)}</strong><small>${esc(plainText(row.role||'MEMBRO'))}</small><em><span aria-hidden="true">${flag}</span> ${code}</em></span>
+      <span class="team-roster-copy"><strong class="${nameClass}">${esc(nickname)}</strong><small>${esc(plainText(row.role||'MEMBRO'))}</small><em><span aria-hidden="true">${flag}</span> ${code}</em></span>
       <span class="team-roster-plus" aria-hidden="true">＋</span>
     </button>`;
   }
