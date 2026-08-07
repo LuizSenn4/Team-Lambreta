@@ -9477,3 +9477,36 @@ html.tl-modal-lock,html.tl-modal-lock body{overflow:hidden!important}
     line-height:1!important;
   }
 }
+
+/* V93.5.6 — hero superior preenchendo melhor toda a box */
+.home-page .hero-v22.hero-v22--banner-only{
+  min-height:clamp(340px,42vw,560px)!important;
+  align-items:stretch!important;
+}
+
+.home-page .hero-v22.hero-v22--banner-only > div,
+.home-page .hero-v22.hero-v22--banner-only > .hero-v22-visual--banner-only{
+  max-width:none!important;
+  width:100%!important;
+  height:100%!important;
+}
+
+.home-page .hero-v22.hero-v22--banner-only .hero-v22-visual--banner-only{
+  min-height:clamp(340px,42vw,560px)!important;
+}
+
+.home-page .hero-v22.hero-v22--banner-only .hero-v22-visual--banner-only img{
+  width:100%!important;
+  height:100%!important;
+  min-height:100%!important;
+  max-width:none!important;
+  object-fit:cover!important;
+  object-position:center center!important;
+}
+
+@media (max-width: 760px){
+  .home-page .hero-v22.hero-v22--banner-only,
+  .home-page .hero-v22.hero-v22--banner-only .hero-v22-visual--banner-only{
+    min-height:220px!important;
+  }
+}
