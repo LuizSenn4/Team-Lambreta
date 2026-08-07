@@ -905,6 +905,7 @@
     form.addEventListener('submit', async ev => {
       ev.preventDefault(); ev.stopImmediatePropagation();
       if (!session) return loginGoogle();
+      if (window.TLChatRequireTerms && !(await window.TLChatRequireTerms())) return;
       if (!(await ensureNickname())) return;
       const message=input?.value.trim();
       const nowMs=Date.now(); recentSendTimes=recentSendTimes.filter(t=>nowMs-t<10000); if(recentSendTimes.length>=5){ $('chatDelayInfo').textContent='Calma 😅 aguarda 30 segundos antes de continuar.'; setTimeout(()=>{ if($('chatDelayInfo')) $('chatDelayInfo').textContent=''; },30000); return; } if (!message) return; if (message.length > 240) { alert('A mensagem pode ter no máximo 240 caracteres.'); return; }
@@ -1091,13 +1092,13 @@
           <span><b>Data:</b> ${new Date(row.created_at).toLocaleString('pt-PT')}</span>
         </div>
         ${row.details ? `<p><b>Detalhes:</b> ${esc(row.details)}</p>` : ''}
-        <div class="pending-actions tl-report-actions">
+        ${row.status === 'pending' ? `<div class="pending-actions tl-report-actions">
           <button type="button" data-report-action="mute">Silenciar 15 min</button>
           <button type="button" data-report-action="delete">Apagar mensagem</button>
           <button type="button" class="danger" data-report-action="ban">Banir</button>
-          <button type="button" data-report-action="resolve">Resolver</button>
+          <button type="button" data-report-action="resolve">Advertir e resolver</button>
           <button type="button" data-report-action="dismiss">Ignorar</button>
-        </div>
+        </div>` : ''}
       </article>`).join('') : '<div class="empty-admin">Nenhuma denúncia recebida.</div>';
 
     target.querySelectorAll('[data-report-action]').forEach(button => {
@@ -1108,18 +1109,17 @@
         button.disabled = true;
         let error = null;
         if (action === 'mute') {
-          ({error} = await sb.rpc('moderate_user',{target_user_id:item.dataset.targetUserId,mute_minutes:15}));
+          ({error} = await sb.rpc('admin_apply_chat_report_action',{target_report_id:Number(item.dataset.reportId),moderation_action:'mute_15'}));
         } else if (action === 'delete') {
-          if (!confirm('Apagar esta mensagem denunciada?')) { button.disabled=false; return; }
-          ({error} = await sb.rpc('moderate_chat_message',{target_message_id:Number(item.dataset.messageId)}));
+          if (!confirm('Apagar esta mensagem e enviar um aviso administrativo ao autor?')) { button.disabled=false; return; }
+          ({error} = await sb.rpc('admin_apply_chat_report_action',{target_report_id:Number(item.dataset.reportId),moderation_action:'delete'}));
         } else if (action === 'ban') {
-          if (!confirm('Banir este utilizador do chat?')) { button.disabled=false; return; }
-          ({error} = await sb.rpc('set_chat_ban',{target_user_id:item.dataset.targetUserId,banned:true}));
-        } else if (action === 'resolve' || action === 'dismiss') {
-          ({error} = await sb.rpc('admin_resolve_chat_report',{
-            target_report_id:Number(item.dataset.reportId),
-            new_status:action === 'resolve' ? 'resolved' : 'dismissed'
-          }));
+          if (!confirm('Banir este utilizador e enviar o aviso obrigatório de banimento?')) { button.disabled=false; return; }
+          ({error} = await sb.rpc('admin_apply_chat_report_action',{target_report_id:Number(item.dataset.reportId),moderation_action:'ban'}));
+        } else if (action === 'resolve') {
+          ({error} = await sb.rpc('admin_apply_chat_report_action',{target_report_id:Number(item.dataset.reportId),moderation_action:'warn'}));
+        } else if (action === 'dismiss') {
+          ({error} = await sb.rpc('admin_apply_chat_report_action',{target_report_id:Number(item.dataset.reportId),moderation_action:'dismiss'}));
         }
         button.disabled = false;
         if (error) { alert(error.message); return; }

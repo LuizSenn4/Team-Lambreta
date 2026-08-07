@@ -9199,3 +9199,52 @@ html, body { width:100%; max-width:100%; overflow-x:hidden; }
 @media(max-width:760px){
   .tl-chat-report-card{padding:22px 18px;border-radius:18px}
 }
+
+/* V93.4.7 — regras obrigatórias + avisos administrativos */
+html.tl-modal-lock,html.tl-modal-lock body{overflow:hidden!important}
+.tl-mandatory-modal{position:fixed;inset:0;z-index:200000;display:grid;place-items:center;padding:18px;background:rgba(0,0,0,.88);backdrop-filter:blur(10px)}
+.tl-mandatory-modal[hidden]{display:none!important}
+.tl-mandatory-card{width:min(760px,100%);max-height:min(92vh,900px);display:flex;flex-direction:column;gap:14px;padding:clamp(20px,4vw,34px);border:1px solid rgba(217,164,65,.4);border-radius:24px;background:linear-gradient(180deg,#171510,#090a09);box-shadow:0 28px 90px rgba(0,0,0,.72),0 0 32px rgba(115,255,24,.06);color:#efe3c0}
+.tl-mandatory-kicker{font-size:10px;font-weight:900;letter-spacing:3px;color:#73ff18}
+.tl-mandatory-head h2,.tl-admin-notice-card h2{margin:2px 0 6px;font-size:clamp(28px,5vw,48px);line-height:1;color:#f6e6ae}
+.tl-mandatory-head p,.tl-admin-notice-card>p{margin:0;color:#c2b796;line-height:1.55}
+.tl-rules-scroll{min-height:220px;max-height:430px;overflow:auto;padding:8px 14px 8px 4px;scrollbar-width:thin;scrollbar-color:#73ff18 #181818}
+.tl-rules-item{padding:15px 16px;margin:0 0 10px;border:1px solid rgba(217,164,65,.16);border-radius:15px;background:rgba(255,255,255,.025)}
+.tl-rules-item h3{margin:0 0 7px;font-size:16px;color:#f4d98b}
+.tl-rules-item p{margin:0;color:#c9c0a6;line-height:1.58;font-size:14px}
+.tl-rules-final{border-color:rgba(115,255,24,.24);background:rgba(115,255,24,.035)}
+.tl-rules-end{text-align:center;padding:14px;color:#73ff18;font-weight:900;letter-spacing:1px}
+.tl-rules-progress{height:5px;border-radius:99px;background:#2b2a23;overflow:hidden}
+.tl-rules-progress span{display:block;width:0;height:100%;background:#73ff18;box-shadow:0 0 12px rgba(115,255,24,.7);transition:width .18s ease}
+.tl-rules-actions{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+.tl-rules-actions button,.tl-rules-actions a{padding:9px 14px;border:1px solid rgba(217,164,65,.3);border-radius:10px;background:#17150f;color:#f0d993;text-decoration:none;font-weight:800;cursor:pointer}
+.tl-rules-check{display:flex;align-items:flex-start;gap:10px;padding:13px 14px;border:1px solid rgba(115,255,24,.24);border-radius:13px;background:rgba(115,255,24,.04);font-size:13px;line-height:1.45}
+.tl-rules-check.is-locked{opacity:.48}
+.tl-rules-check input{margin-top:2px;accent-color:#73ff18;transform:scale(1.12)}
+.tl-rules-accept{width:100%;padding:14px 18px;border:1px solid rgba(115,255,24,.55);border-radius:13px;background:linear-gradient(180deg,#234713,#13240d);color:#efffdc;font-weight:950;cursor:pointer;box-shadow:0 0 20px rgba(115,255,24,.08)}
+.tl-rules-accept:disabled{opacity:.38;cursor:not-allowed;box-shadow:none}
+.tl-rules-feedback{min-height:18px;margin:0!important;color:#ff6e7f!important;font-size:12px}
+.tl-admin-notice-card{width:min(650px,100%);border-color:rgba(255,57,78,.48);box-shadow:0 28px 90px rgba(0,0,0,.78),0 0 35px rgba(255,40,67,.12)}
+.tl-admin-notice-icon{width:52px;height:52px;display:grid;place-items:center;border:1px solid #ff4058;border-radius:50%;background:#341015;color:#ff5268;font-size:32px;font-weight:1000;box-shadow:0 0 24px rgba(255,64,88,.2)}
+.tl-admin-notice-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.tl-admin-notice-grid>div{padding:12px;border:1px solid rgba(217,164,65,.18);border-radius:12px;background:#0d0d0b}
+.tl-admin-notice-grid span,.tl-offending-message-wrap>span{display:block;margin-bottom:5px;color:#8f876f;font-size:10px;font-weight:900;text-transform:uppercase;letter-spacing:1.4px}
+.tl-admin-notice-grid strong{color:#ead99f;font-size:13px}
+.tl-offending-message-wrap{padding:14px;border:1px solid rgba(255,64,88,.48);border-radius:14px;background:linear-gradient(135deg,rgba(255,35,62,.11),rgba(0,0,0,.45))}
+.tl-offending-message-wrap blockquote{margin:5px 0 0;padding:12px 14px;border-left:3px solid #ff4058;border-radius:8px;background:#070707;color:#fff1e4;font-size:16px;line-height:1.5;overflow-wrap:anywhere}
+.tl-admin-notice-note{padding:10px 12px;border-radius:10px;background:rgba(217,164,65,.08);color:#d7c392!important;font-size:13px}
+.tl-admin-notice-rules a{color:#73ff18}
+
+/* Página Regras */
+.rules-page-shell{width:min(1180px,calc(100% - 28px));margin:0 auto;padding:42px 0 70px}
+.rules-hero{text-align:center;margin-bottom:28px}
+.rules-hero h1{margin:8px 0;color:#f3dea0;font-size:clamp(42px,7vw,76px)}
+.rules-hero p{max-width:780px;margin:0 auto;color:#aea48d;line-height:1.7}
+.rules-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+.rules-card{padding:22px;border:1px solid rgba(217,164,65,.19);border-radius:18px;background:linear-gradient(180deg,#151512,#0b0c0b)}
+.rules-card h2{margin:0 0 9px;color:#f2d67f;font-size:19px}
+.rules-card p{margin:0;color:#c7bea8;line-height:1.65}
+.rules-acceptance-note{margin-top:22px;padding:24px;border:1px solid rgba(115,255,24,.25);border-radius:20px;background:rgba(115,255,24,.035)}
+.rules-acceptance-note h2{margin-top:0;color:#73ff18}
+.rules-acceptance-note p{color:#cfc8b3;line-height:1.65}
+@media(max-width:760px){.tl-mandatory-modal{padding:8px}.tl-mandatory-card{max-height:96vh;padding:18px;border-radius:18px}.tl-rules-scroll{max-height:52vh}.tl-admin-notice-grid{grid-template-columns:1fr}.rules-grid{grid-template-columns:1fr}.rules-page-shell{padding-top:24px}}

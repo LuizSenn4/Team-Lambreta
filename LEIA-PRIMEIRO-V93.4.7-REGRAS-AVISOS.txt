@@ -1,0 +1,52 @@
+TEAM LAMBRETA V93.4.7 — REGRAS OBRIGATÓRIAS + AVISOS ADMINISTRATIVOS
+=====================================================================
+
+1) SUPABASE
+Antes de testar, executa no Supabase > SQL Editor:
+
+SUPABASE-COMUNIDADE-REGRAS-AVISOS-V93.4.7.sql
+
+Este SQL deve ser executado DEPOIS do SQL de denúncias V93.4.6.
+
+2) O QUE FOI ADICIONADO
+- Nova página regras.html.
+- Link "Regras" no menu Comunidade das páginas públicas.
+- Ao usar o chat pela primeira vez nesta versão:
+  * modal obrigatório, sem botão de fechar;
+  * é necessário ler/rolar até ao fim;
+  * botão "Avançar" pode acelerar a leitura por blocos;
+  * checkbox só desbloqueia no final;
+  * botão OK só funciona após marcar o checkbox;
+  * a aceitação fica guardada no Supabase por utilizador e versão.
+- O banco também bloqueia o envio do chat se os termos atuais não tiverem sido aceites.
+- Ações de moderação em denúncias agora geram avisos administrativos obrigatórios.
+- O utilizador vê o aviso ao entrar/atualizar uma página do site enquanto estiver autenticado.
+- O aviso mostra ação, motivo, data e a mensagem que originou a moderação em destaque.
+- O aviso não pode ser fechado sem clicar em "Entendi".
+
+3) PAINEL ADMIN > DENÚNCIAS DO CHAT
+- Silenciar 15 min: silencia + resolve + cria aviso obrigatório.
+- Apagar mensagem: remove a mensagem + resolve + cria aviso obrigatório.
+- Banir: bane + resolve + cria aviso obrigatório.
+- Advertir e resolver: cria advertência + resolve.
+- Ignorar: encerra a denúncia sem aviso para o denunciado.
+- Denúncias já resolvidas não exibem novamente os botões de ação.
+
+4) TESTE RÁPIDO
+A. Com uma conta membro, entra no chat.
+   Esperado: modal de regras obrigatório.
+B. Tenta marcar a checkbox antes de chegar ao fim.
+   Esperado: checkbox bloqueada.
+C. Rola ou usa "Avançar" até ao fim, marca a checkbox e confirma.
+   Esperado: chat libertado e aceitação guardada.
+D. Com outra conta, denuncia uma mensagem da conta membro.
+E. No Admin > Denúncias do chat, clica "Advertir e resolver" ou "Silenciar 15 min".
+F. Volta à conta punida e atualiza o site.
+   Esperado: aviso administrativo obrigatório com o comentário destacado.
+G. Clica "Entendi".
+   Esperado: aviso fica registado como reconhecido e não volta a aparecer.
+
+5) VERSÃO DOS TERMOS
+2026-08-07-v1
+
+Ao mudar regras importantes no futuro, muda a versão no SQL e em community-safety-v9347.js para exigir nova aceitação.
