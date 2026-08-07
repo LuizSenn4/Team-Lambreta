@@ -22,8 +22,28 @@
   iframe.src = `https://www.tiktok.com/embed/live/@${encodeURIComponent(username)}?autoplay=1&muted=1&controls=1&embed_domain=${encodeURIComponent(embedDomain)}`;
 
   let playerConfirmed = false;
+  let liveSessionHeartbeat = null;
+  let liveSessionCloseTimer = null;
+
+  const startLiveSessionHeartbeat = () => {
+    window.TeamLiveChatSession?.touch?.();
+    if (liveSessionHeartbeat) return;
+    liveSessionHeartbeat = setInterval(() => window.TeamLiveChatSession?.touch?.(), 60 * 1000);
+  };
+
+  const stopLiveSessionHeartbeat = () => {
+    if (!liveSessionHeartbeat) return;
+    clearInterval(liveSessionHeartbeat);
+    liveSessionHeartbeat = null;
+  };
+
   const showPlayer = () => {
     playerConfirmed = true;
+    if (liveSessionCloseTimer) {
+      clearTimeout(liveSessionCloseTimer);
+      liveSessionCloseTimer = null;
+    }
+    startLiveSessionHeartbeat();
     iframe.classList.add('is-ready');
     if (fallback) fallback.hidden = true;
   };
@@ -47,6 +67,15 @@
       if (state === 1 || state === 3) showPlayer();
     }
     if (message.type === 'onPlayerError') {
+      const wasLive = playerConfirmed;
+      stopLiveSessionHeartbeat();
+      if (wasLive && !liveSessionCloseTimer) {
+        // Dá 2 minutos para uma falha temporária recuperar antes de encerrar a sessão.
+        liveSessionCloseTimer = setTimeout(() => {
+          window.TeamLiveChatSession?.close?.();
+          liveSessionCloseTimer = null;
+        }, 2 * 60 * 1000);
+      }
       showFallback('Player indisponível aqui', 'O TikTok não liberou a reprodução incorporada neste domínio ou a live terminou.');
     }
   });

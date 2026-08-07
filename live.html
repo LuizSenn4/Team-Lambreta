@@ -73,13 +73,54 @@
   <script src="community-safety-v9347.js?v=93.4.7"></script>
   <script>
     (() => {
-      const user = (new URLSearchParams(location.search).get('user') || 'live').replace(/^@/, '').trim().toLowerCase();
-      const safeUser = user.replace(/[^a-z0-9._-]/g, '').slice(0, 50) || 'live';
-      window.TL_CHAT_ROOM = `live:${safeUser}`;
-      document.body.dataset.chatRoom = window.TL_CHAT_ROOM;
+      const SUPABASE_URL = 'https://ahiatqnokyhfpailobjx.supabase.co';
+      const SUPABASE_KEY = 'sb_publishable_qgwMhZPrB_3cFv3yCMcToA_9nDvHz-O';
+      const rawUser = (new URLSearchParams(location.search).get('user') || 'live').replace(/^@/, '').trim().toLowerCase();
+      const safeUser = rawUser.replace(/[^a-z0-9._-]/g, '').slice(0, 32) || 'live';
+
+      async function bootLiveChatRoom() {
+        let room = `live:${safeUser}`;
+        let sessionClient = null;
+        try {
+          sessionClient = window.supabase?.createClient(SUPABASE_URL, SUPABASE_KEY, {
+            auth: { persistSession: true, autoRefreshToken: true, detectSessionInUrl: false }
+          });
+          if (sessionClient) {
+            const { data, error } = await sessionClient.rpc('tl_claim_live_chat_session', { p_streamer: safeUser });
+            if (!error && typeof data === 'string' && data.trim()) room = data.trim().toLowerCase();
+            else if (error) console.warn('[Team Lambreta] Sessão da live em fallback:', error.message);
+          }
+        } catch (error) {
+          console.warn('[Team Lambreta] Não foi possível resolver a sessão da live:', error);
+        }
+
+        window.TL_LIVE_STREAMER = safeUser;
+        window.TL_CHAT_ROOM = room;
+        window.TL_LIVE_CHAT_ROOM = room;
+        document.body.dataset.chatRoom = room;
+
+        window.TeamLiveChatSession = {
+          room,
+          streamer: safeUser,
+          async touch() {
+            if (!sessionClient || !room.includes(':')) return;
+            try { await sessionClient.rpc('tl_touch_live_chat_session', { p_room: room }); } catch (_) {}
+          },
+          async close() {
+            if (!sessionClient || !room.includes(':')) return;
+            try { await sessionClient.rpc('tl_close_live_chat_session', { p_room: room }); } catch (_) {}
+          }
+        };
+
+        const script = document.createElement('script');
+        script.src = 'supabase-integration-v92.js?v=93.7.0';
+        script.defer = true;
+        document.body.appendChild(script);
+      }
+
+      bootLiveChatRoom();
     })();
   </script>
-  <script src="supabase-integration-v92.js?v=93.6.9"></script>
   <script src="buddy-presence-v95.js?v=92.39.4.5"></script><script src="buddy-global-notifications-v94.js?v=92.39.4.5"></script><script src="navigation-v93.js?v=93.0"></script>
   <script src="error-codes-v92.js"></script>
   <script src="site-i18n-v92.js"></script>

@@ -1,0 +1,25 @@
+TEAM LAMBRETA V93.7.0 — CHAT RESETADO A CADA LIVE
+
+1. Execute no Supabase SQL Editor:
+   SUPABASE-LIVE-SESSOES-V93.7.0.sql
+
+2. O SUPABASE-CHAT-SALAS-V93.6.9.sql precisa já ter sido executado.
+
+COMPORTAMENTO
+- Home continua usando: lobby
+- Cada streamer tem uma sessão temporária por transmissão.
+- Exemplo:
+  live:rv3113:1a2b3c...
+- Todos que assistem à MESMA transmissão entram na mesma sala.
+- Quando a live termina e o player reporta erro após ter tocado, a sessão é fechada.
+- Como segurança, uma sessão sem heartbeat por 5 minutos também expira.
+- A próxima transmissão cria uma sala nova e começa com chat vazio.
+
+TESTE
+1. Abra live.html?user=rv3113&name=INK31&game=Fortnite em dois navegadores.
+2. Envie uma mensagem em um deles: ela deve aparecer no outro.
+3. A Home não deve mostrar essa mensagem.
+4. Para simular o fim de uma sessão no SQL Editor:
+   select public.tl_close_live_chat_session('<room atual>');
+   (o room atual aparece em window.TL_LIVE_CHAT_ROOM no console do navegador.)
+5. Reabra a live: a nova sessão deve começar vazia.

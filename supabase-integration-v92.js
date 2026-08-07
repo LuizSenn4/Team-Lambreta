@@ -7,11 +7,11 @@
   if (!sb) { console.error('[Team Lambreta] Supabase SDK não carregou.'); return; }
   window.teamSupabase = sb;
 
-  // V93.6.9 — salas de chat isoladas.
+  // V93.7.0 — salas de chat isoladas e sessões temporárias por transmissão.
   // Home usa 'lobby'; páginas de live definem window.TL_CHAT_ROOM antes deste script.
   const CHAT_ROOM = (() => {
     const raw = String(window.TL_CHAT_ROOM || document.body?.dataset?.chatRoom || 'lobby').trim().toLowerCase();
-    const safe = raw.replace(/[^a-z0-9:_-]/g, '').slice(0, 80);
+    const safe = raw.replace(/[^a-z0-9:_-]/g, '').slice(0, 120);
     return safe || 'lobby';
   })();
   window.TeamLambretaChatRoom = CHAT_ROOM;
