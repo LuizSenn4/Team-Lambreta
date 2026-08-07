@@ -8941,11 +8941,11 @@ html, body { width:100%; max-width:100%; overflow-x:hidden; }
   width:100%!important;
   height:100%!important;
   min-height:100%;
-  max-width:100%;
-  object-fit:contain!important;
-  object-position:center;
+  max-width:none;
+  object-fit:cover!important;
+  object-position:center center;
   border-radius:inherit!important;
-  background:#050505;
+  background:transparent;
   box-shadow:none!important;
 }
 
