@@ -54,4 +54,25 @@
   setTimeout(() => {
     if (!playerConfirmed) showFallback('A verificar a live…', 'Se o player não abrir, o domínio pode ainda precisar de aprovação do TikTok para LIVE Embed.');
   }, 5000);
+
+  // Mantém a coluna do chat exatamente na altura do bloco da live no desktop.
+  const syncLiveChatHeight = () => {
+    const main = document.querySelector('.live-watch-main');
+    const chat = document.querySelector('.live-watch-chat');
+    if (!main || !chat) return;
+    if (window.matchMedia('(max-width: 1050px)').matches) {
+      chat.style.removeProperty('--live-panel-height');
+      return;
+    }
+    const height = Math.round(main.getBoundingClientRect().height);
+    if (height > 0) chat.style.setProperty('--live-panel-height', `${height}px`);
+  };
+
+  syncLiveChatHeight();
+  window.addEventListener('resize', syncLiveChatHeight, { passive: true });
+  if ('ResizeObserver' in window) {
+    const main = document.querySelector('.live-watch-main');
+    if (main) new ResizeObserver(syncLiveChatHeight).observe(main);
+  }
+
 })();
