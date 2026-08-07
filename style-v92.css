@@ -9545,3 +9545,36 @@ html.tl-modal-lock,html.tl-modal-lock body{overflow:hidden!important}
     aspect-ratio:4 / 3!important;
   }
 }
+
+/* V93.5.8 — hero superior com proporção igual ao slider inferior */
+.home-page .hero-v22.hero-v22--banner-only{
+  aspect-ratio: 21 / 9 !important;
+  min-height: 0 !important;
+  max-height: 360px !important;
+}
+
+.home-page .hero-v22.hero-v22--banner-only .hero-v22-visual--banner-only{
+  aspect-ratio: 21 / 9 !important;
+  min-height: 0 !important;
+  max-height: 360px !important;
+}
+
+.home-page .hero-v22.hero-v22--banner-only .hero-v22-visual--banner-only img{
+  object-fit: cover !important;
+  object-position: center center !important;
+}
+
+@media (max-width: 980px){
+  .home-page .hero-v22.hero-v22--banner-only,
+  .home-page .hero-v22.hero-v22--banner-only .hero-v22-visual--banner-only{
+    aspect-ratio: 16 / 9 !important;
+    max-height: none !important;
+  }
+}
+
+@media (max-width: 760px){
+  .home-page .hero-v22.hero-v22--banner-only,
+  .home-page .hero-v22.hero-v22--banner-only .hero-v22-visual--banner-only{
+    aspect-ratio: 4 / 3 !important;
+  }
+}
