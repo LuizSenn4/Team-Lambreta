@@ -9578,3 +9578,25 @@ html.tl-modal-lock,html.tl-modal-lock body{overflow:hidden!important}
     aspect-ratio: 4 / 3 !important;
   }
 }
+
+/* V93.5.9 — hero da Lambreta com proporção igual ao banner colorido */
+.home-page .hero-v22.hero-v22--banner-only,
+.home-page .hero-v22.hero-v22--banner-only .hero-v22-visual--banner-only{
+  aspect-ratio: 16 / 9 !important;
+  max-height: none !important;
+  min-height: 0 !important;
+}
+
+.home-page .hero-v22.hero-v22--banner-only .hero-v22-visual--banner-only img{
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover !important;
+  object-position: center center !important;
+}
+
+@media (max-width: 760px){
+  .home-page .hero-v22.hero-v22--banner-only,
+  .home-page .hero-v22.hero-v22--banner-only .hero-v22-visual--banner-only{
+    aspect-ratio: 4 / 3 !important;
+  }
+}
