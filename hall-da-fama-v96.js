@@ -1,7 +1,7 @@
 (() => {
   const URL='https://ahiatqnokyhfpailobjx.supabase.co';
   const KEY='sb_publishable_qgwMhZPrB_3cFv3yCMcToA_9nDvHz-O';
-  const sb=window.supabase?.createClient(URL,KEY);
+  const sb=window.teamSupabase || window.supabase?.createClient(URL,KEY);
   const rankingEl=document.getElementById('hallRankingList');
   const grid=document.getElementById('hallAchievementGrid');
   const modal=document.getElementById('hallModal');
@@ -103,4 +103,7 @@
   document.addEventListener('keydown',e=>{if(e.key==='Escape'&&modal&&!modal.hidden)closeModal();});
   document.getElementById('year')&&(document.getElementById('year').textContent=new Date().getFullYear());
   load();
+  window.addEventListener('focus',load);
+  document.addEventListener('visibilitychange',()=>{ if(!document.hidden) load(); });
+  setInterval(()=>{ if(!document.hidden) load(); },15000);
 })();

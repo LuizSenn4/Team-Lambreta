@@ -1,0 +1,16 @@
+V93.8.4 — FIX DO PROGRESSO BETA
+
+1. Rode no Supabase SQL Editor:
+   SUPABASE-PROGRESSO-RPC-V2-V93.8.4.sql
+
+2. Suba os arquivos do patch.
+
+3. Faça Ctrl+F5.
+
+TESTE:
+- criar 1 tópico => +20 XP e forum_topics +1
+- responder publicamente => +8 XP e forum_replies +1
+- dar like em tópico DE OUTRA PESSOA => o autor recebe +5 XP / +1 agradecimento
+- like no próprio tópico NÃO dá XP
+
+O Hall atualiza ao voltar para a aba e também a cada 15s.

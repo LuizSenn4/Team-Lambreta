@@ -2,7 +2,7 @@
   'use strict';
   const URL='https://ahiatqnokyhfpailobjx.supabase.co';
   const KEY='sb_publishable_qgwMhZPrB_3cFv3yCMcToA_9nDvHz-O';
-  const sb=window.supabase?.createClient(URL,KEY);
+  const sb=window.teamSupabase || window.supabase?.createClient(URL,KEY);
   if(!sb) return;
 
   let session=null;
@@ -24,7 +24,10 @@
   async function record(type,amount=1,key=null,metadata={}){
     if(!await getSession()) return null;
     try{
-      const {data,error}=await sb.rpc('tl_record_progress',{p_event_type:type,p_amount:amount,p_dedupe_key:key,p_metadata:metadata});
+      let {data,error}=await sb.rpc('tl_record_progress_v2',{p_event_type:type,p_amount:amount,p_dedupe_key:key,p_metadata:metadata});
+      if(error && /Could not find the function|PGRST202|schema cache/i.test(String(error.message||''))){
+        ({data,error}=await sb.rpc('tl_record_progress',{p_event_type:type,p_amount:amount,p_dedupe_key:key,p_metadata:metadata}));
+      }
       if(error) throw error;
       window.dispatchEvent(new CustomEvent('tl:progress',{detail:data}));
       return data;
@@ -33,7 +36,13 @@
 
   async function thank(targetUserId,topicKey){
     if(!targetUserId||!await getSession()) return false;
-    try{const {data,error}=await sb.rpc('tl_give_forum_thank',{p_target:targetUserId,p_topic_key:String(topicKey||'')}); if(error)throw error; return !!data;}catch(err){console.warn('[TL Progress] thank',err?.message||err);return false;}
+    try{
+      let {data,error}=await sb.rpc('tl_give_forum_thank_v2',{p_target:targetUserId,p_topic_key:String(topicKey||'')});
+      if(error && /Could not find the function|PGRST202|schema cache/i.test(String(error.message||''))){
+        ({data,error}=await sb.rpc('tl_give_forum_thank',{p_target:targetUserId,p_topic_key:String(topicKey||'')}));
+      }
+      if(error)throw error; return !!data;
+    }catch(err){console.warn('[TL Progress] thank',err?.message||err);return false;}
   }
 
   async function flush(){

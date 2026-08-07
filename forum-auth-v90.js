@@ -334,12 +334,13 @@
 
   function addReply(topic, privateReply) {
     const text = askText(privateReply ? 'Resposta privada para o autor:' : 'Resposta pública:');
-    if (!text) return false;
-    topic.replies.push({
+    if (!text) return null;
+    const reply = {
       id: makeId(), text, private: privateReply, author: currentName(), authorRole: roleOf(profile),
       authorLabel: isBoss() ? 'BOSS' : roleLabel(roleOf(profile)), userId: uid(), createdAt: now()
-    });
-    return true;
+    };
+    topic.replies.push(reply);
+    return reply;
   }
 
   function createDialog(id, className, markup) {
@@ -514,9 +515,13 @@
           return save(data, closing ? 'Tópico fechado.' : 'Tópico reaberto.');
         }
         if (action === 'reply' || action === 'private-reply') {
-          if (addReply(topic, action === 'private-reply')) {
+          const reply = addReply(topic, action === 'private-reply');
+          if (reply) {
             save(data, action === 'private-reply' ? 'Resposta privada enviada.' : 'Resposta publicada.');
-            if (action === 'reply') window.TeamProgress?.event?.('forum_reply', `reply:${topic.id}:${Date.now()}`, { topic: topic.id });
+            if (action === 'reply') {
+              window.TeamProgress?.event?.('forum_reply', `reply:${reply.id}`, { topic: topic.id, reply: reply.id })
+                .then(result => { if (!result) console.warn('[TL Progress] resposta não contabilizada'); });
+            }
           }
         }
       };
@@ -555,7 +560,8 @@
     }
 
     saveTeamData(data);
-    window.TeamProgress?.event?.('forum_topic', `topic:${topic.id}`, { topic: topic.id, category: topic.category });
+    window.TeamProgress?.event?.('forum_topic', `topic:${topic.id}`, { topic: topic.id, category: topic.category })
+      .then(result => { if (!result) console.warn('[TL Progress] tópico não contabilizado'); });
     $('topicTitle').value = '';
     $('topicDescription').value = '';
     renderRooms();
