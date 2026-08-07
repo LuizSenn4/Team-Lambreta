@@ -526,3 +526,58 @@ html.admin-pending body { visibility: hidden; }
   color:#fff!important;
   background:rgba(255,23,54,.16)!important;
 }
+
+/* V93.5.0 — Team: cargo é um campo simples; editor rico apenas no Sobre */
+#teamMemberRole{
+  display:block!important;
+  position:static!important;
+  width:100%!important;
+  height:auto!important;
+  opacity:1!important;
+  pointer-events:auto!important;
+  text-transform:uppercase;
+}
+
+#teamMemberRole + .team-rich-editor{
+  display:none!important;
+}
+
+.team-rich-source{
+  position:absolute!important;
+  width:1px!important;
+  height:1px!important;
+  opacity:0!important;
+  pointer-events:none!important;
+  overflow:hidden!important;
+}
+
+.team-rich-editor{
+  overflow:hidden;
+  border:1px solid rgba(217,164,65,.28);
+  border-radius:12px;
+  background:#090a0b;
+}
+
+.team-rich-toolbar{
+  display:flex;
+  flex-wrap:wrap;
+  gap:6px;
+  padding:8px;
+  border-bottom:1px solid rgba(217,164,65,.18);
+  background:#16171a;
+}
+
+.team-rich-toolbar select,
+.team-rich-toolbar button{
+  min-height:34px;
+}
+
+.team-rich-area{
+  min-height:130px;
+  padding:12px 13px;
+  color:#f4eee2;
+  font:16px/1.5 Inter,Arial,sans-serif;
+  outline:none;
+  overflow-wrap:anywhere;
+  background:#090a0b;
+}

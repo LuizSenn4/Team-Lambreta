@@ -170,7 +170,7 @@
     if(source&&editor) source.value=cleanRichHtml(editor.innerHTML);
   }
 
-  function syncAllRichEditors(){['teamMemberRole','teamMemberBio'].forEach(syncRichEditor)}
+  function syncAllRichEditors(){['teamMemberBio'].forEach(syncRichEditor)}
 
   function setupRichEditor(id,label){
     const source=$(id); if(!source||source.dataset.richReady==='1') return;
@@ -307,7 +307,10 @@
       name:$('teamMemberName').value.trim(),
       nickname:$('teamMemberNickname').value.trim()||null,
       age:ageValue?Number(ageValue):null,
-      role:$('teamMemberRole').value.trim()||null,
+      role:(()=>{
+        const value=$('teamMemberRole').value.trim();
+        return value ? value.toUpperCase() : null;
+      })(),
       member_group:$('teamMemberGroup').value,
       country:$('teamMemberCountry').value.trim()||null,
       main_game:$('teamMemberMainGame').value.trim()||null,
@@ -342,7 +345,13 @@
 
       if(result.error) throw result.error;
 
-      feedback('Perfil guardado na nuvem.');
+      const savedRole=String(result.data?.role||'').trim();
+      const expectedRole=String(row.role||'').trim();
+      if(savedRole !== expectedRole){
+        throw new Error(`O cargo não foi persistido corretamente. Esperado: ${expectedRole||'vazio'} / Salvo: ${savedRole||'vazio'}`);
+      }
+
+      feedback(`Perfil guardado na nuvem${savedRole?` • Cargo: ${savedRole}`:''}.`);
       await load();
       setTimeout(closeEditor,450);
     }catch(error){
@@ -573,7 +582,6 @@
   const refresh=()=>{clearTimeout(timer);timer=setTimeout(load,120);};
 
   async function boot(){
-    setupRichEditor('teamMemberRole','Função ou cargo');
     setupRichEditor('teamMemberBio','Sobre');
     renderSocialSlots();
     await load();
