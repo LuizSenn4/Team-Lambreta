@@ -1,90 +1,71 @@
 (() => {
-  const ranking = [
-    { rank: 2, name: 'Raluxsz', role: 'ADMIN', roleClass: 'admin', level: 24, xp: 74, avatar: 'R' },
-    { rank: 3, name: 'LariLambs', role: 'STAFF', roleClass: 'staff', level: 19, xp: 61, avatar: 'L' },
-    { rank: 4, name: 'ModRafa', role: 'MOD', roleClass: 'mod', level: 17, xp: 48, avatar: 'M' },
-    { rank: 5, name: 'LambretaBR', role: 'VIP III', roleClass: 'vip', level: 15, xp: 39, avatar: 'L' }
-  ];
+  const URL='https://ahiatqnokyhfpailobjx.supabase.co';
+  const KEY='sb_publishable_qgwMhZPrB_3cFv3yCMcToA_9nDvHz-O';
+  const sb=window.supabase?.createClient(URL,KEY);
+  const rankingEl=document.getElementById('hallRankingList');
+  const grid=document.getElementById('hallAchievementGrid');
+  const modal=document.getElementById('hallModal');
+  let me=null, progress=[], profiles=[];
 
-  const achievements = [
-    { category: 'activity', icon: '⚡', title: 'Motor Ligado', description: 'Complete 10 horas de atividade real no site.', progress: 80, current: '8/10h' },
-    { category: 'activity', icon: '☕', title: 'AFK Profissional', description: 'Acumule 30 minutos AFK e volte antes de ser dado como offline.', progress: 53, current: '16/30m' },
-    { category: 'community', icon: '✎', title: 'Primeira Palavra', description: 'Publique o seu primeiro tópico no fórum.', progress: 100, current: 'Concluída' },
-    { category: 'community', icon: '♥', title: 'Família Reconhece', description: 'Receba 25 agradecimentos em respostas e tópicos.', progress: 44, current: '11/25' },
-    { category: 'events', icon: '⚑', title: 'Presença Confirmada', description: 'Participe de 5 eventos oficiais do Team.', progress: 60, current: '3/5' },
-    { category: 'events', icon: '♛', title: 'No Pódio', description: 'Termine um evento entre os três primeiros colocados.', progress: 0, current: 'Bloqueada' },
-    { category: 'special', icon: '★', title: 'Hall da Fama', description: 'Conquista especial entregue pela administração a quem marcou a história.', progress: 0, current: 'Especial' },
-    { category: 'special', icon: '∞', title: 'Desde o Início', description: 'Selo destinado aos primeiros membros e apoiadores do projeto.', progress: 100, current: 'Concluída' }
-  ];
+  const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  const name=p=>p?.game_nickname||p?.full_name||'Membro';
+  const roleClass=r=>String(r||'member').toLowerCase().replace(/[^a-z0-9_-]/g,'');
+  const pct=(v,max)=>Math.max(0,Math.min(100,Math.round((Number(v||0)/max)*100)));
+  const hours=s=>Math.floor(Number(s||0)/3600);
 
-  const rankingEl = document.getElementById('hallRankingList');
-  const grid = document.getElementById('hallAchievementGrid');
-  const modal = document.getElementById('hallModal');
-
-  function renderRanking() {
-    if (!rankingEl) return;
-    rankingEl.innerHTML = ranking.map((item) => `
-      <button type="button" class="hall-ranking-row" data-profile-name="${item.name}">
-        <span class="hall-ranking-number">${String(item.rank).padStart(2, '0')}</span>
-        <span class="hall-avatar">${item.avatar}</span>
-        <span class="hall-ranking-user"><strong>${item.name}</strong><small>Nível ${item.level}</small></span>
-        <span class="hall-role hall-role-${item.roleClass}">${item.role}</span>
-        <span class="hall-mini-xp"><i style="--progress:${item.xp}%"></i></span>
-      </button>
-    `).join('');
+  function achievementList(p={}){
+    return [
+      {category:'activity',icon:'⚡',title:'Motor Ligado',description:'Complete 10 horas de atividade real no site.',progress:pct(p.active_seconds,36000),current:`${Math.min(hours(p.active_seconds),10)}/10h`},
+      {category:'activity',icon:'◉',title:'Presença Real',description:'Complete 60 minutos ativos sem depender de aba abandonada.',progress:pct(p.active_seconds,3600),current:`${Math.min(Math.floor((p.active_seconds||0)/60),60)}/60m`},
+      {category:'community',icon:'✎',title:'Primeira Palavra',description:'Publique o seu primeiro tópico no fórum.',progress:p.forum_topics?100:0,current:p.forum_topics?'Concluída':'0/1'},
+      {category:'community',icon:'↩',title:'Voz da Família',description:'Publique 20 respostas no fórum.',progress:pct(p.forum_replies,20),current:`${p.forum_replies||0}/20`},
+      {category:'community',icon:'♥',title:'Família Reconhece',description:'Receba 25 agradecimentos/likes em tópicos.',progress:pct(p.forum_thanks,25),current:`${p.forum_thanks||0}/25`},
+      {category:'events',icon:'◉',title:'Na Bancada',description:'Acompanhe 5 horas de live ativa pelo Team Lambreta.',progress:pct(p.live_seconds,18000),current:`${Math.min(hours(p.live_seconds),5)}/5h`},
+      {category:'events',icon:'⚑',title:'Presença Confirmada',description:'Registe presença em 5 eventos oficiais do Team.',progress:pct(p.event_participations,5),current:`${p.event_participations||0}/5`},
+      {category:'special',icon:'★',title:'Hall da Fama',description:'Conquista especial entregue pela administração a quem marcou a história.',progress:0,current:'Especial'}
+    ];
   }
 
-  function renderAchievements(filter = 'all') {
-    if (!grid) return;
-    const visible = achievements.filter((item) => filter === 'all' || item.category === filter);
-    grid.innerHTML = visible.map((item) => `
-      <button type="button" class="hall-achievement-card ${item.progress === 100 ? 'is-complete' : ''}" data-title="${item.title}" data-category="${item.category}" data-description="${item.description}" data-icon="${item.icon}">
-        <span class="hall-achievement-icon">${item.icon}</span>
-        <span class="hall-achievement-content"><small>${item.category}</small><strong>${item.title}</strong><p>${item.description}</p><span class="hall-achievement-progress"><i style="--progress:${item.progress}%"></i></span><em>${item.current}</em></span>
-      </button>
-    `).join('');
+  function renderRanking(){
+    if(!rankingEl)return;
+    const top=progress.slice(0,5);
+    rankingEl.innerHTML=top.length?top.map((p,i)=>{const pr=profiles.find(x=>x.id===p.user_id)||{};return `<button type="button" class="hall-ranking-row"><span class="hall-ranking-number">${String(i+1).padStart(2,'0')}</span><span class="hall-avatar">${esc(name(pr).charAt(0).toUpperCase())}</span><span class="hall-ranking-user"><strong>${esc(name(pr))}</strong><small>Nível ${p.level||1} · ${p.xp||0} XP</small></span><span class="hall-role hall-role-${roleClass(pr.role)}">${esc(String(pr.role||'MEMBRO').toUpperCase())}</span><span class="hall-mini-xp"><i style="--progress:${Math.round(((p.xp||0)%250)/250*100)}%"></i></span></button>`}).join(''):'<p class="hall-empty">O ranking começa assim que os membros acumularem XP.</p>';
   }
 
-  function openModal({ title, text, icon = '★', category = 'HALL DA FAMA' }) {
-    if (!modal) return;
-    document.getElementById('hallModalTitle').textContent = title;
-    document.getElementById('hallModalText').textContent = text;
-    document.getElementById('hallModalIcon').textContent = icon;
-    document.getElementById('hallModalCategory').textContent = category.toUpperCase();
-    modal.hidden = false;
-    requestAnimationFrame(() => modal.classList.add('is-open'));
+  function renderAchievements(filter='all'){
+    if(!grid)return;
+    const p=progress.find(x=>x.user_id===me?.id)||{};
+    const visible=achievementList(p).filter(x=>filter==='all'||x.category===filter);
+    grid.innerHTML=visible.map(item=>`<button type="button" class="hall-achievement-card ${item.progress===100?'is-complete':''}" data-title="${esc(item.title)}" data-category="${esc(item.category)}" data-description="${esc(item.description)}" data-icon="${esc(item.icon)}"><span class="hall-achievement-icon">${item.icon}</span><span class="hall-achievement-content"><small>${item.category}</small><strong>${item.title}</strong><p>${item.description}</p><span class="hall-achievement-progress"><i style="--progress:${item.progress}%"></i></span><em>${item.current}</em></span></button>`).join('');
   }
 
-  function closeModal() {
-    if (!modal) return;
-    modal.classList.remove('is-open');
-    window.setTimeout(() => { modal.hidden = true; }, 180);
+  function renderMetrics(){
+    const total=(key)=>progress.reduce((s,p)=>s+Number(p[key]||0),0);
+    const completed=progress.reduce((s,p)=>s+achievementList(p).filter(a=>a.progress===100).length,0);
+    document.getElementById('hallActiveHours')&&(document.getElementById('hallActiveHours').textContent=hours(total('active_seconds')));
+    document.getElementById('hallAchievementTotal')&&(document.getElementById('hallAchievementTotal').textContent=completed);
+    document.getElementById('hallEventTotal')&&(document.getElementById('hallEventTotal').textContent=total('event_participations'));
+    document.getElementById('hallAfkTotal')&&(document.getElementById('hallAfkTotal').textContent=hours(total('live_seconds')));
+    const labels=document.querySelectorAll('.hall-metrics small'); if(labels[3]) labels[3].textContent='Horas de live';
   }
 
-  document.getElementById('hallFilters')?.addEventListener('click', (event) => {
-    const button = event.target.closest('[data-filter]');
-    if (!button) return;
-    document.querySelectorAll('#hallFilters [data-filter]').forEach((item) => item.classList.toggle('is-active', item === button));
-    renderAchievements(button.dataset.filter);
-  });
+  function openModal({title,text,icon='★',category='HALL DA FAMA'}){if(!modal)return;document.getElementById('hallModalTitle').textContent=title;document.getElementById('hallModalText').textContent=text;document.getElementById('hallModalIcon').textContent=icon;document.getElementById('hallModalCategory').textContent=category.toUpperCase();modal.hidden=false;requestAnimationFrame(()=>modal.classList.add('is-open'));}
+  function closeModal(){if(!modal)return;modal.classList.remove('is-open');setTimeout(()=>modal.hidden=true,180);}
 
-  grid?.addEventListener('click', (event) => {
-    const card = event.target.closest('.hall-achievement-card');
-    if (!card) return;
-    openModal({ title: card.dataset.title, text: card.dataset.description, icon: card.dataset.icon, category: card.dataset.category });
-  });
+  async function load(){
+    if(!sb){renderAchievements();return;}
+    const sess=await sb.auth.getSession();
+    if(sess.data.session){const r=await sb.from('profiles').select('id,game_nickname,full_name,role,avatar_url').order('game_nickname');profiles=r.data||[];me=profiles.find(p=>p.id===sess.data.session.user.id)||null;}
+    const pr=await sb.from('community_progress').select('*').order('xp',{ascending:false}).order('active_seconds',{ascending:false}).limit(100);
+    progress=pr.data||[];
+    renderRanking();renderAchievements();renderMetrics();
+  }
 
-  document.getElementById('hallRankingInfo')?.addEventListener('click', () => openModal({
-    title: 'Ranking do Hall',
-    text: 'Nesta primeira versão o ranking é uma prévia visual. Depois ele será calculado com XP vindo do tempo ativo, fórum, eventos, lives e conquistas especiais, sem premiar apenas quem deixa a aba aberta.',
-    icon: '♛',
-    category: 'Ranking'
-  }));
-
-  modal?.addEventListener('click', (event) => { if (event.target.closest('[data-close-hall]')) closeModal(); });
-  document.addEventListener('keydown', (event) => { if (event.key === 'Escape' && modal && !modal.hidden) closeModal(); });
-  document.getElementById('year') && (document.getElementById('year').textContent = new Date().getFullYear());
-
-  renderRanking();
-  renderAchievements();
+  document.getElementById('hallFilters')?.addEventListener('click',e=>{const b=e.target.closest('[data-filter]');if(!b)return;document.querySelectorAll('#hallFilters [data-filter]').forEach(x=>x.classList.toggle('is-active',x===b));renderAchievements(b.dataset.filter);});
+  grid?.addEventListener('click',e=>{const c=e.target.closest('.hall-achievement-card');if(c)openModal({title:c.dataset.title,text:c.dataset.description,icon:c.dataset.icon,category:c.dataset.category});});
+  document.getElementById('hallRankingInfo')?.addEventListener('click',()=>openModal({title:'Ranking do Hall',text:'Beta ativa: XP vem de presença real, fórum, eventos e horas de live. Aba abandonada entra como AFK e não gera XP.',icon:'♛',category:'Ranking'}));
+  modal?.addEventListener('click',e=>{if(e.target.closest('[data-close-hall]'))closeModal();});
+  document.addEventListener('keydown',e=>{if(e.key==='Escape'&&modal&&!modal.hidden)closeModal();});
+  document.getElementById('year')&&(document.getElementById('year').textContent=new Date().getFullYear());
+  load();
 })();

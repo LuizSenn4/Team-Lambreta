@@ -44,6 +44,7 @@
       liveSessionCloseTimer = null;
     }
     startLiveSessionHeartbeat();
+    window.TeamProgress?.setLiveActive?.(true);
     iframe.classList.add('is-ready');
     if (fallback) fallback.hidden = true;
   };
@@ -69,6 +70,7 @@
     if (message.type === 'onPlayerError') {
       const wasLive = playerConfirmed;
       stopLiveSessionHeartbeat();
+      window.TeamProgress?.setLiveActive?.(false);
       if (wasLive && !liveSessionCloseTimer) {
         // Dá 2 minutos para uma falha temporária recuperar antes de encerrar a sessão.
         liveSessionCloseTimer = setTimeout(() => {

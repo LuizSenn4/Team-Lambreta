@@ -9592,3 +9592,10 @@ html.tl-modal-lock,html.tl-modal-lock body{overflow:hidden!important}
 .live-watch-body .sb-auth-bar{display:none!important}
 .streamer-live-preview{position:relative}.streamer-live-fallback{position:absolute;inset:0}.streamer-live-fallback[hidden]{display:none!important}.streamer-live-fallback>img{width:100%;height:100%;object-fit:cover}.streamer-live-probe-frame{position:absolute;inset:0;width:100%;height:100%;border:0;background:#000}.streamer-live-probe-frame[hidden]{display:none!important}.streamer-live-cta{display:flex!important;flex-wrap:wrap!important;gap:8px!important}@media(max-width:1050px){.live-watch-shell{grid-template-columns:1fr;align-items:start}.live-watch-chat{position:relative;top:auto;width:100%!important;height:620px!important;max-height:620px!important}}
 @media(max-width:620px){.live-watch-shell{width:calc(100% - 14px);padding-top:18px}.live-watch-heading{align-items:flex-start;flex-direction:column}.live-watch-info{grid-template-columns:1fr}.live-watch-player-card{border-radius:14px}.live-watch-chat{height:580px!important;max-height:580px!important;padding:12px!important}}
+
+/* V93.8.0 — progresso beta */
+.tl-event-checkin{margin-top:12px;padding:9px 13px;border:1px solid rgba(115,255,24,.35);border-radius:10px;background:rgba(115,255,24,.07);color:#73ff18;font-weight:900;cursor:pointer;transition:.18s ease}
+.tl-event-checkin:hover{transform:translateY(-1px);box-shadow:0 0 18px rgba(115,255,24,.12)}
+.tl-event-checkin:disabled{opacity:.7;cursor:default;transform:none}
+.hall-roadmap li.is-live{border-color:rgba(115,255,24,.22);background:rgba(115,255,24,.035)}
+.hall-roadmap li.is-live b{color:#73ff18}

@@ -1,0 +1,32 @@
+TEAM LAMBRETA V93.8.0 — PROGRESSO BETA
+
+1. Executar no Supabase SQL Editor:
+   SUPABASE-PROGRESSO-COMUNIDADE-V93.8.0.sql
+
+2. O que fica ativo:
+   - presença real com AFK após 2 minutos sem interação;
+   - AFK é contado, mas não gera XP;
+   - live só soma quando o player está confirmado, aba visível e utilizador ativo;
+   - tópico: +20 XP;
+   - resposta pública: +8 XP;
+   - like/agradecimento recebido: +5 XP (uma vez por pessoa/tópico);
+   - presença em evento: +50 XP (uma vez por evento);
+   - 1 nível a cada 250 XP;
+   - Hall passa a ler ranking e conquistas do Supabase.
+
+3. Anti-farm:
+   - browser não pode enviar mais de 120 segundos por chamada;
+   - dedupe server-side em tópicos, agradecimentos e eventos;
+   - aba escondida não conta presença;
+   - após 2 min sem interação entra em AFK;
+   - AFK não gera XP.
+
+4. Testes sugeridos antes do lançamento:
+   - ficar 2+ min sem interação e confirmar que XP para;
+   - criar tópico e resposta;
+   - dar like num tópico de outra pessoa;
+   - assistir live com player ativo;
+   - confirmar presença num evento;
+   - abrir Hall da Fama e conferir ranking/XP.
+
+NOTA: eventos ainda usam confirmação do próprio utilizador nesta fase beta. Para lançamento oficial, recomenda-se check-in com código/QR ou validação administrativa para impedir presença falsa.

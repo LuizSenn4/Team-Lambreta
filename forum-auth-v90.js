@@ -461,6 +461,9 @@
           const otherIndex = other.indexOf(me);
           if (otherIndex >= 0) other.splice(otherIndex, 1);
           own.push(me);
+          if (button.dataset.reaction === 'like' && topic.userId && topic.userId !== me) {
+            window.TeamProgress?.thank?.(topic.userId, topic.id);
+          }
         }
         save(data);
       };
@@ -513,6 +516,7 @@
         if (action === 'reply' || action === 'private-reply') {
           if (addReply(topic, action === 'private-reply')) {
             save(data, action === 'private-reply' ? 'Resposta privada enviada.' : 'Resposta publicada.');
+            if (action === 'reply') window.TeamProgress?.event?.('forum_reply', `reply:${topic.id}:${Date.now()}`, { topic: topic.id });
           }
         }
       };
@@ -551,6 +555,7 @@
     }
 
     saveTeamData(data);
+    window.TeamProgress?.event?.('forum_topic', `topic:${topic.id}`, { topic: topic.id, category: topic.category });
     $('topicTitle').value = '';
     $('topicDescription').value = '';
     renderRooms();

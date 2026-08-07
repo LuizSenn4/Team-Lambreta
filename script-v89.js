@@ -28,6 +28,7 @@ function renderCards(containerId,items,emptyTitle){
         <div>
           <h3>${item.title||"Evento sem título"}</h3>
           <p>${item.description||"Sem descrição"}</p>
+          <button type="button" class="tl-event-checkin" data-tl-event-key="${encodeURIComponent((item.title||'evento')+'|'+(item.date||index))}">CONFIRMAR PRESENÇA</button>
         </div>
       </article>
     `).join("");
