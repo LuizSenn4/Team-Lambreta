@@ -8819,60 +8819,6 @@ html, body { width:100%; max-width:100%; overflow-x:hidden; }
 }
 
 
-/* V93.3.1 — hero da home preenchendo toda a box, sem distância dupla */
-.home-page .hero-v22.hero-v22--banner-only{
-  grid-template-columns:1fr!important;
-  min-height:auto;
-  padding:0;
-  gap:0;
-  overflow:hidden;
-}
-
-.home-page .hero-v22.hero-v22--banner-only::before{
-  content:none;
-}
-
-.home-page .hero-v22.hero-v22--banner-only .hero-v22-visual--banner-only{
-  position:relative;
-  z-index:2;
-  display:flex;
-  align-items:stretch;
-  justify-content:stretch;
-  width:100%;
-  min-height:0;
-  padding:0;
-  margin:0;
-  border:0;
-  border-radius:inherit;
-  background:transparent;
-  box-shadow:none;
-  overflow:hidden;
-}
-
-.home-page .hero-v22.hero-v22--banner-only .hero-v22-visual--banner-only::before{
-  content:none;
-}
-
-.home-page .hero-v22.hero-v22--banner-only .hero-v22-visual--banner-only img{
-  display:block!important;
-  width:100%;
-  max-width:100%;
-  height:auto;
-  max-height:none;
-  object-fit:cover;
-  object-position:center;
-  border-radius:inherit;
-  filter:none;
-  animation:none;
-}
-
-@media (max-width: 760px){
-  .home-page .hero-v22.hero-v22--banner-only{
-    border-radius:22px;
-  }
-}
-
-
 /* V93.4 — slider visual na box inferior com banners alinhados */
 .lb-banner-final{
   min-height:332px;
@@ -9478,125 +9424,33 @@ html.tl-modal-lock,html.tl-modal-lock body{overflow:hidden!important}
   }
 }
 
-/* V93.5.6 — hero superior preenchendo melhor toda a box */
-.home-page .hero-v22.hero-v22--banner-only{
-  min-height:clamp(340px,42vw,560px)!important;
-  align-items:stretch!important;
+
+/* V93.6.0 — CLEAN: banner superior usa a mesma box do slider inferior */
+.lb-banner-static{
+  padding:0!important;
+  overflow:hidden!important;
+  background:#050505!important;
 }
 
-.home-page .hero-v22.hero-v22--banner-only > div,
-.home-page .hero-v22.hero-v22--banner-only > .hero-v22-visual--banner-only{
-  max-width:none!important;
-  width:100%!important;
-  height:100%!important;
+.lb-banner-static::before{
+  content:none!important;
 }
 
-.home-page .hero-v22.hero-v22--banner-only .hero-v22-visual--banner-only{
-  min-height:clamp(340px,42vw,560px)!important;
+.lb-banner-static>img{
+  position:absolute;
+  inset:0;
+  display:block;
+  width:100%;
+  height:100%;
+  max-width:none;
+  object-fit:cover;
+  object-position:center center;
+  border-radius:inherit;
+  background:#050505;
 }
 
-.home-page .hero-v22.hero-v22--banner-only .hero-v22-visual--banner-only img{
-  width:100%!important;
-  height:100%!important;
-  min-height:100%!important;
-  max-width:none!important;
-  object-fit:cover!important;
-  object-position:center center!important;
-}
-
-@media (max-width: 760px){
-  .home-page .hero-v22.hero-v22--banner-only,
-  .home-page .hero-v22.hero-v22--banner-only .hero-v22-visual--banner-only{
-    min-height:220px!important;
-  }
-}
-
-/* V93.5.7 — hero superior sem margem morta, preenchendo como foto cover */
-.home-page .hero-v22.hero-v22--banner-only{
-  min-height:0!important;
-  height:auto!important;
-  aspect-ratio:3 / 2!important;
-  align-items:stretch!important;
-}
-
-.home-page .hero-v22.hero-v22--banner-only > div,
-.home-page .hero-v22.hero-v22--banner-only > .hero-v22-visual--banner-only,
-.home-page .hero-v22.hero-v22--banner-only > .hero-v22-visual--banner-only img{
-  width:100%!important;
-  height:100%!important;
-}
-
-.home-page .hero-v22.hero-v22--banner-only .hero-v22-visual--banner-only{
-  min-height:0!important;
-  max-width:none!important;
-  aspect-ratio:inherit!important;
-}
-
-.home-page .hero-v22.hero-v22--banner-only .hero-v22-visual--banner-only img{
-  display:block!important;
-  max-width:none!important;
-  object-fit:cover!important;
-  object-position:center center!important;
-}
-
-@media (max-width: 760px){
-  .home-page .hero-v22.hero-v22--banner-only,
-  .home-page .hero-v22.hero-v22--banner-only .hero-v22-visual--banner-only{
-    aspect-ratio:4 / 3!important;
-  }
-}
-
-/* V93.5.8 — hero superior com proporção igual ao slider inferior */
-.home-page .hero-v22.hero-v22--banner-only{
-  aspect-ratio: 21 / 9 !important;
-  min-height: 0 !important;
-  max-height: 360px !important;
-}
-
-.home-page .hero-v22.hero-v22--banner-only .hero-v22-visual--banner-only{
-  aspect-ratio: 21 / 9 !important;
-  min-height: 0 !important;
-  max-height: 360px !important;
-}
-
-.home-page .hero-v22.hero-v22--banner-only .hero-v22-visual--banner-only img{
-  object-fit: cover !important;
-  object-position: center center !important;
-}
-
-@media (max-width: 980px){
-  .home-page .hero-v22.hero-v22--banner-only,
-  .home-page .hero-v22.hero-v22--banner-only .hero-v22-visual--banner-only{
-    aspect-ratio: 16 / 9 !important;
-    max-height: none !important;
-  }
-}
-
-@media (max-width: 760px){
-  .home-page .hero-v22.hero-v22--banner-only,
-  .home-page .hero-v22.hero-v22--banner-only .hero-v22-visual--banner-only{
-    aspect-ratio: 4 / 3 !important;
-  }
-}
-
-/* V93.5.9 — hero da Lambreta com proporção igual ao banner colorido */
-.home-page .hero-v22.hero-v22--banner-only,
-.home-page .hero-v22.hero-v22--banner-only .hero-v22-visual--banner-only{
-  aspect-ratio: 16 / 9 !important;
-  max-height: none !important;
-  min-height: 0 !important;
-}
-
-.home-page .hero-v22.hero-v22--banner-only .hero-v22-visual--banner-only img{
-  width: 100% !important;
-  height: 100% !important;
-  object-fit: cover !important;
-  object-position: center center !important;
-}
-
-@media (max-width: 760px){
-  .home-page .hero-v22.hero-v22--banner-only,
-  .home-page .hero-v22.hero-v22--banner-only .hero-v22-visual--banner-only{
-    aspect-ratio: 4 / 3 !important;
+@media(max-width:760px){
+  .lb-banner-static>img{
+    object-position:center center;
   }
 }
