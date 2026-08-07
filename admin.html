@@ -83,7 +83,19 @@
           <label>Nome de exibição *<input id="teamMemberName" required maxlength="70"></label>
           <label>Nickname<input id="teamMemberNickname" maxlength="16" placeholder="electricmagneti"></label>
           <label>Idade<input id="teamMemberAge" type="number" min="1" max="120"></label>
-          <label>Função / cargo<input id="teamMemberRole" maxlength="90" placeholder="DEV, Atacante, Suporte..."></label>
+          <label>Função / cargo
+            <select id="teamMemberRole" required>
+              <option value="MEMBRO">MEMBRO</option>
+              <option value="DEV">DEV</option>
+              <option value="ADMIN">ADMIN</option>
+              <option value="STAFF">STAFF</option>
+              <option value="BOSS">BOSS</option>
+              <option value="STREAMER">STREAMER</option>
+              <option value="MODERADOR">MODERADOR</option>
+              <option value="APOIADOR">APOIADOR</option>
+              <option value="VIP">VIP</option>
+            </select>
+          </label>
           <label>Área
             <select id="teamMemberGroup">
               <option value="Gamers">Gamers</option>
@@ -402,7 +414,7 @@
   <script src="admin.js"></script>
   <script src="supabase-integration-v92.js?v=93.4.8"></script>
   <script src="streamer-admin-v85.js"></script>
-  <script src="team-admin-v92.js"></script>
+  <script src="team-admin-v92.js?v=93.5.1"></script>
   <script src="error-codes-v92.js"></script>
   <script src="site-i18n-v92.js"></script>
 <script src="buddy-presence-v95.js?v=92.39.4.5"></script><script src="buddy-global-notifications-v94.js?v=92.39.4.5"></script></body>

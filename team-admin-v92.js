@@ -233,6 +233,7 @@
     $('teamMemberForm')?.reset();
     setValue('teamMemberId');
     setValue('teamMemberOrder',100);
+    setValue('teamMemberRole','MEMBRO');
     setSocialCount(1);
     $('teamMemberPublished').checked=true;
     $('teamMemberFeatured').checked=false;
@@ -257,7 +258,7 @@
       setValue('teamMemberName',row.name);
       setValue('teamMemberNickname',row.nickname);
       setValue('teamMemberAge',row.age);
-      setValue('teamMemberRole',row.role);
+      setValue('teamMemberRole',String(row.role||'MEMBRO').toUpperCase());
       setValue('teamMemberGroup',row.member_group||'Gamers');
       setValue('teamMemberCountry',row.country);
       setValue('teamMemberMainGame',row.main_game);
@@ -307,10 +308,7 @@
       name:$('teamMemberName').value.trim(),
       nickname:$('teamMemberNickname').value.trim()||null,
       age:ageValue?Number(ageValue):null,
-      role:(()=>{
-        const value=$('teamMemberRole').value.trim();
-        return value ? value.toUpperCase() : null;
-      })(),
+      role:String($('teamMemberRole').value||'MEMBRO').trim().toUpperCase(),
       member_group:$('teamMemberGroup').value,
       country:$('teamMemberCountry').value.trim()||null,
       main_game:$('teamMemberMainGame').value.trim()||null,

@@ -1,0 +1,17 @@
+TEAM LAMBRETA V93.5.1 — CARGOS POR SELETOR
+
+Correção:
+- O campo Função / cargo deixou de ser texto livre.
+- Agora é um seletor fixo com: DEV, MEMBRO, ADMIN, STAFF, BOSS, STREAMER, MODERADOR, APOIADOR e VIP.
+- Ao editar perfil, o cargo atual é carregado no seletor.
+- Ao guardar, o valor selecionado é persistido em team_members.role e confirmado pelo retorno do Supabase.
+- Novo perfil começa como MEMBRO.
+- Não requer SQL novo.
+
+Teste:
+1. Painel Admin > Team > editar ElectricMagnetis.
+2. Em Função / cargo selecione DEV.
+3. Clique Guardar perfil.
+4. Deve aparecer: Perfil guardado na nuvem • Cargo: DEV.
+5. Atualize a página Team (Ctrl+R).
+6. O card deve exibir DEV.
