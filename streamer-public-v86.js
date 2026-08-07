@@ -46,6 +46,35 @@
     ]
   };
 
+  function extractTikTokUsername(row = {}) {
+    const candidates = [row.tiktok_username, row.live_url, row.tiktok_url];
+    for (const candidate of candidates) {
+      const value = String(candidate || '').trim();
+      if (!value) continue;
+      if (!value.includes('/') && !value.includes('@')) return value.replace(/^@/, '');
+      const match = value.match(/tiktok\.com\/@([^/?#]+)/i) || value.match(/^@([^/?#]+)/);
+      if (match?.[1]) return decodeURIComponent(match[1]).replace(/^@/, '');
+    }
+    return '';
+  }
+
+  function normalizeStreamer(row = {}) {
+    const normalized = { ...row };
+    const tiktokUser = extractTikTokUsername(normalized);
+    if (!tiktokUser) return normalized;
+
+    const displayName = String(normalized.display_name || tiktokUser).trim();
+    const game = String(normalized.main_game || 'Fortnite').trim();
+
+    normalized.tiktok_username = tiktokUser;
+    normalized.live_platform = normalized.live_platform || 'tiktok';
+    normalized.tiktok_url = normalized.tiktok_url || `https://www.tiktok.com/@${tiktokUser}`;
+    normalized.live_url = normalized.live_url || `https://www.tiktok.com/@${tiktokUser}/live`;
+    normalized.live_page_url = `live.html?user=${encodeURIComponent(tiktokUser)}&name=${encodeURIComponent(displayName)}&game=${encodeURIComponent(game)}`;
+    normalized.auto_probe_live = true;
+    return normalized;
+  }
+
   function platformClass(name) {
     const value = String(name || '').toLowerCase();
     if (value.includes('tiktok')) return 'tiktok';
@@ -154,6 +183,7 @@
   }
 
   function buildCard(row, globalIndex) {
+    row = normalizeStreamer(row);
     const tone = row.is_static ? 'tone-red' : getTone(globalIndex);
     const socials = socialData(row);
     const live = Boolean(row.force_live || row.manual_live || row.auto_live);
@@ -235,7 +265,7 @@
               ${row.auto_probe_live && row.tiktok_username ? `<iframe class="streamer-live-probe-frame" data-live-frame hidden src="https://www.tiktok.com/embed/live/@${esc(row.tiktok_username)}?autoplay=1&muted=1&controls=1&embed_domain=${encodeURIComponent(location.hostname)}" allow="autoplay; fullscreen" allowfullscreen loading="lazy" title="TikTok LIVE de ${esc(row.display_name || 'streamer')}"></iframe>` : ''}
             </div>
             <div class="streamer-live-cta">
-              ${row.live_page_url ? `<a class="streamer-panel-button streamer-panel-button--watch" data-watch-here href="${esc(row.live_page_url)}" ${live ? '' : 'hidden'}>ASSISTIR AQUI</a>` : ''}
+              ${row.live_page_url ? `<a class="streamer-panel-button streamer-panel-button--watch" data-watch-here href="${esc(row.live_page_url)}">ASSISTIR AQUI</a>` : ''}
               ${watchUrl ? `<a class="streamer-panel-button streamer-panel-button--secondary" data-open-platform href="${esc(watchUrl)}" target="_blank" rel="noopener noreferrer">${watchLabel}</a>` : '<span class="streamer-panel-button streamer-panel-button--ghost">LIVE EM BREVE</span>'}
             </div>
           </section>
@@ -271,7 +301,7 @@
         if (fallback) fallback.hidden = false;
         if (label) label.textContent = 'LIVE';
         if (statusText) statusText.textContent = 'Veja quando estiver ao vivo';
-        if (watchHere) watchHere.hidden = true;
+        if (watchHere) watchHere.hidden = false;
       };
 
       const listener = event => {
