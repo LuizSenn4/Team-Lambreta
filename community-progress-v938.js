@@ -21,6 +21,27 @@
     const r=await sb.auth.getSession(); session=r.data.session||null; return session;
   }
 
+  async function forumProgress(type,metadata={}){
+    if(!await getSession()) return null;
+    const xpMap={forum_topic:20,forum_reply:8};
+    const xp=xpMap[type];
+    if(!xp) return null;
+    try{
+      const {data,error}=await sb.rpc('add_community_progress_v2',{
+        p_event_type:type,
+        p_xp:xp,
+        p_metadata:metadata||{}
+      });
+      if(error) throw error;
+      console.info('[TL Progress] contabilizado',type,data);
+      window.dispatchEvent(new CustomEvent('tl:progress',{detail:data}));
+      return data;
+    }catch(err){
+      console.error('[TL Progress] RPC add_community_progress_v2 falhou:',type,err?.message||err);
+      return null;
+    }
+  }
+
   async function record(type,amount=1,key=null,metadata={}){
     if(!await getSession()) return null;
     try{
@@ -37,12 +58,17 @@
   async function thank(targetUserId,topicKey){
     if(!targetUserId||!await getSession()) return false;
     try{
-      let {data,error}=await sb.rpc('tl_give_forum_thank_v2',{p_target:targetUserId,p_topic_key:String(topicKey||'')});
-      if(error && /Could not find the function|PGRST202|schema cache/i.test(String(error.message||''))){
-        ({data,error}=await sb.rpc('tl_give_forum_thank',{p_target:targetUserId,p_topic_key:String(topicKey||'')}));
-      }
-      if(error)throw error; return !!data;
-    }catch(err){console.warn('[TL Progress] thank',err?.message||err);return false;}
+      const {data,error}=await sb.rpc('give_community_forum_thank_v2',{
+        p_target:targetUserId,
+        p_topic_key:String(topicKey||'')
+      });
+      if(error) throw error;
+      console.info('[TL Progress] like contabilizado',data);
+      return !!data;
+    }catch(err){
+      console.error('[TL Progress] RPC give_community_forum_thank_v2 falhou:',err?.message||err);
+      return false;
+    }
   }
 
   async function flush(){
@@ -77,7 +103,10 @@
 
   window.TeamProgress={
     record,
-    event:(type,key=null,metadata={})=>record(type,1,key,metadata),
+    event:(type,key=null,metadata={})=>{
+      if(type==='forum_topic'||type==='forum_reply') return forumProgress(type,{...metadata,dedupe_key:key});
+      return record(type,1,key,metadata);
+    },
     thank,
     setLiveActive(value){livePlaying=!!value; if(livePlaying) touch();},
     touch,
