@@ -1,0 +1,8 @@
+V93.6.6 — Live page layout clean
+
+- Remove o auth bar flutuante (login/sair) somente da página live.html.
+- Mantém o estado de login dentro do próprio chat.
+- Chat desktop estica automaticamente para a mesma altura visual da coluna do player/info.
+- Mobile mantém player em cima e chat embaixo com altura própria.
+- TikTok LIVE Embed continua configurado para @rv3113, autoplay e muted.
+- O domínio ainda precisa ser aprovado pelo TikTok para LIVE Embed; isso não pode ser concedido via código do site.
