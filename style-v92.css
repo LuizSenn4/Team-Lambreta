@@ -8385,21 +8385,18 @@ html, body { width:100%; max-width:100%; overflow-x:hidden; }
    ============================================================ */
 .team-esports-page,
 .team-esports-page button,
+.team-esports-page .team-roster-copy,
+.team-esports-page .team-roster-copy *,
 .team-esports-profile,
-.team-esports-profile button{
-  font-family:Inter,Arial,sans-serif!important;
+.team-esports-profile button,
+.team-esports-profile .team-esports-profile-copy,
+.team-esports-profile .team-esports-profile-copy *{
+  font-family:var(--tl-font-official)!important;
 }
-.team-esports-hero h1,
-.team-roster-copy strong,
-.team-roster-copy small,
-.team-esports-profile-copy h2,
-.team-esports-profile-copy>strong{
-  font-family:Inter,Arial,sans-serif!important;
-}
-.team-roster-copy strong{font-weight:850!important;letter-spacing:-.5px!important}
-.team-roster-copy small{font-weight:900!important}
-.team-esports-profile-copy h2{font-weight:900!important;letter-spacing:-1.5px!important;line-height:.96!important}
-.team-esports-profile-copy>strong{font-weight:900!important;line-height:1.25!important}
+.team-roster-copy strong{font-weight:400!important;letter-spacing:.4px!important}
+.team-roster-copy small{font-weight:400!important}
+.team-esports-profile-copy h2{font-weight:400!important;letter-spacing:.5px!important;line-height:.96!important}
+.team-esports-profile-copy>strong{font-weight:400!important;line-height:1.25!important}
 
 @media(min-width:861px){
   .team-esports-profile{
@@ -9255,7 +9252,7 @@ html.tl-modal-lock,html.tl-modal-lock body{overflow:hidden!important}
 /* V93.5.2 — badges coloridas para múltiplos cargos no Team */
 .team-role-badges{display:flex;flex-wrap:wrap;gap:7px;align-items:center;margin:6px 0 4px}
 .team-role-badges.is-compact{gap:5px;margin:0}
-.team-role-badge{--role-color:#f1eee5;display:inline-flex;align-items:center;min-height:22px;padding:3px 8px;border:1px solid color-mix(in srgb,var(--role-color) 46%,transparent);border-radius:999px;background:color-mix(in srgb,var(--role-color) 8%,transparent);color:var(--role-color);font:900 11px/1 Inter,Arial,sans-serif;letter-spacing:.55px;text-transform:uppercase;text-shadow:0 0 9px color-mix(in srgb,var(--role-color) 48%,transparent);white-space:nowrap}
+.team-role-badge{--role-color:#f1eee5;display:inline-flex;align-items:center;min-height:22px;padding:3px 8px;border:1px solid color-mix(in srgb,var(--role-color) 46%,transparent);border-radius:999px;background:color-mix(in srgb,var(--role-color) 8%,transparent);color:var(--role-color);font:400 16px/1 var(--tl-font-official);letter-spacing:.8px;text-transform:uppercase;text-shadow:0 0 9px color-mix(in srgb,var(--role-color) 48%,transparent);white-space:nowrap}
 .team-role-badge.role-dev{--role-color:#58f5ff}
 .team-role-badge.role-admin{--role-color:#ff4c67}
 .team-role-badge.role-boss{--role-color:#f6c94a}

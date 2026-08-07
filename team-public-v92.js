@@ -8,6 +8,7 @@
   const pager=document.getElementById('teamRosterPager');
   const esc=value=>String(value??'').replace(/[&<>"']/g,char=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char]));
   let members=[]; let currentPage=1; const PAGE_SIZE=10;
+  const capitaliseFirst=value=>{const text=String(value??'').trimStart();return text?text.charAt(0).toLocaleUpperCase('pt-PT')+text.slice(1):''};
 
   function richText(value){
     const template=document.createElement('template');
@@ -62,7 +63,7 @@
   }
 
   function avatar(row){
-    const label=row.nickname||row.name||'L';
+    const label=capitaliseFirst(row.nickname||row.name||'L');
     return row.image_url?`<img src="${esc(row.image_url)}" alt="${esc(row.name||label)}" loading="lazy">`:`<span>${esc(label.charAt(0).toUpperCase())}</span>`;
   }
   function countryInfo(country){
@@ -77,7 +78,7 @@
     return [['Instagram',row.instagram_url,'instagram'],['TikTok',row.tiktok_url,'tiktok'],['Facebook',row.facebook_url,'facebook']].filter(([,u])=>u);
   }
   function compactCard(row,index){
-    const nickname=row.nickname||row.name||'Membro'; const [flag,code]=countryInfo(row.country);
+    const nickname=capitaliseFirst(row.nickname||row.name||'Membro'); const [flag,code]=countryInfo(row.country);
     const nameClass=nickname.length>=18?'is-very-long':nickname.length>=13?'is-long':'';
     return `<button type="button" class="team-roster-card tone-${index%2===0?'green':'red'}" data-member-index="${index}" aria-label="Abrir perfil de ${esc(nickname)}">
       <span class="team-roster-accent"></span>
@@ -97,7 +98,7 @@
   }
   function openModal(row){
     const modal=ensureModal(), content=modal.querySelector('#teamProfileContent');
-    const nickname=row.nickname||row.name||'Membro';
+    const nickname=capitaliseFirst(row.nickname||row.name||'Membro');
     const factMarkup=facts(row).map(([label,value])=>{const shown=label==='País'?(()=>{const [f,c]=countryInfo(value);return `<span class="team-country-value"><span>${f}</span><b>${c}</b></span>`})():esc(value);return `<div><small>${esc(label)}</small><strong>${shown}</strong></div>`}).join('');
     const linkMarkup=links(row).map(([label,url,type])=>`<a class="team-social-link is-${esc(type)}" href="${esc(url)}" target="_blank" rel="noopener">${esc(label)}</a>`).join('');
     content.innerHTML=`<div class="team-esports-profile-photo">${avatar(row)}</div><div class="team-esports-profile-copy"><p class="tag">PERFIL OFICIAL</p><h2 id="teamProfileName">${esc(nickname)}</h2><div class="team-profile-rich-role">${rolesMarkup(row.role||'MEMBRO')}</div>${factMarkup?`<div class="team-esports-facts">${factMarkup}</div>`:''}<div class="team-esports-bio team-profile-rich-bio">${richText(row.bio||'Perfil oficial do Team Lambreta.')}</div>${linkMarkup?`<div class="team-esports-links">${linkMarkup}</div>`:''}</div>`;
