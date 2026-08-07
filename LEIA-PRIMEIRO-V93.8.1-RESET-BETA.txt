@@ -1,0 +1,22 @@
+TEAM LAMBRETA V93.8.1 — RESET BETA
+
+1. Primeiro tenha rodado SUPABASE-PROGRESSO-COMUNIDADE-V93.8.0.sql.
+2. No Supabase > SQL Editor, rode UMA VEZ:
+   SUPABASE-RESET-PROGRESSO-BETA-V93.8.1.sql
+3. O script cria backup lógico dos contadores e eventos antes de zerar.
+4. Ele NÃO apaga perfis, mensagens, tópicos, streamers, chat, denúncias ou conteúdo.
+5. Depois atualize Hall da Fama / site com Ctrl+F5.
+
+Resultado esperado:
+- XP = 0
+- nível = 1
+- horas ativas = 0
+- live = 0
+- AFK = 0
+- tópicos/respostas/agradecimentos do progresso = 0
+- eventos = 0
+- conquistas do progresso = 0
+
+Os snapshots ficam nas tabelas:
+- community_progress_beta_backups
+- community_progress_events_beta_backups
