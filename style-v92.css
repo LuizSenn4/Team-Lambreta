@@ -8209,9 +8209,9 @@ html, body { width:100%; max-width:100%; overflow-x:hidden; }
 .team-esports-hero h1{
   margin:0!important;
   color:#efbd4c!important;
-  font-family:Arial Black,Impact,Arial,sans-serif!important;
+  font-family:"Road Rage",Impact,sans-serif!important;
   font-size:clamp(48px,5vw,82px)!important;
-  font-weight:950!important;
+  font-weight:400!important;
   line-height:1!important;
   letter-spacing:4px!important;
   text-transform:uppercase!important;
@@ -8389,7 +8389,6 @@ html, body { width:100%; max-width:100%; overflow-x:hidden; }
 .team-esports-profile button{
   font-family:Inter,Arial,sans-serif!important;
 }
-.team-esports-hero h1,
 .team-roster-copy strong,
 .team-roster-copy small,
 .team-esports-profile-copy h2,
