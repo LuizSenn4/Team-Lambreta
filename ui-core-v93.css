@@ -124,3 +124,14 @@ button,a{-webkit-tap-highlight-color:transparent}
   .site-header.tl-header-v88>.tl-global-tools{display:none!important}
   .tl-header-v88 .tl-main-nav{width:min(92vw,380px)!important;padding-top:76px!important}
 }
+
+/* V93.5.5 — exceção do modal Team: imagem deve preencher como capa */
+.team-esports-profile .team-esports-profile-photo img{
+  width:100%!important;
+  height:100%!important;
+  max-width:none!important;
+  max-height:none!important;
+  object-fit:cover!important;
+  object-position:center center!important;
+  background:#060706!important;
+}
