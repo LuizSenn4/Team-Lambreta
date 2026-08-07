@@ -9510,3 +9510,38 @@ html.tl-modal-lock,html.tl-modal-lock body{overflow:hidden!important}
     min-height:220px!important;
   }
 }
+
+/* V93.5.7 — hero superior sem margem morta, preenchendo como foto cover */
+.home-page .hero-v22.hero-v22--banner-only{
+  min-height:0!important;
+  height:auto!important;
+  aspect-ratio:3 / 2!important;
+  align-items:stretch!important;
+}
+
+.home-page .hero-v22.hero-v22--banner-only > div,
+.home-page .hero-v22.hero-v22--banner-only > .hero-v22-visual--banner-only,
+.home-page .hero-v22.hero-v22--banner-only > .hero-v22-visual--banner-only img{
+  width:100%!important;
+  height:100%!important;
+}
+
+.home-page .hero-v22.hero-v22--banner-only .hero-v22-visual--banner-only{
+  min-height:0!important;
+  max-width:none!important;
+  aspect-ratio:inherit!important;
+}
+
+.home-page .hero-v22.hero-v22--banner-only .hero-v22-visual--banner-only img{
+  display:block!important;
+  max-width:none!important;
+  object-fit:cover!important;
+  object-position:center center!important;
+}
+
+@media (max-width: 760px){
+  .home-page .hero-v22.hero-v22--banner-only,
+  .home-page .hero-v22.hero-v22--banner-only .hero-v22-visual--banner-only{
+    aspect-ratio:4 / 3!important;
+  }
+}
