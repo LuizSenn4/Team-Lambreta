@@ -3,7 +3,7 @@
   const username = (params.get('user') || 'rv3113').replace(/^@/, '').trim();
   const displayName = params.get('name') || username || 'Streamer';
   const queryGame = params.get('game') || 'Fortnite';
-  const queryMode = params.get('mode') || 'Battle Royale';
+  const queryModeRaw = params.get('mode') || 'Battle Royale [Zero Build]';
   const iframe = document.getElementById('tiktokLivePlayer');
   const fallback = document.getElementById('livePlayerFallback');
   const fallbackTitle = document.getElementById('liveFallbackTitle');
@@ -11,18 +11,13 @@
   const title = document.getElementById('liveWatchTitle');
   const gameBadge = document.getElementById('liveGameBadge');
   const modeBadge = document.getElementById('liveModeBadge');
+  const variantBadge = document.getElementById('liveVariantBadge');
   const gameSelectorBtn = document.getElementById('liveGameSelectorBtn');
   const modeSelectorBtn = document.getElementById('liveModeSelectorBtn');
+  const variantSelectorBtn = document.getElementById('liveVariantSelectorBtn');
   const gameMenu = document.getElementById('liveGameMenu');
   const modeMenu = document.getElementById('liveModeMenu');
-  const gameEditBtn = document.getElementById('liveGameEditBtn');
-  const configPopover = document.getElementById('liveConfigPopover');
-  const gameSelect = document.getElementById('liveGameSelect');
-  const modeSelect = document.getElementById('liveModeSelect');
-  const gameFeedback = document.getElementById('liveGameFeedback');
-  const catalogAdminActions = document.getElementById('liveCatalogAdminActions');
-  const registerGameBtn = document.getElementById('liveRegisterGameBtn');
-  const registerModeBtn = document.getElementById('liveRegisterModeBtn');
+  const variantMenu = document.getElementById('liveVariantMenu');
   const openTikTok = document.getElementById('liveOpenTikTok');
   if (!iframe) return;
 
@@ -32,19 +27,42 @@
     auth: { persistSession: true, autoRefreshToken: true, detectSessionInUrl: false }
   });
 
-  const FALLBACK_GAMES = ['Blitz', 'Battle Royale', 'Reload'];
+  const FALLBACK_GAMES = ['Fortnite'];
   const FALLBACK_MODES = {
-    'Blitz': ['Padrão'],
-    'Battle Royale': ['Build', 'Zero Build'],
-    'Reload': ['Padrão'],
-    'Fortnite': ['Battle Royale']
+    'Fortnite': ['Blitz', 'Battle Royale', 'Reload']
   };
+  const FALLBACK_VARIANTS = {
+    'Fortnite::Blitz': ['Padrão'],
+    'Fortnite::Battle Royale': ['Build', 'Zero Build'],
+    'Fortnite::Reload': ['Padrão']
+  };
+  const MODE_AS_GAMES = new Set(['blitz', 'battle royale', 'reload']);
 
+  function unique(values) {
+    return [...new Set((values || []).map(v => String(v || '').trim()).filter(Boolean))];
+  }
+  function parseStoredMode(value) {
+    const raw = String(value || '').trim();
+    if (!raw) return { mode: 'Battle Royale', variant: 'Zero Build' };
+    const match = raw.match(/^(.*?)\s*\[(.*?)\]\s*$/);
+    if (match) return { mode: match[1].trim() || 'Battle Royale', variant: match[2].trim() || 'Padrão' };
+    return { mode: raw, variant: raw === 'Battle Royale' ? 'Zero Build' : 'Padrão' };
+  }
+  function serializeStoredMode(mode, variant) {
+    const cleanMode = String(mode || 'Battle Royale').trim() || 'Battle Royale';
+    const cleanVariant = String(variant || '').trim();
+    if (cleanVariant && cleanVariant !== 'Padrão') return `${cleanMode} [${cleanVariant}]`;
+    return cleanMode;
+  }
+
+  const parsedInitial = parseStoredMode(queryModeRaw);
   let currentGame = queryGame;
-  let currentMode = queryMode;
+  let currentMode = parsedInitial.mode;
+  let currentVariant = parsedInitial.variant;
   let streamerRow = null;
   let gameCatalog = [...FALLBACK_GAMES];
   let modeCatalog = { ...FALLBACK_MODES };
+  let variantCatalog = { ...FALLBACK_VARIANTS };
   let playerConfirmed = false;
   let liveSessionHeartbeat = null;
   let liveSessionCloseTimer = null;
@@ -54,24 +72,28 @@
   const role = () => String(document.body.dataset.userRole || '').toLowerCase();
   const canEditLive = () => ['master', 'dev', 'admin', 'moderator'].includes(role());
   const canRegisterCatalog = () => ['master', 'dev', 'admin'].includes(role());
-
-  const unique = values => [...new Set((values || []).map(v => String(v || '').trim()).filter(Boolean))];
   const modesFor = game => unique(modeCatalog[game] || FALLBACK_MODES[game] || ['Padrão']);
+  const variantsFor = (game, mode) => unique(variantCatalog[`${game}::${mode}`] || FALLBACK_VARIANTS[`${game}::${mode}`] || ['Padrão']);
 
   const setGame = value => {
-    currentGame = String(value || 'Jogo não informado').trim() || 'Jogo não informado';
+    currentGame = String(value || 'Fortnite').trim() || 'Fortnite';
     if (gameBadge) gameBadge.textContent = currentGame;
-    if (gameSelect) gameSelect.value = currentGame;
   };
   const setMode = value => {
-    currentMode = String(value || 'Modo não informado').trim() || 'Modo não informado';
+    currentMode = String(value || 'Battle Royale').trim() || 'Battle Royale';
     if (modeBadge) modeBadge.textContent = currentMode;
-    if (modeSelect) modeSelect.value = currentMode;
+  };
+  const setVariant = value => {
+    const available = variantsFor(currentGame, currentMode);
+    const next = String(value || available[0] || 'Padrão').trim() || (available[0] || 'Padrão');
+    currentVariant = available.includes(next) ? next : (available[0] || 'Padrão');
+    if (variantBadge) variantBadge.textContent = currentVariant;
   };
 
   if (title) title.textContent = `${displayName} ao vivo`;
   setGame(queryGame);
-  setMode(queryMode);
+  setMode(parsedInitial.mode);
+  setVariant(parsedInitial.variant);
   if (openTikTok) openTikTok.href = `https://www.tiktok.com/@${encodeURIComponent(username)}/live`;
 
   const embedDomain = location.hostname || 'team-lambreta.vercel.app';
@@ -85,8 +107,8 @@
   const closeMenus = () => {
     setMenuOpen(gameSelectorBtn, gameMenu, false);
     setMenuOpen(modeSelectorBtn, modeMenu, false);
+    setMenuOpen(variantSelectorBtn, variantMenu, false);
   };
-  const closeConfig = () => { if (configPopover) configPopover.hidden = true; };
 
   const optionButton = (label, kind) => {
     const btn = document.createElement('button');
@@ -102,9 +124,9 @@
     gameCatalog.forEach(game => {
       const btn = optionButton(game, 'game');
       btn.addEventListener('click', async () => {
-        const availableModes = modesFor(game);
-        const nextMode = availableModes.includes(currentMode) ? currentMode : availableModes[0];
-        await saveLiveInfo(game, nextMode);
+        const nextMode = modesFor(game)[0] || 'Padrão';
+        const nextVariant = variantsFor(game, nextMode)[0] || 'Padrão';
+        await saveLiveInfo(game, nextMode, nextVariant);
         closeMenus();
       });
       gameMenu.appendChild(btn);
@@ -119,11 +141,12 @@
 
   const renderModeMenu = () => {
     if (!modeMenu) return;
-    modeMenu.innerHTML = `<div class="live-meta-menu-title">MODOS DISPONÍVEIS PARA ${currentGame.toUpperCase()}</div>`;
+    modeMenu.innerHTML = `<div class="live-meta-menu-title">MODOS DISPONÍVEIS EM ${currentGame.toUpperCase()}</div>`;
     modesFor(currentGame).forEach(mode => {
       const btn = optionButton(mode, 'mode');
       btn.addEventListener('click', async () => {
-        await saveLiveInfo(currentGame, mode);
+        const nextVariant = variantsFor(currentGame, mode)[0] || 'Padrão';
+        await saveLiveInfo(currentGame, mode, nextVariant);
         closeMenus();
       });
       modeMenu.appendChild(btn);
@@ -136,28 +159,25 @@
     }
   };
 
-  const renderConfigSelects = () => {
-    if (gameSelect) {
-      gameSelect.innerHTML = gameCatalog.map(game => `<option value="${game.replace(/&/g,'&amp;').replace(/"/g,'&quot;')}">${game}</option>`).join('');
-      if (!gameCatalog.includes(currentGame)) gameSelect.insertAdjacentHTML('beforeend', `<option value="${currentGame}">${currentGame}</option>`);
-      gameSelect.value = currentGame;
-    }
-    const modes = modesFor(currentGame);
-    if (modeSelect) {
-      modeSelect.innerHTML = modes.map(mode => `<option value="${mode.replace(/&/g,'&amp;').replace(/"/g,'&quot;')}">${mode}</option>`).join('');
-      if (!modes.includes(currentMode)) modeSelect.insertAdjacentHTML('beforeend', `<option value="${currentMode}">${currentMode}</option>`);
-      modeSelect.value = currentMode;
-    }
+  const renderVariantMenu = () => {
+    if (!variantMenu) return;
+    variantMenu.innerHTML = `<div class="live-meta-menu-title">TIPOS DISPONÍVEIS PARA ${currentMode.toUpperCase()}</div>`;
+    variantsFor(currentGame, currentMode).forEach(variant => {
+      const btn = optionButton(variant, 'variant');
+      btn.addEventListener('click', async () => {
+        await saveLiveInfo(currentGame, currentMode, variant);
+        closeMenus();
+      });
+      variantMenu.appendChild(btn);
+    });
   };
 
   const refreshPermissions = () => {
     const editable = canEditLive();
-    [gameSelectorBtn, modeSelectorBtn].forEach(btn => btn?.classList.toggle('is-editable', editable));
-    if (gameEditBtn) gameEditBtn.hidden = !editable;
-    if (catalogAdminActions) catalogAdminActions.hidden = !canRegisterCatalog();
+    [gameSelectorBtn, modeSelectorBtn, variantSelectorBtn].forEach(btn => btn?.classList.toggle('is-editable', editable));
     renderGameMenu();
     renderModeMenu();
-    renderConfigSelects();
+    renderVariantMenu();
   };
   refreshPermissions();
   new MutationObserver(refreshPermissions).observe(document.body, { attributes: true, attributeFilter: ['data-user-role'] });
@@ -168,20 +188,35 @@
       liveSb.from('live_game_catalog').select('name').eq('is_active', true).order('sort_order', { ascending: true }).order('name'),
       liveSb.from('live_mode_catalog').select('game_name,name').eq('is_active', true).order('sort_order', { ascending: true }).order('name')
     ]);
-    if (games?.length) gameCatalog = unique(games.map(x => x.name));
+    const validGames = unique((games || []).map(x => x.name).filter(name => !MODE_AS_GAMES.has(String(name || '').trim().toLowerCase())));
+    if (validGames.length) gameCatalog = validGames;
     if (modes?.length) {
       const grouped = {};
       modes.forEach(row => {
         const game = String(row.game_name || '').trim();
         const mode = String(row.name || '').trim();
         if (!game || !mode) return;
-        (grouped[game] ||= []).push(mode);
+        if (!MODE_AS_GAMES.has(game.toLowerCase())) (grouped[game] ||= []).push(mode);
       });
       modeCatalog = { ...modeCatalog, ...grouped };
     }
     renderGameMenu();
     renderModeMenu();
-    renderConfigSelects();
+    renderVariantMenu();
+  };
+
+  const applyStreamerValues = (mainGame, rawMode) => {
+    let safeGame = String(mainGame || '').trim();
+    let safeModeRaw = rawMode;
+    if (MODE_AS_GAMES.has(safeGame.toLowerCase())) {
+      safeModeRaw = safeModeRaw || safeGame;
+      safeGame = 'Fortnite';
+    }
+    if (safeGame) setGame(safeGame);
+    const parsed = parseStoredMode(safeModeRaw);
+    if (parsed.mode.toLowerCase() === 'fortnite') parsed.mode = 'Battle Royale';
+    setMode(parsed.mode);
+    setVariant(parsed.variant);
   };
 
   const loadStreamer = async () => {
@@ -196,46 +231,40 @@
       return;
     }
     streamerRow = (data || []).find(row => `${row.tiktok_url || ''} ${row.live_url || ''}`.toLowerCase().includes(`/@${escUsername}`)) || null;
-    if (streamerRow?.main_game) setGame(streamerRow.main_game);
-    if (streamerRow?.live_game_mode) setMode(streamerRow.live_game_mode);
+    if (streamerRow) applyStreamerValues(streamerRow.main_game, streamerRow.live_game_mode);
     renderGameMenu();
     renderModeMenu();
-    renderConfigSelects();
+    renderVariantMenu();
 
     if (streamerRow?.id && !streamerChannel) {
       streamerChannel = liveSb.channel(`live-game-${streamerRow.id}`)
         .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'streamers', filter: `id=eq.${streamerRow.id}` }, payload => {
           streamerRow = { ...streamerRow, ...payload.new };
-          if (payload.new?.main_game) setGame(payload.new.main_game);
-          if (payload.new?.live_game_mode) setMode(payload.new.live_game_mode);
+          applyStreamerValues(payload.new?.main_game, payload.new?.live_game_mode);
           renderGameMenu();
           renderModeMenu();
-          renderConfigSelects();
+          renderVariantMenu();
         })
         .subscribe();
     }
   };
   Promise.all([loadCatalog(), loadStreamer()]);
 
-  async function saveLiveInfo(nextGame, nextMode) {
+  async function saveLiveInfo(nextGame, nextMode, nextVariant) {
     if (!liveSb || !canEditLive()) return false;
-    if (gameFeedback) gameFeedback.textContent = 'A guardar…';
     const { data, error } = await liveSb.rpc('tl_set_streamer_live_info', {
       p_streamer: escUsername,
       p_game: nextGame,
-      p_mode: nextMode
+      p_mode: serializeStoredMode(nextMode, nextVariant)
     });
     if (error) {
       console.warn('[Team Lambreta] Falha ao atualizar jogo/modo:', error.message);
-      if (gameFeedback) gameFeedback.textContent = error.message || 'Não foi possível atualizar.';
       return false;
     }
     const saved = data && typeof data === 'object' ? data : null;
-    setGame(saved?.game || nextGame);
-    setMode(saved?.mode || nextMode);
+    applyStreamerValues(saved?.game || nextGame, saved?.mode || serializeStoredMode(nextMode, nextVariant));
     renderModeMenu();
-    renderConfigSelects();
-    if (gameFeedback) gameFeedback.textContent = 'Atualizado.';
+    renderVariantMenu();
     return true;
   }
 
@@ -262,39 +291,25 @@
     if (!canEditLive()) return;
     event.stopPropagation();
     const open = gameMenu?.hidden !== false;
-    closeMenus(); closeConfig(); renderGameMenu();
+    closeMenus(); renderGameMenu();
     setMenuOpen(gameSelectorBtn, gameMenu, open);
   });
   modeSelectorBtn?.addEventListener('click', event => {
     if (!canEditLive()) return;
     event.stopPropagation();
     const open = modeMenu?.hidden !== false;
-    closeMenus(); closeConfig(); renderModeMenu();
+    closeMenus(); renderModeMenu();
     setMenuOpen(modeSelectorBtn, modeMenu, open);
   });
-  gameEditBtn?.addEventListener('click', event => {
-    if (!canEditLive() || !configPopover) return;
+  variantSelectorBtn?.addEventListener('click', event => {
+    if (!canEditLive()) return;
     event.stopPropagation();
-    closeMenus();
-    renderConfigSelects();
-    configPopover.hidden = !configPopover.hidden;
+    const open = variantMenu?.hidden !== false;
+    closeMenus(); renderVariantMenu();
+    setMenuOpen(variantSelectorBtn, variantMenu, open);
   });
-  gameSelect?.addEventListener('change', () => {
-    const nextGame = gameSelect.value;
-    const modes = modesFor(nextGame);
-    modeSelect.innerHTML = modes.map(mode => `<option value="${mode}">${mode}</option>`).join('');
-  });
-  modeSelect?.addEventListener('change', async () => {
-    await saveLiveInfo(gameSelect.value, modeSelect.value);
-  });
-  gameSelect?.addEventListener('change', async () => {
-    const modes = modesFor(gameSelect.value);
-    await saveLiveInfo(gameSelect.value, modes[0] || 'Padrão');
-  });
-  registerGameBtn?.addEventListener('click', registerGame);
-  registerModeBtn?.addEventListener('click', registerMode);
   document.addEventListener('click', event => {
-    if (!event.target.closest('.live-meta-inline')) { closeMenus(); closeConfig(); }
+    if (!event.target.closest('.live-meta-inline')) closeMenus();
   });
 
   const startLiveSessionHeartbeat = () => {
@@ -357,7 +372,6 @@
     if (!playerConfirmed) showFallback('A verificar a live…', 'Se o player não abrir, o domínio pode ainda precisar de aprovação do TikTok para LIVE Embed.');
   }, 5000);
 
-  // Desktop: chat termina junto com player + cabeçalho. Mobile: altura compacta própria.
   const syncLiveChatHeight = () => {
     const main = document.querySelector('.live-watch-main');
     const chat = document.querySelector('.live-watch-chat');

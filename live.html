@@ -45,20 +45,13 @@
                   </button>
                   <div id="liveModeMenu" class="live-meta-menu live-meta-menu--mode" role="listbox" hidden></div>
                 </div>
-                <button id="liveGameEditBtn" class="live-game-edit" type="button" aria-label="Configuração da transmissão" title="Configuração da transmissão" hidden>✎</button>
-
-                <section id="liveConfigPopover" class="live-config-popover" hidden aria-label="Configuração ao vivo">
-                  <div class="live-config-heading"><span class="live-config-gear">⚙</span><strong>ADMIN</strong><i></i><span>CONFIGURAÇÃO AO VIVO</span></div>
-                  <label for="liveGameSelect">Jogo</label>
-                  <select id="liveGameSelect"></select>
-                  <label for="liveModeSelect">Modo</label>
-                  <select id="liveModeSelect"></select>
-                  <div id="liveCatalogAdminActions" class="live-catalog-admin-actions" hidden>
-                    <button id="liveRegisterGameBtn" type="button">＋ <span>Cadastrar jogo</span></button>
-                    <button id="liveRegisterModeBtn" type="button">＋ <span>Cadastrar modo</span></button>
-                  </div>
-                  <small id="liveGameFeedback"></small>
-                </section>
+                <span class="live-meta-sep" aria-hidden="true">•</span>
+                <div class="live-meta-control-wrap live-meta-variant-wrap">
+                  <button id="liveVariantSelectorBtn" class="live-meta-pill live-meta-pill--variant" type="button" aria-haspopup="listbox" aria-expanded="false">
+                    <small>TIPO</small><span class="live-meta-divider" aria-hidden="true"></span><b id="liveVariantBadge">Zero Build</b><span class="live-meta-chevron" aria-hidden="true">⌄</span>
+                  </button>
+                  <div id="liveVariantMenu" class="live-meta-menu live-meta-menu--variant" role="listbox" hidden></div>
+                </div>
               </div>
             </div>
           </div>
