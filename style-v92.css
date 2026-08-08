@@ -9581,8 +9581,8 @@ html.tl-modal-lock,html.tl-modal-lock body{overflow:hidden!important}
 .live-watch-site{min-height:100vh}
 .live-watch-shell{width:min(1580px,calc(100% - 32px));margin:0 auto;padding:26px 0 42px;display:grid;grid-template-columns:minmax(0,1fr) minmax(330px,410px);gap:22px;align-items:stretch}
 .live-watch-main{min-width:0;display:flex;flex-direction:column}
-.live-watch-heading{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;margin-bottom:12px}
-.live-watch-heading-copy{min-width:0}
+.live-watch-heading{display:block;margin-bottom:12px}
+.live-watch-heading-copy{min-width:0;width:100%}
 .live-watch-kicker{margin:0 0 5px;color:#ff314f;font-size:11px;font-weight:950;letter-spacing:2.4px}
 .live-watch-title-line{display:flex;align-items:center;flex-wrap:wrap;gap:9px 10px;min-width:0}
 .live-watch-heading h1{margin:0;color:#f5e8bf;font-size:clamp(30px,4vw,54px);line-height:1}
@@ -9618,10 +9618,10 @@ html.tl-modal-lock,html.tl-modal-lock body{overflow:hidden!important}
 
 /* V93.8.9 — Jogo/Modo ao vivo, fiel ao mockup neon e sem CSS antigo herdado */
 .live-watch-heading-copy{flex:1;min-width:0}
-.live-watch-title-line{display:grid;grid-template-columns:auto minmax(0,1fr);align-items:center;column-gap:clamp(28px,4vw,72px);min-width:0}
-.live-meta-inline{position:relative;justify-self:end;display:inline-flex;align-items:center;gap:14px;min-width:0;max-width:100%;flex-wrap:wrap}
+.live-watch-title-line{display:flex;align-items:center;justify-content:space-between;gap:clamp(18px,3vw,54px);min-width:0;width:100%}
+.live-meta-inline{position:relative;display:flex;align-items:center;justify-content:flex-end;gap:8px;min-width:0;max-width:100%;flex-wrap:nowrap;margin-left:auto}
 .live-meta-control-wrap{position:relative;flex:0 0 auto}
-.live-meta-pill{appearance:none;display:inline-flex;align-items:center;justify-content:center;gap:12px;min-height:44px;padding:0 18px;border-radius:999px;background:rgba(5,7,5,.9);font:inherit;cursor:default;transition:transform .18s ease,box-shadow .18s ease,border-color .18s ease;min-width:0}
+.live-meta-pill{appearance:none;display:inline-flex;align-items:center;justify-content:center;gap:12px;min-height:42px;padding:0 14px;border-radius:999px;background:rgba(5,7,5,.9);font:inherit;cursor:default;transition:transform .18s ease,box-shadow .18s ease,border-color .18s ease;min-width:0}
 .live-meta-pill small{font-size:10px;font-weight:950;letter-spacing:1.8px;opacity:.76}
 .live-meta-pill b{font-size:14px;font-weight:950;letter-spacing:.15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:160px}
 .live-meta-divider{width:1px;height:19px;opacity:.45}
@@ -9673,9 +9673,9 @@ html.tl-modal-lock,html.tl-modal-lock body{overflow:hidden!important}
 .live-catalog-admin-actions button:first-child span{color:#73ff18}.live-catalog-admin-actions button:last-child span{color:#ff3150}
 .live-config-popover>small{display:block;min-height:16px;margin-top:9px;color:#b7aa89}
 
-@media(max-width:1050px){
-  .live-watch-title-line{grid-template-columns:1fr;row-gap:10px}
-  .live-meta-inline{justify-self:start}
+@media(max-width:760px){
+  .live-watch-title-line{display:block}
+  .live-meta-inline{margin-left:0;margin-top:8px}
 }
 @media(max-width:620px){
   .live-watch-title-line{display:block}

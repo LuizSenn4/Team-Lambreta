@@ -18,7 +18,6 @@
   const gameMenu = document.getElementById('liveGameMenu');
   const modeMenu = document.getElementById('liveModeMenu');
   const variantMenu = document.getElementById('liveVariantMenu');
-  const openTikTok = document.getElementById('liveOpenTikTok');
   if (!iframe) return;
 
   const SUPABASE_URL = 'https://ahiatqnokyhfpailobjx.supabase.co';
@@ -94,7 +93,6 @@
   setGame(queryGame);
   setMode(parsedInitial.mode);
   setVariant(parsedInitial.variant);
-  if (openTikTok) openTikTok.href = `https://www.tiktok.com/@${encodeURIComponent(username)}/live`;
 
   const embedDomain = location.hostname || 'team-lambreta.vercel.app';
   iframe.src = `https://www.tiktok.com/embed/live/@${encodeURIComponent(username)}?autoplay=1&muted=1&controls=1&embed_domain=${encodeURIComponent(embedDomain)}`;
@@ -252,13 +250,28 @@
 
   async function saveLiveInfo(nextGame, nextMode, nextVariant) {
     if (!liveSb || !canEditLive()) return false;
+
+    const previous = { game: currentGame, mode: currentMode, variant: currentVariant };
+    // Feedback imediato: o clique muda a interface sem esperar a rede.
+    setGame(nextGame);
+    setMode(nextMode);
+    setVariant(nextVariant);
+    renderModeMenu();
+    renderVariantMenu();
+
     const { data, error } = await liveSb.rpc('tl_set_streamer_live_info', {
       p_streamer: escUsername,
       p_game: nextGame,
       p_mode: serializeStoredMode(nextMode, nextVariant)
     });
     if (error) {
-      console.warn('[Team Lambreta] Falha ao atualizar jogo/modo:', error.message);
+      console.warn('[Team Lambreta] Falha ao atualizar jogo/modo/tipo:', error.message);
+      setGame(previous.game);
+      setMode(previous.mode);
+      setVariant(previous.variant);
+      renderModeMenu();
+      renderVariantMenu();
+      window.alert(`Não foi possível guardar a alteração: ${error.message || 'erro no Supabase'}`);
       return false;
     }
     const saved = data && typeof data === 'object' ? data : null;
