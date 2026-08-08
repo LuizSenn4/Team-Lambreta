@@ -1,0 +1,9 @@
+TEAM LAMBRETA V93.9.5
+
+Rode UMA VEZ no Supabase:
+SUPABASE-STREAMER-AUTO-CREATE-V93.9.5.sql
+
+Depois disso:
+- streamer criado no painel: TikTok vincula automaticamente;
+- streamer fixo no código: se faltar no Supabase, é criado automaticamente na primeira alteração da live;
+- não precisa mais executar SQL por streamer.
