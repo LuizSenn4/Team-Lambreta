@@ -1,0 +1,15 @@
+TEAM LAMBRETA V93.9.3 — LIVE OFFLINE
+
+1. Rode no Supabase SQL Editor:
+   SUPABASE-LIVE-STREAMER-OFFLINE-FIX-V93.9.3.sql
+
+2. Suba o patch normalmente.
+
+3. Ctrl+F5.
+
+Teste com a live OFFLINE:
+- Battle Royale -> Build
+- Battle Royale -> Zero Build
+- Blitz / Reload
+
+A alteração deve guardar mesmo sem o streamer estar ao vivo.

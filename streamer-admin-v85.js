@@ -234,6 +234,25 @@
     </article>`;
   }
 
+  function normalizeTikTokIdentity(row) {
+    const raw = String(row.tiktok_url || row.live_url || '').trim();
+    if (!raw) return row;
+
+    let handle = '';
+    const fromUrl = raw.match(/tiktok\.com\/@([A-Za-z0-9._-]+)/i);
+    if (fromUrl?.[1]) handle = fromUrl[1];
+    else if (/^@[A-Za-z0-9._-]+$/.test(raw)) handle = raw.slice(1);
+    else if (/^[A-Za-z0-9._-]+$/.test(raw)) handle = raw;
+
+    handle = handle.replace(/^@/, '').trim();
+    if (!handle) return row;
+
+    row.tiktok_url = `https://www.tiktok.com/@${handle}`;
+    row.live_url = `https://www.tiktok.com/@${handle}/live`;
+    row.live_platform = 'tiktok';
+    return row;
+  }
+
   function collectForm() {
     const row = {};
     Object.entries(fields).forEach(([key,id]) => {
@@ -243,7 +262,7 @@
     Object.entries(boolFields).forEach(([key,id]) => row[key]=Boolean($(id)?.checked));
     row.schedule_json = collectScheduleRows();
     row.auto_live = false;
-    return row;
+    return normalizeTikTokIdentity(row);
   }
 
   async function uploadPhoto(file) {

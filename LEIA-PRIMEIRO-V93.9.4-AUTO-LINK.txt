@@ -1,0 +1,11 @@
+TEAM LAMBRETA V93.9.4 — STREAMER AUTO LINK
+
+Rode uma vez:
+SUPABASE-STREAMER-AUTO-LINK-V93.9.4.sql
+
+Depois disso:
+- cadastrar streamer no painel + TikTok já cria o vínculo automaticamente;
+- aceita URL, @handle ou handle;
+- live_url é preenchido automaticamente;
+- funciona online ou offline;
+- não precisa mais SQL individual por streamer.
