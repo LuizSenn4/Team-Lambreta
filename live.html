@@ -27,7 +27,14 @@
     <main class="live-watch-shell">
       <section class="live-watch-main">
         <div class="live-watch-heading">
-          <div><p class="live-watch-kicker"><span class="live-dot"></span> TRANSMISSÃO</p><h1 id="liveWatchTitle">INK31 ao vivo</h1></div>
+          <div class="live-watch-heading-copy">
+            <p class="live-watch-kicker"><span class="live-dot"></span> TRANSMISSÃO</p>
+            <div class="live-watch-title-line">
+              <h1 id="liveWatchTitle">INK31 ao vivo</h1>
+              <span id="liveGameBadge" class="live-game-badge">Fortnite</span>
+              <button id="liveGameEditBtn" class="live-game-edit" type="button" aria-label="Alterar jogo da transmissão" title="Alterar jogo" hidden>✎</button>
+            </div>
+          </div>
           <a id="liveOpenTikTok" class="live-watch-external" href="https://www.tiktok.com/@rv3113/live" target="_blank" rel="noopener noreferrer">Abrir TikTok ↗</a>
         </div>
 
@@ -38,13 +45,22 @@
             <div><span>TEAM LAMBRETA LIVE</span><strong id="liveFallbackTitle">A preparar a transmissão…</strong><p id="liveFallbackText">O player vai aparecer aqui assim que o TikTok autorizar a reprodução.</p></div>
           </div>
         </div>
-
-        <div class="live-watch-info">
-          <div><small>STREAMER</small><strong id="liveStreamerName">INK31</strong></div>
-          <div><small>JOGO</small><strong id="liveGameName">Fortnite</strong></div>
-          <div><small>ÁUDIO</small><strong>Começa mutado</strong></div>
-        </div>
       </section>
+
+      <dialog id="liveGameDialog" class="live-game-dialog">
+        <form id="liveGameForm" method="dialog">
+          <button id="liveGameDialogClose" class="live-game-dialog-close" type="button" aria-label="Fechar">×</button>
+          <p>TRANSMISSÃO</p>
+          <h2>Alterar jogo</h2>
+          <label for="liveGameInput">Jogo atual</label>
+          <input id="liveGameInput" type="text" maxlength="60" autocomplete="off" placeholder="Ex.: Fortnite">
+          <small id="liveGameFeedback"></small>
+          <div>
+            <button id="liveGameCancel" class="live-game-cancel" type="button">Cancelar</button>
+            <button id="liveGameSave" class="live-game-save" type="submit">Guardar</button>
+          </div>
+        </form>
+      </dialog>
 
       <aside class="online-chat live-watch-chat">
         <div class="chat-head">
@@ -126,6 +142,6 @@
   <script src="site-i18n-v92.js"></script>
   <script src="chat-translate-v92.js"></script>
   <script src="community-progress-v938.js?v=93.8.6"></script>
-  <script src="live-page-v9366.js"></script>
+  <script src="live-page-v9366.js?v=93.8.7"></script>
 </body>
 </html>

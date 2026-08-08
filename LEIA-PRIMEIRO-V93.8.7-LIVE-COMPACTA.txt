@@ -1,0 +1,18 @@
+TEAM LAMBRETA V93.8.7 — LIVE COMPACTA + JOGO EDITÁVEL
+
+1. Execute no Supabase SQL Editor:
+   SUPABASE-LIVE-JOGO-MODERACAO-V93.8.7.sql
+
+2. Alterações:
+   - removidas as 3 boxes Streamer/Jogo/Áudio abaixo do player;
+   - jogo aparece como badge ao lado do título da live;
+   - DEV, ADMIN e MODERADOR veem um lápis para alterar o jogo;
+   - alteração persiste em streamers.main_game e atualiza em tempo real;
+   - mobile usa chat mais compacto para player + chat caberem melhor na mesma tela;
+   - mensagens continuam com scroll interno.
+
+3. Teste:
+   - abra live.html?user=rv3113&name=INK31&game=Fortnite;
+   - com conta DEV/Admin/Moderador, clique no lápis ao lado do jogo;
+   - altere para outro jogo e guarde;
+   - abra a mesma live em outro navegador e confirme que a badge atualiza.
