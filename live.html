@@ -32,10 +32,33 @@
             <div class="live-watch-title-line">
               <h1 id="liveWatchTitle">INK31 ao vivo</h1>
               <div class="live-meta-inline" aria-label="Informações da transmissão">
-                <span class="live-meta-pill"><small>JOGO</small><b id="liveGameBadge">Fortnite</b></span>
+                <div class="live-meta-control-wrap live-meta-game-wrap">
+                  <button id="liveGameSelectorBtn" class="live-meta-pill live-meta-pill--game" type="button" aria-haspopup="listbox" aria-expanded="false">
+                    <small>JOGO</small><span class="live-meta-divider" aria-hidden="true"></span><b id="liveGameBadge">Fortnite</b><span class="live-meta-chevron" aria-hidden="true">⌄</span>
+                  </button>
+                  <div id="liveGameMenu" class="live-meta-menu live-meta-menu--game" role="listbox" hidden></div>
+                </div>
                 <span class="live-meta-sep" aria-hidden="true">•</span>
-                <span class="live-meta-pill"><small>MODO</small><b id="liveModeBadge">Battle Royale</b></span>
-                <button id="liveGameEditBtn" class="live-game-edit" type="button" aria-label="Alterar jogo e modo da transmissão" title="Alterar jogo e modo" hidden>✎</button>
+                <div class="live-meta-control-wrap live-meta-mode-wrap">
+                  <button id="liveModeSelectorBtn" class="live-meta-pill live-meta-pill--mode" type="button" aria-haspopup="listbox" aria-expanded="false">
+                    <small>MODO</small><span class="live-meta-divider" aria-hidden="true"></span><b id="liveModeBadge">Battle Royale</b><span class="live-meta-chevron" aria-hidden="true">⌄</span>
+                  </button>
+                  <div id="liveModeMenu" class="live-meta-menu live-meta-menu--mode" role="listbox" hidden></div>
+                </div>
+                <button id="liveGameEditBtn" class="live-game-edit" type="button" aria-label="Configuração da transmissão" title="Configuração da transmissão" hidden>✎</button>
+
+                <section id="liveConfigPopover" class="live-config-popover" hidden aria-label="Configuração ao vivo">
+                  <div class="live-config-heading"><span class="live-config-gear">⚙</span><strong>ADMIN</strong><i></i><span>CONFIGURAÇÃO AO VIVO</span></div>
+                  <label for="liveGameSelect">Jogo</label>
+                  <select id="liveGameSelect"></select>
+                  <label for="liveModeSelect">Modo</label>
+                  <select id="liveModeSelect"></select>
+                  <div id="liveCatalogAdminActions" class="live-catalog-admin-actions" hidden>
+                    <button id="liveRegisterGameBtn" type="button">＋ <span>Cadastrar jogo</span></button>
+                    <button id="liveRegisterModeBtn" type="button">＋ <span>Cadastrar modo</span></button>
+                  </div>
+                  <small id="liveGameFeedback"></small>
+                </section>
               </div>
             </div>
           </div>
@@ -51,22 +74,6 @@
         </div>
       </section>
 
-      <dialog id="liveGameDialog" class="live-game-dialog">
-        <form id="liveGameForm" method="dialog">
-          <button id="liveGameDialogClose" class="live-game-dialog-close" type="button" aria-label="Fechar">×</button>
-          <p>TRANSMISSÃO</p>
-          <h2>Alterar transmissão</h2>
-          <label for="liveGameInput">Jogo</label>
-          <input id="liveGameInput" type="text" maxlength="60" autocomplete="off" placeholder="Ex.: Fortnite">
-          <label for="liveModeInput">Modo de jogo</label>
-          <input id="liveModeInput" type="text" maxlength="60" autocomplete="off" placeholder="Ex.: Battle Royale">
-          <small id="liveGameFeedback"></small>
-          <div>
-            <button id="liveGameCancel" class="live-game-cancel" type="button">Cancelar</button>
-            <button id="liveGameSave" class="live-game-save" type="submit">Guardar</button>
-          </div>
-        </form>
-      </dialog>
 
       <aside class="online-chat live-watch-chat">
         <div class="chat-head">

@@ -1,0 +1,20 @@
+TEAM LAMBRETA V93.8.9
+
+Alteração SOMENTE na área JOGO / MODO da página live.html.
+
+1. Execute no Supabase SQL Editor:
+   SUPABASE-LIVE-JOGO-MODO-CATALOGO-V93.8.9.sql
+
+2. Depois publique os arquivos normalmente.
+
+Pré-cadastrados:
+- JOGO: Blitz, Battle Royale, Reload
+- Battle Royale: Build, Zero Build
+- Blitz / Reload: Padrão
+
+Permissões:
+- DEV / ADMIN / MASTER: selecionar + cadastrar novos jogos/modos
+- MODERADOR: selecionar jogo/modo, sem cadastrar novos
+- Público: apenas visualiza
+
+Nenhum outro layout/página foi alterado.
