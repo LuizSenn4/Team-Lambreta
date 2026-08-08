@@ -9635,3 +9635,19 @@ html.tl-modal-lock,html.tl-modal-lock body{overflow:hidden!important}
 .tl-event-checkin:disabled{opacity:.7;cursor:default;transform:none}
 .hall-roadmap li.is-live{border-color:rgba(115,255,24,.22);background:rgba(115,255,24,.035)}
 .hall-roadmap li.is-live b{color:#73ff18}
+
+/* V93.8.8 — metadados discretos da transmissão: jogo + modo */
+.live-meta-inline{display:inline-flex;align-items:center;gap:8px;min-width:0;flex-wrap:wrap}
+.live-meta-pill{display:inline-flex;align-items:center;gap:6px;min-height:30px;padding:4px 10px;border:1px solid rgba(115,255,24,.26);border-radius:999px;background:rgba(8,14,7,.72);box-shadow:inset 0 0 18px rgba(115,255,24,.035)}
+.live-meta-pill small{color:#8d987f;font-size:8px;font-weight:950;letter-spacing:1.2px}
+.live-meta-pill b{color:#efe1b6;font-size:11px;font-weight:950;letter-spacing:.2px;white-space:nowrap}
+.live-meta-sep{color:rgba(217,164,65,.46);font-size:12px}
+.live-game-edit{flex:0 0 auto}
+@media(max-width:760px){
+  .live-watch-title-line{align-items:flex-start!important;gap:8px!important}
+  .live-meta-inline{gap:5px}
+  .live-meta-pill{min-height:25px;padding:3px 7px;gap:4px}
+  .live-meta-pill small{font-size:7px;letter-spacing:.9px}
+  .live-meta-pill b{font-size:9px}
+  .live-meta-sep{display:none}
+}
