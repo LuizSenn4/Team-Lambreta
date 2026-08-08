@@ -1,0 +1,4 @@
+1. Rode SUPABASE-LIVE-ROLE-ENUM-FIX-V93.9.2.sql no Supabase.
+2. Suba o patch.
+3. Ctrl+F5.
+4. Teste Build / Zero Build.
