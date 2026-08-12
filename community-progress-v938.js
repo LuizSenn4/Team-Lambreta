@@ -23,23 +23,11 @@
 
   async function forumProgress(type,metadata={}){
     if(!await getSession()) return null;
-    const xpMap={forum_topic:20,forum_reply:8};
-    const xp=xpMap[type];
-    if(!xp) return null;
-    try{
-      const {data,error}=await sb.rpc('add_community_progress_v2',{
-        p_event_type:type,
-        p_xp:xp,
-        p_metadata:metadata||{}
-      });
-      if(error) throw error;
-      console.info('[TL Progress] contabilizado',type,data);
-      window.dispatchEvent(new CustomEvent('tl:progress',{detail:data}));
-      return data;
-    }catch(err){
-      console.error('[TL Progress] RPC add_community_progress_v2 falhou:',type,err?.message||err);
-      return null;
-    }
+    const key=metadata?.dedupe_key||null;
+    const clean={...(metadata||{})};delete clean.dedupe_key;
+    const data=await record(type,1,key,clean);
+    if(data) console.info('[TL Progress] contabilizado',type,data);
+    return data;
   }
 
   async function record(type,amount=1,key=null,metadata={}){
@@ -64,6 +52,7 @@
       });
       if(error) throw error;
       console.info('[TL Progress] like contabilizado',data);
+      if(data) window.dispatchEvent(new CustomEvent('tl:progress',{detail:{type:'forum_thank',targetUserId}}));
       return !!data;
     }catch(err){
       console.error('[TL Progress] RPC give_community_forum_thank_v2 falhou:',err?.message||err);

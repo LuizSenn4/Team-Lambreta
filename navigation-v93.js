@@ -6,6 +6,32 @@
   if (!nav || !button || !backdrop || nav.dataset.navigationReady === 'true') return;
   nav.dataset.navigationReady = 'true';
 
+  if (!nav.querySelector('a[href="participe.html"]')) {
+    const participate = document.createElement('a');
+    participate.className = 'tl-menu-link';
+    participate.href = 'participe.html';
+    participate.innerHTML = '<span>Participe</span>';
+    const store = nav.querySelector('a[href="loja.html"]');
+    nav.insertBefore(participate, store || null);
+  }
+
+  let inboxAttempts = 0;
+  const loadInbox = () => {
+    if (window.TLUserInboxLoaded || document.querySelector('script[src*="user-inbox-v96.js"]')) return true;
+    if (!window.supabase) return false;
+    const inboxScript = document.createElement('script');
+    inboxScript.src = 'user-inbox-v96.js?v=96.0';
+    inboxScript.defer = true;
+    document.body.appendChild(inboxScript);
+    return true;
+  };
+  if (!loadInbox()) {
+    const inboxWait = setInterval(() => {
+      inboxAttempts += 1;
+      if (loadInbox() || inboxAttempts >= 40) clearInterval(inboxWait);
+    }, 250);
+  }
+
   const mobile = window.matchMedia('(max-width: 900px)');
   const groups = [...nav.querySelectorAll('.tl-menu-group')];
   let previousFocus = null;

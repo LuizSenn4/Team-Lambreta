@@ -828,12 +828,22 @@
 
     const nickname = match[1].trim();
     const requested = normalizeRole(match[2]);
+    const rank = {member:0,supporter:0,vip:0,moderator:1,staff:2,admin:3,master:4};
+    const target = mentionProfiles.find(item => String(item.game_nickname || '').toLowerCase() === nickname.toLowerCase());
+    if (!target) return {handled:true,ok:false,message:`Usuário @${nickname} não encontrado. Digite @ e selecione o perfil correto.`};
+    if (target.id === session?.user?.id) return {handled:true,ok:false,message:'Você não pode alterar o próprio cargo pelo chat.'};
+    if ((rank[normalizeRole(target.role)] ?? 0) >= (rank[actorRole] ?? 0)) {
+      return {handled:true,ok:false,message:'Você não pode alterar um cargo igual ou superior ao seu.'};
+    }
+    if ((rank[requested] ?? 0) >= (rank[actorRole] ?? 0)) {
+      return {handled:true,ok:false,message:'Você não pode atribuir um cargo igual ou superior ao seu.'};
+    }
     const { data, error } = await sb.rpc('assign_role_by_nickname', {
       target_nickname: nickname,
       new_role: requested
     });
 
-    if (error) return { handled:true, ok:false, message:error.message };
+    if (error) return { handled:true, ok:false, message:`Não foi possível alterar o cargo: ${error.message}` };
     const result = Array.isArray(data) ? data[0] : data;
     return {
       handled:true,

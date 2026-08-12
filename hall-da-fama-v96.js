@@ -5,7 +5,7 @@
   const rankingEl=document.getElementById('hallRankingList');
   const grid=document.getElementById('hallAchievementGrid');
   const modal=document.getElementById('hallModal');
-  let me=null, progress=[], profiles=[];
+  let me=null, progress=[], profiles=[],progressChannel=null;
 
   const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
   const name=p=>p?.game_nickname||p?.full_name||'Membro';
@@ -90,7 +90,8 @@
   async function load(){
     if(!sb){renderChampion();renderRanking();renderAchievements();renderMetrics();return;}
     const sess=await sb.auth.getSession();
-    if(sess.data.session){const r=await sb.from('profiles').select('id,game_nickname,full_name,role,avatar_url').order('game_nickname');profiles=r.data||[];me=profiles.find(p=>p.id===sess.data.session.user.id)||null;}
+    const r=await sb.from('profiles').select('id,game_nickname,full_name,role,avatar_url').order('game_nickname');
+    profiles=r.data||[];me=profiles.find(p=>p.id===sess.data.session?.user?.id)||null;
     const pr=await sb.from('community_progress').select('*').order('xp',{ascending:false}).order('active_seconds',{ascending:false}).limit(100);
     progress=pr.data||[];
     renderChampion();renderRanking();renderAchievements();renderMetrics();
@@ -103,7 +104,10 @@
   document.addEventListener('keydown',e=>{if(e.key==='Escape'&&modal&&!modal.hidden)closeModal();});
   document.getElementById('year')&&(document.getElementById('year').textContent=new Date().getFullYear());
   load();
+  if(sb){progressChannel=sb.channel('hall-progress-v96').on('postgres_changes',{event:'*',schema:'public',table:'community_progress'},()=>load()).subscribe();}
+  window.addEventListener('tl:progress',()=>load());
   window.addEventListener('focus',load);
   document.addEventListener('visibilitychange',()=>{ if(!document.hidden) load(); });
   setInterval(()=>{ if(!document.hidden) load(); },15000);
+  window.addEventListener('pagehide',()=>{if(progressChannel)sb.removeChannel(progressChannel)});
 })();

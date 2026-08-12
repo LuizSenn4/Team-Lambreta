@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="pt-PT">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Participe - Team Lambreta</title>
+  <link rel="stylesheet" href="style-v92.css">
+  <link rel="stylesheet" href="ui-core-v93.css?v=93.0">
+</head>
+<body class="participate-page">
+  <div id="supabaseAuthBar" class="sb-auth-bar"></div>
+  <section class="site-content">
+    <header class="site-header tl-header-v88">
+      <a href="home.html" class="brand brand-logo-link"><img class="brand-logo-image" src="img/team-lambreta-header-logo.svg" alt="Team Lambreta"></a>
+      <button id="tlMenuButton" class="tl-mobile-menu-button" type="button" aria-controls="tlMainNav"><span></span><span></span><span></span></button>
+      <div id="tlMenuBackdrop" class="tl-mobile-menu-backdrop" hidden></div>
+      <nav id="tlMainNav" class="tl-main-nav" aria-label="Menu principal"><a class="tl-menu-link" href="home.html"><span>Início</span></a><a class="tl-menu-link is-current" href="participe.html"><span>Participe</span></a><a class="tl-menu-link" href="streamers.html"><span>Streamers</span></a><a class="tl-menu-link" href="forum.html"><span>Fórum</span></a><a class="tl-menu-link" href="conquistas.html"><span>Hall da Fama</span></a></nav>
+    </header>
+    <main class="participate-shell">
+      <section class="participate-hero"><span>FORTNITE COMPETITIVO</span><h1>Faça parte da próxima formação</h1><p>Conte-nos sobre você, a sua experiência e disponibilidade. A equipa analisará cada inscrição individualmente.</p></section>
+      <section class="participate-layout">
+        <aside class="participate-aside"><strong>Antes de enviar</strong><ul><li>Entre com a sua conta Google.</li><li>Informe dados verdadeiros e links próprios.</li><li>Só é permitida uma inscrição pendente por pessoa.</li><li>A resposta chegará na sua Caixa de entrada.</li></ul><div id="participationCurrent" class="participation-current"></div></aside>
+        <form id="participationForm" class="participation-form">
+          <div class="participation-form-head"><div><span>INSCRIÇÃO</span><h2>Perfil competitivo</h2></div><small>* campos obrigatórios</small></div>
+          <div class="participation-fields">
+            <label>Nick / Epic Games *<input name="epic_nickname" required maxlength="60" autocomplete="off"></label>
+            <label>Nome *<input name="full_name" required maxlength="100" autocomplete="name"></label>
+            <label>Idade *<input name="age" type="number" required min="13" max="99"></label>
+            <label>País *<input name="country" required maxlength="60" autocomplete="country-name"></label>
+            <label>Discord *<input name="discord" required maxlength="100" placeholder="utilizador ou utilizador#0000"></label>
+            <label>Plataforma *<select name="platform" required><option value="">Selecione</option><option>PC</option><option>PlayStation</option><option>Xbox</option><option>Switch</option><option>Mobile</option></select></label>
+            <label>Comando *<select name="input_method" required><option value="controle">Controle</option><option value="teclado_mouse">Teclado e mouse</option></select></label>
+            <label>Região / servidor *<select name="region" required><option value="">Selecione</option><option value="EU">Europa</option><option value="BR">Brasil</option><option value="NAE">NA East</option><option value="NAC">NA Central</option><option value="NAW">NA West</option><option value="ME">Middle East</option><option value="OCE">Oceania</option><option value="ASIA">Ásia</option></select></label>
+            <label>Build ou Zero Build *<select name="build_preference" required><option value="build">Build</option><option value="zero_build">Zero Build</option><option value="ambos">Ambos</option></select></label>
+            <label>Modo principal *<input name="main_mode" required maxlength="80" placeholder="Solo, Dupla, Trio..."></label>
+            <label class="full">Experiência competitiva *<textarea name="competitive_experience" required maxlength="1500" rows="5"></textarea></label>
+            <label>PR, caso tenha<input name="power_ranking" type="number" min="0" step="1"></label>
+            <label>Tracker / perfil competitivo<input name="tracker_links" type="url" maxlength="500" placeholder="https://..."></label>
+            <label class="full">Disponibilidade de horários *<textarea name="availability" required maxlength="1000" rows="4"></textarea></label>
+            <label class="full">Por que gostaria de participar? *<textarea name="motivation" required maxlength="1500" rows="5"></textarea></label>
+            <label class="full">Observações<textarea name="notes" maxlength="1000" rows="4"></textarea></label>
+          </div>
+          <div class="participation-submit"><p id="participationFeedback" role="status"></p><button type="submit">Enviar inscrição</button></div>
+        </form>
+      </section>
+    </main>
+    <footer class="site-footer"><p>© <span id="year"></span> Team Lambreta — Juntos somos mais fortes.</p></footer>
+  </section>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="supabase-integration-v92.js?v=93.9.6"></script>
+  <script src="navigation-v93.js?v=93.9.6"></script>
+  <script src="user-inbox-v96.js?v=96.0"></script>
+  <script src="participation-v96.js?v=96.0"></script>
+</body>
+</html>
