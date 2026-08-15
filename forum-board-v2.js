@@ -33,7 +33,9 @@
   let currentForumProfile = null;
   let quotePostId = null;
   let editingPostId = null;
+  let deletingPostId = null;
   let mentionPreview = null;
+  const shareIcon = `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 8a3 3 0 1 0-2.83-4A3 3 0 0 0 15 5c0 .2.02.39.06.57L8.91 9.1A3 3 0 1 0 9 14.78l6.13 3.5A3 3 0 1 0 16 16.55l-6.12-3.49c.08-.34.1-.7.06-1.05l6.16-3.54c.52.34 1.18.53 1.9.53Z"/></svg>`;
 
   const esc = (value) =>
     String(value ?? "").replace(
@@ -789,11 +791,13 @@
       ? posts.find((item) => item.id === post.quote_post_id)
       : null;
     const postHash = `post-${post.id}`;
+    const removed = Boolean(post.deleted_at);
+    const canManage = post.author_id === session.user.id || isModerator();
     return `<article id="${esc(postHash)}" class="forum-post-card" data-post-id="${esc(post.id)}">
       <header><a class="forum-post-author-mobile" href="forum.html?profile=${encodeURIComponent(post.author_id)}" data-route>${avatarMarkup(post.author_id, "is-mobile")}<span><strong class="role-${esc(role(post.author_id))}">${esc(personName(post.author_id))}</strong><small>${esc(author.country || "País não informado")} · ${stats.totalPosts} posts</small></span><span class="forum-role-badge role-${esc(role(post.author_id))}">${esc(roleLabel(post.author_id))}</span></a><div><time datetime="${esc(post.created_at)}">${esc(fmt(post.created_at))}</time><a href="#${esc(postHash)}" data-share-post="${esc(post.id)}" aria-label="Copiar link do post ${index + 1}">#${index + 1}</a></div></header>
       <div class="forum-post-layout"><aside class="forum-post-author"><a href="forum.html?profile=${encodeURIComponent(post.author_id)}" data-route>${avatarMarkup(post.author_id, "is-post")}<strong class="role-${esc(role(post.author_id))}">${esc(personName(post.author_id))}</strong></a><span class="forum-role-badge role-${esc(role(post.author_id))}">${esc(roleLabel(post.author_id))}</span><small>${esc(author.country || "País não informado")}</small><dl><div><dt>Jogo</dt><dd>${esc(author.main_game || "—")}</dd></div><div><dt>Posts</dt><dd>${stats.totalPosts}</dd></div><div><dt>XP</dt><dd>${stats.xp}</dd></div><div><dt>Publicado</dt><dd>${esc(relative(post.created_at))}</dd></div><div><dt>Membro desde</dt><dd>${memberSince ? esc(fmtDate(memberSince)) : "—"}</dd></div></dl></aside>
-      <div class="forum-post-main">${quoted ? `<blockquote class="forum-linked-quote"><a href="#post-${esc(quoted.id)}">${esc(personName(quoted.author_id))} escreveu:</a><p>${renderTlMark(quoted.body.slice(0, 500))}</p></blockquote>` : ""}<div class="forum-post-body">${renderTlMark(post.body)}</div>${post.edited_at ? `<p class="forum-post-edited">Editado em ${esc(fmt(post.edited_at))}</p>` : ""}</div></div>
-      <footer><span>${post.is_original ? "POST ORIGINAL" : `ID ${esc(post.id)}`}</span><div><button type="button" data-reply-post="${esc(post.id)}">Responder</button><button type="button" data-quote-post="${esc(post.id)}">Citar</button>${post.author_id === session.user.id || isModerator() ? `<button type="button" data-edit-post="${esc(post.id)}">Editar</button>` : ""}<button type="button" data-share-post="${esc(post.id)}">Compartilhar</button></div></footer>
+      <div class="forum-post-main">${quoted ? `<blockquote class="forum-linked-quote"><a href="#post-${esc(quoted.id)}">${esc(personName(quoted.author_id))} escreveu:</a><p>${quoted.deleted_at ? "Post removido." : renderTlMark(quoted.body.slice(0, 500))}</p></blockquote>` : ""}<div class="forum-post-body ${removed ? "is-removed" : ""}">${removed ? "Este post foi removido." : renderTlMark(post.body)}</div>${post.edited_at && !removed ? `<p class="forum-post-edited">Editado em ${esc(fmt(post.edited_at))}</p>` : ""}</div></div>
+      <footer><span>${post.is_original ? "POST ORIGINAL" : `ID ${esc(post.id)}`}</span><div>${removed ? "" : `<button type="button" data-reply-post="${esc(post.id)}">Responder</button><button type="button" data-quote-post="${esc(post.id)}">Citar</button>${canManage ? `<button type="button" data-edit-post="${esc(post.id)}">Editar</button><button type="button" class="forum-delete-action" data-delete-post="${esc(post.id)}">Apagar</button>` : ""}`}<button type="button" data-share-post="${esc(post.id)}">Compartilhar</button></div></footer>
     </article>`;
   }
 
@@ -870,10 +874,23 @@
 
   function bindMentions() {
     view.querySelectorAll("[data-forum-mention]").forEach((mention) => {
+      let longPressTimer = null;
+      let hoverTimer = null;
       mention.addEventListener("pointerenter", (event) => {
-        if (event.pointerType !== "touch") showMentionPreview(mention);
+        if (event.pointerType !== "touch")
+          hoverTimer = setTimeout(() => showMentionPreview(mention), 260);
       });
-      mention.addEventListener("pointerleave", () => hideMentionPreview());
+      mention.addEventListener("pointerleave", () => {
+        clearTimeout(hoverTimer);
+        hideMentionPreview();
+      });
+      mention.addEventListener("pointerdown", (event) => {
+        if (event.pointerType === "touch")
+          longPressTimer = setTimeout(() => showMentionPreview(mention), 850);
+      });
+      ["pointerup", "pointercancel", "pointermove"].forEach((name) =>
+        mention.addEventListener(name, () => clearTimeout(longPressTimer)),
+      );
       mention.addEventListener("focus", () => showMentionPreview(mention));
       mention.addEventListener("blur", () => hideMentionPreview());
       mention.addEventListener("click", () => showMentionPreview(mention));
@@ -913,7 +930,7 @@
       { label: topic.title },
     ]);
     view.innerHTML = `<section class="forum-topic-page">
-      <header class="forum-topic-page-head"><div><h3>${esc(topic.title)}</h3><p>Iniciado por <b class="role-${esc(role(topic.author_id))}">${esc(personName(topic.author_id))}</b> · ${esc(fmt(topic.created_at))}</p></div><button type="button" data-share-topic>Compartilhar tópico</button></header>
+      <header class="forum-topic-page-head"><div><h3>${esc(topic.title)}</h3><p>Iniciado por <b class="role-${esc(role(topic.author_id))}">${esc(personName(topic.author_id))}</b> · ${esc(fmt(topic.created_at))}</p></div><button class="forum-icon-action" type="button" data-share-topic data-tooltip="Compartilhar" aria-label="Compartilhar tópico">${shareIcon}</button></header>
       ${topic.status === "pending" ? '<div class="forum-pending-notice">Este tópico está visível apenas para você e para a moderação enquanto aguarda aprovação.</div>' : ""}
       <div class="forum-post-stack">${topicPosts.map(postCard).join("")}</div>
       ${topic.status === "approved" && !topic.is_locked ? '<button id="forumReplyButton" class="forum-primary-button forum-reply-button" type="button">Responder</button>' : topic.is_locked ? '<p class="forum-locked-note">Este tópico está fechado para novas respostas.</p>' : ""}
@@ -922,6 +939,7 @@
     bindShare(topic);
     bindPostActions(topic);
     bindMentions();
+    bindActionTooltips();
     $("forumReplyButton")?.addEventListener("click", () => openReplyEditor());
     if (topic.status === "approved") {
       sb.rpc("tl_forum_register_view", { p_topic_id: topic.id }).then(
@@ -975,6 +993,35 @@
         $("forumEditPostDialog").showModal();
       }),
     );
+    view.querySelectorAll("[data-delete-post]").forEach((button) =>
+      button.addEventListener("click", () => {
+        const post = posts.find(
+          (item) => item.id === button.dataset.deletePost,
+        );
+        if (!post || post.deleted_at) return;
+        deletingPostId = post.id;
+        $("forumDeletePostDialog").showModal();
+      }),
+    );
+  }
+
+  function bindActionTooltips() {
+    view.querySelectorAll("[data-tooltip]").forEach((button) => {
+      let timer = null;
+      button.addEventListener("pointerdown", (event) => {
+        if (event.pointerType === "touch")
+          timer = setTimeout(() => button.classList.add("show-tooltip"), 850);
+      });
+      ["pointerup", "pointercancel", "pointermove"].forEach((name) =>
+        button.addEventListener(name, () => clearTimeout(timer)),
+      );
+      button.addEventListener("blur", () =>
+        button.classList.remove("show-tooltip"),
+      );
+      button.addEventListener("click", () =>
+        setTimeout(() => button.classList.remove("show-tooltip"), 1200),
+      );
+    });
   }
 
   function renderNotFound(message) {
@@ -1117,6 +1164,23 @@
     notify("Post atualizado.");
   }
 
+  async function submitPostDelete(event) {
+    event.preventDefault();
+    if (!deletingPostId) return;
+    const submit = event.submitter;
+    submit.disabled = true;
+    const { error } = await sb.rpc("tl_forum_delete_post", {
+      p_post_id: deletingPostId,
+    });
+    submit.disabled = false;
+    if (error) return notify(error.message, true);
+    $("forumDeletePostDialog").close();
+    deletingPostId = null;
+    await loadBoard();
+    renderRoute();
+    notify("Post apagado.");
+  }
+
   async function activate() {
     gate.hidden = true;
     app.hidden = false;
@@ -1160,6 +1224,7 @@
   $("forumCreateForm")?.addEventListener("submit", submitTopic);
   $("forumReplyForm")?.addEventListener("submit", submitReply);
   $("forumEditPostForm")?.addEventListener("submit", submitPostEdit);
+  $("forumDeletePostForm")?.addEventListener("submit", submitPostDelete);
   $("forumProfileForm")?.addEventListener("submit", saveForumProfile);
   $("forumProfileAvatar")?.addEventListener("change", (event) => {
     const file = event.target.files?.[0];
