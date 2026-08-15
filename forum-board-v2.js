@@ -171,6 +171,7 @@
       ),
       totalPosts: postCount,
       xp: Number(global.xp || 0),
+      accountCreatedAt: global.account_created_at || null,
     };
   }
 
@@ -450,7 +451,7 @@
     ]);
     view.innerHTML = `<section class="forum-full-profile">
       <header>${avatarMarkup(userId, "is-profile")}<div><h3 class="role-${esc(role(userId))}">${esc(personName(userId))}</h3><span class="forum-role-badge role-${esc(role(userId))}">${esc(roleLabel(userId))}</span><p>${esc(member.country || "País não informado")}</p></div>${userId === session.user.id ? '<button type="button" data-edit-profile>Editar perfil</button>' : ""}</header>
-      <div class="forum-profile-stats"><article><b>${stats.topics}</b><small>Tópicos</small></article><article><b>${stats.posts}</b><small>Respostas</small></article><article><b>${stats.xp}</b><small>XP</small></article><article><b>${esc(relative(member.created_at || new Date().toISOString()))}</b><small>Membro desde</small></article></div>
+      <div class="forum-profile-stats"><article><b>${stats.topics}</b><small>Tópicos</small></article><article><b>${stats.posts}</b><small>Respostas</small></article><article><b>${stats.xp}</b><small>XP</small></article><article><b>${stats.accountCreatedAt ? esc(fmtDate(stats.accountCreatedAt)) : "—"}</b><small>Membro desde</small></article></div>
       <div id="forumProfileOverview" class="forum-profile-details"><section><h4>Perfil</h4><p>${esc(member.bio || "Este membro ainda não adicionou uma bio.")}</p></section><dl><div><dt>Jogo</dt><dd>${esc(member.main_game || "—")}</dd></div><div><dt>Plataforma</dt><dd>${esc(member.platform || "—")}</dd></div><div><dt>Modo</dt><dd>${esc(member.preferred_mode || "—")}</dd></div>${member.discord ? `<div><dt>Discord</dt><dd>${esc(member.discord)}</dd></div>` : ""}</dl></div>
       <div class="forum-profile-tabs" role="tablist"><button class="is-active" type="button" data-profile-tab="profile">Perfil</button><button type="button" data-profile-tab="topics">Tópicos</button><button type="button" data-profile-tab="replies">Respostas</button><button type="button" data-profile-tab="activity">Atividade</button></div>
       <div id="forumProfileActivity" hidden></div>
@@ -645,9 +646,7 @@
   function postCard(post, index) {
     const author = person(post.author_id);
     const stats = ownForumStats(post.author_id);
-    const memberSince =
-      forumProfiles.get(post.author_id)?.created_at ||
-      profiles.get(post.author_id)?.created_at;
+    const memberSince = progress.get(post.author_id)?.account_created_at;
     const quoted = post.quote_post_id
       ? posts.find((item) => item.id === post.quote_post_id)
       : null;
