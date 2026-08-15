@@ -37,6 +37,13 @@
 .buddy-main #buddyConversation header small{font-size:10px;color:#9e947f}
 .buddy-main #buddyConversation header [data-minimize],.buddy-main #buddyConversation header [data-close-chat]{width:30px;height:30px;min-width:30px;padding:0;border-radius:50%;font-size:18px;line-height:1}
 .buddy-main #buddyConversation header [data-block],.buddy-main #buddyConversation header [data-delete]{display:none}
+.buddy-main #buddyConversation header [data-chat-menu]{width:30px;height:30px;min-width:30px;padding:0;border-radius:50%;font-size:20px;line-height:1}
+.buddy-chat-menu{position:absolute;top:54px;right:10px;z-index:4;display:grid;min-width:170px;padding:6px;border:1px solid rgba(217,164,65,.3);border-radius:12px;background:#101215;box-shadow:0 16px 44px rgba(0,0,0,.6)}
+.buddy-chat-menu[hidden]{display:none}
+.buddy-chat-menu button{padding:9px 10px;border:0;border-radius:7px;background:transparent;color:#d9c9a4;text-align:left;cursor:pointer;font-size:11px}
+.buddy-chat-menu button:hover,.buddy-chat-menu button:focus-visible{background:rgba(115,255,24,.09);color:#73ff18;outline:none}
+.buddy-chat-unread{position:absolute;top:5px;right:42px;min-width:17px;height:17px;padding:0 4px;border-radius:999px;background:#73ff18;color:#091005;text-align:center;font:950 10px/17px system-ui;box-shadow:0 0 12px rgba(115,255,24,.7)}
+.buddy-main #buddyConversation.has-unread{border-color:#73ff18;box-shadow:0 24px 90px rgba(0,0,0,.7),0 0 24px rgba(115,255,24,.18)}
 .buddy-main #buddyConversation .buddy-messages{min-height:0;max-height:none;height:auto;padding:14px 12px}
 .buddy-main #buddyConversation .buddy-message-form{padding:10px;border-top:1px solid rgba(217,164,65,.14)}
 @media(max-width:760px){
@@ -47,9 +54,11 @@
   .buddy-app.conversation-open>.buddy-main{background:#15171b;border-color:transparent}
   .buddy-main #buddyConversation{position:static;width:100%;height:100%;border:0;border-radius:0;box-shadow:none}
   .buddy-main #buddyConversation.is-minimized{height:100%}
-  .buddy-main #buddyConversation header{display:grid!important;grid-template-columns:36px 42px minmax(0,1fr) 32px 30px!important;align-items:center!important;height:64px!important;padding:8px 10px!important}
+  .buddy-main #buddyConversation header{display:grid!important;grid-template-columns:36px 42px minmax(0,1fr) 30px 30px 30px!important;align-items:center!important;height:64px!important;padding:8px 10px!important}
   .buddy-main #buddyConversation header [data-profile]{grid-column:auto!important;width:32px!important;min-width:32px!important;height:32px!important}
   .buddy-main #buddyConversation header [data-close-chat]{width:30px!important;min-width:30px!important;height:30px!important}
   .buddy-main #buddyConversation header [data-block],.buddy-main #buddyConversation header [data-delete]{display:none!important}
+  .buddy-main #buddyConversation header [data-chat-menu]{width:30px!important;min-width:30px!important;height:30px!important}
+  .buddy-chat-menu{position:fixed;top:auto;right:10px;bottom:76px;max-width:calc(100vw - 20px)}
   .buddy-main #buddyConversation header [data-minimize]{display:none}
 }
