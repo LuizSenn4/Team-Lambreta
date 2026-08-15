@@ -320,6 +320,17 @@
   cursor: pointer;
   touch-action: manipulation;
 }
+.forum-topic-actions {
+  display: flex;
+  flex: 0 0 auto;
+  align-items: center;
+  gap: 8px;
+}
+.forum-topic-page-head .forum-topic-delete-action {
+  border-color: rgba(235, 79, 94, 0.34);
+  background: rgba(166, 31, 47, 0.12);
+  color: #f27b87;
+}
 .forum-icon-action svg {
   width: 20px;
   height: 20px;
@@ -1525,6 +1536,9 @@
   }
   .forum-topic-page-head {
     display: grid;
+  }
+  .forum-topic-actions {
+    justify-self: end;
   }
   .forum-post-card > header {
     display: grid;
