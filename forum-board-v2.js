@@ -30,6 +30,7 @@
   const profiles = new Map();
   const forumProfiles = new Map();
   const progress = new Map();
+  const editorMentions = new WeakMap();
   let currentForumProfile = null;
   let quotePostId = null;
   let editingPostId = null;
@@ -160,6 +161,55 @@
     return output.replace(/\n/g, "<br>");
   }
 
+  function plainMentions(value) {
+    return String(value || "").replace(
+      /\[mention=([0-9a-f-]{36})\]([\s\S]*?)\[\/mention\]/gi,
+      (_all, userId, label) =>
+        forumProfiles.has(userId) || profiles.has(userId)
+          ? `@${personName(userId)}`
+          : String(label || "@Membro").replace(/^@?/, "@"),
+    );
+  }
+
+  function hydrateEditorValue(textarea, value = "") {
+    const mentions = new Map();
+    String(value || "").replace(
+      /\[mention=([0-9a-f-]{36})\][\s\S]*?\[\/mention\]/gi,
+      (_all, userId) => {
+        if (forumProfiles.has(userId) || profiles.has(userId))
+          mentions.set(userId, personName(userId));
+        return _all;
+      },
+    );
+    editorMentions.set(textarea, mentions);
+    textarea.value = plainMentions(value);
+  }
+
+  function rememberEditorMention(textarea, userId) {
+    const mentions = editorMentions.get(textarea) || new Map();
+    mentions.set(userId, personName(userId));
+    editorMentions.set(textarea, mentions);
+  }
+
+  function serializeEditorValue(textarea) {
+    let value = textarea.value;
+    const mentions = [
+      ...(editorMentions.get(textarea) || new Map()).entries(),
+    ].sort((a, b) => b[1].length - a[1].length);
+    mentions.forEach(([userId, nick]) => {
+      const escapedNick = nick.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+      const matcher = new RegExp(
+        `(^|[^\\p{L}\\p{N}_.-])@${escapedNick}(?![\\p{L}\\p{N}_.-])`,
+        "giu",
+      );
+      value = value.replace(
+        matcher,
+        (_all, prefix) => `${prefix}[mention=${userId}]@${nick}[/mention]`,
+      );
+    });
+    return value;
+  }
+
   const avatarMarkup = (userId, sizeClass = "") => {
     const member = person(userId);
     const name = personName(userId);
@@ -209,6 +259,7 @@
       const textarea = editor.querySelector("textarea");
       const toolbar = editor.querySelector(".forum-editor-toolbar");
       const preview = editor.querySelector(".forum-editor-preview");
+      editorMentions.set(textarea, new Map());
       toolbar.innerHTML = `${tools.map(([label, title, open, close]) => `<button type="button" title="${title}" aria-label="${title}" data-open="${esc(open)}" data-close="${esc(close)}">${label}</button>`).join("")}<span class="forum-editor-emojis" aria-label="Emojis">${["😊", "😂", "❤️", "👍", "🔥", "🎮", "🛵", "🏆"].map((emoji) => `<button type="button" data-emoji="${emoji}" aria-label="Inserir ${emoji}">${emoji}</button>`).join("")}</span><button type="button" data-preview>Pré-visualizar</button>`;
       toolbar
         .querySelectorAll("[data-open]")
@@ -231,7 +282,8 @@
           textarea.hidden = !preview.hidden;
           if (!preview.hidden)
             preview.innerHTML =
-              renderTlMark(textarea.value) || "<em>Sem conteúdo.</em>";
+              renderTlMark(serializeEditorValue(textarea)) ||
+              "<em>Sem conteúdo.</em>";
           event.currentTarget.textContent = preview.hidden
             ? "Pré-visualizar"
             : "Continuar editando";
@@ -298,9 +350,10 @@
     const select = (userId) => {
       const context = mentionQuery(textarea);
       if (!context || !matches.includes(userId)) return close();
-      const token = `[mention=${userId}]@${personName(userId)}[/mention] `;
+      const visibleMention = `@${personName(userId)} `;
+      rememberEditorMention(textarea, userId);
       textarea.setRangeText(
-        token,
+        visibleMention,
         context.start,
         textarea.selectionStart,
         "end",
@@ -621,7 +674,7 @@
             memberPosts
               .map((post) => {
                 const topic = topics.find((item) => item.id === post.topic_id);
-                return `<a class="forum-profile-activity-row" href="forum.html?topic=${encodeURIComponent(post.topic_id)}#post-${encodeURIComponent(post.id)}" data-route><strong>${esc(topic?.title || "Tópico")}</strong><span>${esc(post.body.slice(0, 140))}</span><small>${esc(relative(post.created_at))}</small></a>`;
+                return `<a class="forum-profile-activity-row" href="forum.html?topic=${encodeURIComponent(post.topic_id)}#post-${encodeURIComponent(post.id)}" data-route><strong>${esc(topic?.title || "Tópico")}</strong><span>${esc(plainMentions(post.body).slice(0, 140))}</span><small>${esc(relative(post.created_at))}</small></a>`;
               })
               .join("") ||
             '<p class="forum-empty-state">Nenhuma resposta publicada.</p>';
@@ -637,7 +690,7 @@
               ...memberPosts.map((item) => ({
                 type: "Resposta",
                 date: item.created_at,
-                text: item.body.slice(0, 100),
+                text: plainMentions(item.body).slice(0, 100),
                 href: `forum.html?topic=${encodeURIComponent(item.topic_id)}#post-${encodeURIComponent(item.id)}`,
               })),
             ]
@@ -959,12 +1012,14 @@
     context.hidden = !quotePostId;
     context.innerHTML =
       quotePostId && post
-        ? `<strong>Citando ${esc(personName(post.author_id))}</strong><span>${esc(post.body.slice(0, 180))}</span>`
+        ? `<strong>Citando ${esc(personName(post.author_id))}</strong><span>${esc(plainMentions(post.body).slice(0, 180))}</span>`
         : "";
-    $("forumReplyBody").value =
+    hydrateEditorValue(
+      $("forumReplyBody"),
       post && !quote
         ? `[mention=${post.author_id}]@${personName(post.author_id)}[/mention] `
-        : "";
+        : "",
+    );
     $("forumReplyDialog").showModal();
     setTimeout(() => $("forumReplyBody").focus(), 30);
   }
@@ -989,7 +1044,7 @@
         const post = posts.find((item) => item.id === button.dataset.editPost);
         if (!post) return;
         editingPostId = post.id;
-        $("forumEditPostBody").value = post.body;
+        hydrateEditorValue($("forumEditPostBody"), post.body);
         $("forumEditPostDialog").showModal();
       }),
     );
@@ -1107,7 +1162,7 @@
     const { data, error } = await sb.rpc("tl_forum_create_topic_v3", {
       p_section_id: Number($("forumTopicSection").value),
       p_title: $("forumTopicTitle").value.trim(),
-      p_body: $("forumTopicBody").value.trim(),
+      p_body: serializeEditorValue($("forumTopicBody")).trim(),
     });
     button.disabled = false;
     if (error) return notify(error.message, true);
@@ -1129,7 +1184,7 @@
     button.disabled = true;
     const { data, error } = await sb.rpc("tl_forum_create_post_v3", {
       p_topic_id: topicId,
-      p_body: $("forumReplyBody").value.trim(),
+      p_body: serializeEditorValue($("forumReplyBody")).trim(),
       p_quote_post_id: quotePostId,
     });
     button.disabled = false;
@@ -1153,7 +1208,7 @@
     submit.disabled = true;
     const { error } = await sb.rpc("tl_forum_edit_post", {
       p_post_id: editingPostId,
-      p_body: $("forumEditPostBody").value.trim(),
+      p_body: serializeEditorValue($("forumEditPostBody")).trim(),
     });
     submit.disabled = false;
     if (error) return notify(error.message, true);
