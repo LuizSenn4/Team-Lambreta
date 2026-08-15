@@ -54,6 +54,7 @@
   let deletingPostId = null;
   let deletingPostKind = "reply";
   let mentionPreview = null;
+  let gameResultsOpen = false;
   const shareIcon = `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 8a3 3 0 1 0-2.83-4A3 3 0 0 0 15 5c0 .2.02.39.06.57L8.91 9.1A3 3 0 1 0 9 14.78l6.13 3.5A3 3 0 1 0 16 16.55l-6.12-3.49c.08-.34.1-.7.06-1.05l6.16-3.54c.52.34 1.18.53 1.9.53Z"/></svg>`;
   const trashIcon = `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 3h6l1 2h4v2H4V5h4l1-2Zm-3 6h12l-1 12H7L6 9Zm3 2v7h2v-7H9Zm4 0v7h2v-7h-2Z"/></svg>`;
   const likeIcon = `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7.4 10.2 11 3.8c.5-.9 1.7-1.2 2.5-.6.6.4.9 1.2.7 1.9l-.9 3.5h4.9c1.7 0 2.9 1.6 2.4 3.2l-1.8 6.1c-.3 1.1-1.3 1.8-2.4 1.8H7.4V10.2Z"/><path d="M3.2 10.2h4.2v9.5H3.2z"/></svg>`;
@@ -294,7 +295,10 @@
 
   function ownForumStats(userId) {
     const topicCount = topics.filter(
-      (topic) => topic.author_id === userId && topic.status === "approved",
+      (topic) =>
+        topic.author_id === userId &&
+        topic.status === "approved" &&
+        !topicOriginalRemoved(topic.id),
     ).length;
     const postCount = posts.filter(
       (post) => post.author_id === userId && !post.deleted_at,
@@ -311,6 +315,12 @@
       accountCreatedAt: global.account_created_at || null,
     };
   }
+
+  const topicOriginalRemoved = (topicId) =>
+    posts.some(
+      (post) =>
+        post.topic_id === topicId && post.is_original && post.deleted_at,
+    );
 
   function applyEditorTag(textarea, open, close = open) {
     const start = textarea.selectionStart;
@@ -673,12 +683,22 @@
       : '<p class="forum-picker-empty">Selecione um jogo para escolher modos.</p>';
   }
 
-  function renderGameResults(query = "") {
+  function setGameResultsOpen(open, { restoreFocus = false } = {}) {
+    const search = $("forumGameSearch");
+    const host = $("forumGameResults");
+    if (!search || !host) return;
+    gameResultsOpen = Boolean(open && search.value.trim());
+    host.hidden = !gameResultsOpen;
+    search.setAttribute("aria-expanded", String(gameResultsOpen));
+    if (!gameResultsOpen && restoreFocus) search.focus();
+  }
+
+  function renderGameResults(query = "", { open = Boolean(query.trim()) } = {}) {
     const needle = normalizedSearch(query);
     const host = $("forumGameResults");
     if (!needle) {
-      host.hidden = true;
       host.innerHTML = "";
+      setGameResultsOpen(false);
       return;
     }
     const matches = gameCatalog
@@ -688,7 +708,6 @@
         ),
       )
       .slice(0, 12);
-    host.hidden = false;
     host.innerHTML = matches.length
       ? matches
           .map(
@@ -697,6 +716,7 @@
           )
           .join("")
       : '<p class="forum-picker-empty">Nenhum jogo encontrado.</p>';
+    setGameResultsOpen(open);
   }
 
   function setAvatarPreview(source, name) {
@@ -834,7 +854,10 @@
     const member = person(userId);
     const stats = ownForumStats(userId);
     const memberTopics = topics.filter(
-      (topic) => topic.author_id === userId && topic.status === "approved",
+      (topic) =>
+        topic.author_id === userId &&
+        topic.status === "approved" &&
+        !topicOriginalRemoved(topic.id),
     );
     const memberPosts = posts.filter(
       (post) =>
@@ -911,7 +934,10 @@
 
   function sectionStats(section) {
     const sectionTopics = topics.filter(
-      (topic) => topic.section_id === section.id && topic.status === "approved",
+      (topic) =>
+        topic.section_id === section.id &&
+        topic.status === "approved" &&
+        !topicOriginalRemoved(topic.id),
     );
     const sectionPosts = posts.filter(
       (post) =>
@@ -996,6 +1022,7 @@
   }
 
   function topicRow(topic) {
+    if (topicOriginalRemoved(topic.id)) return "";
     const replies = Math.max(
       0,
       posts.filter((post) => post.topic_id === topic.id && !post.deleted_at)
@@ -1015,7 +1042,10 @@
     if (!section) return renderNotFound("Pasta não encontrada.");
     const category = categories.find((item) => item.id === section.category_id);
     const list = topics.filter(
-      (topic) => topic.section_id === section.id && topic.status === "approved",
+      (topic) =>
+        topic.section_id === section.id &&
+        topic.status === "approved" &&
+        !topicOriginalRemoved(topic.id),
     );
     const ownPending = topics.filter(
       (topic) =>
@@ -1051,11 +1081,14 @@
       : null;
     const postHash = `post-${post.id}`;
     const removed = Boolean(post.deleted_at);
+    if (removed && !post.is_original) {
+      return `<div id="${esc(postHash)}" class="forum-post-deleted-anchor" data-post-id="${esc(post.id)}" aria-hidden="true"></div>`;
+    }
     const canManage = post.author_id === session.user.id || isModerator();
     return `<article id="${esc(postHash)}" class="forum-post-card" data-post-id="${esc(post.id)}">
       <header><a class="forum-post-author-mobile" href="forum.html?profile=${encodeURIComponent(post.author_id)}" data-route>${avatarMarkup(post.author_id, "is-mobile")}<span><strong class="role-${esc(role(post.author_id))}">${esc(personName(post.author_id))}</strong><small>${esc(author.country || "País não informado")} · ${stats.totalPosts} posts</small></span><span class="forum-role-badge role-${esc(role(post.author_id))}">${esc(roleLabel(post.author_id))}</span></a><div><time datetime="${esc(post.created_at)}">${esc(fmt(post.created_at))}</time><a href="#${esc(postHash)}" data-share-post="${esc(post.id)}" aria-label="Copiar link do post ${index + 1}">#${index + 1}</a></div></header>
       <div class="forum-post-layout"><aside class="forum-post-author"><a href="forum.html?profile=${encodeURIComponent(post.author_id)}" data-route>${avatarMarkup(post.author_id, "is-post")}<strong class="role-${esc(role(post.author_id))}">${esc(personName(post.author_id))}</strong></a><span class="forum-role-badge role-${esc(role(post.author_id))}">${esc(roleLabel(post.author_id))}</span><small>${esc(author.country || "País não informado")}</small><dl><div><dt>Jogos</dt><dd>${gameLabels(author).length ? esc(gameLabels(author).join(" · ")) : "—"}</dd></div><div><dt>Posts</dt><dd>${stats.totalPosts}</dd></div><div><dt>XP</dt><dd>${stats.xp}</dd></div><div><dt>Likes</dt><dd class="forum-author-likes" data-author-likes="${esc(post.author_id)}">${likeIcon}<span>${stats.likes}</span></dd></div><div><dt>Publicado</dt><dd>${esc(relative(post.created_at))}</dd></div><div><dt>Membro desde</dt><dd>${memberSince ? esc(fmtDate(memberSince)) : "—"}</dd></div></dl></aside>
-      <div class="forum-post-main">${quoted ? `<blockquote class="forum-linked-quote"><a href="#post-${esc(quoted.id)}">${esc(personName(quoted.author_id))} escreveu:</a><p>${quoted.deleted_at ? "Conteúdo removido." : renderTlMark(quoted.body.slice(0, 500))}</p></blockquote>` : ""}<div class="forum-post-body ${removed ? "is-removed" : ""}">${removed ? (post.is_original ? "Esta publicação foi removida." : "Esta resposta foi removida.") : renderTlMark(post.body)}</div>${post.edited_at && !removed ? `<p class="forum-post-edited">Editado em ${esc(fmt(post.edited_at))}</p>` : ""}</div></div>
+      <div class="forum-post-main">${quoted ? `<blockquote class="forum-linked-quote"><a href="#post-${esc(quoted.id)}">${esc(personName(quoted.author_id))} escreveu:</a><p>${quoted.deleted_at ? "Conteúdo removido." : renderTlMark(quoted.body.slice(0, 500))}</p></blockquote>` : ""}<div class="forum-post-body ${removed ? "is-removed" : ""}">${removed ? "Esta publicação foi removida." : renderTlMark(post.body)}</div>${post.edited_at && !removed ? `<p class="forum-post-edited">Editado em ${esc(fmt(post.edited_at))}</p>` : ""}</div></div>
       <footer><div class="forum-post-footer-meta"><span>${post.is_original ? "POST ORIGINAL" : `ID ${esc(post.id)}`}</span>${removed ? "" : reactionButtons(post.id)}</div><div class="forum-post-actions">${removed ? "" : `<button type="button" data-reply-post="${esc(post.id)}">Responder</button><button type="button" data-quote-post="${esc(post.id)}">Citar</button>${canManage ? `<button type="button" data-edit-post="${esc(post.id)}">Editar</button>${post.is_original ? "" : `<button type="button" class="forum-delete-action" data-delete-post="${esc(post.id)}">Apagar resposta</button>`}` : ""}`}<button type="button" data-share-post="${esc(post.id)}">Compartilhar</button></div></footer>
     </article>`;
   }
@@ -1194,6 +1227,15 @@
       { label: topic.title },
     ]);
     const originalPost = topicPosts.find((post) => post.is_original);
+    const topicRemoved = Boolean(originalPost?.deleted_at);
+    if (topicRemoved) {
+      view.innerHTML = `<section class="forum-topic-page forum-topic-page--removed">
+        <header class="forum-topic-page-head"><div><h3>${esc(topic.title)}</h3><p>Iniciado por <b class="role-${esc(role(topic.author_id))}">${esc(personName(topic.author_id))}</b> · ${esc(fmt(topic.created_at))}</p></div></header>
+        <div class="forum-topic-removed-state" role="status">Este tópico foi removido.</div>
+      </section>`;
+      bindRoutes();
+      return;
+    }
     const canDeleteTopic = originalPost && !originalPost.deleted_at && (originalPost.author_id === session.user.id || isModerator());
     view.innerHTML = `<section class="forum-topic-page">
       <header class="forum-topic-page-head"><div><h3>${esc(topic.title)}</h3><p>Iniciado por <b class="role-${esc(role(topic.author_id))}">${esc(personName(topic.author_id))}</b> · ${esc(fmt(topic.created_at))}</p></div><div class="forum-topic-actions"><button class="forum-icon-action" type="button" data-share-topic data-tooltip="Compartilhar publicação" aria-label="Compartilhar publicação">${shareIcon}</button>${canDeleteTopic ? `<button class="forum-icon-action forum-topic-delete-action" type="button" data-delete-topic-post="${esc(originalPost.id)}" data-tooltip="Deletar publicação" aria-label="Deletar publicação">${trashIcon}</button>` : ""}</div></header>
@@ -1606,8 +1648,15 @@
     }, 350);
   });
   $("forumGameSearch")?.addEventListener("input", (event) =>
-    renderGameResults(event.currentTarget.value),
+    renderGameResults(event.currentTarget.value, { open: true }),
   );
+  $("forumGameSearch")?.addEventListener("click", (event) => {
+    event.stopPropagation();
+    const search = event.currentTarget;
+    if (!search.value.trim()) return setGameResultsOpen(false);
+    if (gameResultsOpen) setGameResultsOpen(false);
+    else renderGameResults(search.value, { open: true });
+  });
   $("forumGameResults")?.addEventListener("change", (event) => {
     const input = event.target.closest('input[type="checkbox"]');
     if (!input) return;
@@ -1650,6 +1699,16 @@
         ? selectedModes.add(input.value)
         : selectedModes.delete(input.value);
   });
+  document.addEventListener("click", (event) => {
+    if (!gameResultsOpen) return;
+    if (event.target.closest("#forumGamesPicker")) return;
+    setGameResultsOpen(false);
+  });
+  document.addEventListener("keydown", (event) => {
+    if (event.key !== "Escape" || !gameResultsOpen) return;
+    event.preventDefault();
+    setGameResultsOpen(false, { restoreFocus: true });
+  });
   document.addEventListener(
     "error",
     (event) => {
@@ -1682,8 +1741,16 @@
     );
   document.querySelectorAll(".forum-board-dialog").forEach((dialog) =>
     dialog.addEventListener("click", (event) => {
+      if (dialog.id === "forumProfileDialog" && gameResultsOpen) {
+        setGameResultsOpen(false);
+        if (event.target === dialog) event.stopPropagation();
+        return;
+      }
       if (event.target === dialog) dialog.close();
     }),
+  );
+  $("forumProfileDialog")?.addEventListener("close", () =>
+    setGameResultsOpen(false),
   );
   window.addEventListener("popstate", () => session && renderRoute());
   sb.auth.onAuthStateChange((_event, nextSession) => {

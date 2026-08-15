@@ -1291,6 +1291,30 @@
   border-color: #65d98f;
   box-shadow: 0 0 0 2px rgba(101, 217, 143, 0.12);
 }
+.forum-post-deleted-anchor {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  clip-path: inset(50%);
+  overflow: hidden;
+  scroll-margin-top: 92px;
+}
+.forum-topic-page--removed .forum-topic-page-head {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.065);
+}
+.forum-topic-removed-state {
+  margin: 16px;
+  padding: 18px;
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.025);
+  color: #87928b;
+  font-size: 0.9rem;
+  font-style: italic;
+}
 .forum-post-card > header {
   display: flex;
   align-items: center;

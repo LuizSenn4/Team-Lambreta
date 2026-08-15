@@ -6,7 +6,7 @@
     <title>Fórum - Team Lambreta</title>
     <link rel="stylesheet" href="style-v92.css?v=97.0" />
     <link rel="stylesheet" href="ui-core-v93.css?v=93.0" />
-    <link rel="stylesheet" href="forum-board-v2.css?v=2.5" />
+    <link rel="stylesheet" href="forum-board-v2.css?v=2.9" />
   </head>
   <body>
     <section id="siteContent" class="site-content forum-page">
@@ -140,7 +140,7 @@
           <div class="forum-profile-form-grid">
             <label>Nick do game *<input id="forumProfileNickname" type="text" minlength="3" maxlength="32" pattern="[A-Za-zÀ-ÖØ-öø-ÿ0-9_. -]+" required /></label><label>País<input id="forumProfileCountry" type="text" maxlength="56" /></label><label>Discord opcional<input id="forumProfileDiscord" type="text" maxlength="64" /></label>
           </div>
-          <fieldset class="forum-profile-picker"><legend>Jogos <span id="forumGamesCount">0/3</span></legend><input id="forumGameSearch" type="search" placeholder="Pesquisar jogo..." autocomplete="off" aria-label="Pesquisar jogo" /><div id="forumSelectedGames" class="forum-profile-chips"></div><div id="forumGameResults" class="forum-game-results" hidden></div><small id="forumGamesHint">Selecione até 3 jogos.</small></fieldset>
+          <fieldset id="forumGamesPicker" class="forum-profile-picker"><legend>Jogos <span id="forumGamesCount">0/3</span></legend><input id="forumGameSearch" type="search" placeholder="Pesquisar jogo..." autocomplete="off" aria-label="Pesquisar jogo" aria-controls="forumGameResults" aria-expanded="false" /><div id="forumSelectedGames" class="forum-profile-chips"></div><div id="forumGameResults" class="forum-game-results" hidden></div><small id="forumGamesHint">Selecione até 3 jogos.</small></fieldset>
           <fieldset class="forum-profile-picker"><legend>Plataformas</legend><div id="forumPlatformOptions" class="forum-profile-chips"></div></fieldset>
           <fieldset id="forumModesPicker" class="forum-profile-picker"><legend>Modos de jogo</legend><div id="forumModeOptions" class="forum-mode-options"></div></fieldset>
           <label>Bio<textarea id="forumProfileBio" maxlength="500" rows="5"></textarea></label>
@@ -192,7 +192,7 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="community-safety-v9347.js?v=93.4.7"></script>
     <script src="supabase-integration-v92.js?v=93.4.8"></script>
-    <script src="forum-board-v2.js?v=2.8"></script>
+    <script src="forum-board-v2.js?v=2.9"></script>
     <script src="buddy-presence-v95.js?v=92.39.4.5"></script>
     <script src="buddy-global-notifications-v94.js?v=92.39.4.5"></script>
     <script src="navigation-v93.js?v=93.0"></script>
