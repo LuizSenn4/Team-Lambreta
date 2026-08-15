@@ -716,13 +716,13 @@
     renderBreadcrumb(
       selected
         ? [{ label: "Fórum", href: "forum.html" }, { label: selected.name }]
-        : [{ label: "Fórum" }],
+        : [],
     );
     view.innerHTML =
       shown
         .map(
           (category) => `<section class="forum-category-block">
-      <header><div><small>CATEGORIA</small><h3><a href="forum.html?category=${encodeURIComponent(category.slug)}" data-route>${esc(category.name)}</a></h3><p>${esc(category.description)}</p></div><span>${sections.filter((section) => section.category_id === category.id).length} pastas</span></header>
+      <header><div><h3><a href="forum.html?category=${encodeURIComponent(category.slug)}" data-route>${esc(category.name)}</a></h3><p>${esc(category.description)}</p></div><span>${sections.filter((section) => section.category_id === category.id).length} pastas</span></header>
       <div class="forum-section-list">${
         sections
           .filter((section) => section.category_id === category.id)
