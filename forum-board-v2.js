@@ -46,6 +46,7 @@
   const profiles = new Map();
   const forumProfiles = new Map();
   const progress = new Map();
+  const postReactions = new Map();
   const editorMentions = new WeakMap();
   let currentForumProfile = null;
   let quotePostId = null;
@@ -55,6 +56,8 @@
   let mentionPreview = null;
   const shareIcon = `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 8a3 3 0 1 0-2.83-4A3 3 0 0 0 15 5c0 .2.02.39.06.57L8.91 9.1A3 3 0 1 0 9 14.78l6.13 3.5A3 3 0 1 0 16 16.55l-6.12-3.49c.08-.34.1-.7.06-1.05l6.16-3.54c.52.34 1.18.53 1.9.53Z"/></svg>`;
   const trashIcon = `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 3h6l1 2h4v2H4V5h4l1-2Zm-3 6h12l-1 12H7L6 9Zm3 2v7h2v-7H9Zm4 0v7h2v-7h-2Z"/></svg>`;
+  const likeIcon = `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7.4 10.2 11 3.8c.5-.9 1.7-1.2 2.5-.6.6.4.9 1.2.7 1.9l-.9 3.5h4.9c1.7 0 2.9 1.6 2.4 3.2l-1.8 6.1c-.3 1.1-1.3 1.8-2.4 1.8H7.4V10.2Z"/><path d="M3.2 10.2h4.2v9.5H3.2z"/></svg>`;
+  const dislikeIcon = `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7.4 13.8 11 20.2c.5.9 1.7 1.2 2.5.6.6-.4.9-1.2.7-1.9l-.9-3.5h4.9c1.7 0 2.9-1.6 2.4-3.2l-1.8-6.1c-.3-1.1-1.3-1.8-2.4-1.8H7.4v9.5Z"/><path d="M3.2 4.3h4.2v9.5H3.2z"/></svg>`;
 
   const esc = (value) =>
     String(value ?? "").replace(
@@ -550,6 +553,7 @@
       forumProfileResult,
       progressResult,
       gameCatalogResult,
+      reactionResult,
     ] = await Promise.all([
       sb.from("forum_categories").select("*").order("sort_order"),
       sb.from("forum_sections").select("*").order("sort_order"),
@@ -565,6 +569,7 @@
       sb.from("forum_profiles").select("*"),
       sb.rpc("tl_forum_profile_stats"),
       sb.from("forum_game_catalog").select("*").order("sort_order"),
+      sb.rpc("tl_forum_post_reaction_summary"),
     ]);
     const failure = [
       categoryResult,
@@ -590,6 +595,14 @@
     progress.clear();
     (progressResult.data || []).forEach((item) =>
       progress.set(item.user_id, item),
+    );
+    postReactions.clear();
+    (Array.isArray(reactionResult.data) ? reactionResult.data : []).forEach((item) =>
+      postReactions.set(String(item.post_id), {
+        likes: Number(item.likes || 0),
+        dislikes: Number(item.dislikes || 0),
+        myReaction: item.my_reaction || null,
+      }),
     );
     currentForumProfile = forumProfiles.get(session.user.id) || null;
     populateSectionSelect();
@@ -1035,10 +1048,15 @@
     const canManage = post.author_id === session.user.id || isModerator();
     return `<article id="${esc(postHash)}" class="forum-post-card" data-post-id="${esc(post.id)}">
       <header><a class="forum-post-author-mobile" href="forum.html?profile=${encodeURIComponent(post.author_id)}" data-route>${avatarMarkup(post.author_id, "is-mobile")}<span><strong class="role-${esc(role(post.author_id))}">${esc(personName(post.author_id))}</strong><small>${esc(author.country || "País não informado")} · ${stats.totalPosts} posts</small></span><span class="forum-role-badge role-${esc(role(post.author_id))}">${esc(roleLabel(post.author_id))}</span></a><div><time datetime="${esc(post.created_at)}">${esc(fmt(post.created_at))}</time><a href="#${esc(postHash)}" data-share-post="${esc(post.id)}" aria-label="Copiar link do post ${index + 1}">#${index + 1}</a></div></header>
-      <div class="forum-post-layout"><aside class="forum-post-author"><a href="forum.html?profile=${encodeURIComponent(post.author_id)}" data-route>${avatarMarkup(post.author_id, "is-post")}<strong class="role-${esc(role(post.author_id))}">${esc(personName(post.author_id))}</strong></a><span class="forum-role-badge role-${esc(role(post.author_id))}">${esc(roleLabel(post.author_id))}</span><small>${esc(author.country || "País não informado")}</small><dl><div><dt>Jogos</dt><dd>${gameLabels(author).length ? esc(gameLabels(author).join(" · ")) : "—"}</dd></div><div><dt>Posts</dt><dd>${stats.totalPosts}</dd></div><div><dt>XP</dt><dd>${stats.xp}</dd></div><div><dt>Likes</dt><dd>${stats.likes}</dd></div><div><dt>Publicado</dt><dd>${esc(relative(post.created_at))}</dd></div><div><dt>Membro desde</dt><dd>${memberSince ? esc(fmtDate(memberSince)) : "—"}</dd></div></dl></aside>
+      <div class="forum-post-layout"><aside class="forum-post-author"><a href="forum.html?profile=${encodeURIComponent(post.author_id)}" data-route>${avatarMarkup(post.author_id, "is-post")}<strong class="role-${esc(role(post.author_id))}">${esc(personName(post.author_id))}</strong></a><span class="forum-role-badge role-${esc(role(post.author_id))}">${esc(roleLabel(post.author_id))}</span><small>${esc(author.country || "País não informado")}</small><dl><div><dt>Jogos</dt><dd>${gameLabels(author).length ? esc(gameLabels(author).join(" · ")) : "—"}</dd></div><div><dt>Posts</dt><dd>${stats.totalPosts}</dd></div><div><dt>XP</dt><dd>${stats.xp}</dd></div><div><dt>Likes</dt><dd class="forum-author-likes" data-author-likes="${esc(post.author_id)}">${likeIcon}<span>${stats.likes}</span></dd></div><div><dt>Publicado</dt><dd>${esc(relative(post.created_at))}</dd></div><div><dt>Membro desde</dt><dd>${memberSince ? esc(fmtDate(memberSince)) : "—"}</dd></div></dl></aside>
       <div class="forum-post-main">${quoted ? `<blockquote class="forum-linked-quote"><a href="#post-${esc(quoted.id)}">${esc(personName(quoted.author_id))} escreveu:</a><p>${quoted.deleted_at ? "Post removido." : renderTlMark(quoted.body.slice(0, 500))}</p></blockquote>` : ""}<div class="forum-post-body ${removed ? "is-removed" : ""}">${removed ? "Este post foi removido." : renderTlMark(post.body)}</div>${post.edited_at && !removed ? `<p class="forum-post-edited">Editado em ${esc(fmt(post.edited_at))}</p>` : ""}</div></div>
-      <footer><span>${post.is_original ? "POST ORIGINAL" : `ID ${esc(post.id)}`}</span><div>${removed ? "" : `<button type="button" data-reply-post="${esc(post.id)}">Responder</button><button type="button" data-quote-post="${esc(post.id)}">Citar</button>${canManage ? `<button type="button" data-edit-post="${esc(post.id)}">Editar</button>${post.is_original ? "" : `<button type="button" class="forum-delete-action" data-delete-post="${esc(post.id)}">Apagar resposta</button>`}` : ""}`}<button type="button" data-share-post="${esc(post.id)}">Compartilhar</button></div></footer>
+      <footer><div class="forum-post-footer-meta"><span>${post.is_original ? "POST ORIGINAL" : `ID ${esc(post.id)}`}</span>${removed ? "" : reactionButtons(post.id)}</div><div class="forum-post-actions">${removed ? "" : `<button type="button" data-reply-post="${esc(post.id)}">Responder</button><button type="button" data-quote-post="${esc(post.id)}">Citar</button>${canManage ? `<button type="button" data-edit-post="${esc(post.id)}">Editar</button>${post.is_original ? "" : `<button type="button" class="forum-delete-action" data-delete-post="${esc(post.id)}">Apagar resposta</button>`}` : ""}`}<button type="button" data-share-post="${esc(post.id)}">Compartilhar</button></div></footer>
     </article>`;
+  }
+
+  function reactionButtons(postId) {
+    const state = postReactions.get(String(postId)) || {likes:0,dislikes:0,myReaction:null};
+    return `<div class="forum-post-reactions" aria-label="Reações do post"><button type="button" class="forum-post-reaction is-like${state.myReaction === "like" ? " is-active" : ""}" data-post-reaction="like" data-post-id="${esc(postId)}" data-tooltip="Curtir" aria-label="Curtir">${likeIcon}<span>${state.likes}</span></button><button type="button" class="forum-post-reaction is-dislike${state.myReaction === "dislike" ? " is-active" : ""}" data-post-reaction="dislike" data-post-id="${esc(postId)}" data-tooltip="Não curtir" aria-label="Não curtir">${dislikeIcon}<span>${state.dislikes}</span></button></div>`;
   }
 
   function ensureMentionPreview() {
@@ -1180,6 +1198,7 @@
     bindRoutes();
     bindShare(topic);
     bindPostActions(topic);
+    bindPostReactions();
     view.querySelector("[data-delete-topic-post]")?.addEventListener("click", (event) => {
       const post = posts.find((item) => item.id === event.currentTarget.dataset.deleteTopicPost);
       if (post && !post.deleted_at) openDeleteDialog(post, "topic");
@@ -1248,6 +1267,46 @@
         );
         if (!post || post.deleted_at) return;
         openDeleteDialog(post, "reply");
+      }),
+    );
+  }
+
+  function bindPostReactions() {
+    view.querySelectorAll("[data-post-reaction]").forEach((button) =>
+      button.addEventListener("click", async () => {
+        const postId = button.dataset.postId;
+        const nextReaction = button.dataset.postReaction;
+        const previous = postReactions.get(postId) || {likes:0,dislikes:0,myReaction:null};
+        const requested = previous.myReaction === nextReaction ? null : nextReaction;
+        view.querySelectorAll(`[data-post-id="${CSS.escape(postId)}"] [data-post-reaction]`).forEach((item) => item.disabled = true);
+        const { data, error } = await sb.rpc("tl_forum_set_post_reaction", {
+          p_post_id: postId,
+          p_reaction: requested,
+        });
+        if (error) {
+          view.querySelectorAll(`[data-post-id="${CSS.escape(postId)}"] [data-post-reaction]`).forEach((item) => item.disabled = false);
+          return notify(error.message, true);
+        }
+        const next = {
+          likes: Number(data?.likes || 0),
+          dislikes: Number(data?.dislikes || 0),
+          myReaction: data?.my_reaction || null,
+        };
+        postReactions.set(postId, next);
+        const card = view.querySelector(`[data-post-id="${CSS.escape(postId)}"]`);
+        card?.querySelectorAll("[data-post-reaction]").forEach((item) => {
+          const type = item.dataset.postReaction;
+          item.classList.toggle("is-active", next.myReaction === type);
+          item.querySelector("span").textContent = String(type === "like" ? next.likes : next.dislikes);
+          item.disabled = false;
+        });
+        const post = posts.find((item) => item.id === postId);
+        const likeDelta = next.likes - Number(previous.likes || 0);
+        if (post && likeDelta) {
+          const authorStats = progress.get(post.author_id);
+          if (authorStats) authorStats.forum_likes = Math.max(0, Number(authorStats.forum_likes || 0) + likeDelta);
+          view.querySelectorAll(`[data-author-likes="${CSS.escape(post.author_id)}"] span`).forEach((item) => item.textContent = String(Math.max(0, Number(authorStats?.forum_likes || 0))));
+        }
       }),
     );
   }
