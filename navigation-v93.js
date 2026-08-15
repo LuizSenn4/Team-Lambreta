@@ -3,7 +3,8 @@
 
   /* V93.9.6 — patch de correção preservado sobre a versão atual.
      1) Normaliza nomes/nicks usados por cargos e moderação.
-     2) Corrige o título do chat para não ficar absoluto/sobreposto em telas menores. */
+     2) Corrige o título do chat para não ficar absoluto/sobreposto em telas menores.
+     3) Evita overflow horizontal causado por checkboxes visuais ocultos. */
   if (typeof window.normalizeChatName !== 'function') {
     window.normalizeChatName = function normalizeChatName(name) {
       return String(name || '')
@@ -30,6 +31,12 @@
         line-height: 1.15;
         transform: none;
         white-space: normal;
+      }
+
+      .tl-enter-toggle > input,
+      .tl-chat-remember input {
+        width: 1px !important;
+        height: 1px !important;
       }
     `;
     document.head.appendChild(patchStyle);
