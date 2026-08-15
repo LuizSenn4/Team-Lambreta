@@ -28,13 +28,33 @@
     const image=$('teamMemberPhotoPreview');
     const stage=$('teamMemberPhotoStage');
     const empty=$('teamMemberPhotoEmpty');
+    const dimensions=$('teamMemberPhotoDimensions');
     if(!image||!stage) return;
+    image.onload=null;
+    image.onerror=null;
     if(src){
+      if(dimensions) dimensions.textContent='A ler dimensões da imagem…';
+      image.onload=()=>{
+        const width=image.naturalWidth;
+        const height=image.naturalHeight;
+        if(!dimensions||!width||!height) return;
+        dimensions.textContent=width===800&&height===1000
+          ? `Imagem: ${width} × ${height} px ✓`
+          : `Imagem: ${width} × ${height} px · Recomendado: 800 × 1000 px`;
+        dimensions.classList.toggle('is-standard',width===800&&height===1000);
+      };
+      image.onerror=()=>{
+        if(dimensions) dimensions.textContent='Não foi possível ler as dimensões desta imagem.';
+      };
       image.src=src;
       image.hidden=false;
       if(empty) empty.hidden=true;
-      stage.style.backgroundImage=`url("${String(src).replace(/"/g,'\\"')}")`;
+      stage.style.backgroundImage='none';
     }else{
+      if(dimensions){
+        dimensions.textContent='';
+        dimensions.classList.remove('is-standard');
+      }
       image.hidden=true;
       image.removeAttribute('src');
       if(empty) empty.hidden=false;

@@ -282,7 +282,7 @@ html.admin-pending body { visibility: hidden; }
 .team-avatar-stage{
   position:relative;
   width:190px;
-  aspect-ratio:1/1;
+  aspect-ratio:4/5;
   overflow:hidden;
   display:grid;
   place-items:center;
@@ -314,13 +314,18 @@ html.admin-pending body { visibility: hidden; }
   max-width:100%!important;
   max-height:100%!important;
   object-fit:contain!important;
-  object-position:center!important;
+  object-position:center center!important;
+  display:block!important;
   border:0!important;
   border-radius:18px!important;
   box-shadow:none!important;
   background:transparent!important
 }
 .team-avatar-stage>span{color:#897b5f;font-size:12px;text-transform:uppercase;letter-spacing:1.2px}
+.team-image-guidance{display:grid;gap:5px;margin:0 0 14px;padding:11px 13px;border-left:3px solid rgba(217,164,65,.58);border-radius:0 10px 10px 0;background:rgba(217,164,65,.055);color:#aa9b7d;font-size:12px;line-height:1.45}
+.team-image-guidance strong{color:#e3c875;font-size:12px;letter-spacing:.35px}
+.team-image-dimensions{min-height:17px;color:#c7b995;line-height:1.4}
+.team-image-dimensions.is-standard{color:#91df68}
 .team-avatar-controls{display:grid;gap:10px;min-width:0}
 .team-avatar-controls input[type="url"]{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .team-avatar-link-hint{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:100%;color:#998b70}

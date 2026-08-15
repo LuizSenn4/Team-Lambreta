@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Admin - Team Lambreta</title>
-  <link rel="stylesheet" href="admin.css" />
+  <link rel="stylesheet" href="admin.css?v=97.1" />
 </head>
 <body>
   <div id="supabaseAuthBar" class="sb-auth-bar"></div>
@@ -136,6 +136,10 @@
 
       <fieldset class="team-avatar-fieldset">
         <legend>Foto ou avatar</legend>
+        <div class="team-image-guidance">
+          <strong>PADRÃO TEAM: 800 × 1000 px · proporção 4:5</strong>
+          <span>Centralize rosto/corpo dentro da imagem. Imagens fora desse formato podem apresentar margens para preservar o enquadramento.</span>
+        </div>
         <div class="team-avatar-box">
           <div id="teamMemberPhotoStage" class="team-avatar-stage" aria-label="Pré-visualização da foto">
             <img id="teamMemberPhotoPreview" alt="Pré-visualização" hidden>
@@ -146,6 +150,7 @@
               <input id="teamMemberPhotoUrl" type="url" placeholder="https://i.imgur.com/exemplo.png" autocomplete="off">
             </label>
             <small id="teamMemberPhotoLinkHint" class="team-avatar-link-hint">Aceita link direto de Imgur, Supabase e outros sites.</small>
+            <small id="teamMemberPhotoDimensions" class="team-image-dimensions" aria-live="polite"></small>
             <div class="team-avatar-file-row">
               <label class="team-avatar-file-button">
                 <span>Abrir ficheiro</span>
@@ -153,7 +158,7 @@
               </label>
               <button id="teamMemberPhotoRemove" type="button" class="team-avatar-remove">Remover imagem</button>
             </div>
-            <small>A imagem aparece inteira, centralizada e com fundo desfocado quando o formato não preencher a moldura.</small>
+            <small>A imagem aparece inteira e centralizada; formatos diferentes podem deixar margens internas.</small>
           </div>
         </div>
       </fieldset>
@@ -422,7 +427,7 @@
   <script src="admin.js"></script>
   <script src="supabase-integration-v92.js?v=93.4.8"></script>
   <script src="streamer-admin-v85.js"></script>
-  <script src="team-admin-v92.js?v=93.5.1"></script>
+  <script src="team-admin-v92.js?v=97.1"></script>
   <script src="competition-admin-v96.js?v=96.0"></script>
   <script src="error-codes-v92.js"></script>
   <script src="site-i18n-v92.js"></script>
