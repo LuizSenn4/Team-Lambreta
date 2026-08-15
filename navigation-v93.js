@@ -1,5 +1,40 @@
 (() => {
   'use strict';
+
+  /* V93.9.6 — patch de correção preservado sobre a versão atual.
+     1) Normaliza nomes/nicks usados por cargos e moderação.
+     2) Corrige o título do chat para não ficar absoluto/sobreposto em telas menores. */
+  if (typeof window.normalizeChatName !== 'function') {
+    window.normalizeChatName = function normalizeChatName(name) {
+      return String(name || '')
+        .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+        .trim()
+        .toLowerCase()
+        .replace(/\s+/g, '_')
+        .replace(/[^a-z0-9_]/g, '');
+    };
+  }
+
+  if (!document.getElementById('tl-v9396-chat-fix')) {
+    const patchStyle = document.createElement('style');
+    patchStyle.id = 'tl-v9396-chat-fix';
+    patchStyle.textContent = `
+      .chat-head h2 {
+        position: static;
+        margin: 4px 0 0;
+        width: auto;
+        max-width: 100%;
+        text-align: left;
+        font-family: Cinzel, serif;
+        color: var(--gold);
+        line-height: 1.15;
+        transform: none;
+        white-space: normal;
+      }
+    `;
+    document.head.appendChild(patchStyle);
+  }
+
   const nav = document.getElementById('tlMainNav');
   const button = document.getElementById('tlMenuButton');
   const backdrop = document.getElementById('tlMenuBackdrop');
