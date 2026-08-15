@@ -50,7 +50,7 @@
       image.src=src;
       image.hidden=false;
       if(empty) empty.hidden=true;
-      stage.style.backgroundImage='none';
+      stage.style.setProperty('--team-photo-image',`url(${JSON.stringify(src)})`);
     }else{
       if(dimensions){
         dimensions.textContent='';
@@ -59,7 +59,7 @@
       image.hidden=true;
       image.removeAttribute('src');
       if(empty) empty.hidden=false;
-      stage.style.backgroundImage='none';
+      stage.style.removeProperty('--team-photo-image');
     }
   }
 

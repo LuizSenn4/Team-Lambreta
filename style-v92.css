@@ -3352,6 +3352,50 @@ body {
     min-height: 330px;
   }
 
+  #lbBannerFinal {
+    display:grid;
+    gap:14px;
+    min-height:0;
+    overflow:visible;
+    border:0;
+    border-radius:0;
+    background:transparent;
+  }
+
+  #lbBannerFinal::before,
+  #lbBannerFinal .lb-arrow,
+  #lbBannerFinal .lb-dots {
+    display:none;
+  }
+
+  #lbBannerFinal .lb-slide {
+    position:relative;
+    inset:auto;
+    width:100%;
+    min-height:0;
+    padding:0;
+    overflow:hidden;
+    border:1px solid rgba(217,164,65,.22);
+    border-radius:20px;
+    opacity:1;
+    visibility:visible;
+    pointer-events:auto;
+    transform:none;
+  }
+
+  #lbBannerFinal .lb-slide--media img {
+    position:static;
+    width:100%;
+    height:auto;
+    object-fit:contain;
+    object-position:center center;
+  }
+
+  #lbBannerFinal .lb-slide--copy {
+    min-height:220px;
+    padding:34px 28px;
+  }
+
   .lb-slide {
     padding: 54px 68px 72px;
   }
@@ -8314,7 +8358,7 @@ html, body { width:100%; max-width:100%; overflow-x:hidden; }
   outline:none;
 }
 .team-roster-accent{position:absolute;left:0;top:15px;bottom:15px;width:3px;border-radius:0 4px 4px 0;background:var(--roster-accent);box-shadow:0 0 16px var(--roster-accent)}
-.team-roster-avatar{width:118px;aspect-ratio:4/5;border:1px solid rgba(217,164,65,.28);border-radius:12px;overflow:hidden;background:#090909;display:grid;place-items:center}
+.team-roster-avatar{width:118px;aspect-ratio:4/5;padding:3px;border:1px solid rgba(217,164,65,.28);border-radius:12px;overflow:hidden;background:#090909;display:grid;place-items:center}
 .team-roster-avatar img{width:100%;height:100%;display:block;object-fit:contain;object-position:center center}
 .team-roster-avatar>span{font:400 58px 'Road Rage',Impact,sans-serif;color:var(--roster-accent)}
 .team-roster-copy{min-width:0;display:grid;gap:6px}
@@ -8456,7 +8500,7 @@ html, body { width:100%; max-width:100%; overflow-x:hidden; }
   .team-esports-profile-photo{
     min-height:0!important;
     height:100%!important;
-    padding:0!important;
+    padding:clamp(7px,1.1vw,11px)!important;
     overflow:hidden!important;
     background:transparent!important;
     border-radius:24px 0 0 24px!important;
@@ -9417,7 +9461,7 @@ html.tl-modal-lock,html.tl-modal-lock body{overflow:hidden!important}
     height:auto!important;
     min-height:0!important;
     aspect-ratio:4/5!important;
-    padding:0!important;
+    padding:clamp(7px,1.1vw,11px)!important;
     margin:0!important;
     overflow:hidden!important;
     border-radius:24px 0 0 24px!important;
@@ -9476,7 +9520,7 @@ html.tl-modal-lock,html.tl-modal-lock body{overflow:hidden!important}
   }
 
   .team-esports-profile-photo{
-    padding:0!important;
+    padding:8px!important;
     margin:0!important;
     aspect-ratio:4/5!important;
     overflow:hidden!important;
@@ -9735,3 +9779,43 @@ input,select,textarea,button{max-width:100%;font:inherit}
   .lb-banner-static,.lb-banner-final{height:auto!important;min-height:0!important;aspect-ratio:auto!important}.lb-banner-static img,.lb-slide--media img{position:static!important;width:100%!important;height:auto!important;object-fit:contain!important}.lb-slide--media{background:#050505}.lb-slide--copy{min-height:220px}
   .tl-inbox-trigger{right:12px;bottom:12px}.tl-inbox-panel{padding:14px}.tl-inbox-item{grid-template-columns:1fr}.tl-inbox-delete{justify-self:start;margin:0 0 10px 8px}
 }
+
+/* Molduras 4:5: respiro leve e continuidade usando a própria foto. */
+.team-roster-avatar,
+.team-quick-preview-photo,
+.team-esports-profile-photo,
+.team-inline-photo-frame,
+.team-player-photo{position:relative;isolation:isolate;overflow:hidden}
+.team-quick-preview-photo{padding:3px}
+.team-player-photo{padding:3px}
+.team-roster-avatar::before,
+.team-quick-preview-photo::before,
+.team-esports-profile-photo::before,
+.team-inline-photo-frame::before,
+.team-player-photo::before{
+  content:"";
+  position:absolute;
+  inset:-10px;
+  z-index:0;
+  background-image:var(--team-photo-image,none);
+  background-size:cover;
+  background-position:center center;
+  filter:blur(12px) brightness(.4) saturate(.72);
+  opacity:.52;
+  transform:scale(1.06);
+  pointer-events:none
+}
+.team-roster-avatar img,
+.team-roster-avatar>span,
+.team-quick-preview-photo img,
+.team-quick-preview-photo span,
+.team-esports-profile-photo img,
+.team-esports-profile-photo>span,
+.team-inline-photo-frame img,
+.team-inline-photo-frame>span,
+.team-player-photo img{position:relative;z-index:1}
+.team-roster-avatar img,
+.team-quick-preview-photo img,
+.team-esports-profile-photo img,
+.team-inline-photo-frame img,
+.team-player-photo img{background:transparent!important}

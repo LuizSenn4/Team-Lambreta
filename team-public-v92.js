@@ -65,6 +65,14 @@
     const label=row.nickname||row.name||'L';
     return row.image_url?`<img src="${esc(row.image_url)}" alt="${esc(row.name||label)}" loading="lazy">`:`<span>${esc(label.charAt(0).toUpperCase())}</span>`;
   }
+  function setPhotoBackdrop(frame){
+    const image=frame?.querySelector('img');
+    if(!image) return;
+    frame.style.setProperty('--team-photo-image',`url(${JSON.stringify(image.currentSrc||image.src)})`);
+  }
+  function setPhotoBackdrops(root=document){
+    root.querySelectorAll('.team-roster-avatar,.team-quick-preview-photo,.team-esports-profile-photo,.team-inline-photo-frame,.team-player-photo').forEach(setPhotoBackdrop);
+  }
   function countryInfo(country){
     const value=String(country||'').trim().toLowerCase();
     const map={'brasil':['🇧🇷','BR'],'brazil':['🇧🇷','BR'],'portugal':['🇵🇹','PT'],'espanha':['🇪🇸','ES'],'spain':['🇪🇸','ES'],'polónia':['🇵🇱','PL'],'polonia':['🇵🇱','PL'],'poland':['🇵🇱','PL'],'frança':['🇫🇷','FR'],'franca':['🇫🇷','FR'],'france':['🇫🇷','FR'],'alemanha':['🇩🇪','DE'],'germany':['🇩🇪','DE'],'itália':['🇮🇹','IT'],'italia':['🇮🇹','IT'],'italy':['🇮🇹','IT'],'holanda':['🇳🇱','NL'],'netherlands':['🇳🇱','NL'],'reino unido':['🇬🇧','GB'],'united kingdom':['🇬🇧','GB'],'estados unidos':['🇺🇸','US'],'usa':['🇺🇸','US']};
@@ -101,6 +109,7 @@
     const factMarkup=facts(row).map(([label,value])=>{const shown=label==='País'?(()=>{const [f,c]=countryInfo(value);return `<span class="team-country-value"><span>${f}</span><b>${c}</b></span>`})():esc(value);return `<div><small>${esc(label)}</small><strong>${shown}</strong></div>`}).join('');
     const linkMarkup=links(row).map(([label,url,type])=>`<a class="team-social-link is-${esc(type)}" href="${esc(url)}" target="_blank" rel="noopener">${esc(label)}</a>`).join('');
     content.innerHTML=`<div class="team-esports-profile-photo">${avatar(row)}</div><div class="team-esports-profile-copy"><p class="tag">PERFIL OFICIAL</p><h2 id="teamProfileName">${esc(nickname)}</h2><div class="team-profile-rich-role">${rolesMarkup(row.role||'MEMBRO')}</div>${factMarkup?`<div class="team-esports-facts">${factMarkup}</div>`:''}<div class="team-esports-bio team-profile-rich-bio">${richText(row.bio||'Perfil oficial do Team Lambreta.')}</div>${linkMarkup?`<div class="team-esports-links">${linkMarkup}</div>`:''}</div>`;
+    setPhotoBackdrops(content);
     modal.hidden=false; document.body.classList.add('team-modal-open'); modal.querySelector('.team-esports-close')?.focus();
   }
   function closeModal(){const modal=document.getElementById('teamProfileModal'); if(!modal)return; modal.hidden=true; document.body.classList.remove('team-modal-open')}
@@ -112,6 +121,7 @@
   function render(){
     if(!grid)return; const totalPages=Math.max(1,Math.ceil(members.length/PAGE_SIZE)); if(currentPage>totalPages)currentPage=totalPages; const start=(currentPage-1)*PAGE_SIZE; const rows=members.slice(start,start+PAGE_SIZE);
     grid.innerHTML=rows.length?rows.map((row,i)=>compactCard(row,start+i)).join(''):`<article class="team-esports-empty"><h2>Nenhum perfil nesta área</h2></article>`;
+    setPhotoBackdrops(grid);
     grid.querySelectorAll('[data-member-index]').forEach(btn=>btn.onclick=()=>openModal(members[Number(btn.dataset.memberIndex)])); renderPager(totalPages);
   }
   async function load(){
