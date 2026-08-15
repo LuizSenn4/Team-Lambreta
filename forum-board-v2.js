@@ -33,6 +33,7 @@
   let currentForumProfile = null;
   let quotePostId = null;
   let editingPostId = null;
+  let mentionPreview = null;
 
   const esc = (value) =>
     String(value ?? "").replace(
@@ -124,6 +125,14 @@
 
   function renderTlMark(value) {
     let output = esc(value || "");
+    output = output.replace(
+      /\[mention=([0-9a-f-]{36})\][\s\S]*?\[\/mention\]/gi,
+      (_all, userId) => {
+        if (!forumProfiles.has(userId) && !profiles.has(userId))
+          return "@Membro";
+        return `<button type="button" class="forum-mention role-${esc(role(userId))}" data-forum-mention="${esc(userId)}">@${esc(personName(userId))}</button>`;
+      },
+    );
     output = output.replace(
       /\[code\]([\s\S]*?)\[\/code\]/gi,
       "<pre><code>$1</code></pre>",
@@ -225,7 +234,136 @@
             ? "Pré-visualizar"
             : "Continuar editando";
         });
+      if (editor.dataset.editor === "reply")
+        setupMentionAutocomplete(editor, textarea);
     });
+  }
+
+  function topicParticipants(topicId) {
+    const topic = topics.find((item) => item.id === topicId);
+    if (!topic) return [];
+    const ordered = posts
+      .filter((post) => post.topic_id === topicId && !post.is_original)
+      .sort((a, b) => String(b.created_at).localeCompare(String(a.created_at)))
+      .map((post) => post.author_id);
+    ordered.push(topic.author_id);
+    posts
+      .filter((post) => post.topic_id === topicId)
+      .forEach((post) => ordered.push(post.author_id));
+    return [...new Set(ordered)]
+      .filter((userId) => userId !== session?.user?.id)
+      .filter((userId) => forumProfiles.has(userId) || profiles.has(userId));
+  }
+
+  function mentionQuery(textarea) {
+    const beforeCaret = textarea.value.slice(0, textarea.selectionStart);
+    const match = beforeCaret.match(/(?:^|\s)@([A-Za-zÀ-ÖØ-öø-ÿ0-9_.-]*)$/u);
+    return match
+      ? {
+          query: match[1],
+          start: textarea.selectionStart - match[1].length - 1,
+        }
+      : null;
+  }
+
+  function setupMentionAutocomplete(editor, textarea) {
+    const list = document.createElement("div");
+    list.className = "forum-mention-autocomplete";
+    list.hidden = true;
+    list.setAttribute("role", "listbox");
+    list.setAttribute("aria-label", "Participantes do tópico");
+    editor.append(list);
+    let activeIndex = 0;
+    let matches = [];
+
+    const close = () => {
+      list.hidden = true;
+      matches = [];
+      textarea.removeAttribute("aria-activedescendant");
+    };
+    const paint = () => {
+      list
+        .querySelectorAll("[data-mention-option]")
+        .forEach((option, index) => {
+          option.classList.toggle("is-active", index === activeIndex);
+          option.setAttribute("aria-selected", String(index === activeIndex));
+        });
+      const active = list.querySelectorAll("[data-mention-option]")[
+        activeIndex
+      ];
+      if (active) textarea.setAttribute("aria-activedescendant", active.id);
+    };
+    const select = (userId) => {
+      const context = mentionQuery(textarea);
+      if (!context || !matches.includes(userId)) return close();
+      const token = `[mention=${userId}]@${personName(userId)}[/mention] `;
+      textarea.setRangeText(
+        token,
+        context.start,
+        textarea.selectionStart,
+        "end",
+      );
+      textarea.dispatchEvent(new Event("input", { bubbles: true }));
+      close();
+      textarea.focus();
+    };
+    const update = () => {
+      const context = mentionQuery(textarea);
+      if (!context) return close();
+      const needle = context.query.toLocaleLowerCase("pt-PT");
+      matches = topicParticipants(params().get("topic"))
+        .filter((userId) =>
+          personName(userId).toLocaleLowerCase("pt-PT").includes(needle),
+        )
+        .slice(0, 8);
+      activeIndex = 0;
+      list.hidden = false;
+      list.innerHTML = matches.length
+        ? matches
+            .map((userId, index) => {
+              const member = person(userId);
+              const detail = [roleLabel(userId), member.main_game]
+                .filter(Boolean)
+                .join(" · ");
+              return `<button id="forum-mention-option-${index}" type="button" role="option" data-mention-option="${esc(userId)}">${avatarMarkup(userId, "is-mention")}<span><strong class="role-${esc(role(userId))}">${esc(personName(userId))}</strong><small>${esc(detail)}</small></span></button>`;
+            })
+            .join("")
+        : '<p class="forum-mention-empty">Nenhum outro participante encontrado.</p>';
+      list.querySelectorAll("[data-mention-option]").forEach((option) => {
+        option.addEventListener("pointerdown", (event) =>
+          event.preventDefault(),
+        );
+        option.addEventListener("click", () =>
+          select(option.dataset.mentionOption),
+        );
+      });
+      paint();
+    };
+    textarea.setAttribute("aria-autocomplete", "list");
+    textarea.addEventListener("input", update);
+    textarea.addEventListener("click", update);
+    textarea.addEventListener("keydown", (event) => {
+      if (list.hidden) return;
+      if (event.key === "Escape") {
+        event.preventDefault();
+        return close();
+      }
+      if (!matches.length) return;
+      if (event.key === "ArrowDown" || event.key === "ArrowUp") {
+        event.preventDefault();
+        activeIndex =
+          (activeIndex +
+            (event.key === "ArrowDown" ? 1 : -1) +
+            matches.length) %
+          matches.length;
+        return paint();
+      }
+      if (event.key === "Enter") {
+        event.preventDefault();
+        select(matches[activeIndex]);
+      }
+    });
+    textarea.addEventListener("blur", () => setTimeout(close, 120));
   }
 
   function setUrl(next, replace = false) {
@@ -659,6 +797,89 @@
     </article>`;
   }
 
+  function ensureMentionPreview() {
+    if (mentionPreview) return mentionPreview;
+    mentionPreview = document.createElement("aside");
+    mentionPreview.className = "forum-mention-preview";
+    mentionPreview.hidden = true;
+    mentionPreview.setAttribute("role", "dialog");
+    mentionPreview.setAttribute("aria-label", "Resumo do perfil mencionado");
+    document.body.append(mentionPreview);
+    mentionPreview.addEventListener("pointerenter", () =>
+      clearTimeout(mentionPreview.hideTimer),
+    );
+    mentionPreview.addEventListener("pointerleave", () => hideMentionPreview());
+    document.addEventListener("click", (event) => {
+      if (
+        !mentionPreview.hidden &&
+        !event.target.closest("[data-forum-mention]") &&
+        !event.target.closest(".forum-mention-preview")
+      )
+        hideMentionPreview(0);
+    });
+    document.addEventListener("keydown", (event) => {
+      if (event.key === "Escape") hideMentionPreview(0);
+    });
+    window.addEventListener("scroll", () => hideMentionPreview(0), {
+      passive: true,
+    });
+    return mentionPreview;
+  }
+
+  function hideMentionPreview(delay = 100) {
+    if (!mentionPreview) return;
+    clearTimeout(mentionPreview.hideTimer);
+    mentionPreview.hideTimer = setTimeout(() => {
+      mentionPreview.hidden = true;
+    }, delay);
+  }
+
+  function showMentionPreview(trigger) {
+    const userId = trigger.dataset.forumMention;
+    if (!userId || (!forumProfiles.has(userId) && !profiles.has(userId)))
+      return;
+    const member = person(userId);
+    const preview = ensureMentionPreview();
+    clearTimeout(preview.hideTimer);
+    preview.innerHTML = `<header>${avatarMarkup(userId, "is-mention-preview")}<div><strong class="role-${esc(role(userId))}">${esc(personName(userId))}</strong><span class="forum-role-badge role-${esc(role(userId))}">${esc(roleLabel(userId))}</span></div></header><dl>${member.country ? `<div><dt>País</dt><dd>${esc(member.country)}</dd></div>` : ""}${member.main_game ? `<div><dt>Jogo</dt><dd>${esc(member.main_game)}</dd></div>` : ""}${member.preferred_mode ? `<div><dt>Modo</dt><dd>${esc(member.preferred_mode)}</dd></div>` : ""}</dl><a href="forum.html?profile=${encodeURIComponent(userId)}">Ver perfil →</a>`;
+    preview.hidden = false;
+    const rect = trigger.getBoundingClientRect();
+    const width = Math.min(310, window.innerWidth - 24);
+    preview.style.width = `${width}px`;
+    const left = Math.min(
+      Math.max(12, rect.left),
+      window.innerWidth - width - 12,
+    );
+    const top =
+      rect.bottom + 10 + preview.offsetHeight <= window.innerHeight
+        ? rect.bottom + 8
+        : Math.max(12, rect.top - preview.offsetHeight - 8);
+    preview.style.left = `${left}px`;
+    preview.style.top = `${top}px`;
+    preview.querySelector("a").addEventListener("click", (event) => {
+      event.preventDefault();
+      preview.hidden = true;
+      history.pushState(
+        {},
+        "",
+        `forum.html?profile=${encodeURIComponent(userId)}`,
+      );
+      renderRoute();
+    });
+  }
+
+  function bindMentions() {
+    view.querySelectorAll("[data-forum-mention]").forEach((mention) => {
+      mention.addEventListener("pointerenter", (event) => {
+        if (event.pointerType !== "touch") showMentionPreview(mention);
+      });
+      mention.addEventListener("pointerleave", () => hideMentionPreview());
+      mention.addEventListener("focus", () => showMentionPreview(mention));
+      mention.addEventListener("blur", () => hideMentionPreview());
+      mention.addEventListener("click", () => showMentionPreview(mention));
+    });
+  }
+
   async function renderTopic(id) {
     const topic = topics.find((item) => item.id === id);
     if (
@@ -700,6 +921,7 @@
     bindRoutes();
     bindShare(topic);
     bindPostActions(topic);
+    bindMentions();
     $("forumReplyButton")?.addEventListener("click", () => openReplyEditor());
     if (topic.status === "approved") {
       sb.rpc("tl_forum_register_view", { p_topic_id: topic.id }).then(
@@ -722,7 +944,9 @@
         ? `<strong>Citando ${esc(personName(post.author_id))}</strong><span>${esc(post.body.slice(0, 180))}</span>`
         : "";
     $("forumReplyBody").value =
-      post && !quote ? `@${personName(post.author_id)} ` : "";
+      post && !quote
+        ? `[mention=${post.author_id}]@${personName(post.author_id)}[/mention] `
+        : "";
     $("forumReplyDialog").showModal();
     setTimeout(() => $("forumReplyBody").focus(), 30);
   }
