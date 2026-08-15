@@ -57,6 +57,8 @@
   let gameResultsOpen = false;
   let countryResultsOpen = false;
   let selectedCountryCode = "";
+  let sharePopover = null;
+  let activeShareTrigger = null;
   const countryCatalog = window.TeamCountryCatalog;
   const shareIcon = `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 8a3 3 0 1 0-2.83-4A3 3 0 0 0 15 5c0 .2.02.39.06.57L8.91 9.1A3 3 0 1 0 9 14.78l6.13 3.5A3 3 0 1 0 16 16.55l-6.12-3.49c.08-.34.1-.7.06-1.05l6.16-3.54c.52.34 1.18.53 1.9.53Z"/></svg>`;
   const trashIcon = `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 3h6l1 2h4v2H4V5h4l1-2Zm-3 6h12l-1 12H7L6 9Zm3 2v7h2v-7H9Zm4 0v7h2v-7h-2Z"/></svg>`;
@@ -1468,25 +1470,134 @@
   async function copyLink(url) {
     try {
       await navigator.clipboard.writeText(url);
-      notify("Link copiado");
+      notify("Link copiado!");
     } catch (_) {
       notify("Não foi possível copiar o link.", true);
     }
   }
 
+  function closeSharePopover({ restoreFocus = false } = {}) {
+    if (!sharePopover) return;
+    sharePopover.remove();
+    sharePopover = null;
+    activeShareTrigger?.setAttribute("aria-expanded", "false");
+    activeShareTrigger?.removeAttribute("aria-controls");
+    if (restoreFocus) activeShareTrigger?.focus();
+    activeShareTrigger = null;
+  }
+
+  function socialShareUrl(platform, { text, url }) {
+    const encodedText = encodeURIComponent(text);
+    const encodedUrl = encodeURIComponent(url);
+    if (platform === "whatsapp")
+      return `https://wa.me/?text=${encodeURIComponent(`${text} ${url}`)}`;
+    if (platform === "facebook")
+      return `https://www.facebook.com/sharer/sharer.php?u=${encodedUrl}`;
+    if (platform === "twitter")
+      return `https://twitter.com/intent/tweet?text=${encodedText}&url=${encodedUrl}`;
+    return `https://t.me/share/url?url=${encodedUrl}&text=${encodedText}`;
+  }
+
+  function openSharePopover(trigger, shareData) {
+    closeSharePopover();
+    activeShareTrigger = trigger;
+    const popover = document.createElement("div");
+    popover.id = "forumSharePopover";
+    popover.className = "forum-share-popover";
+    popover.setAttribute("role", "menu");
+    popover.setAttribute("aria-label", "Compartilhar publicação");
+    popover.innerHTML = `
+      <strong>Compartilhar</strong>
+      ${[
+        ["whatsapp", "WhatsApp"],
+        ["facebook", "Facebook"],
+        ["twitter", "X / Twitter"],
+        ["telegram", "Telegram"],
+      ]
+        .map(
+          ([platform, label]) =>
+            `<a role="menuitem" href="${esc(socialShareUrl(platform, shareData))}" target="_blank" rel="noopener noreferrer">${esc(label)}</a>`,
+        )
+        .join("")}
+      <button type="button" role="menuitem" data-copy-share-link>Copiar link</button>`;
+    document.body.append(popover);
+    sharePopover = popover;
+    trigger.setAttribute("aria-expanded", "true");
+    trigger.setAttribute("aria-controls", popover.id);
+
+    const triggerRect = trigger.getBoundingClientRect();
+    const popoverRect = popover.getBoundingClientRect();
+    const gap = 8;
+    const left = Math.min(
+      window.innerWidth - popoverRect.width - gap,
+      Math.max(gap, triggerRect.right - popoverRect.width),
+    );
+    const roomBelow = window.innerHeight - triggerRect.bottom;
+    const top =
+      roomBelow >= popoverRect.height + gap
+        ? triggerRect.bottom + gap
+        : Math.max(gap, triggerRect.top - popoverRect.height - gap);
+    popover.style.left = `${left}px`;
+    popover.style.top = `${top}px`;
+
+    popover.querySelector("[data-copy-share-link]").addEventListener("click", async () => {
+      await copyLink(shareData.url);
+      closeSharePopover({ restoreFocus: true });
+    });
+    popover.querySelectorAll("a").forEach((link) =>
+      link.addEventListener("click", () => closeSharePopover()),
+    );
+    popover.querySelector("a")?.focus();
+  }
+
+  async function sharePublication(trigger, shareData) {
+    closeSharePopover();
+    if (typeof navigator.share === "function") {
+      try {
+        await navigator.share(shareData);
+        return;
+      } catch (error) {
+        if (error?.name === "AbortError") return;
+      }
+    }
+    openSharePopover(trigger, shareData);
+  }
+
+  document.addEventListener("pointerdown", (event) => {
+    if (
+      sharePopover &&
+      !sharePopover.contains(event.target) &&
+      !event.target.closest("[data-share-topic], [data-share-post]")
+    )
+      closeSharePopover();
+  });
+  document.addEventListener("keydown", (event) => {
+    if (event.key === "Escape" && sharePopover) {
+      event.preventDefault();
+      closeSharePopover({ restoreFocus: true });
+    }
+  });
+  window.addEventListener("resize", () => closeSharePopover());
+  window.addEventListener("scroll", () => closeSharePopover(), true);
+
   function bindShare(topic) {
-    view
-      .querySelector("[data-share-topic]")
-      ?.addEventListener("click", () =>
-        copyLink(
-          `${location.origin}${location.pathname}?topic=${encodeURIComponent(topic.id)}`,
-        ),
-      );
+    const text = "Veja esta publicação no Fórum Team Lambreta";
+    view.querySelector("[data-share-topic]")?.addEventListener("click", (event) => {
+      event.preventDefault();
+      sharePublication(event.currentTarget, {
+        title: topic.title,
+        text,
+        url: `${location.origin}${location.pathname}?topic=${encodeURIComponent(topic.id)}`,
+      });
+    });
     view.querySelectorAll("[data-share-post]").forEach((button) =>
-      button.addEventListener("click", () => {
-        copyLink(
-          `${location.origin}${location.pathname}?topic=${encodeURIComponent(topic.id)}#post-${encodeURIComponent(button.dataset.sharePost)}`,
-        );
+      button.addEventListener("click", (event) => {
+        event.preventDefault();
+        sharePublication(event.currentTarget, {
+          title: topic.title,
+          text,
+          url: `${location.origin}${location.pathname}?topic=${encodeURIComponent(topic.id)}#post-${encodeURIComponent(button.dataset.sharePost)}`,
+        });
       }),
     );
   }

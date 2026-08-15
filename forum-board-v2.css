@@ -1100,6 +1100,52 @@
   background: #2a1212;
   color: #ffdede;
 }
+.forum-share-popover {
+  position: fixed;
+  z-index: var(--tl-layer-popover);
+  display: grid;
+  width: min(220px, calc(100vw - 16px));
+  box-sizing: border-box;
+  padding: 8px;
+  border: 1px solid rgba(200, 164, 72, 0.32);
+  border-radius: 12px;
+  background: rgba(11, 16, 13, 0.98);
+  box-shadow: 0 18px 48px rgba(0, 0, 0, 0.5);
+  color: #e8ece9;
+}
+.forum-share-popover > strong {
+  padding: 7px 9px 9px;
+  color: #efd27d;
+  font-size: 0.76rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.forum-share-popover a,
+.forum-share-popover button {
+  display: flex;
+  align-items: center;
+  min-height: 40px;
+  box-sizing: border-box;
+  padding: 8px 10px;
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  color: #e2e9e4;
+  font: inherit;
+  font-size: 0.84rem;
+  font-weight: 750;
+  text-align: left;
+  text-decoration: none;
+  cursor: pointer;
+}
+.forum-share-popover a:hover,
+.forum-share-popover a:focus-visible,
+.forum-share-popover button:hover,
+.forum-share-popover button:focus-visible {
+  outline: none;
+  background: rgba(102, 223, 146, 0.12);
+  color: #73df9a;
+}
 .forum-board-view[aria-busy="true"] {
   min-height: 280px;
   opacity: 0.55;
