@@ -296,7 +296,9 @@
     const topicCount = topics.filter(
       (topic) => topic.author_id === userId && topic.status === "approved",
     ).length;
-    const postCount = posts.filter((post) => post.author_id === userId).length;
+    const postCount = posts.filter(
+      (post) => post.author_id === userId && !post.deleted_at,
+    ).length;
     const global = progress.get(userId) || {};
     return {
       topics: Number(global.forum_topics ?? topicCount),
@@ -835,7 +837,8 @@
       (topic) => topic.author_id === userId && topic.status === "approved",
     );
     const memberPosts = posts.filter(
-      (post) => post.author_id === userId && !post.is_original,
+      (post) =>
+        post.author_id === userId && !post.is_original && !post.deleted_at,
     );
     setHeading("PERFIL DO FÓRUM", personName(userId));
     renderBreadcrumb([
@@ -910,8 +913,10 @@
     const sectionTopics = topics.filter(
       (topic) => topic.section_id === section.id && topic.status === "approved",
     );
-    const sectionPosts = posts.filter((post) =>
-      sectionTopics.some((topic) => topic.id === post.topic_id),
+    const sectionPosts = posts.filter(
+      (post) =>
+        !post.deleted_at &&
+        sectionTopics.some((topic) => topic.id === post.topic_id),
     );
     const lastTopic = [...sectionTopics].sort((a, b) =>
       String(b.last_activity_at).localeCompare(String(a.last_activity_at)),
@@ -993,7 +998,8 @@
   function topicRow(topic) {
     const replies = Math.max(
       0,
-      posts.filter((post) => post.topic_id === topic.id).length - 1,
+      posts.filter((post) => post.topic_id === topic.id && !post.deleted_at)
+        .length - 1,
     );
     return `<a class="forum-topic-row ${topic.is_pinned ? "is-pinned" : ""}" href="forum.html?topic=${encodeURIComponent(topic.id)}" data-route>
       <span class="forum-topic-state" aria-hidden="true">${topic.is_locked ? "◆" : topic.is_pinned ? "★" : "●"}</span>
@@ -1049,7 +1055,7 @@
     return `<article id="${esc(postHash)}" class="forum-post-card" data-post-id="${esc(post.id)}">
       <header><a class="forum-post-author-mobile" href="forum.html?profile=${encodeURIComponent(post.author_id)}" data-route>${avatarMarkup(post.author_id, "is-mobile")}<span><strong class="role-${esc(role(post.author_id))}">${esc(personName(post.author_id))}</strong><small>${esc(author.country || "País não informado")} · ${stats.totalPosts} posts</small></span><span class="forum-role-badge role-${esc(role(post.author_id))}">${esc(roleLabel(post.author_id))}</span></a><div><time datetime="${esc(post.created_at)}">${esc(fmt(post.created_at))}</time><a href="#${esc(postHash)}" data-share-post="${esc(post.id)}" aria-label="Copiar link do post ${index + 1}">#${index + 1}</a></div></header>
       <div class="forum-post-layout"><aside class="forum-post-author"><a href="forum.html?profile=${encodeURIComponent(post.author_id)}" data-route>${avatarMarkup(post.author_id, "is-post")}<strong class="role-${esc(role(post.author_id))}">${esc(personName(post.author_id))}</strong></a><span class="forum-role-badge role-${esc(role(post.author_id))}">${esc(roleLabel(post.author_id))}</span><small>${esc(author.country || "País não informado")}</small><dl><div><dt>Jogos</dt><dd>${gameLabels(author).length ? esc(gameLabels(author).join(" · ")) : "—"}</dd></div><div><dt>Posts</dt><dd>${stats.totalPosts}</dd></div><div><dt>XP</dt><dd>${stats.xp}</dd></div><div><dt>Likes</dt><dd class="forum-author-likes" data-author-likes="${esc(post.author_id)}">${likeIcon}<span>${stats.likes}</span></dd></div><div><dt>Publicado</dt><dd>${esc(relative(post.created_at))}</dd></div><div><dt>Membro desde</dt><dd>${memberSince ? esc(fmtDate(memberSince)) : "—"}</dd></div></dl></aside>
-      <div class="forum-post-main">${quoted ? `<blockquote class="forum-linked-quote"><a href="#post-${esc(quoted.id)}">${esc(personName(quoted.author_id))} escreveu:</a><p>${quoted.deleted_at ? "Post removido." : renderTlMark(quoted.body.slice(0, 500))}</p></blockquote>` : ""}<div class="forum-post-body ${removed ? "is-removed" : ""}">${removed ? "Este post foi removido." : renderTlMark(post.body)}</div>${post.edited_at && !removed ? `<p class="forum-post-edited">Editado em ${esc(fmt(post.edited_at))}</p>` : ""}</div></div>
+      <div class="forum-post-main">${quoted ? `<blockquote class="forum-linked-quote"><a href="#post-${esc(quoted.id)}">${esc(personName(quoted.author_id))} escreveu:</a><p>${quoted.deleted_at ? "Conteúdo removido." : renderTlMark(quoted.body.slice(0, 500))}</p></blockquote>` : ""}<div class="forum-post-body ${removed ? "is-removed" : ""}">${removed ? (post.is_original ? "Esta publicação foi removida." : "Esta resposta foi removida.") : renderTlMark(post.body)}</div>${post.edited_at && !removed ? `<p class="forum-post-edited">Editado em ${esc(fmt(post.edited_at))}</p>` : ""}</div></div>
       <footer><div class="forum-post-footer-meta"><span>${post.is_original ? "POST ORIGINAL" : `ID ${esc(post.id)}`}</span>${removed ? "" : reactionButtons(post.id)}</div><div class="forum-post-actions">${removed ? "" : `<button type="button" data-reply-post="${esc(post.id)}">Responder</button><button type="button" data-quote-post="${esc(post.id)}">Citar</button>${canManage ? `<button type="button" data-edit-post="${esc(post.id)}">Editar</button>${post.is_original ? "" : `<button type="button" class="forum-delete-action" data-delete-post="${esc(post.id)}">Apagar resposta</button>`}` : ""}`}<button type="button" data-share-post="${esc(post.id)}">Compartilhar</button></div></footer>
     </article>`;
   }
@@ -1491,7 +1497,18 @@
       p_post_id: deletingPostId,
     });
     submit.disabled = false;
-    if (error) return notify(error.message, true);
+    if (error) {
+      console.error("[TL Fórum] Falha ao apagar conteúdo", {
+        postId: deletingPostId,
+        message: error.message,
+      });
+      return notify(
+        deletingPostKind === "topic"
+          ? "Não foi possível deletar a publicação. Tente novamente."
+          : "Não foi possível apagar a resposta. Tente novamente.",
+        true,
+      );
+    }
     const deletedKind = deletingPostKind;
     $("forumDeletePostDialog").close();
     deletingPostId = null;
