@@ -31,7 +31,7 @@
       <a href="#midia">Mídia</a>
       <a href="#loja">Loja</a>
       <a href="#redes">Redes</a>
-      <a href="ajuda.html">Ajuda</a>
+      <a href="#ajuda-admin">Ajuda</a>
     </nav>
 
     <button id="exitAdminSidebarBtn" class="back-public exit-admin-sidebar" type="button">← Voltar ao site</button>
@@ -417,6 +417,150 @@
         <label>Facebook<input id="facebookInput" type="text" placeholder="https://..."></label>
       </div>
     </section>
+
+    <section id="ajuda-admin" class="admin-card admin-help-center" aria-labelledby="adminHelpTitle">
+      <div class="admin-help-heading">
+        <div>
+          <p>CENTRAL INTERNA</p>
+          <h2 id="adminHelpTitle">Ajuda do Admin</h2>
+          <span>Manual operacional das funções disponíveis neste painel.</span>
+        </div>
+        <label class="admin-help-search">Buscar na ajuda
+          <input id="adminHelpSearch" type="search" placeholder="Ex.: imagem, inscrição, silenciar…" autocomplete="off">
+        </label>
+      </div>
+
+      <nav class="admin-help-index" aria-label="Índice da ajuda administrativa">
+        <a href="#help-geral">Visão geral</a><a href="#help-team">Team</a><a href="#help-streamers">Streamers e Live</a>
+        <a href="#help-hall">Hall da Fama</a><a href="#help-forum">Fórum</a><a href="#help-candidaturas">Candidaturas</a>
+        <a href="#help-inscricoes">Inscrições</a><a href="#help-mensagens">Mensagens</a><a href="#help-chat">Denúncias do chat</a>
+        <a href="#help-conteudo">Conteúdo e Loja</a><a href="#help-cargos">Cargos</a><a href="#help-seguranca">Segurança</a>
+      </nav>
+      <p id="adminHelpResults" class="admin-help-results" role="status" aria-live="polite"></p>
+
+      <div id="adminHelpTopics" class="admin-help-topics">
+        <details id="help-geral" data-help-topic open>
+          <summary><span>01</span> Visão geral e salvamento</summary>
+          <div class="admin-help-topic-body">
+            <section><h3>O que é</h3><p><strong>Geral</strong> controla Nome do time, Slogan, Título do lobby, Texto do lobby e Recado do lobby. O botão <strong>Salvar tudo</strong> grava os campos gerais, redes e listas locais editadas no painel.</p></section>
+            <section><h3>Como usar</h3><p>Edite somente o campo necessário e use <strong>Salvar tudo</strong>. Em cards com <strong>Salvar este</strong>, esse botão confirma o item individual. <strong>Voltar ao site</strong> encerra o desbloqueio administrativo desta sessão.</p></section>
+            <section><h3>Valores recomendados</h3><p>Mantenha títulos curtos e confira o texto no destino público depois de salvar. Use URLs completas, iniciadas por <code>https://</code>, nos campos de links.</p></section>
+            <section><h3>Cuidados</h3><p>Não feche a página antes da confirmação visual de salvamento. Alterações nas áreas em nuvem, como Team e Streamers, possuem botões próprios e não dependem de <strong>Salvar tudo</strong>.</p></section>
+          </div>
+        </details>
+
+        <details id="help-team" data-help-topic>
+          <summary><span>02</span> Team — membros, perfis e imagens</summary>
+          <div class="admin-help-topic-body">
+            <section><h3>O que é</h3><p><strong>Perfis do Team</strong> cria e edita os cards públicos. Os campos reais incluem nome, nickname, idade, função/cargo, área, país, biografia, preferências de jogo, foto, redes sociais, Publicado e Destaque.</p></section>
+            <section><h3>Como usar</h3><p>Use <strong>Adicionar perfil</strong> ou <strong>Editar</strong>, confira a pré-visualização e escolha <strong>Guardar perfil</strong>. É possível colar uma URL ou abrir um ficheiro. Os perfis ativos podem ser reordenados segurando e arrastando; também podem ser arquivados, restaurados ou excluídos quando a ação estiver disponível.</p></section>
+            <section><h3>Valores recomendados</h3><p><strong>Imagem Team: 800 × 1000 px, proporção 4:5.</strong> Centralize rosto/corpo, deixe margem de segurança e evite conteúdo encostado nas bordas. Imagens fora do formato podem apresentar margens para preservar o enquadramento; o formato é uma recomendação visual, não um bloqueio.</p></section>
+            <section><h3>Cuidados</h3><p><strong>Excluir perfil</strong> é definitivo. Arquivar oculta e permite restaurar. O perfil BOSS pode ter dados visuais e imagem editados, mas seu cargo fica protegido e ele não pode ser arquivado ou excluído pelo painel.</p></section>
+          </div>
+        </details>
+
+        <details id="help-streamers" data-help-topic>
+          <summary><span>03</span> Streamers, horários e Live</summary>
+          <div class="admin-help-topic-body">
+            <section><h3>O que é</h3><p><strong>Gerenciar streamers</strong> controla nome, nick, jogo principal, título/cargo, descrição, foto, redes, horários, transmissão, publicação, destaque e ordem. O perfil INK31 permanece protegido e editado somente pelo mecanismo indicado no próprio painel.</p></section>
+            <section><h3>Como usar</h3><p>Adicione ou edite um streamer, configure horários semanais ou uma data específica, informe o fuso e marque <strong>Folga</strong> quando necessário. Em Transmissão, escolha plataforma, detecção Manual ou Automática, link da live/canal e as opções de ao vivo, embed e chat. Use <strong>Pré-visualizar</strong> antes de <strong>Guardar streamer</strong>.</p></section>
+            <section><h3>Valores recomendados</h3><p>Os horários usam formato de 24 horas em intervalos de 10 minutos. Plataformas disponíveis: TikTok, Twitch, YouTube ou Outra. Preencha apenas redes válidas; campos vazios não aparecem no site.</p></section>
+            <section><h3>Cuidados</h3><p><strong>Forçar AO VIVO</strong> prevalece na apresentação e deve ser desligado quando a transmissão terminar. A detecção automática só funciona quando a integração segura correspondente estiver disponível. Arquivar também retira o streamer da publicação; <strong>Destacar</strong> troca o destaque principal.</p></section>
+          </div>
+        </details>
+
+        <details id="help-hall" data-help-topic>
+          <summary><span>04</span> Hall da Fama</summary>
+          <div class="admin-help-topic-body">
+            <section><h3>O que é</h3><p>Gerencia destaques de apoiadores com Nome, Título, Descrição, Total doado (€), Mimo/benefício e Imagem URL.</p></section>
+            <section><h3>Como usar</h3><p>Escolha <strong>Adicionar destaque</strong>, preencha os dados e salve o item. Atualize o total acumulado no destaque existente, em vez de criar duplicados para a mesma pessoa.</p></section>
+            <section><h3>Valores recomendados</h3><p>Total doado aceita valor numérico não negativo. Use URL direta e segura para a imagem e descreva somente benefícios confirmados.</p></section>
+            <section><h3>Cuidados</h3><p>Confirme nome, valor e benefício antes de publicar. <strong>Remover</strong> apaga o item da lista local.</p></section>
+          </div>
+        </details>
+
+        <details id="help-forum" data-help-topic>
+          <summary><span>05</span> Fórum aprovado e tópicos pendentes</summary>
+          <div class="admin-help-topic-body">
+            <section><h3>O que é</h3><p><strong>Fórum aprovado</strong> administra tópicos com Título, Descrição, Autor/Equipe, status Aberto ou Fechado e opção Fixado. <strong>Tópicos pendentes</strong> reúne publicações aguardando análise.</p></section>
+            <section><h3>Como usar</h3><p>Crie um tópico já aprovado ou edite um existente. Nos pendentes, leia autor e conteúdo antes de <strong>Aprovar</strong> ou <strong>Recusar</strong>. Aprovar move o tópico para a lista pública aprovada.</p></section>
+            <section><h3>Valores recomendados</h3><p>Use <strong>Fixado</strong> apenas para conteúdo que precise permanecer em evidência. Use <strong>Fechado</strong> quando o tópico deve continuar visível sem novas interações.</p></section>
+            <section><h3>Cuidados</h3><p>A recusa remove o tópico pendente. Não use esta área para moderar comentários individuais: aqui o escopo é o tópico listado.</p></section>
+          </div>
+        </details>
+
+        <details id="help-candidaturas" data-help-topic>
+          <summary><span>06</span> Candidaturas de Streamers</summary>
+          <div class="admin-help-topic-body">
+            <section><h3>O que é</h3><p>Recebe pedidos enviados pelo formulário público “Quero participar”, mostrando nome, plataforma, contacto, canal e mensagem disponíveis.</p></section>
+            <section><h3>Como usar</h3><p><strong>Aprovar e abrir perfil</strong> remove a candidatura, cria um perfil inicial de streamer e gera um aviso administrativo. Depois, revise o novo perfil em Streamers e complete os dados. <strong>Recusar</strong> remove a candidatura.</p></section>
+            <section><h3>Valores recomendados</h3><p>Confirme que canal e contacto pertencem ao candidato antes da aprovação. Complete foto, links, transmissão e estado de publicação no editor criado.</p></section>
+            <section><h3>Cuidados</h3><p>A aprovação cria apenas uma base de perfil; não presuma que todos os campos foram verificados. A recusa não possui recuperação nesta lista local.</p></section>
+          </div>
+        </details>
+
+        <details id="help-inscricoes" data-help-topic>
+          <summary><span>07</span> Inscrições competitivas / Participe</summary>
+          <div class="admin-help-topic-body">
+            <section><h3>O que é</h3><p>Lista inscrições competitivas ligadas à conta autenticada, com pesquisa e filtros para Todos, Pendentes, Aprovados e Recusados. O detalhe mostra os dados enviados e a auditoria das notificações.</p></section>
+            <section><h3>Como usar</h3><p>Abra o card, confira identidade, contacto, plataforma, região, Build, modo, experiência, disponibilidade e motivação. Em uma inscrição pendente, escolha <strong>Aprovar</strong> ou <strong>Recusar</strong>. A decisão registra o administrador e a data, mantém a mensagem interna ao inscrito e tenta enviar a notificação por e-mail.</p></section>
+            <section><h3>Valores recomendados</h3><p>Analise todos os campos antes da decisão. Os estados de e-mail exibidos são Pendente, Enviando, E-mail enviado ou E-mail não enviado.</p></section>
+            <section><h3>Cuidados</h3><p>A decisão administrativa continua válida mesmo se o e-mail falhar. Nesse caso, use <strong>Tentar novamente</strong>: a ação reenvia somente a notificação e não repete aprovação, recusa ou mensagem interna.</p></section>
+          </div>
+        </details>
+
+        <details id="help-mensagens" data-help-topic>
+          <summary><span>08</span> Mensagens privadas e avisos</summary>
+          <div class="admin-help-topic-body">
+            <section><h3>O que é</h3><p>Reúne contactos privados recebidos e avisos criados no painel. Avisos locais possuem Título, Mensagem, Tipo, Público e Autor.</p></section>
+            <section><h3>Como usar</h3><p>Nos contactos recebidos, use <strong>Marcar lida</strong>, <strong>Respondida</strong> ou <strong>Fechar</strong> conforme o tratamento. Para criar um aviso, selecione tipo Notícia, Evento, Admin ou Parceria e público Todos, Streamers, VIP ou Admin.</p></section>
+            <section><h3>Valores recomendados</h3><p>Use título objetivo, mensagem suficiente para orientar o destinatário e o público mais restrito que atenda à comunicação.</p></section>
+            <section><h3>Cuidados</h3><p>Marcar como respondida registra o responsável, mas não substitui a redação da resposta quando ela for necessária. Evite dados pessoais desnecessários em avisos amplos.</p></section>
+          </div>
+        </details>
+
+        <details id="help-chat" data-help-topic>
+          <summary><span>09</span> Denúncias do chat e moderação</summary>
+          <div class="admin-help-topic-body">
+            <section><h3>O que é</h3><p>Apresenta denúncias com motivo, mensagem denunciada, autor, denunciante, data e estado Pendente, Resolvida ou Ignorada.</p></section>
+            <section><h3>Como usar</h3><p>Após ler o contexto, escolha Silenciar, Apagar mensagem, Banir, Advertir e resolver ou Ignorar. Silenciar permite duração predefinida ou personalizada. Ações disciplinares aplicáveis geram o aviso administrativo previsto para o utilizador.</p></section>
+            <section><h3>Valores recomendados</h3><p>Durações prontas: 5, 15 ou 30 minutos; 1 ou 6 horas; 24 horas; 3 ou 7 dias. O valor personalizado aceita de 1 minuto a 30 dias.</p></section>
+            <section><h3>Cuidados</h3><p>Apagar e banir pedem confirmação e têm impacto direto. Use Ignorar somente quando a denúncia não exigir medida; confira sempre mensagem, autor e motivo antes de agir.</p></section>
+          </div>
+        </details>
+
+        <details id="help-conteudo" data-help-topic>
+          <summary><span>10</span> Usuários, eventos, conquistas, mídia, loja e redes</summary>
+          <div class="admin-help-topic-body">
+            <section><h3>O que é</h3><p><strong>Usuários pendentes</strong> é a lista de teste local com Nome, Email/Contacto e estado. <strong>Eventos</strong> usa Título, Data/Descrição e Imagem. <strong>Conquistas</strong> usa Título, Descrição e Imagem. <strong>Mídia</strong> usa Título, Descrição, tipo photo/video/short, imagem/thumb e link. <strong>Loja</strong> administra os campos apresentados em cada produto. <strong>Redes sociais</strong> define TikTok, Instagram, YouTube, Discord e Facebook gerais.</p></section>
+            <section><h3>Como usar</h3><p>Adicione, edite e salve cada card. Em Mídia, informe o tipo correto e use o campo de link para YouTube, Shorts, TikTok ou Reel. Em Redes, cole a URL completa. A lista Usuários pendentes permite Pendente, Aceito ou Recusado, mas não concede permissões reais.</p></section>
+            <section><h3>Valores recomendados</h3><p>Uploads locais genéricos aceitam imagens de até 2 MB e vídeos de até 5 MB; para vídeo, prefira o link da plataforma. Tipos de mídia aceitos pelo seletor: <code>photo</code>, <code>video</code> e <code>short</code>.</p></section>
+            <section><h3>Cuidados</h3><p>Não confunda Usuários pendentes com gestão real de autenticação. Verifique links e direitos de uso da mídia. Remover um card local não possui arquivo de recuperação dentro do painel.</p></section>
+          </div>
+        </details>
+
+        <details id="help-cargos" data-help-topic>
+          <summary><span>11</span> Cargos, etiquetas e permissões</summary>
+          <div class="admin-help-topic-body">
+            <section><h3>O que é</h3><p>Existem dois contextos distintos. No perfil público do Team, as etiquetas disponíveis são DEV, MEMBRO, ADMIN, STAFF, BOSS, STREAMER, MODERADOR, APOIADOR e VIP, inclusive em combinações. No acesso do sistema, os cargos reconhecidos são DEV/Admin Master, ADMIN, STAFF, MODERADOR, VIP, APOIADOR e MEMBRO.</p></section>
+            <section><h3>Como usar</h3><p>Use as etiquetas do editor Team apenas para representar a função pública daquele perfil. O acesso ao painel completo é validado para DEV/Admin Master e ADMIN; mudar a etiqueta visual de um card não altera a conta autenticada nem concede acesso.</p></section>
+            <section><h3>Valores recomendados</h3><p>A hierarquia de gestão definida é DEV/Admin Master acima de ADMIN, seguido por STAFF, MODERADOR e cargos de membro. VIP, APOIADOR e MEMBRO ficam no nível comum de atribuição.</p></section>
+            <section><h3>Cuidados</h3><p>Não altere cargos sem autorização. Um administrador não pode modificar ou atribuir cargo igual ou superior ao próprio. BOSS é uma etiqueta protegida do perfil Team; não a remova para tentar resolver acesso.</p></section>
+          </div>
+        </details>
+
+        <details id="help-seguranca" data-help-topic>
+          <summary><span>12</span> Segurança e rotina de conferência</summary>
+          <div class="admin-help-topic-body">
+            <section><h3>O que é</h3><p>O painel é uma área operacional restrita. A sessão e o cargo da conta são verificados antes de exibir as ferramentas administrativas.</p></section>
+            <section><h3>Como usar</h3><p>Antes de publicar, revise o card, use preview quando disponível, salve e confira a página de destino. Ao terminar em computador compartilhado, use <strong>Voltar ao site</strong> para encerrar o desbloqueio do Admin.</p></section>
+            <section><h3>Valores recomendados</h3><p>Use URLs HTTPS, ficheiros dentro dos limites mostrados pelo painel e somente dados necessários à operação.</p></section>
+            <section><h3>Cuidados</h3><p>Nunca cole senhas, tokens, chaves ou credenciais em campos de conteúdo. Não compartilhe dados pessoais de inscrições e mensagens. Confirme ações definitivas, especialmente excluir perfil, recusar, apagar mensagem ou banir.</p></section>
+          </div>
+        </details>
+      </div>
+      <div id="adminHelpEmpty" class="admin-help-empty" hidden>Nenhum tópico corresponde à busca.</div>
+    </section>
   </main>
 
   <div id="toast">Salvo!</div>
@@ -429,6 +573,7 @@
   <script src="streamer-admin-v85.js"></script>
   <script src="team-admin-v92.js?v=98.0"></script>
   <script src="competition-admin-v96.js?v=98.1"></script>
+  <script src="admin-help.js?v=1.0"></script>
   <script src="error-codes-v92.js"></script>
   <script src="site-i18n-v92.js"></script>
 <script src="buddy-presence-v95.js?v=92.39.4.5"></script><script src="buddy-global-notifications-v94.js?v=92.39.4.5"></script><script src="community-progress-v938.js?v=93.8.6"></script>
