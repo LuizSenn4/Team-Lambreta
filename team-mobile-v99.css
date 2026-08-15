@@ -7,7 +7,7 @@
   .team-esports-page{width:100%!important;max-width:none!important;margin:0!important;padding:0 14px 34px!important}
   .team-esports-hero{display:none!important}
   .team-mobile-appbar{display:grid;grid-template-columns:44px minmax(0,1fr) 54px;align-items:center;gap:12px;min-height:80px;padding:10px 2px 8px}
-  .team-mobile-appbar h1{margin:0;color:#f3ead5;font:900 clamp(22px,7vw,29px)/1.05 Cinzel,serif;letter-spacing:-.6px}
+  .team-mobile-appbar h1{margin:0;color:#f3ead5;font:900 clamp(21px,6.5vw,27px)/1.05 Inter,Arial,sans-serif;letter-spacing:-.8px}
   .team-mobile-appbar p{display:flex;align-items:center;gap:6px;margin:6px 0 0;color:#80f54c;font-size:10px;font-weight:900;letter-spacing:1.4px;text-transform:uppercase}
   .team-mobile-appbar p span{width:7px;height:7px;border-radius:50%;background:#73ff18;box-shadow:0 0 10px rgba(115,255,24,.8)}
   .team-mobile-back,.team-mobile-count{display:grid;place-items:center;width:42px;height:42px;border:1px solid rgba(217,164,65,.22);border-radius:14px;background:rgba(15,18,14,.9);color:#eed994;text-decoration:none}
@@ -20,16 +20,16 @@
   .team-mobile-tabs button.is-active::after{content:"";position:absolute;right:17%;bottom:-1px;left:17%;height:2px;border-radius:5px;background:#73ff18;box-shadow:0 0 12px rgba(115,255,24,.55)}
   .team-mobile-panel{display:none}.team-mobile-panel.is-active{display:block}
   .team-esports-grid{display:grid!important;grid-template-columns:1fr!important;gap:11px!important;width:100%!important}
-  .team-roster-card{position:relative!important;display:grid!important;grid-template-columns:82px minmax(0,1fr) 38px!important;gap:13px!important;min-height:112px!important;width:100%!important;padding:10px 12px 10px 10px!important;overflow:hidden;border:1px solid rgba(217,164,65,.17)!important;border-radius:20px!important;background:linear-gradient(115deg,rgba(18,21,17,.98),rgba(8,10,8,.98))!important;box-shadow:0 10px 28px rgba(0,0,0,.23)!important;text-align:left!important;transform:none!important}
+  .team-roster-card{position:relative!important;display:grid!important;grid-template-columns:80px minmax(0,1fr) 38px!important;gap:13px!important;min-height:118px!important;width:100%!important;padding:9px 12px 9px 10px!important;overflow:hidden;border:1px solid rgba(217,164,65,.17)!important;border-radius:20px!important;background:linear-gradient(115deg,rgba(18,21,17,.98),rgba(8,10,8,.98))!important;box-shadow:0 10px 28px rgba(0,0,0,.23)!important;text-align:left!important;transform:none!important}
   .team-roster-card::after{content:"";position:absolute;inset:0;pointer-events:none;background:linear-gradient(100deg,transparent 62%,rgba(217,164,65,.035))}
   .team-roster-accent{position:absolute!important;z-index:3;top:14px!important;bottom:14px!important;left:0!important;width:3px!important;border-radius:0 5px 5px 0;background:#73ff18!important;box-shadow:0 0 12px rgba(115,255,24,.5)}
   .team-roster-card.tone-red .team-roster-accent{background:#e53f4f!important;box-shadow:0 0 12px rgba(229,63,79,.5)}
-  .team-roster-avatar{position:relative!important;width:82px!important;height:92px!important;aspect-ratio:auto!important;padding:0!important;overflow:hidden!important;border:1px solid rgba(255,255,255,.1)!important;border-radius:15px!important;background:#10120f!important}
-  .team-roster-avatar::before{inset:-12px!important;filter:blur(10px) brightness(.7) saturate(.85)!important;opacity:.92!important}
-  .team-roster-avatar img{position:absolute!important;inset:0!important;width:100%!important;height:100%!important;object-fit:contain!important;border-radius:14px!important;background:transparent!important}
+  .team-roster-avatar{position:relative!important;width:80px!important;height:auto!important;aspect-ratio:4/5!important;padding:0!important;overflow:hidden!important;border:1px solid rgba(255,255,255,.1)!important;border-radius:15px!important;background:#10120f!important}
+  .team-roster-avatar::before{display:none!important}
+  .team-roster-avatar img{position:absolute!important;inset:0!important;width:100%!important;height:100%!important;object-fit:cover!important;object-position:center center!important;border-radius:14px!important;background:#10120f!important}
   .team-roster-copy{position:relative;z-index:2;display:flex!important;min-width:0;flex-direction:column;align-items:flex-start!important;justify-content:center;gap:6px!important}
-  .team-roster-copy strong{width:100%;color:#f5f0e5!important;font-size:clamp(20px,6.2vw,27px)!important;font-weight:950!important;line-height:1!important;letter-spacing:-.75px!important;overflow-wrap:anywhere}
-  .team-roster-copy strong.is-long{font-size:clamp(18px,5.2vw,23px)!important}.team-roster-copy strong.is-very-long{font-size:clamp(16px,4.6vw,20px)!important}
+  .team-roster-copy strong{display:block!important;width:100%;overflow:hidden!important;color:#f5f0e5!important;font:900 clamp(20px,5.8vw,25px)/1.08 Inter,Arial,sans-serif!important;letter-spacing:-.75px!important;white-space:nowrap!important;text-overflow:ellipsis!important;overflow-wrap:normal!important;-webkit-line-clamp:unset!important}
+  .team-roster-copy strong.is-long{font-size:clamp(18px,5.1vw,22px)!important}.team-roster-copy strong.is-very-long{font-size:clamp(16px,4.5vw,20px)!important}
   .team-roster-copy .team-role-badges{gap:4px!important}.team-roster-copy .team-role-badge{min-height:18px!important;padding:3px 6px!important;font-size:8px!important;line-height:1!important}
   .team-roster-copy em{display:flex;align-items:center;gap:5px;color:#9b9f96!important;font-size:10px!important;font-style:normal!important;font-weight:850!important;letter-spacing:.65px}
   .team-roster-plus{position:relative;z-index:2;display:grid!important;place-items:center;align-self:center;width:34px;height:34px;border:1px solid rgba(217,164,65,.26);border-radius:12px;background:#12150f;color:#e7ce80!important;font-size:22px!important;line-height:1}
@@ -44,16 +44,15 @@
   .team-esports-profile{position:fixed!important;inset:0!important;display:block!important;width:100%!important;max-width:none!important;height:100dvh!important;max-height:none!important;margin:0!important;padding:0!important;overflow-x:hidden!important;overflow-y:auto!important;border:0!important;border-radius:0!important;background:#060806!important;animation:team-mobile-profile-in .26s ease-out both}
   .team-esports-close,.team-esports-back-button{position:fixed!important;z-index:4;top:max(14px,env(safe-area-inset-top));display:grid!important;place-items:center;width:42px!important;height:42px!important;border:1px solid rgba(255,255,255,.18)!important;border-radius:14px!important;background:rgba(5,8,5,.72)!important;backdrop-filter:blur(12px);color:#fff!important;font-size:24px!important;line-height:1!important}
   .team-esports-back-button{left:14px}.team-esports-close{right:14px!important;left:auto!important}
-  .team-profile-mobile-hero{position:relative;height:min(56dvh,520px);min-height:370px;overflow:hidden;background:#080a08}
-  .team-profile-mobile-hero::after{content:"";position:absolute;z-index:2;right:0;bottom:0;left:0;height:44%;background:linear-gradient(transparent,#060806)}
+  .team-profile-mobile-hero{position:relative;width:100%;height:auto;min-height:0;aspect-ratio:4/4.15;overflow:hidden;border-bottom:1px solid rgba(217,164,65,.14);background:#080a08}
   .team-esports-profile-photo{position:absolute!important;inset:0!important;width:100%!important;height:100%!important;max-height:none!important;aspect-ratio:auto!important;padding:0!important;border:0!important;border-radius:0!important}
   .team-esports-profile-photo::before{inset:-18px!important;filter:blur(18px) brightness(.48) saturate(.86)!important;opacity:.88!important}
-  .team-esports-profile-photo img{position:relative!important;z-index:1;width:100%!important;height:100%!important;padding:18px 12px 38px!important;object-fit:contain!important;object-position:center center!important;border-radius:0!important;background:transparent!important}
-  .team-profile-mobile-heading{position:absolute;z-index:3;right:18px;bottom:8px;left:18px}
+  .team-esports-profile-photo img{position:relative!important;z-index:1;width:100%!important;height:100%!important;padding:12px!important;object-fit:contain!important;object-position:center center!important;border-radius:0!important;background:transparent!important}
+  .team-profile-mobile-heading{position:static!important;display:block;margin:0 0 16px;padding:0 2px}
   .team-profile-status{display:flex;align-items:center;gap:6px;margin:0 0 8px;color:#7cf04a;font-size:9px;font-weight:950;letter-spacing:1.6px}.team-profile-status::before{content:"";width:7px;height:7px;border-radius:50%;background:#73ff18;box-shadow:0 0 10px #73ff18}
-  .team-profile-mobile-heading h2{margin:0!important;color:#fff!important;font:950 clamp(31px,10vw,43px)/.95 Cinzel,serif!important;letter-spacing:-1.4px!important;overflow-wrap:anywhere}
+  .team-profile-mobile-heading h2{display:block;max-width:100%;margin:0!important;color:#fff!important;font:900 clamp(28px,8.4vw,38px)/1.08 Inter,Arial,sans-serif!important;letter-spacing:-1.25px!important;overflow-wrap:anywhere;word-break:normal}
   .team-profile-heading-meta{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin-top:10px}.team-profile-country{color:#c4c3ba;font-size:12px;font-weight:850}
-  .team-esports-profile-copy{display:block!important;padding:14px 16px max(32px,env(safe-area-inset-bottom))!important;background:#060806!important}
+  .team-esports-profile-copy{display:block!important;padding:18px 16px max(32px,env(safe-area-inset-bottom))!important;background:#060806!important}
   .team-esports-profile-copy>.tag,.team-profile-desktop-name,.team-profile-desktop-role,.team-esports-profile-copy>.team-esports-facts{display:none!important}
   .team-profile-metrics{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-bottom:14px}
   .team-profile-metrics div{display:grid;align-content:center;min-width:0;min-height:68px;padding:10px 7px;border:1px solid rgba(217,164,65,.14);border-radius:14px;background:#0d100d;text-align:center}.team-profile-metrics small{color:#747a71;font-size:8px;font-weight:900;letter-spacing:.65px;text-transform:uppercase}.team-profile-metrics strong{margin-top:6px;color:#eee4ca;font-size:12px;line-height:1.15;overflow-wrap:anywhere}
