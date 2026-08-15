@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Início - Team Lambreta</title>
-  <link rel="stylesheet" href="style-v92.css?v=98.0" />
+  <link rel="stylesheet" href="style-v92.css?v=98.2" />
   <link rel="stylesheet" href="ui-core-v93.css?v=93.0" />
 </head>
 <body>
@@ -156,6 +156,27 @@
 
         window.lbBannerRender(0);
         window.lbBannerRestart();
+
+        (function enableMobileBannerSwipe() {
+          const banner = document.getElementById("lbBannerFinal");
+          if (!banner) return;
+          let startX = 0;
+          let startY = 0;
+
+          banner.addEventListener("touchstart", function(event) {
+            if (!window.matchMedia("(max-width: 768px)").matches || event.touches.length !== 1) return;
+            startX = event.touches[0].clientX;
+            startY = event.touches[0].clientY;
+          }, { passive: true });
+
+          banner.addEventListener("touchend", function(event) {
+            if (!window.matchMedia("(max-width: 768px)").matches || !event.changedTouches.length) return;
+            const deltaX = event.changedTouches[0].clientX - startX;
+            const deltaY = event.changedTouches[0].clientY - startY;
+            if (Math.abs(deltaX) < 45 || Math.abs(deltaX) <= Math.abs(deltaY)) return;
+            window.lbBannerMove(deltaX < 0 ? 1 : -1);
+          }, { passive: true });
+        })();
       </script>
     </section>
   </section>
