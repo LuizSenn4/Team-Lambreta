@@ -4,8 +4,9 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Fórum - Team Lambreta</title>
-  <link rel="stylesheet" href="style-v92.css?v=92.40.1" />
+  <link rel="stylesheet" href="style-v92.css?v=97.0" />
   <link rel="stylesheet" href="ui-core-v93.css?v=93.0" />
+  <link rel="stylesheet" href="forum-board-v1.css?v=1.0" />
 </head>
 <body>
   <section id="siteContent" class="site-content forum-page">
@@ -62,55 +63,50 @@
   </nav>
 </header>
     
-<main class="forum-page-shell">
+<main class="forum-page-shell forum-classic-shell">
   <section class="forum-hero forum-hero-v38">
     <div class="forum-title-badge">Fórum</div>
-    <h1>Tópicos da equipa</h1>
-    <p>Cria sugestões, acompanha discussões e espera aprovação da administração.</p>
+    <h1>Comunidade Team Lambreta</h1>
+    <p>Categorias, discussões e respostas organizadas num fórum exclusivo para membros.</p>
   </section>
 
-  <section class="forum-board">
-    <aside class="forum-create-panel">
-      <h2>Criar tópico</h2>
-      <p>O tópico fica pendente até o admin aprovar.</p>
+  <section id="forumMemberGate" class="forum-member-gate" aria-labelledby="forumGateTitle" hidden>
+    <span class="forum-gate-lock" aria-hidden="true">◆</span>
+    <small>ÁREA DE MEMBROS</small>
+    <h2 id="forumGateTitle">Este conteúdo é exclusivo para membros.</h2>
+    <p>Entre com sua conta Google para continuar.</p>
+    <button id="forumGoogleLogin" class="forum-primary-button google-brand-login" type="button"><img src="img/brasao.png" alt="">Entrar com Google</button>
+  </section>
 
-      <div id="forumLoginNotice" class="forum-login-notice">Entra com o Google para criar um tópico.</div>
-      <form id="userTopicFormV90" class="user-topic-form" hidden>
-        <div id="forumAuthorIdentity" class="forum-author-identity"></div>
-        <label class="forum-field-label" for="topicCategory">Sala</label>
-        <select id="topicCategory" class="forum-category-select">
-          <option value="geral">Geral</option>
-          <option value="suporte">Suporte</option>
-          <option value="loja">Loja</option>
-          <option value="sugestoes">Sugestões</option>
-          <option value="duvidas">Dúvidas</option>
-          <option value="ajuda">Ajuda</option>
-          <option value="candidaturas">Candidaturas — privada</option>
-          <option value="eventos">Eventos e Torneios</option>
-          <option value="fortnite">Fortnite</option>
-          <option value="denuncias">Denúncias — privada</option>
-        </select>
-        <input id="topicTitle" type="text" placeholder="Título do tópico" maxlength="60"><small class="field-counter" data-for="topicTitle"></small>
-        <textarea id="topicDescription" placeholder="Explica o tópico..." maxlength="280"></textarea><small class="field-counter full" data-for="topicDescription"></small>
-        <button type="submit">Enviar para aprovação</button>
-      </form>
-
-      <p id="topicFeedback" class="topic-feedback"></p>
-    </aside>
-
-    <section class="forum-topic-panel">
-      <div id="forumTabs" class="forum-tabs">
-        <button class="active" type="button" data-forum-filter="approved">Aprovados</button>
-        <button type="button" data-forum-filter="fixed">Fixados</button>
-        <button type="button" data-forum-filter="closed"><span aria-hidden="true">🔒</span> Fechados</button>
-        <button type="button" data-forum-filter="pending" data-moderator-only hidden>Pendentes</button>
-      </div>
-      <section id="forumReactionStats" class="forum-reaction-stats" aria-label="Estatísticas de reações do fórum"></section>
-      <div id="forumRooms" class="forum-rooms" aria-label="Salas do fórum"></div>
-      <div id="forumGrid" class="forum-list"></div>
-    </section>
+  <section id="forumApplication" class="forum-application" hidden aria-live="polite">
+    <nav id="forumBreadcrumbs" class="forum-breadcrumbs" aria-label="Navegação do Fórum"></nav>
+    <div class="forum-page-toolbar">
+      <div><small id="forumViewEyebrow">FÓRUM</small><h2 id="forumViewTitle">Categorias</h2></div>
+      <button id="forumCreateTopicButton" class="forum-primary-button" type="button">Criar tópico</button>
+    </div>
+    <p id="forumFeedback" class="forum-board-feedback" role="status" aria-live="polite"></p>
+    <section id="forumBoardView" class="forum-board-view" aria-busy="true"></section>
   </section>
 </main>
+
+<dialog id="forumCreateDialog" class="forum-board-dialog">
+  <form id="forumCreateForm" method="dialog">
+    <header><div><small>NOVO TÓPICO</small><h2>Enviar para aprovação</h2></div><button type="button" data-dialog-close aria-label="Fechar">×</button></header>
+    <label>Pasta<select id="forumTopicSection" required></select></label>
+    <label>Título<input id="forumTopicTitle" type="text" maxlength="120" required></label>
+    <label>Texto<textarea id="forumTopicBody" maxlength="5000" rows="10" required></textarea></label>
+    <p>O tópico fica pendente até aprovação da administração.</p>
+    <footer><button type="button" class="forum-secondary-button" data-dialog-close>Cancelar</button><button class="forum-primary-button" type="submit">Enviar para aprovação</button></footer>
+  </form>
+</dialog>
+
+<dialog id="forumReplyDialog" class="forum-board-dialog">
+  <form id="forumReplyForm" method="dialog">
+    <header><div><small>RESPOSTA</small><h2>Responder ao tópico</h2></div><button type="button" data-dialog-close aria-label="Fechar">×</button></header>
+    <label>Texto<textarea id="forumReplyBody" maxlength="5000" rows="10" required></textarea></label>
+    <footer><button type="button" class="forum-secondary-button" data-dialog-close>Cancelar</button><button class="forum-primary-button" type="submit">Publicar resposta</button></footer>
+  </form>
+</dialog>
 
     <footer class="site-footer">
       <p>© <span id="year"></span> Team Lambreta — Juntos somos mais fortes.</p>
@@ -122,7 +118,7 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="community-safety-v9347.js?v=93.4.7"></script>
   <script src="supabase-integration-v92.js?v=93.4.8"></script>
-  <script src="forum-auth-v90.js?v=92.40.1"></script>
+  <script src="forum-board-v1.js?v=1.0"></script>
   <script src="buddy-presence-v95.js?v=92.39.4.5"></script><script src="buddy-global-notifications-v94.js?v=92.39.4.5"></script><script src="navigation-v93.js?v=93.0"></script>
 
   <script src="error-codes-v92.js"></script>
