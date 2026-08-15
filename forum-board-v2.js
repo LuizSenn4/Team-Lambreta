@@ -299,14 +299,21 @@
   }
 
   function ownForumStats(userId) {
+    const validTopicIds = new Set(
+      posts
+        .filter((post) => post.is_original && !post.deleted_at)
+        .map((post) => post.topic_id),
+    );
     const topicCount = topics.filter(
       (topic) =>
         topic.author_id === userId &&
         topic.status === "approved" &&
-        !topicOriginalRemoved(topic.id),
+        validTopicIds.has(topic.id),
     ).length;
-    const postCount = posts.filter(
-      (post) => post.author_id === userId && !post.deleted_at,
+    const postCount = posts.filter((post) =>
+      post.author_id === userId &&
+      !post.deleted_at &&
+      validTopicIds.has(post.topic_id),
     ).length;
     const global = progress.get(userId) || {};
     return {
