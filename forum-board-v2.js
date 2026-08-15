@@ -27,6 +27,22 @@
   let sections = [];
   let topics = [];
   let posts = [];
+  let gameCatalog = [];
+  const selectedGames = new Set();
+  const selectedPlatforms = new Set();
+  const selectedModes = new Set();
+  const PLATFORM_OPTIONS = [
+    ["pc", "PC"],
+    ["playstation-5", "PlayStation 5"],
+    ["playstation-4", "PlayStation 4"],
+    ["xbox-series", "Xbox Series X|S"],
+    ["xbox-one", "Xbox One"],
+    ["nintendo-switch", "Nintendo Switch"],
+    ["nintendo-switch-2", "Nintendo Switch 2"],
+    ["android", "Android"],
+    ["ios", "iOS"],
+    ["cloud-gaming", "Cloud Gaming"],
+  ];
   const profiles = new Map();
   const forumProfiles = new Map();
   const progress = new Map();
@@ -113,6 +129,33 @@
     })[role(id)] || "MEMBRO";
   const isModerator = () =>
     MOD_ROLES.has(String(profile?.role || "").toLowerCase());
+  const gameBySlug = (slug) => gameCatalog.find((game) => game.slug === slug);
+  const gameSlugs = (member) =>
+    Array.isArray(member?.games) && member.games.length
+      ? member.games
+      : gameCatalog
+          .filter(
+            (game) =>
+              member?.main_game &&
+              [game.name, game.short_name]
+                .map((value) => value.toLocaleLowerCase("pt-PT"))
+                .includes(member.main_game.toLocaleLowerCase("pt-PT")),
+          )
+          .map((game) => game.slug)
+          .slice(0, 1);
+  const gameLabels = (member, short = true) =>
+    gameSlugs(member)
+      .map((slug) => gameBySlug(slug))
+      .filter(Boolean)
+      .map((game) => (short ? game.short_name : game.name));
+  const platformLabel = (slug) =>
+    PLATFORM_OPTIONS.find(([value]) => value === slug)?.[1] || slug;
+  const gameChips = (member) => {
+    const labels = gameLabels(member);
+    return labels.length
+      ? `<span class="forum-public-chips">${labels.map((label) => `<span>${esc(label)}</span>`).join("")}</span>`
+      : "—";
+  };
 
   function notify(message, error = false) {
     if (!feedback) return;
@@ -213,11 +256,36 @@
   const avatarMarkup = (userId, sizeClass = "") => {
     const member = person(userId);
     const name = personName(userId);
-    const source = member.avatar_signed_url || member.avatar_url;
+    const source =
+      member.avatar_external_url ||
+      member.avatar_signed_url ||
+      member.avatar_url;
     return source
-      ? `<img class="forum-user-avatar ${sizeClass}" src="${esc(source)}" alt="Avatar de ${esc(name)}">`
+      ? `<img class="forum-user-avatar ${sizeClass}" src="${esc(source)}" alt="Avatar de ${esc(name)}" data-avatar-name="${esc(name)}">`
       : `<span class="forum-avatar-fallback ${sizeClass}" aria-label="Avatar padrão de ${esc(name)}">${esc(name.slice(0, 1).toUpperCase())}</span>`;
   };
+
+  function bindAvatarFallbacks(root = document) {
+    root.querySelectorAll("img[data-avatar-name]").forEach((image) => {
+      const fallback = () => {
+        const replacement = document.createElement("span");
+        replacement.className = image.className.replace(
+          "forum-user-avatar",
+          "forum-avatar-fallback",
+        );
+        replacement.setAttribute(
+          "aria-label",
+          `Avatar padrão de ${image.dataset.avatarName}`,
+        );
+        replacement.textContent = image.dataset.avatarName
+          .slice(0, 1)
+          .toUpperCase();
+        image.replaceWith(replacement);
+      };
+      image.addEventListener("error", fallback, { once: true });
+      if (image.complete && !image.naturalWidth) fallback();
+    });
+  }
 
   function ownForumStats(userId) {
     const topicCount = topics.filter(
@@ -232,6 +300,7 @@
       ),
       totalPosts: postCount,
       xp: Number(global.xp || 0),
+      likes: Number(global.forum_likes || 0),
       accountCreatedAt: global.account_created_at || null,
     };
   }
@@ -377,7 +446,7 @@
         ? matches
             .map((userId, index) => {
               const member = person(userId);
-              const detail = [roleLabel(userId), member.main_game]
+              const detail = [roleLabel(userId), ...gameLabels(member)]
                 .filter(Boolean)
                 .join(" · ");
               return `<button id="forum-mention-option-${index}" type="button" role="option" data-mention-option="${esc(userId)}">${avatarMarkup(userId, "is-mention")}<span><strong class="role-${esc(role(userId))}">${esc(personName(userId))}</strong><small>${esc(detail)}</small></span></button>`;
@@ -478,6 +547,7 @@
       profileResult,
       forumProfileResult,
       progressResult,
+      gameCatalogResult,
     ] = await Promise.all([
       sb.from("forum_categories").select("*").order("sort_order"),
       sb.from("forum_sections").select("*").order("sort_order"),
@@ -492,6 +562,7 @@
         .select("id,full_name,game_nickname,avatar_url,role,created_at"),
       sb.from("forum_profiles").select("*"),
       sb.rpc("tl_forum_profile_stats"),
+      sb.from("forum_game_catalog").select("*").order("sort_order"),
     ]);
     const failure = [
       categoryResult,
@@ -499,12 +570,14 @@
       topicResult,
       postResult,
       forumProfileResult,
+      gameCatalogResult,
     ].find((result) => result.error);
     if (failure) throw failure.error;
     categories = categoryResult.data || [];
     sections = sectionResult.data || [];
     topics = topicResult.data || [];
     posts = postResult.data || [];
+    gameCatalog = gameCatalogResult.data || [];
     profiles.clear();
     (profileResult.data || []).forEach((item) => profiles.set(item.id, item));
     forumProfiles.clear();
@@ -536,6 +609,96 @@
       .join("");
   }
 
+  const normalizedSearch = (value) =>
+    String(value || "")
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "")
+      .toLocaleLowerCase("pt-PT")
+      .trim();
+
+  function renderProfilePickers() {
+    $("forumGamesCount").textContent = `${selectedGames.size}/3`;
+    $("forumSelectedGames").innerHTML = [...selectedGames]
+      .map((slug) => gameBySlug(slug))
+      .filter(Boolean)
+      .map(
+        (game) =>
+          `<button type="button" data-remove-game="${esc(game.slug)}">${esc(game.short_name)} <span aria-hidden="true">×</span><span class="sr-only">Remover ${esc(game.name)}</span></button>`,
+      )
+      .join("");
+    $("forumGamesHint").textContent =
+      selectedGames.size >= 3
+        ? "Você pode selecionar até 3 jogos."
+        : "Selecione até 3 jogos.";
+    $("forumPlatformOptions").innerHTML = PLATFORM_OPTIONS.map(
+      ([slug, label]) =>
+        `<label class="forum-choice-chip"><input type="checkbox" value="${slug}" ${selectedPlatforms.has(slug) ? "checked" : ""}><span>${esc(label)}</span></label>`,
+    ).join("");
+    const modes = [...selectedGames]
+      .map((slug) => gameBySlug(slug))
+      .filter(Boolean)
+      .map((game) => ({
+        game,
+        modes: game.modes?.length ? game.modes : ["Outro"],
+      }));
+    $("forumModeOptions").innerHTML = modes.length
+      ? modes
+          .map(
+            ({ game, modes: choices }) =>
+              `<section><strong>${esc(game.short_name)}</strong><div class="forum-profile-chips">${choices
+                .map((mode) => {
+                  const value = `${game.slug}::${mode}`;
+                  return `<label class="forum-choice-chip"><input type="checkbox" value="${esc(value)}" ${selectedModes.has(value) ? "checked" : ""}><span>${esc(mode)}</span></label>`;
+                })
+                .join("")}</div></section>`,
+          )
+          .join("")
+      : '<p class="forum-picker-empty">Selecione um jogo para escolher modos.</p>';
+  }
+
+  function renderGameResults(query = "") {
+    const needle = normalizedSearch(query);
+    const host = $("forumGameResults");
+    if (!needle) {
+      host.hidden = true;
+      host.innerHTML = "";
+      return;
+    }
+    const matches = gameCatalog
+      .filter((game) =>
+        [game.name, game.short_name, ...(game.aliases || [])].some((value) =>
+          normalizedSearch(value).includes(needle),
+        ),
+      )
+      .slice(0, 12);
+    host.hidden = false;
+    host.innerHTML = matches.length
+      ? matches
+          .map(
+            (game) =>
+              `<label><input type="checkbox" value="${esc(game.slug)}" ${selectedGames.has(game.slug) ? "checked" : ""} ${selectedGames.size >= 3 && !selectedGames.has(game.slug) ? "disabled" : ""}><span><strong>${esc(game.name)}</strong>${game.short_name !== game.name ? `<small>${esc(game.short_name)}</small>` : ""}</span></label>`,
+          )
+          .join("")
+      : '<p class="forum-picker-empty">Nenhum jogo encontrado.</p>';
+  }
+
+  function setAvatarPreview(source, name) {
+    const host = $("forumProfileAvatarPreview");
+    host.className = "forum-avatar-fallback";
+    host.textContent = (name || "TL").slice(0, 1).toUpperCase();
+    if (!source) return;
+    const image = new Image();
+    image.alt = "Preview do avatar";
+    image.onload = () => {
+      host.textContent = "";
+      host.append(image);
+    };
+    image.onerror = () => {
+      host.textContent = (name || "TL").slice(0, 1).toUpperCase();
+    };
+    image.src = source;
+  }
+
   function fillProfileForm() {
     const item = currentForumProfile || {};
     $("forumProfileDialogTitle").textContent = profileReady()
@@ -544,20 +707,24 @@
     $("forumProfileNickname").value =
       item.forum_nickname || profile?.game_nickname || "";
     $("forumProfileCountry").value = item.country || "";
-    $("forumProfileGame").value = item.main_game || "";
-    $("forumProfilePlatform").value = item.platform || "";
-    $("forumProfileMode").value = item.preferred_mode || "";
     $("forumProfileDiscord").value = item.discord || "";
     $("forumProfileBio").value = item.bio || "";
-    const preview = $("forumProfileAvatarPreview");
-    const source = item.avatar_signed_url || profile?.avatar_url;
-    preview.innerHTML = source
-      ? `<img src="${esc(source)}" alt="Preview do avatar">`
-      : esc(
-          (item.forum_nickname || profile?.game_nickname || "TL")
-            .slice(0, 1)
-            .toUpperCase(),
-        );
+    $("forumProfileAvatarUrl").value = item.avatar_external_url || "";
+    $("forumProfileAvatarUrl").dataset.valid = item.avatar_external_url
+      ? "true"
+      : "";
+    selectedGames.clear();
+    gameSlugs(item).forEach((slug) => selectedGames.add(slug));
+    selectedPlatforms.clear();
+    (item.platforms || []).forEach((slug) => selectedPlatforms.add(slug));
+    selectedModes.clear();
+    (item.game_modes || []).forEach((mode) => selectedModes.add(mode));
+    renderProfilePickers();
+    renderGameResults("");
+    setAvatarPreview(
+      item.avatar_external_url || item.avatar_signed_url || profile?.avatar_url,
+      item.forum_nickname || profile?.game_nickname,
+    );
     $("forumProfileFeedback").textContent = "";
     $("forumProfileAvatar").value = "";
   }
@@ -596,20 +763,38 @@
     submit.disabled = true;
     let uploadedPath = null;
     try {
+      const requestedExternalUrl = $("forumProfileAvatarUrl").value.trim();
+      if (
+        requestedExternalUrl &&
+        $("forumProfileAvatarUrl").dataset.valid !== "true"
+      )
+        throw new Error("A URL do avatar precisa carregar uma imagem válida.");
       uploadedPath = await uploadAvatar($("forumProfileAvatar").files?.[0]);
       const oldPath = currentForumProfile?.avatar_path || null;
-      const { error } = await sb.rpc("tl_forum_save_profile", {
+      const externalUrl = $("forumProfileAvatarUrl").value.trim();
+      const usingUpload = Boolean($("forumProfileAvatar").files?.[0]);
+      const { error } = await sb.rpc("tl_forum_save_profile_v2", {
         p_nickname: $("forumProfileNickname").value.trim(),
-        p_avatar_path: uploadedPath,
+        p_avatar_path: usingUpload
+          ? uploadedPath
+          : externalUrl
+            ? null
+            : uploadedPath,
+        p_avatar_external_url: usingUpload ? null : externalUrl || null,
         p_country: $("forumProfileCountry").value.trim(),
-        p_main_game: $("forumProfileGame").value.trim(),
-        p_platform: $("forumProfilePlatform").value.trim(),
-        p_preferred_mode: $("forumProfileMode").value.trim(),
+        p_games: [...selectedGames],
+        p_platforms: [...selectedPlatforms],
+        p_game_modes: [...selectedModes].filter((mode) =>
+          selectedGames.has(mode.split("::")[0]),
+        ),
         p_bio: $("forumProfileBio").value.trim(),
         p_discord: $("forumProfileDiscord").value.trim(),
       });
       if (error) throw error;
-      if (oldPath && uploadedPath && oldPath !== uploadedPath)
+      if (
+        oldPath &&
+        (externalUrl || (uploadedPath && oldPath !== uploadedPath))
+      )
         await sb.storage.from("forum-avatars").remove([oldPath]);
       const nextAction = $("forumProfileDialog").dataset.nextAction;
       $("forumProfileDialog").close();
@@ -645,7 +830,7 @@
     view.innerHTML = `<section class="forum-full-profile">
       <header>${avatarMarkup(userId, "is-profile")}<div><h3 class="role-${esc(role(userId))}">${esc(personName(userId))}</h3><span class="forum-role-badge role-${esc(role(userId))}">${esc(roleLabel(userId))}</span><p>${esc(member.country || "País não informado")}</p></div>${userId === session.user.id ? '<button type="button" data-edit-profile>Editar perfil</button>' : ""}</header>
       <div class="forum-profile-stats"><article><b>${stats.topics}</b><small>Tópicos</small></article><article><b>${stats.posts}</b><small>Respostas</small></article><article><b>${stats.xp}</b><small>XP</small></article><article><b>${stats.accountCreatedAt ? esc(fmtDate(stats.accountCreatedAt)) : "—"}</b><small>Membro desde</small></article></div>
-      <div id="forumProfileOverview" class="forum-profile-details"><section><h4>Perfil</h4><p>${esc(member.bio || "Este membro ainda não adicionou uma bio.")}</p></section><dl><div><dt>Jogo</dt><dd>${esc(member.main_game || "—")}</dd></div><div><dt>Plataforma</dt><dd>${esc(member.platform || "—")}</dd></div><div><dt>Modo</dt><dd>${esc(member.preferred_mode || "—")}</dd></div>${member.discord ? `<div><dt>Discord</dt><dd>${esc(member.discord)}</dd></div>` : ""}</dl></div>
+      <div id="forumProfileOverview" class="forum-profile-details"><section><h4>Perfil</h4><p>${esc(member.bio || "Este membro ainda não adicionou uma bio.")}</p></section><dl><div><dt>Jogos</dt><dd>${gameChips(member)}</dd></div><div><dt>Plataformas</dt><dd>${member.platforms?.length ? `<span class="forum-public-chips">${member.platforms.map((item) => `<span>${esc(platformLabel(item))}</span>`).join("")}</span>` : "—"}</dd></div><div><dt>Modos de jogo</dt><dd>${member.game_modes?.length ? `<span class="forum-public-chips">${member.game_modes.map((item) => `<span>${esc(item.split("::")[1] || item)}</span>`).join("")}</span>` : "—"}</dd></div>${member.discord ? `<div><dt>Discord</dt><dd>${esc(member.discord)}</dd></div>` : ""}</dl></div>
       <div class="forum-profile-tabs" role="tablist"><button class="is-active" type="button" data-profile-tab="profile">Perfil</button><button type="button" data-profile-tab="topics">Tópicos</button><button type="button" data-profile-tab="replies">Respostas</button><button type="button" data-profile-tab="activity">Atividade</button></div>
       <div id="forumProfileActivity" hidden></div>
     </section>`;
@@ -848,7 +1033,7 @@
     const canManage = post.author_id === session.user.id || isModerator();
     return `<article id="${esc(postHash)}" class="forum-post-card" data-post-id="${esc(post.id)}">
       <header><a class="forum-post-author-mobile" href="forum.html?profile=${encodeURIComponent(post.author_id)}" data-route>${avatarMarkup(post.author_id, "is-mobile")}<span><strong class="role-${esc(role(post.author_id))}">${esc(personName(post.author_id))}</strong><small>${esc(author.country || "País não informado")} · ${stats.totalPosts} posts</small></span><span class="forum-role-badge role-${esc(role(post.author_id))}">${esc(roleLabel(post.author_id))}</span></a><div><time datetime="${esc(post.created_at)}">${esc(fmt(post.created_at))}</time><a href="#${esc(postHash)}" data-share-post="${esc(post.id)}" aria-label="Copiar link do post ${index + 1}">#${index + 1}</a></div></header>
-      <div class="forum-post-layout"><aside class="forum-post-author"><a href="forum.html?profile=${encodeURIComponent(post.author_id)}" data-route>${avatarMarkup(post.author_id, "is-post")}<strong class="role-${esc(role(post.author_id))}">${esc(personName(post.author_id))}</strong></a><span class="forum-role-badge role-${esc(role(post.author_id))}">${esc(roleLabel(post.author_id))}</span><small>${esc(author.country || "País não informado")}</small><dl><div><dt>Jogo</dt><dd>${esc(author.main_game || "—")}</dd></div><div><dt>Posts</dt><dd>${stats.totalPosts}</dd></div><div><dt>XP</dt><dd>${stats.xp}</dd></div><div><dt>Publicado</dt><dd>${esc(relative(post.created_at))}</dd></div><div><dt>Membro desde</dt><dd>${memberSince ? esc(fmtDate(memberSince)) : "—"}</dd></div></dl></aside>
+      <div class="forum-post-layout"><aside class="forum-post-author"><a href="forum.html?profile=${encodeURIComponent(post.author_id)}" data-route>${avatarMarkup(post.author_id, "is-post")}<strong class="role-${esc(role(post.author_id))}">${esc(personName(post.author_id))}</strong></a><span class="forum-role-badge role-${esc(role(post.author_id))}">${esc(roleLabel(post.author_id))}</span><small>${esc(author.country || "País não informado")}</small><dl><div><dt>Jogos</dt><dd>${gameLabels(author).length ? esc(gameLabels(author).join(" · ")) : "—"}</dd></div><div><dt>Posts</dt><dd>${stats.totalPosts}</dd></div><div><dt>XP</dt><dd>${stats.xp}</dd></div><div><dt>Likes</dt><dd>${stats.likes}</dd></div><div><dt>Publicado</dt><dd>${esc(relative(post.created_at))}</dd></div><div><dt>Membro desde</dt><dd>${memberSince ? esc(fmtDate(memberSince)) : "—"}</dd></div></dl></aside>
       <div class="forum-post-main">${quoted ? `<blockquote class="forum-linked-quote"><a href="#post-${esc(quoted.id)}">${esc(personName(quoted.author_id))} escreveu:</a><p>${quoted.deleted_at ? "Post removido." : renderTlMark(quoted.body.slice(0, 500))}</p></blockquote>` : ""}<div class="forum-post-body ${removed ? "is-removed" : ""}">${removed ? "Este post foi removido." : renderTlMark(post.body)}</div>${post.edited_at && !removed ? `<p class="forum-post-edited">Editado em ${esc(fmt(post.edited_at))}</p>` : ""}</div></div>
       <footer><span>${post.is_original ? "POST ORIGINAL" : `ID ${esc(post.id)}`}</span><div>${removed ? "" : `<button type="button" data-reply-post="${esc(post.id)}">Responder</button><button type="button" data-quote-post="${esc(post.id)}">Citar</button>${canManage ? `<button type="button" data-edit-post="${esc(post.id)}">Editar</button><button type="button" class="forum-delete-action" data-delete-post="${esc(post.id)}">Apagar</button>` : ""}`}<button type="button" data-share-post="${esc(post.id)}">Compartilhar</button></div></footer>
     </article>`;
@@ -898,7 +1083,7 @@
     const member = person(userId);
     const preview = ensureMentionPreview();
     clearTimeout(preview.hideTimer);
-    preview.innerHTML = `<header>${avatarMarkup(userId, "is-mention-preview")}<div><strong class="role-${esc(role(userId))}">${esc(personName(userId))}</strong><span class="forum-role-badge role-${esc(role(userId))}">${esc(roleLabel(userId))}</span></div></header><dl>${member.country ? `<div><dt>País</dt><dd>${esc(member.country)}</dd></div>` : ""}${member.main_game ? `<div><dt>Jogo</dt><dd>${esc(member.main_game)}</dd></div>` : ""}${member.preferred_mode ? `<div><dt>Modo</dt><dd>${esc(member.preferred_mode)}</dd></div>` : ""}</dl><a href="forum.html?profile=${encodeURIComponent(userId)}">Ver perfil →</a>`;
+    preview.innerHTML = `<header>${avatarMarkup(userId, "is-mention-preview")}<div><strong class="role-${esc(role(userId))}">${esc(personName(userId))}</strong><span class="forum-role-badge role-${esc(role(userId))}">${esc(roleLabel(userId))}</span></div></header><dl>${member.country ? `<div><dt>País</dt><dd>${esc(member.country)}</dd></div>` : ""}${gameLabels(member).length ? `<div><dt>Jogos</dt><dd>${esc(gameLabels(member).join(" · "))}</dd></div>` : ""}${member.game_modes?.length ? `<div><dt>Modos</dt><dd>${esc(member.game_modes.map((item) => item.split("::")[1] || item).join(" · "))}</dd></div>` : ""}</dl><a href="forum.html?profile=${encodeURIComponent(userId)}">Ver perfil →</a>`;
     preview.hidden = false;
     const rect = trigger.getBoundingClientRect();
     const width = Math.min(310, window.innerWidth - 24);
@@ -1284,10 +1469,115 @@
   $("forumProfileAvatar")?.addEventListener("change", (event) => {
     const file = event.target.files?.[0];
     if (!file) return;
-    const preview = $("forumProfileAvatarPreview");
     const url = window.URL.createObjectURL(file);
-    preview.innerHTML = `<img src="${esc(url)}" alt="Preview do novo avatar">`;
+    $("forumProfileAvatarUrl").value = "";
+    setAvatarPreview(url, $("forumProfileNickname").value);
   });
+  $("forumProfileAvatarUrl")?.addEventListener("input", (event) => {
+    const input = event.currentTarget;
+    input.dataset.valid = "";
+    clearTimeout(input.previewTimer);
+    input.previewTimer = setTimeout(() => {
+      const value = input.value.trim();
+      if (!value)
+        return setAvatarPreview(
+          currentForumProfile?.avatar_signed_url || profile?.avatar_url,
+          $("forumProfileNickname").value,
+        );
+      try {
+        const url = new URL(value);
+        if (!/^https?:$/.test(url.protocol)) throw new Error();
+        $("forumProfileAvatar").value = "";
+        const probe = new Image();
+        probe.onload = () => {
+          if (input.value.trim() !== value) return;
+          input.dataset.valid = "true";
+          $("forumProfileFeedback").textContent = "";
+          setAvatarPreview(url.href, $("forumProfileNickname").value);
+        };
+        probe.onerror = () => {
+          if (input.value.trim() !== value) return;
+          input.dataset.valid = "false";
+          $("forumProfileFeedback").textContent =
+            "Não foi possível carregar uma imagem nessa URL.";
+        };
+        probe.src = url.href;
+      } catch (_) {
+        $("forumProfileFeedback").textContent =
+          "Use uma URL de imagem HTTP ou HTTPS válida.";
+      }
+    }, 350);
+  });
+  $("forumGameSearch")?.addEventListener("input", (event) =>
+    renderGameResults(event.currentTarget.value),
+  );
+  $("forumGameResults")?.addEventListener("change", (event) => {
+    const input = event.target.closest('input[type="checkbox"]');
+    if (!input) return;
+    if (input.checked && selectedGames.size >= 3) {
+      input.checked = false;
+      $("forumGamesHint").textContent = "Você pode selecionar até 3 jogos.";
+      return;
+    }
+    input.checked
+      ? selectedGames.add(input.value)
+      : selectedGames.delete(input.value);
+    [...selectedModes].forEach((mode) => {
+      if (!selectedGames.has(mode.split("::")[0])) selectedModes.delete(mode);
+    });
+    renderProfilePickers();
+    renderGameResults($("forumGameSearch").value);
+  });
+  $("forumSelectedGames")?.addEventListener("click", (event) => {
+    const button = event.target.closest("[data-remove-game]");
+    if (!button) return;
+    selectedGames.delete(button.dataset.removeGame);
+    [...selectedModes].forEach((mode) => {
+      if (mode.startsWith(`${button.dataset.removeGame}::`))
+        selectedModes.delete(mode);
+    });
+    renderProfilePickers();
+    renderGameResults($("forumGameSearch").value);
+  });
+  $("forumPlatformOptions")?.addEventListener("change", (event) => {
+    const input = event.target.closest('input[type="checkbox"]');
+    if (input)
+      input.checked
+        ? selectedPlatforms.add(input.value)
+        : selectedPlatforms.delete(input.value);
+  });
+  $("forumModeOptions")?.addEventListener("change", (event) => {
+    const input = event.target.closest('input[type="checkbox"]');
+    if (input)
+      input.checked
+        ? selectedModes.add(input.value)
+        : selectedModes.delete(input.value);
+  });
+  document.addEventListener(
+    "error",
+    (event) => {
+      const image = event.target;
+      if (
+        !(image instanceof HTMLImageElement) ||
+        !image.matches("img[data-avatar-name]")
+      )
+        return;
+      const replacement = document.createElement("span");
+      replacement.className = image.className.replace(
+        "forum-user-avatar",
+        "forum-avatar-fallback",
+      );
+      replacement.setAttribute(
+        "aria-label",
+        `Avatar padrão de ${image.dataset.avatarName}`,
+      );
+      replacement.textContent = image.dataset.avatarName
+        .slice(0, 1)
+        .toUpperCase();
+      image.replaceWith(replacement);
+    },
+    true,
+  );
   document
     .querySelectorAll("[data-dialog-close]")
     .forEach((button) =>

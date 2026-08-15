@@ -135,11 +135,14 @@
           </header>
           <div class="forum-profile-avatar-editor">
             <div id="forumProfileAvatarPreview" class="forum-avatar-fallback" aria-label="Preview do avatar">TL</div>
-            <label>Avatar<input id="forumProfileAvatar" type="file" accept="image/jpeg,image/png,image/webp,image/gif" /><small>Recomendado: 512 × 512 px · JPG, PNG, WebP ou GIF · máximo 2 MB.</small></label>
+            <div><label>Upload de avatar<input id="forumProfileAvatar" type="file" accept="image/jpeg,image/png,image/webp,image/gif" /><small>Recomendado: 512 × 512 px · máximo 2 MB.</small></label><label>Ou URL externa HTTPS<input id="forumProfileAvatarUrl" type="url" maxlength="1000" inputmode="url" placeholder="https://.../avatar.jpg" /></label></div>
           </div>
           <div class="forum-profile-form-grid">
-            <label>Nick do game *<input id="forumProfileNickname" type="text" minlength="3" maxlength="32" pattern="[A-Za-zÀ-ÖØ-öø-ÿ0-9_. -]+" required /></label><label>País<input id="forumProfileCountry" type="text" maxlength="56" /></label><label>Jogo principal<input id="forumProfileGame" type="text" maxlength="56" /></label><label>Plataforma<input id="forumProfilePlatform" type="text" maxlength="56" /></label><label>Modo preferido<input id="forumProfileMode" type="text" maxlength="56" /></label><label>Discord opcional<input id="forumProfileDiscord" type="text" maxlength="64" /></label>
+            <label>Nick do game *<input id="forumProfileNickname" type="text" minlength="3" maxlength="32" pattern="[A-Za-zÀ-ÖØ-öø-ÿ0-9_. -]+" required /></label><label>País<input id="forumProfileCountry" type="text" maxlength="56" /></label><label>Discord opcional<input id="forumProfileDiscord" type="text" maxlength="64" /></label>
           </div>
+          <fieldset class="forum-profile-picker"><legend>Jogos <span id="forumGamesCount">0/3</span></legend><input id="forumGameSearch" type="search" placeholder="Pesquisar jogo..." autocomplete="off" aria-label="Pesquisar jogo" /><div id="forumSelectedGames" class="forum-profile-chips"></div><div id="forumGameResults" class="forum-game-results" hidden></div><small id="forumGamesHint">Selecione até 3 jogos.</small></fieldset>
+          <fieldset class="forum-profile-picker"><legend>Plataformas</legend><div id="forumPlatformOptions" class="forum-profile-chips"></div></fieldset>
+          <fieldset id="forumModesPicker" class="forum-profile-picker"><legend>Modos de jogo</legend><div id="forumModeOptions" class="forum-mode-options"></div></fieldset>
           <label>Bio<textarea id="forumProfileBio" maxlength="500" rows="5"></textarea></label>
           <p id="forumProfileFeedback" class="forum-profile-feedback" role="status"></p>
           <footer><button type="button" class="forum-secondary-button" data-dialog-close>Cancelar</button><button class="forum-primary-button" type="submit">Salvar perfil</button></footer>
@@ -189,7 +192,7 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="community-safety-v9347.js?v=93.4.7"></script>
     <script src="supabase-integration-v92.js?v=93.4.8"></script>
-    <script src="forum-board-v2.js?v=2.4"></script>
+    <script src="forum-board-v2.js?v=2.5"></script>
     <script src="buddy-presence-v95.js?v=92.39.4.5"></script>
     <script src="buddy-global-notifications-v94.js?v=92.39.4.5"></script>
     <script src="navigation-v93.js?v=93.0"></script>
