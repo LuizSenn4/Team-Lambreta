@@ -9764,9 +9764,9 @@ input,select,textarea,button{max-width:100%;font:inherit}
   background-image:var(--team-photo-image,none);
   background-size:cover;
   background-position:center center;
-  filter:blur(12px) brightness(.4) saturate(.72);
-  opacity:.52;
-  transform:scale(1.06);
+  filter:blur(12px) brightness(.72) saturate(.78);
+  opacity:.7;
+  transform:scale(1.08);
   pointer-events:none
 }
 .team-roster-avatar img,
@@ -9783,3 +9783,13 @@ input,select,textarea,button{max-width:100%;font:inherit}
 .team-esports-profile-photo img,
 .team-inline-photo-frame img,
 .team-player-photo img{background:transparent!important}
+
+/* A miniatura fica inteira dentro de uma área definida, inclusive em fotos muito verticais. */
+.team-roster-avatar img{
+  position:absolute!important;
+  inset:4px!important;
+  width:calc(100% - 8px)!important;
+  height:calc(100% - 8px)!important;
+  object-fit:contain!important;
+  object-position:center center!important
+}

@@ -125,13 +125,18 @@ button,a{-webkit-tap-highlight-color:transparent}
   .tl-header-v88 .tl-main-nav{width:min(92vw,380px)!important;padding-top:76px!important}
 }
 
-/* V93.5.5 — exceção do modal Team: imagem deve preencher como capa */
+/* Modal Team: foto inteira, centralizada e com leve respiro dentro da moldura. */
+.team-esports-profile .team-esports-profile-photo{
+  display:grid!important;
+  place-items:center!important;
+}
 .team-esports-profile .team-esports-profile-photo img{
-  width:100%!important;
-  height:100%!important;
+  width:98%!important;
+  height:98%!important;
   max-width:none!important;
   max-height:none!important;
-  object-fit:cover!important;
+  margin:0!important;
+  object-fit:contain!important;
   object-position:center center!important;
-  background:#060706!important;
+  background:transparent!important;
 }
