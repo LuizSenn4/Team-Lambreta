@@ -10,6 +10,7 @@
   const view = $("forumBoardView");
   const crumbs = $("forumBreadcrumbs");
   const feedback = $("forumFeedback");
+  if (feedback) document.body.append(feedback);
   const RETURN_KEY = "tl_forum_return_v1";
   const MOD_ROLES = new Set([
     "master",
