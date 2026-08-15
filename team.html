@@ -6,6 +6,7 @@
   <title>Team - Team Lambreta</title>
   <link rel="stylesheet" href="style-v92.css?v=98.0" />
   <link rel="stylesheet" href="ui-core-v93.css?v=93.0" />
+  <link rel="stylesheet" href="team-mobile-v99.css?v=99.0" />
 </head>
 <body data-cloud-team="1">
   <section id="siteContent" class="site-content team-page">
@@ -63,6 +64,16 @@
 </header>
 
     <main class="team-esports-page">
+  <header class="team-mobile-appbar" aria-label="Cabeçalho do Team">
+    <a class="team-mobile-back" href="home.html" aria-label="Voltar ao início">‹</a>
+    <div><h1>Team Lambreta</h1><p><span></span> Online</p></div>
+    <div class="team-mobile-count" aria-label="Quantidade de membros"><span aria-hidden="true">♟</span><strong id="teamMemberCount">—</strong></div>
+  </header>
+  <nav class="team-mobile-tabs" aria-label="Áreas do Team">
+    <button type="button" class="is-active" data-team-tab="members" aria-selected="true">Membros</button>
+    <button type="button" data-team-tab="about" aria-selected="false">Sobre</button>
+    <button type="button" data-team-tab="activity" aria-selected="false">Atividade</button>
+  </nav>
   <section class="team-esports-hero">
     <div class="team-hero-eyebrow" aria-label="Team Lambreta"><span></span><strong>TL&nbsp;&nbsp; TEAM LAMBRETA</strong><span></span></div>
     <h1>TEAM LAMBRETA</h1>
@@ -70,12 +81,24 @@
     <p>Clica num membro para abrir o perfil completo.</p>
   </section>
 
+  <section class="team-mobile-panel is-active" data-team-panel="members">
   <section id="teamRosterGrid" class="team-esports-grid" aria-live="polite">
     <article class="team-esports-empty">
       <h2>Carregando Team...</h2>
     </article>
   </section>
   <nav id="teamRosterPager" class="team-roster-pager" aria-label="Paginação do Team" hidden></nav>
+  </section>
+  <section class="team-mobile-panel team-mobile-info" data-team-panel="about" hidden>
+    <small>Sobre a equipa</small>
+    <h2>Uma família dentro e fora do jogo.</h2>
+    <p>Conhece os membros oficiais, as suas funções e os perfis que fazem parte do Team Lambreta.</p>
+  </section>
+  <section class="team-mobile-panel team-mobile-info" data-team-panel="activity" hidden>
+    <small>Atividade</small>
+    <h2>Perfis oficiais</h2>
+    <p>As novidades e contribuições públicas dos membros serão apresentadas aqui.</p>
+  </section>
 </main>
 
     <footer class="site-footer">
@@ -87,7 +110,7 @@
   <script src="script-v89.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="community-safety-v9347.js?v=93.4.7"></script>
-  <script src="team-public-v92.js?v=98.0"></script>
+  <script src="team-public-v92.js?v=99.0"></script>
   <script src="buddy-presence-v95.js?v=92.39.4.5"></script><script src="buddy-global-notifications-v94.js?v=92.39.4.5"></script><script src="navigation-v93.js?v=93.0"></script>
 
   <script src="error-codes-v92.js"></script>

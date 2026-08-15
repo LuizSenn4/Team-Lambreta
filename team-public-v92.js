@@ -97,7 +97,7 @@
   function ensureModal(){
     let modal=document.getElementById('teamProfileModal'); if(modal) return modal;
     modal=document.createElement('div'); modal.id='teamProfileModal'; modal.className='team-esports-modal'; modal.hidden=true;
-    modal.innerHTML=`<div class="team-esports-backdrop" data-close-profile></div><article class="team-esports-profile" role="dialog" aria-modal="true" aria-labelledby="teamProfileName"><button type="button" class="team-esports-close" data-close-profile aria-label="Fechar">×</button><div id="teamProfileContent"></div></article>`;
+    modal.innerHTML=`<div class="team-esports-backdrop" data-close-profile></div><article class="team-esports-profile" role="dialog" aria-modal="true" aria-labelledby="teamProfileName"><button type="button" class="team-esports-back-button" data-close-profile aria-label="Voltar à lista">‹</button><button type="button" class="team-esports-close" data-close-profile aria-label="Fechar">×</button><div id="teamProfileContent"></div></article>`;
     document.body.appendChild(modal);
     modal.querySelectorAll('[data-close-profile]').forEach(el=>el.addEventListener('click',closeModal));
     document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!modal.hidden)closeModal()});
@@ -106,9 +106,14 @@
   function openModal(row){
     const modal=ensureModal(), content=modal.querySelector('#teamProfileContent');
     const nickname=row.nickname||row.name||'Membro';
-    const factMarkup=facts(row).map(([label,value])=>{const shown=label==='País'?(()=>{const [f,c]=countryInfo(value);return `<span class="team-country-value"><span>${f}</span><b>${c}</b></span>`})():esc(value);return `<div><small>${esc(label)}</small><strong>${shown}</strong></div>`}).join('');
+    const [flag,countryCode]=countryInfo(row.country);
+    const rowFacts=facts(row);
+    const factMarkup=rowFacts.map(([label,value])=>{const shown=label==='País'?`<span class="team-country-value"><span>${flag}</span><b>${countryCode}</b></span>`:esc(value);return `<div><small>${esc(label)}</small><strong>${shown}</strong></div>`}).join('');
     const linkMarkup=links(row).map(([label,url,type])=>`<a class="team-social-link is-${esc(type)}" href="${esc(url)}" target="_blank" rel="noopener">${esc(label)}</a>`).join('');
-    content.innerHTML=`<div class="team-esports-profile-photo">${avatar(row)}</div><div class="team-esports-profile-copy"><p class="tag">PERFIL OFICIAL</p><h2 id="teamProfileName">${esc(nickname)}</h2><div class="team-profile-rich-role">${rolesMarkup(row.role||'MEMBRO')}</div>${factMarkup?`<div class="team-esports-facts">${factMarkup}</div>`:''}<div class="team-esports-bio team-profile-rich-bio">${richText(row.bio||'Perfil oficial do Team Lambreta.')}</div>${linkMarkup?`<div class="team-esports-links">${linkMarkup}</div>`:''}</div>`;
+    const specialties=[row.main_game,row.favorite_mode,row.favorite_weapons,row.play_style].filter(Boolean);
+    const joined=row.created_at?new Intl.DateTimeFormat('pt-PT',{month:'short',year:'numeric'}).format(new Date(row.created_at)):'Team';
+    const metrics=[['Membro desde',joined],['Jogo',row.main_game||'—'],['Redes',String(links(row).length)]];
+    content.innerHTML=`<div class="team-profile-mobile-hero"><div class="team-esports-profile-photo">${avatar(row)}</div><div class="team-profile-mobile-heading"><p class="team-profile-status">ONLINE</p><h2 id="teamProfileName">${esc(nickname)}</h2><div class="team-profile-heading-meta">${rolesMarkup(row.role||'MEMBRO')}<span class="team-profile-country"><span aria-hidden="true">${flag}</span> ${esc(row.country||countryCode)}</span></div></div></div><div class="team-esports-profile-copy"><p class="tag">PERFIL OFICIAL</p><h2 class="team-profile-desktop-name">${esc(nickname)}</h2><div class="team-profile-rich-role team-profile-desktop-role">${rolesMarkup(row.role||'MEMBRO')}</div><div class="team-profile-metrics">${metrics.map(([label,value])=>`<div><small>${esc(label)}</small><strong>${esc(value)}</strong></div>`).join('')}</div>${factMarkup?`<div class="team-esports-facts">${factMarkup}</div>`:''}<section class="team-profile-section"><small>Sobre</small><div class="team-esports-bio team-profile-rich-bio">${richText(row.bio||'Perfil oficial do Team Lambreta.')}</div></section><section class="team-profile-section"><small>Cargos</small><div class="team-profile-role-list">${rolesMarkup(row.role||'MEMBRO')}</div></section>${specialties.length?`<section class="team-profile-section"><small>Especialidades</small><div class="team-profile-specialties">${specialties.map(item=>`<span>${esc(item)}</span>`).join('')}</div></section>`:''}${linkMarkup?`<section class="team-profile-section"><small>Redes sociais</small><div class="team-esports-links">${linkMarkup}</div></section>`:''}</div>`;
     setPhotoBackdrops(content);
     modal.hidden=false; document.body.classList.add('team-modal-open'); modal.querySelector('.team-esports-close')?.focus();
   }
@@ -126,9 +131,16 @@
   }
   async function load(){
     if(!grid)return; const {data,error}=await sb.from('team_members').select('*').eq('is_published',true).eq('is_archived',false).order('is_featured',{ascending:false}).order('display_order').order('created_at');
-    if(error){grid.innerHTML=`<article class="team-esports-empty"><h2>Não foi possível carregar o Team</h2><p>${esc(error.message)}</p></article>`;return} members=data||[];render();
+    if(error){grid.innerHTML=`<article class="team-esports-empty"><h2>Não foi possível carregar o Team</h2><p>${esc(error.message)}</p></article>`;return} members=data||[];document.getElementById('teamMemberCount')?.replaceChildren(String(members.length));render();
+  }
+  function setupMobileTabs(){
+    document.querySelectorAll('[data-team-tab]').forEach(button=>button.addEventListener('click',()=>{
+      const selected=button.dataset.teamTab;
+      document.querySelectorAll('[data-team-tab]').forEach(item=>{const active=item===button;item.classList.toggle('is-active',active);item.setAttribute('aria-selected',String(active))});
+      document.querySelectorAll('[data-team-panel]').forEach(panel=>{const active=panel.dataset.teamPanel===selected;panel.classList.toggle('is-active',active);panel.hidden=!active});
+    }));
   }
   let timer=null; const refresh=()=>{clearTimeout(timer);timer=setTimeout(load,120)};
-  async function boot(){await load();sb.channel('team-public-v92').on('postgres_changes',{event:'*',schema:'public',table:'team_members'},refresh).subscribe();addEventListener('focus',load);document.addEventListener('visibilitychange',()=>{if(!document.hidden)load()})}
+  async function boot(){setupMobileTabs();await load();sb.channel('team-public-v92').on('postgres_changes',{event:'*',schema:'public',table:'team_members'},refresh).subscribe();addEventListener('focus',load);document.addEventListener('visibilitychange',()=>{if(!document.hidden)load()})}
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot);else boot();
 })();
