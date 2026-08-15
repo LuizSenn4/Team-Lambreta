@@ -86,7 +86,7 @@
   display: flex;
   justify-content: space-between;
   gap: 8px;
-  padding: 5px 0;
+  padding: 4px 0;
   border-top: 1px solid rgba(255, 255, 255, 0.055);
 }
 .forum-post-author dt {
