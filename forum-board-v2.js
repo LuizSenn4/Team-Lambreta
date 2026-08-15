@@ -55,6 +55,9 @@
   let deletingPostKind = "reply";
   let mentionPreview = null;
   let gameResultsOpen = false;
+  let countryResultsOpen = false;
+  let selectedCountryCode = "";
+  const countryCatalog = window.TeamCountryCatalog;
   const shareIcon = `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 8a3 3 0 1 0-2.83-4A3 3 0 0 0 15 5c0 .2.02.39.06.57L8.91 9.1A3 3 0 1 0 9 14.78l6.13 3.5A3 3 0 1 0 16 16.55l-6.12-3.49c.08-.34.1-.7.06-1.05l6.16-3.54c.52.34 1.18.53 1.9.53Z"/></svg>`;
   const trashIcon = `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 3h6l1 2h4v2H4V5h4l1-2Zm-3 6h12l-1 12H7L6 9Zm3 2v7h2v-7H9Zm4 0v7h2v-7h-2Z"/></svg>`;
   const likeIcon = `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7.4 10.2 11 3.8c.5-.9 1.7-1.2 2.5-.6.6.4.9 1.2.7 1.9l-.9 3.5h4.9c1.7 0 2.9 1.6 2.4 3.2l-1.8 6.1c-.3 1.1-1.3 1.8-2.4 1.8H7.4V10.2Z"/><path d="M3.2 10.2h4.2v9.5H3.2z"/></svg>`;
@@ -643,6 +646,13 @@
       .toLocaleLowerCase("pt-PT")
       .trim();
 
+  const countryInfo = (value) => countryCatalog?.resolve(value) || null;
+  const countryFlag = (value) => countryInfo(value)?.flag || "🌍";
+  const countryFullLabel = (value) => {
+    const country = countryInfo(value);
+    return country ? `${country.flag} ${country.name}` : "🌍 País não informado";
+  };
+
   function renderProfilePickers() {
     $("forumGamesCount").textContent = `${selectedGames.size}/3`;
     $("forumSelectedGames").innerHTML = [...selectedGames]
@@ -719,6 +729,39 @@
     setGameResultsOpen(open);
   }
 
+  function setCountryResultsOpen(open, { restoreFocus = false } = {}) {
+    const search = $("forumProfileCountry");
+    const host = $("forumCountryResults");
+    if (!search || !host) return;
+    countryResultsOpen = Boolean(open && search.value.trim());
+    host.hidden = !countryResultsOpen;
+    search.setAttribute("aria-expanded", String(countryResultsOpen));
+    if (!countryResultsOpen && restoreFocus) search.focus();
+  }
+
+  function renderSelectedCountry() {
+    const host = $("forumSelectedCountry");
+    const country = countryInfo(selectedCountryCode);
+    host.hidden = !country;
+    host.innerHTML = country
+      ? `<button type="button" data-clear-country aria-label="Alterar país selecionado"><span aria-hidden="true">${country.flag}</span><strong>${esc(country.name)}</strong><small>${country.code}</small><b aria-hidden="true">×</b></button>`
+      : "";
+  }
+
+  function renderCountryResults(query = "", { open = Boolean(query.trim()) } = {}) {
+    const host = $("forumCountryResults");
+    const matches = countryCatalog?.search(query, 12) || [];
+    if (!query.trim()) {
+      host.innerHTML = "";
+      setCountryResultsOpen(false);
+      return;
+    }
+    host.innerHTML = matches.length
+      ? matches.map((country) => `<button type="button" data-country-code="${country.code}"><span aria-hidden="true">${country.flag}</span><strong>${esc(country.name)}</strong><small>${country.code}</small></button>`).join("")
+      : '<p class="forum-picker-empty">Nenhum país encontrado.</p>';
+    setCountryResultsOpen(open);
+  }
+
   function setAvatarPreview(source, name) {
     const host = $("forumProfileAvatarPreview");
     host.className = "forum-avatar-fallback";
@@ -743,7 +786,10 @@
       : "Complete seu perfil do Fórum";
     $("forumProfileNickname").value =
       item.forum_nickname || profile?.game_nickname || "";
-    $("forumProfileCountry").value = item.country || "";
+    selectedCountryCode = countryInfo(item.country)?.code || "";
+    $("forumProfileCountry").value = "";
+    renderSelectedCountry();
+    renderCountryResults("");
     $("forumProfileDiscord").value = item.discord || "";
     $("forumProfileBio").value = item.bio || "";
     $("forumProfileAvatarUrl").value = item.avatar_external_url || "";
@@ -818,7 +864,7 @@
             ? null
             : uploadedPath,
         p_avatar_external_url: usingUpload ? null : externalUrl || null,
-        p_country: $("forumProfileCountry").value.trim(),
+        p_country: selectedCountryCode,
         p_games: [...selectedGames],
         p_platforms: [...selectedPlatforms],
         p_game_modes: [...selectedModes].filter((mode) =>
@@ -869,7 +915,7 @@
       { label: personName(userId) },
     ]);
     view.innerHTML = `<section class="forum-full-profile">
-      <header>${avatarMarkup(userId, "is-profile")}<div><h3 class="role-${esc(role(userId))}">${esc(personName(userId))}</h3><span class="forum-role-badge role-${esc(role(userId))}">${esc(roleLabel(userId))}</span><p>${esc(member.country || "País não informado")}</p></div>${userId === session.user.id ? '<button type="button" data-edit-profile>Editar perfil</button>' : ""}</header>
+      <header>${avatarMarkup(userId, "is-profile")}<div><h3 class="role-${esc(role(userId))}">${esc(personName(userId))}</h3><span class="forum-role-badge role-${esc(role(userId))}">${esc(roleLabel(userId))}</span><p>${esc(countryFullLabel(member.country))}</p></div>${userId === session.user.id ? '<button type="button" data-edit-profile>Editar perfil</button>' : ""}</header>
       <div class="forum-profile-stats"><article><b>${stats.topics}</b><small>Tópicos</small></article><article><b>${stats.posts}</b><small>Respostas</small></article><article><b>${stats.xp}</b><small>XP</small></article><article><b>${stats.accountCreatedAt ? esc(fmtDate(stats.accountCreatedAt)) : "—"}</b><small>Membro desde</small></article></div>
       <div id="forumProfileOverview" class="forum-profile-details"><section><h4>Perfil</h4><p>${esc(member.bio || "Este membro ainda não adicionou uma bio.")}</p></section><dl><div><dt>Jogos</dt><dd>${gameChips(member)}</dd></div><div><dt>Plataformas</dt><dd>${member.platforms?.length ? `<span class="forum-public-chips">${member.platforms.map((item) => `<span>${esc(platformLabel(item))}</span>`).join("")}</span>` : "—"}</dd></div><div><dt>Modos de jogo</dt><dd>${member.game_modes?.length ? `<span class="forum-public-chips">${member.game_modes.map((item) => `<span>${esc(item.split("::")[1] || item)}</span>`).join("")}</span>` : "—"}</dd></div>${member.discord ? `<div><dt>Discord</dt><dd>${esc(member.discord)}</dd></div>` : ""}</dl></div>
       <div class="forum-profile-tabs" role="tablist"><button class="is-active" type="button" data-profile-tab="profile">Perfil</button><button type="button" data-profile-tab="topics">Tópicos</button><button type="button" data-profile-tab="replies">Respostas</button><button type="button" data-profile-tab="activity">Atividade</button></div>
@@ -1086,8 +1132,8 @@
     }
     const canManage = post.author_id === session.user.id || isModerator();
     return `<article id="${esc(postHash)}" class="forum-post-card" data-post-id="${esc(post.id)}">
-      <header><a class="forum-post-author-mobile" href="forum.html?profile=${encodeURIComponent(post.author_id)}" data-route>${avatarMarkup(post.author_id, "is-mobile")}<span><strong class="role-${esc(role(post.author_id))}">${esc(personName(post.author_id))}</strong><small>${esc(author.country || "País não informado")} · ${stats.totalPosts} posts</small></span><span class="forum-role-badge role-${esc(role(post.author_id))}">${esc(roleLabel(post.author_id))}</span></a><div><time datetime="${esc(post.created_at)}">${esc(fmt(post.created_at))}</time><a href="#${esc(postHash)}" data-share-post="${esc(post.id)}" aria-label="Copiar link do post ${index + 1}">#${index + 1}</a></div></header>
-      <div class="forum-post-layout"><aside class="forum-post-author"><a href="forum.html?profile=${encodeURIComponent(post.author_id)}" data-route>${avatarMarkup(post.author_id, "is-post")}<strong class="role-${esc(role(post.author_id))}">${esc(personName(post.author_id))}</strong></a><span class="forum-role-badge role-${esc(role(post.author_id))}">${esc(roleLabel(post.author_id))}</span><small>${esc(author.country || "País não informado")}</small><dl><div><dt>Jogos</dt><dd>${gameLabels(author).length ? esc(gameLabels(author).join(" · ")) : "—"}</dd></div><div><dt>Posts</dt><dd>${stats.totalPosts}</dd></div><div><dt>XP</dt><dd>${stats.xp}</dd></div><div><dt>Likes</dt><dd class="forum-author-likes" data-author-likes="${esc(post.author_id)}">${likeIcon}<span>${stats.likes}</span></dd></div><div><dt>Publicado</dt><dd>${esc(relative(post.created_at))}</dd></div><div><dt>Membro desde</dt><dd>${memberSince ? esc(fmtDate(memberSince)) : "—"}</dd></div></dl></aside>
+      <header><a class="forum-post-author-mobile" href="forum.html?profile=${encodeURIComponent(post.author_id)}" data-route>${avatarMarkup(post.author_id, "is-mobile")}<span><strong class="role-${esc(role(post.author_id))}">${esc(personName(post.author_id))}</strong><small>${countryFlag(author.country)} · ${stats.totalPosts} posts</small></span><span class="forum-role-badge role-${esc(role(post.author_id))}">${esc(roleLabel(post.author_id))}</span></a><div><time datetime="${esc(post.created_at)}">${esc(fmt(post.created_at))}</time><a href="#${esc(postHash)}" data-share-post="${esc(post.id)}" aria-label="Copiar link do post ${index + 1}">#${index + 1}</a></div></header>
+      <div class="forum-post-layout"><aside class="forum-post-author"><a href="forum.html?profile=${encodeURIComponent(post.author_id)}" data-route>${avatarMarkup(post.author_id, "is-post")}<strong class="role-${esc(role(post.author_id))}">${esc(personName(post.author_id))}</strong></a><span class="forum-role-badge role-${esc(role(post.author_id))}">${esc(roleLabel(post.author_id))}</span><small class="forum-post-country" title="${esc(countryInfo(author.country)?.name || "País não informado")}">${countryFlag(author.country)}</small><dl><div><dt>Jogos</dt><dd>${gameLabels(author).length ? esc(gameLabels(author).join(" · ")) : "—"}</dd></div><div><dt>Posts</dt><dd>${stats.totalPosts}</dd></div><div><dt>XP</dt><dd>${stats.xp}</dd></div><div><dt>Likes</dt><dd class="forum-author-likes" data-author-likes="${esc(post.author_id)}">${likeIcon}<span>${stats.likes}</span></dd></div><div><dt>Publicado</dt><dd>${esc(relative(post.created_at))}</dd></div><div><dt>Membro desde</dt><dd>${memberSince ? esc(fmtDate(memberSince)) : "—"}</dd></div></dl></aside>
       <div class="forum-post-main">${quoted ? `<blockquote class="forum-linked-quote"><a href="#post-${esc(quoted.id)}">${esc(personName(quoted.author_id))} escreveu:</a><p>${quoted.deleted_at ? "Conteúdo removido." : renderTlMark(quoted.body.slice(0, 500))}</p></blockquote>` : ""}<div class="forum-post-body ${removed ? "is-removed" : ""}">${removed ? "Esta publicação foi removida." : renderTlMark(post.body)}</div>${post.edited_at && !removed ? `<p class="forum-post-edited">Editado em ${esc(fmt(post.edited_at))}</p>` : ""}</div></div>
       <footer><div class="forum-post-footer-meta"><span>${post.is_original ? "POST ORIGINAL" : `ID ${esc(post.id)}`}</span>${removed ? "" : reactionButtons(post.id)}</div><div class="forum-post-actions">${removed ? "" : `<button type="button" data-reply-post="${esc(post.id)}">Responder</button><button type="button" data-quote-post="${esc(post.id)}">Citar</button>${canManage ? `<button type="button" data-edit-post="${esc(post.id)}">Editar</button>${post.is_original ? "" : `<button type="button" class="forum-delete-action" data-delete-post="${esc(post.id)}">Apagar resposta</button>`}` : ""}`}<button type="button" data-share-post="${esc(post.id)}">Compartilhar</button></div></footer>
     </article>`;
@@ -1142,7 +1188,7 @@
     const member = person(userId);
     const preview = ensureMentionPreview();
     clearTimeout(preview.hideTimer);
-    preview.innerHTML = `<header>${avatarMarkup(userId, "is-mention-preview")}<div><strong class="role-${esc(role(userId))}">${esc(personName(userId))}</strong><span class="forum-role-badge role-${esc(role(userId))}">${esc(roleLabel(userId))}</span></div></header><dl>${member.country ? `<div><dt>País</dt><dd>${esc(member.country)}</dd></div>` : ""}${gameLabels(member).length ? `<div><dt>Jogos</dt><dd>${esc(gameLabels(member).join(" · "))}</dd></div>` : ""}${member.game_modes?.length ? `<div><dt>Modos</dt><dd>${esc(member.game_modes.map((item) => item.split("::")[1] || item).join(" · "))}</dd></div>` : ""}</dl><a href="forum.html?profile=${encodeURIComponent(userId)}">Ver perfil →</a>`;
+    preview.innerHTML = `<header>${avatarMarkup(userId, "is-mention-preview")}<div><strong class="role-${esc(role(userId))}">${esc(personName(userId))}</strong><span class="forum-role-badge role-${esc(role(userId))}">${esc(roleLabel(userId))}</span></div></header><dl>${member.country ? `<div><dt>País</dt><dd>${esc(countryFullLabel(member.country))}</dd></div>` : ""}${gameLabels(member).length ? `<div><dt>Jogos</dt><dd>${esc(gameLabels(member).join(" · "))}</dd></div>` : ""}${member.game_modes?.length ? `<div><dt>Modos</dt><dd>${esc(member.game_modes.map((item) => item.split("::")[1] || item).join(" · "))}</dd></div>` : ""}</dl><a href="forum.html?profile=${encodeURIComponent(userId)}">Ver perfil →</a>`;
     preview.hidden = false;
     const rect = trigger.getBoundingClientRect();
     const width = Math.min(310, window.innerWidth - 24);
@@ -1674,6 +1720,30 @@
     renderProfilePickers();
     renderGameResults($("forumGameSearch").value);
   });
+  $("forumProfileCountry")?.addEventListener("input", (event) =>
+    renderCountryResults(event.currentTarget.value, { open: true }),
+  );
+  $("forumProfileCountry")?.addEventListener("click", (event) => {
+    event.stopPropagation();
+    const search = event.currentTarget;
+    if (!search.value.trim()) return setCountryResultsOpen(false);
+    if (countryResultsOpen) setCountryResultsOpen(false);
+    else renderCountryResults(search.value, { open: true });
+  });
+  $("forumCountryResults")?.addEventListener("click", (event) => {
+    const option = event.target.closest("[data-country-code]");
+    if (!option) return;
+    selectedCountryCode = option.dataset.countryCode;
+    $("forumProfileCountry").value = "";
+    renderSelectedCountry();
+    setCountryResultsOpen(false);
+  });
+  $("forumSelectedCountry")?.addEventListener("click", (event) => {
+    if (!event.target.closest("[data-clear-country]")) return;
+    selectedCountryCode = "";
+    renderSelectedCountry();
+    $("forumProfileCountry").focus();
+  });
   $("forumSelectedGames")?.addEventListener("click", (event) => {
     const button = event.target.closest("[data-remove-game]");
     if (!button) return;
@@ -1704,10 +1774,20 @@
     if (event.target.closest("#forumGamesPicker")) return;
     setGameResultsOpen(false);
   });
+  document.addEventListener("click", (event) => {
+    if (!countryResultsOpen) return;
+    if (event.target.closest("#forumCountryPicker")) return;
+    setCountryResultsOpen(false);
+  });
   document.addEventListener("keydown", (event) => {
     if (event.key !== "Escape" || !gameResultsOpen) return;
     event.preventDefault();
     setGameResultsOpen(false, { restoreFocus: true });
+  });
+  document.addEventListener("keydown", (event) => {
+    if (event.key !== "Escape" || !countryResultsOpen) return;
+    event.preventDefault();
+    setCountryResultsOpen(false, { restoreFocus: true });
   });
   document.addEventListener(
     "error",
@@ -1741,8 +1821,12 @@
     );
   document.querySelectorAll(".forum-board-dialog").forEach((dialog) =>
     dialog.addEventListener("click", (event) => {
-      if (dialog.id === "forumProfileDialog" && gameResultsOpen) {
+      if (
+        dialog.id === "forumProfileDialog" &&
+        (gameResultsOpen || countryResultsOpen)
+      ) {
         setGameResultsOpen(false);
+        setCountryResultsOpen(false);
         if (event.target === dialog) event.stopPropagation();
         return;
       }
@@ -1750,7 +1834,7 @@
     }),
   );
   $("forumProfileDialog")?.addEventListener("close", () =>
-    setGameResultsOpen(false),
+    (setGameResultsOpen(false), setCountryResultsOpen(false)),
   );
   window.addEventListener("popstate", () => session && renderRoute());
   sb.auth.onAuthStateChange((_event, nextSession) => {
