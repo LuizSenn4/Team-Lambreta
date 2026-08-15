@@ -1,0 +1,55 @@
+/* Buddy list / private window direction: compact game-friend UI. */
+.buddy-person{
+  grid-template-columns:48px minmax(0,1fr)!important;
+  min-height:70px;
+  padding:10px 12px;
+  transition:border-color .16s ease,background .16s ease,transform .16s ease;
+}
+.buddy-person:hover,.buddy-person:focus-visible{
+  border-color:var(--role)!important;
+  background:rgba(115,255,24,.06);
+  transform:translateX(2px);
+  outline:none;
+}
+.buddy-person>div{min-width:0}
+.buddy-person strong,.buddy-person small,.buddy-person em{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.buddy-person em.buddy-presence-online{color:#73ff18}
+.buddy-person em.buddy-presence-away{color:#f0c24b}
+.buddy-person em.buddy-presence-ocupado,.buddy-person em.buddy-presence-busy{color:#ff6b55}
+.buddy-person em.buddy-presence-offline{color:#858585}
+.buddy-person>[data-quick],.buddy-person>.buddy-bell{display:none!important}
+.buddy-profile-modal{place-items:end!important;padding:24px!important;pointer-events:none}
+.buddy-profile-modal .buddy-modal-backdrop{display:none}
+.buddy-profile-modal article{pointer-events:auto;width:min(380px,calc(100vw - 32px));display:block;max-height:min(700px,calc(100vh - 48px));overflow:auto;border-radius:20px;box-shadow:0 24px 80px rgba(0,0,0,.62)}
+.buddy-profile-modal article>img{display:block;width:100%;height:180px;min-height:0;object-fit:cover}
+.buddy-profile-modal article>div{padding:22px}
+.buddy-profile-modal h2{margin:4px 0;font-size:28px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.buddy-profile-modal footer button{flex:1 1 auto;min-height:38px}
+.buddy-app.conversation-open>.buddy-main{background:transparent;border-color:transparent;pointer-events:none}
+.buddy-main #buddyConversation{position:fixed;right:24px;bottom:24px;z-index:100010;width:min(390px,calc(100vw - 48px));height:560px;min-height:0;padding:0!important;border:1px solid rgba(217,164,65,.42);border-radius:18px;background:#15171b;box-shadow:0 24px 90px rgba(0,0,0,.7);pointer-events:auto;overflow:hidden}
+.buddy-main #buddyConversation[hidden]{display:none!important}
+.buddy-main #buddyConversation.is-minimized{height:64px}
+.buddy-main #buddyConversation.is-minimized .buddy-messages,.buddy-main #buddyConversation.is-minimized .buddy-message-form,.buddy-main #buddyConversation.is-minimized .buddy-text-only{display:none!important}
+.buddy-main #buddyConversation header{height:64px;min-height:64px;padding:8px 10px;gap:9px;background:rgba(20,22,26,.98)}
+.buddy-main #buddyConversation header img{width:42px;height:42px;border-radius:10px;object-fit:cover}
+.buddy-main #buddyConversation header div{min-width:0;flex:1}
+.buddy-main #buddyConversation header strong{font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.buddy-main #buddyConversation header small{font-size:10px;color:#9e947f}
+.buddy-main #buddyConversation header [data-minimize],.buddy-main #buddyConversation header [data-close-chat]{width:30px;height:30px;min-width:30px;padding:0;border-radius:50%;font-size:18px;line-height:1}
+.buddy-main #buddyConversation header [data-block],.buddy-main #buddyConversation header [data-delete]{display:none}
+.buddy-main #buddyConversation .buddy-messages{min-height:0;max-height:none;height:auto;padding:14px 12px}
+.buddy-main #buddyConversation .buddy-message-form{padding:10px;border-top:1px solid rgba(217,164,65,.14)}
+@media(max-width:760px){
+  .buddy-person{min-height:66px!important}
+  .buddy-profile-modal{place-items:end center!important;padding:10px!important}
+  .buddy-profile-modal article{width:100%;max-height:calc(100vh - 20px);border-radius:18px}
+  .buddy-profile-modal article>img{height:150px}
+  .buddy-app.conversation-open>.buddy-main{background:#15171b;border-color:transparent}
+  .buddy-main #buddyConversation{position:static;width:100%;height:100%;border:0;border-radius:0;box-shadow:none}
+  .buddy-main #buddyConversation.is-minimized{height:100%}
+  .buddy-main #buddyConversation header{display:grid!important;grid-template-columns:36px 42px minmax(0,1fr) 32px 30px!important;align-items:center!important;height:64px!important;padding:8px 10px!important}
+  .buddy-main #buddyConversation header [data-profile]{grid-column:auto!important;width:32px!important;min-width:32px!important;height:32px!important}
+  .buddy-main #buddyConversation header [data-close-chat]{width:30px!important;min-width:30px!important;height:30px!important}
+  .buddy-main #buddyConversation header [data-block],.buddy-main #buddyConversation header [data-delete]{display:none!important}
+  .buddy-main #buddyConversation header [data-minimize]{display:none}
+}
