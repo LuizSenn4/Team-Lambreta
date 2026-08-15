@@ -9745,16 +9745,12 @@ input,select,textarea,button{max-width:100%;font:inherit}
 }
 
 /* Molduras 4:5: respiro leve e continuidade usando a própria foto. */
-.team-roster-avatar,
 .team-quick-preview-photo,
-.team-esports-profile-photo,
 .team-inline-photo-frame,
 .team-player-photo{position:relative;isolation:isolate;overflow:hidden}
 .team-quick-preview-photo{padding:3px}
 .team-player-photo{padding:3px}
-.team-roster-avatar::before,
 .team-quick-preview-photo::before,
-.team-esports-profile-photo::before,
 .team-inline-photo-frame::before,
 .team-player-photo::before{
   content:"";
@@ -9769,27 +9765,11 @@ input,select,textarea,button{max-width:100%;font:inherit}
   transform:scale(1.08);
   pointer-events:none
 }
-.team-roster-avatar img,
-.team-roster-avatar>span,
 .team-quick-preview-photo img,
 .team-quick-preview-photo span,
-.team-esports-profile-photo img,
-.team-esports-profile-photo>span,
 .team-inline-photo-frame img,
 .team-inline-photo-frame>span,
 .team-player-photo img{position:relative;z-index:1}
-.team-roster-avatar img,
 .team-quick-preview-photo img,
-.team-esports-profile-photo img,
 .team-inline-photo-frame img,
 .team-player-photo img{background:transparent!important}
-
-/* A miniatura fica inteira dentro de uma área definida, inclusive em fotos muito verticais. */
-.team-roster-avatar img{
-  position:absolute!important;
-  inset:4px!important;
-  width:calc(100% - 8px)!important;
-  height:calc(100% - 8px)!important;
-  object-fit:contain!important;
-  object-position:center center!important
-}
