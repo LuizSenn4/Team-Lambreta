@@ -29,6 +29,8 @@
   font-weight:900;
 }
 .chat-auth-user-name{
+  display:inline-flex;
+  align-items:center;
   min-width:0;
   overflow:hidden;
   color:#f2ead7;
@@ -39,7 +41,11 @@
   white-space:nowrap;
 }
 .chat-auth-user-role{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
   flex:0 0 auto;
+  margin:0;
   padding:3px 6px;
   border:1px solid currentColor;
   border-radius:999px;
@@ -49,6 +55,8 @@
   line-height:1;
   letter-spacing:.7px;
   text-transform:uppercase;
+  position:static;
+  transform:none;
 }
 .chat-auth-user.role-master .chat-auth-user-role{color:#18e7ff}
 .chat-auth-user.role-admin .chat-auth-user-role{color:#ff405a}
