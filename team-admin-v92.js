@@ -16,6 +16,7 @@
   let photoObjectUrl=null;
   let draggedId=null;
   let savingOrder=false;
+  let editingBossRole=null;
 
   function clearPhotoObjectUrl(){
     if(photoObjectUrl){
@@ -280,11 +281,19 @@
     return selectedTeamRoles().join('|');
   }
 
+  function setBossRoleProtection(role=''){
+    editingBossRole=parseTeamRoles(role).includes('BOSS')?String(role):null;
+    const picker=$('teamMemberRolePicker');
+    picker?.toggleAttribute('aria-disabled',Boolean(editingBossRole));
+    picker?.querySelectorAll('input[type="checkbox"]').forEach(input=>{input.disabled=Boolean(editingBossRole)});
+  }
+
   function reset(){
     $('teamMemberForm')?.reset();
     setValue('teamMemberId');
     setValue('teamMemberOrder',100);
     setSelectedTeamRoles('MEMBRO');
+    setBossRoleProtection();
     setSocialCount(1);
     $('teamMemberPublished').checked=true;
     $('teamMemberFeatured').checked=false;
@@ -310,6 +319,7 @@
       setValue('teamMemberNickname',row.nickname);
       setValue('teamMemberAge',row.age);
       setSelectedTeamRoles(row.role||'MEMBRO');
+      setBossRoleProtection(row.role||'');
       setValue('teamMemberGroup',row.member_group||'Gamers');
       setValue('teamMemberCountry',row.country);
       setValue('teamMemberMainGame',row.main_game);
@@ -359,7 +369,7 @@
       name:$('teamMemberName').value.trim(),
       nickname:$('teamMemberNickname').value.trim()||null,
       age:ageValue?Number(ageValue):null,
-      role:serialiseTeamRoles(),
+      role:editingBossRole||serialiseTeamRoles(),
       member_group:$('teamMemberGroup').value,
       country:$('teamMemberCountry').value.trim()||null,
       main_game:$('teamMemberMainGame').value.trim()||null,
@@ -449,7 +459,7 @@
       return;
     }
 
-    container.innerHTML=rows.map(row=>`
+    container.innerHTML=rows.map(row=>{const isBoss=parseTeamRoles(row.role||'').includes('BOSS');return `
       <article class="streamer-admin-row team-sortable-row ${row.is_archived?'is-archived':''}" draggable="${row.is_archived?'false':'true'}" data-member-id="${row.id}">
         <button class="team-drag-handle" type="button" aria-label="Arrastar ${esc(row.nickname||row.name)}" title="Segure e arraste">☰</button>
         <div class="streamer-admin-identity">
@@ -467,13 +477,13 @@
         </div>
         <div class="streamer-admin-actions">
           <button data-edit="${row.id}">Editar</button>
-          ${row.is_archived
+          ${isBoss?'':row.is_archived
             ? `<button data-restore="${row.id}">Restaurar</button>`
             : `<button data-archive="${row.id}">Arquivar</button>`}
-          <button class="team-delete-member" data-delete="${row.id}">Excluir perfil</button>
+          ${isBoss?'':`<button class="team-delete-member" data-delete="${row.id}">Excluir perfil</button>`}
         </div>
       </article>
-    `).join('');
+    `}).join('');
 
     container.querySelectorAll('[data-edit]').forEach(button=>{
       button.onclick=()=>openEditor(rows.find(row=>row.id===button.dataset.edit));
