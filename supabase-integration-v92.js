@@ -40,6 +40,13 @@
 
   const $ = id => document.getElementById(id);
   const esc = value => String(value ?? '').replace(/[&<>'"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]));
+  if ($('chatAuthBox') && !document.querySelector('link[data-chat-auth-unified]')) {
+    const authStyles = document.createElement('link');
+    authStyles.rel = 'stylesheet';
+    authStyles.href = 'chat-auth-unified-v99.css?v=99.0';
+    authStyles.dataset.chatAuthUnified = '1';
+    document.head.appendChild(authStyles);
+  }
   const normalizeRole = role => ({dev:'master',developer:'master',owner:'master',boss:'master',administrador:'admin',mod:'moderator',moderador:'moderator',helper:'staff',suporte:'staff',apoiador:'supporter',support:'supporter',user:'member',usuario:'member',membro:'member'}[String(role||'').trim().toLowerCase()] || String(role||'member').trim().toLowerCase() || 'member');
   const teamRoles = new Set(['moderator','staff','admin','master']);
   const moderationRoles = new Set(['moderator','staff','admin','master']);
@@ -341,13 +348,28 @@
   function renderAuth() {
     const bar = $('supabaseAuthBar');
     if (bar) {
-      if (!session) bar.innerHTML = '<button id="sbGlobalLogin" class="google-brand-login" type="button"><img src="img/brasao.png" alt="">Entrar com Google</button>';
-      else bar.innerHTML = `<div class="sb-user role-${roleClass(profile?.role)}">${profile?.avatar_url?`<img src="${esc(profile.avatar_url)}" alt="">`:''}<span>${esc(profile?.game_nickname || profile?.full_name || session.user.email)}</span><small>${roleLabel(profile?.role)}</small>${extraBadges(profile)}</div><button class="sb-logout" id="sbLogout" type="button">Sair</button>`;
-      $('sbGlobalLogin')?.addEventListener('click', loginGoogle);
-      $('sbLogout')?.addEventListener('click', logout);
+      const embeddedAuth = Boolean($('chatAuthBox'));
+      bar.hidden = embeddedAuth;
+      if (embeddedAuth) bar.replaceChildren();
+      else {
+        if (!session) bar.innerHTML = '<button id="sbGlobalLogin" class="google-brand-login" type="button"><img src="img/brasao.png" alt="">Entrar com Google</button>';
+        else bar.innerHTML = `<div class="sb-user role-${roleClass(profile?.role)}">${profile?.avatar_url?`<img src="${esc(profile.avatar_url)}" alt="">`:''}<span>${esc(profile?.game_nickname || profile?.full_name || session.user.email)}</span><small>${roleLabel(profile?.role)}</small>${extraBadges(profile)}</div><button class="sb-logout" id="sbLogout" type="button">Sair</button>`;
+        $('sbGlobalLogin')?.addEventListener('click', loginGoogle);
+        $('sbLogout')?.addEventListener('click', logout);
+      }
     }
     const authBox = $('chatAuthBox');
-    if (authBox) authBox.classList.toggle('is-connected', Boolean(session));
+    if (authBox) {
+      authBox.classList.toggle('is-connected', Boolean(session));
+      if (session) {
+        const nickname = profile?.game_nickname || profile?.full_name || 'Google';
+        const avatar = profile?.avatar_url
+          ? `<img class="chat-auth-user-avatar" src="${esc(profile.avatar_url)}" alt="Avatar de ${esc(nickname)}">`
+          : `<span class="chat-auth-user-avatar is-fallback" aria-hidden="true">${esc(nickname.charAt(0).toUpperCase())}</span>`;
+        authBox.innerHTML = `<div class="chat-auth-user role-${roleClass(profile?.role)}">${avatar}<span class="chat-auth-user-name">${esc(nickname)}</span><small class="chat-auth-user-role">${roleLabel(profile?.role)}</small><button class="chat-auth-logout" id="chatAuthLogout" type="button">Sair</button></div>`;
+        $('chatAuthLogout')?.addEventListener('click', logout);
+      }
+    }
     const btn = $('googleLoginBtn');
     if (btn) {
       btn.innerHTML = session ? `Logado como: ${esc(profile?.game_nickname || profile?.full_name || 'Google')}` : '<img class="google-login-logo" src="img/brasao.png" alt=""> Entrar com Google';
