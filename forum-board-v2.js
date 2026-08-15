@@ -59,9 +59,11 @@
   let selectedCountryCode = "";
   let sharePopover = null;
   let activeShareTrigger = null;
+  let topicModerationController = null;
   const countryCatalog = window.TeamCountryCatalog;
   const shareIcon = `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 8a3 3 0 1 0-2.83-4A3 3 0 0 0 15 5c0 .2.02.39.06.57L8.91 9.1A3 3 0 1 0 9 14.78l6.13 3.5A3 3 0 1 0 16 16.55l-6.12-3.49c.08-.34.1-.7.06-1.05l6.16-3.54c.52.34 1.18.53 1.9.53Z"/></svg>`;
   const trashIcon = `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 3h6l1 2h4v2H4V5h4l1-2Zm-3 6h12l-1 12H7L6 9Zm3 2v7h2v-7H9Zm4 0v7h2v-7h-2Z"/></svg>`;
+  const moderationIcon = `<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="5" cy="12" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="19" cy="12" r="2"/></svg>`;
   const likeIcon = `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7.4 10.2 11 3.8c.5-.9 1.7-1.2 2.5-.6.6.4.9 1.2.7 1.9l-.9 3.5h4.9c1.7 0 2.9 1.6 2.4 3.2l-1.8 6.1c-.3 1.1-1.3 1.8-2.4 1.8H7.4V10.2Z"/><path d="M3.2 10.2h4.2v9.5H3.2z"/></svg>`;
   const dislikeIcon = `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7.4 13.8 11 20.2c.5.9 1.7 1.2 2.5.6.6-.4.9-1.2.7-1.9l-.9-3.5h4.9c1.7 0 2.9-1.6 2.4-3.2l-1.8-6.1c-.3-1.1-1.3-1.8-2.4-1.8H7.4v9.5Z"/><path d="M3.2 4.3h4.2v9.5H3.2z"/></svg>`;
 
@@ -333,6 +335,33 @@
       (post) =>
         post.topic_id === topicId && post.is_original && post.deleted_at,
     );
+  const topicAllowsReplies = (topic) =>
+    Boolean(
+      topic &&
+        topic.status === "approved" &&
+        !topic.is_locked &&
+        !topic.is_closed &&
+        posts.some(
+          (post) =>
+            post.topic_id === topic.id &&
+            post.is_original &&
+            !post.deleted_at,
+        ),
+    );
+
+  function topicStateBadges(topic) {
+    return [
+      topic.is_pinned
+        ? '<span class="forum-topic-badge is-pinned">FIXADO</span>'
+        : "",
+      topic.is_locked
+        ? '<span class="forum-topic-badge is-locked">TRANCADO</span>'
+        : "",
+      topic.is_closed
+        ? '<span class="forum-topic-badge is-closed">FECHADO</span>'
+        : "",
+    ].join("");
+  }
 
   function applyEditorTag(textarea, open, close = open) {
     const start = textarea.selectionStart;
@@ -1084,8 +1113,8 @@
         .length - 1,
     );
     return `<a class="forum-topic-row ${topic.is_pinned ? "is-pinned" : ""}" href="forum.html?topic=${encodeURIComponent(topic.id)}" data-route>
-      <span class="forum-topic-state" aria-hidden="true">${topic.is_locked ? "◆" : topic.is_pinned ? "★" : "●"}</span>
-      <span class="forum-topic-copy"><strong>${esc(topic.title)}</strong><small>por <b class="role-${esc(role(topic.author_id))}">${esc(personName(topic.author_id))}</b>${topic.is_pinned ? " · Fixado" : ""}${topic.is_locked ? " · Fechado" : ""}</small></span>
+      <span class="forum-topic-state" aria-hidden="true">${topic.is_locked || topic.is_closed ? "◆" : topic.is_pinned ? "★" : "●"}</span>
+      <span class="forum-topic-copy"><strong>${esc(topic.title)}</strong><small>por <b class="role-${esc(role(topic.author_id))}">${esc(personName(topic.author_id))}</b><span class="forum-topic-badges">${topicStateBadges(topic)}</span></small></span>
       <span class="forum-topic-metric"><b>${replies}</b><small>Respostas</small></span>
       <span class="forum-topic-metric forum-views"><b>${topic.view_count}</b><small>Visualizações</small></span>
       <span class="forum-topic-activity"><small>Última atividade</small><strong>${esc(relative(topic.last_activity_at))}</strong></span>
@@ -1096,12 +1125,18 @@
     const section = sections.find((item) => item.slug === slug);
     if (!section) return renderNotFound("Pasta não encontrada.");
     const category = categories.find((item) => item.id === section.category_id);
-    const list = topics.filter(
-      (topic) =>
-        topic.section_id === section.id &&
-        topic.status === "approved" &&
-        !topicOriginalRemoved(topic.id),
-    );
+    const list = topics
+      .filter(
+        (topic) =>
+          topic.section_id === section.id &&
+          topic.status === "approved" &&
+          !topicOriginalRemoved(topic.id),
+      )
+      .sort(
+        (a, b) =>
+          Number(Boolean(b.is_pinned)) - Number(Boolean(a.is_pinned)) ||
+          String(b.last_activity_at).localeCompare(String(a.last_activity_at)),
+      );
     const ownPending = topics.filter(
       (topic) =>
         topic.section_id === section.id &&
@@ -1140,11 +1175,14 @@
       return `<div id="${esc(postHash)}" class="forum-post-deleted-anchor" data-post-id="${esc(post.id)}" aria-hidden="true"></div>`;
     }
     const canManage = post.author_id === session.user.id || isModerator();
+    const canReply = topicAllowsReplies(
+      topics.find((topic) => topic.id === post.topic_id),
+    );
     return `<article id="${esc(postHash)}" class="forum-post-card" data-post-id="${esc(post.id)}">
       <header><a class="forum-post-author-mobile" href="forum.html?profile=${encodeURIComponent(post.author_id)}" data-route>${avatarMarkup(post.author_id, "is-mobile")}<span><strong class="role-${esc(role(post.author_id))}">${esc(personName(post.author_id))}</strong><small>${countryFlag(author.country)} · ${stats.totalPosts} posts</small></span><span class="forum-role-badge role-${esc(role(post.author_id))}">${esc(roleLabel(post.author_id))}</span></a><div><time datetime="${esc(post.created_at)}">${esc(fmt(post.created_at))}</time><a href="#${esc(postHash)}" data-share-post="${esc(post.id)}" aria-label="Copiar link do post ${index + 1}">#${index + 1}</a></div></header>
       <div class="forum-post-layout"><aside class="forum-post-author"><a href="forum.html?profile=${encodeURIComponent(post.author_id)}" data-route>${avatarMarkup(post.author_id, "is-post")}<strong class="role-${esc(role(post.author_id))}">${esc(personName(post.author_id))}</strong></a><span class="forum-role-badge role-${esc(role(post.author_id))}">${esc(roleLabel(post.author_id))}</span><small class="forum-post-country" title="${esc(countryInfo(author.country)?.name || "País não informado")}">${countryFlag(author.country)}</small><dl><div><dt>Jogos</dt><dd>${gameLabels(author).length ? esc(gameLabels(author).map((label) => `${label} -`).join("\n")) : "—"}</dd></div><div><dt>Posts</dt><dd>${stats.totalPosts}</dd></div><div><dt>XP</dt><dd>${stats.xp}</dd></div><div><dt>Likes</dt><dd class="forum-author-likes" data-author-likes="${esc(post.author_id)}">${likeIcon}<span>${stats.likes}</span></dd></div><div><dt>Publicado</dt><dd>${esc(relative(post.created_at))}</dd></div><div><dt>Membro desde</dt><dd>${memberSince ? esc(fmtDate(memberSince)) : "—"}</dd></div></dl></aside>
       <div class="forum-post-main">${quoted ? `<blockquote class="forum-linked-quote"><a href="#post-${esc(quoted.id)}">${esc(personName(quoted.author_id))} escreveu:</a><p>${quoted.deleted_at ? "Conteúdo removido." : renderTlMark(quoted.body.slice(0, 500))}</p></blockquote>` : ""}<div class="forum-post-body ${removed ? "is-removed" : ""}">${removed ? "Esta publicação foi removida." : renderTlMark(post.body)}</div>${post.edited_at && !removed ? `<p class="forum-post-edited">Editado em ${esc(fmt(post.edited_at))}</p>` : ""}</div></div>
-      <footer><div class="forum-post-footer-meta"><span>${post.is_original ? "POST ORIGINAL" : `ID ${esc(post.id)}`}</span>${removed ? "" : reactionButtons(post.id)}</div><div class="forum-post-actions">${removed ? "" : `<button type="button" data-reply-post="${esc(post.id)}">Responder</button><button type="button" data-quote-post="${esc(post.id)}">Citar</button>${canManage ? `<button type="button" data-edit-post="${esc(post.id)}">Editar</button>${post.is_original ? "" : `<button type="button" class="forum-delete-action" data-delete-post="${esc(post.id)}">Apagar resposta</button>`}` : ""}`}<button type="button" data-share-post="${esc(post.id)}">Compartilhar</button></div></footer>
+      <footer><div class="forum-post-footer-meta"><span>${post.is_original ? "POST ORIGINAL" : `ID ${esc(post.id)}`}</span>${removed ? "" : reactionButtons(post.id)}</div><div class="forum-post-actions">${removed ? "" : `${canReply ? `<button type="button" data-reply-post="${esc(post.id)}">Responder</button><button type="button" data-quote-post="${esc(post.id)}">Citar</button>` : ""}${canManage ? `<button type="button" data-edit-post="${esc(post.id)}">Editar</button>${post.is_original ? "" : `<button type="button" class="forum-delete-action" data-delete-post="${esc(post.id)}">Apagar resposta</button>`}` : ""}`}<button type="button" data-share-post="${esc(post.id)}">Compartilhar</button></div></footer>
     </article>`;
   }
 
@@ -1292,11 +1330,22 @@
       return;
     }
     const canDeleteTopic = originalPost && !originalPost.deleted_at && (originalPost.author_id === session.user.id || isModerator());
+    const canReply = topicAllowsReplies(topic);
+    const moderationMenu = isModerator()
+      ? `<div class="forum-topic-moderation">
+          <button class="forum-icon-action" type="button" data-topic-moderation-toggle aria-label="Moderação do tópico" aria-expanded="false" aria-controls="forumTopicModerationMenu">${moderationIcon}</button>
+          <div id="forumTopicModerationMenu" class="forum-topic-moderation-menu" role="menu" hidden>
+            <button type="button" role="menuitem" data-topic-state="${topic.is_pinned ? "unpin" : "pin"}">${topic.is_pinned ? "Desafixar tópico" : "Fixar tópico"}</button>
+            <button type="button" role="menuitem" data-topic-state="${topic.is_locked ? "unlock" : "lock"}">${topic.is_locked ? "Destrancar tópico" : "Trancar tópico"}</button>
+            <button type="button" role="menuitem" data-topic-state="${topic.is_closed ? "reopen" : "close"}">${topic.is_closed ? "Reabrir tópico" : "Fechar tópico"}</button>
+          </div>
+        </div>`
+      : "";
     view.innerHTML = `<section class="forum-topic-page">
-      <header class="forum-topic-page-head"><div><h3>${esc(topic.title)}</h3><p>Iniciado por <b class="role-${esc(role(topic.author_id))}">${esc(personName(topic.author_id))}</b> · ${esc(fmt(topic.created_at))}</p></div><div class="forum-topic-actions"><button class="forum-icon-action" type="button" data-share-topic data-tooltip="Compartilhar publicação" aria-label="Compartilhar publicação">${shareIcon}</button>${canDeleteTopic ? `<button class="forum-icon-action forum-topic-delete-action" type="button" data-delete-topic-post="${esc(originalPost.id)}" data-tooltip="Deletar publicação" aria-label="Deletar publicação">${trashIcon}</button>` : ""}</div></header>
+      <header class="forum-topic-page-head"><div><div class="forum-topic-title-line"><h3>${esc(topic.title)}</h3><span class="forum-topic-badges">${topicStateBadges(topic)}</span></div><p>Iniciado por <b class="role-${esc(role(topic.author_id))}">${esc(personName(topic.author_id))}</b> · ${esc(fmt(topic.created_at))}</p></div><div class="forum-topic-actions"><button class="forum-icon-action" type="button" data-share-topic data-tooltip="Compartilhar publicação" aria-label="Compartilhar publicação">${shareIcon}</button>${canDeleteTopic ? `<button class="forum-icon-action forum-topic-delete-action" type="button" data-delete-topic-post="${esc(originalPost.id)}" data-tooltip="Deletar publicação" aria-label="Deletar publicação">${trashIcon}</button>` : ""}${moderationMenu}</div></header>
       ${topic.status === "pending" ? '<div class="forum-pending-notice">Este tópico está visível apenas para você e para a moderação enquanto aguarda aprovação.</div>' : ""}
       <div class="forum-post-stack">${topicPosts.map(postCard).join("")}</div>
-      ${topic.status === "approved" && !topic.is_locked ? '<button id="forumReplyButton" class="forum-primary-button forum-reply-button" type="button">Responder</button>' : topic.is_locked ? '<p class="forum-locked-note">Este tópico está fechado para novas respostas.</p>' : ""}
+      ${canReply ? '<button id="forumReplyButton" class="forum-primary-button forum-reply-button" type="button">Responder</button>' : topic.is_closed ? '<p class="forum-locked-note">Este tópico foi encerrado.</p>' : topic.is_locked ? '<p class="forum-locked-note">Tópico trancado. Novas respostas não são permitidas.</p>' : ""}
     </section>`;
     bindRoutes();
     bindShare(topic);
@@ -1308,6 +1357,7 @@
     });
     bindMentions();
     bindActionTooltips();
+    bindTopicModeration(topic);
     $("forumReplyButton")?.addEventListener("click", () => openReplyEditor());
     if (topic.status === "approved") {
       sb.rpc("tl_forum_register_view", { p_topic_id: topic.id }).then(
@@ -1319,7 +1369,67 @@
     scrollToRequestedPost();
   }
 
+  function bindTopicModeration(topic) {
+    const toggle = view.querySelector("[data-topic-moderation-toggle]");
+    const menu = view.querySelector(".forum-topic-moderation-menu");
+    if (!toggle || !menu) return;
+    topicModerationController = new AbortController();
+    const { signal } = topicModerationController;
+    const close = ({ restoreFocus = false } = {}) => {
+      menu.hidden = true;
+      toggle.setAttribute("aria-expanded", "false");
+      if (restoreFocus) toggle.focus();
+    };
+    toggle.addEventListener("click", () => {
+      const opening = menu.hidden;
+      menu.hidden = !opening;
+      toggle.setAttribute("aria-expanded", String(opening));
+      if (opening) menu.querySelector("button")?.focus();
+    });
+    menu.querySelectorAll("[data-topic-state]").forEach((button) =>
+      button.addEventListener("click", async () => {
+        menu.querySelectorAll("button").forEach((item) => (item.disabled = true));
+        const { error } = await sb.rpc("tl_forum_set_topic_state", {
+          p_topic_id: topic.id,
+          p_action: button.dataset.topicState,
+        });
+        if (error) {
+          menu.querySelectorAll("button").forEach((item) => (item.disabled = false));
+          return notify(error.message, true);
+        }
+        await loadBoard();
+        renderRoute();
+        notify("Estado do tópico atualizado.");
+      }),
+    );
+    document.addEventListener(
+      "pointerdown",
+      (event) => {
+        if (!event.target.closest(".forum-topic-moderation")) close();
+      },
+      { signal },
+    );
+    document.addEventListener(
+      "keydown",
+      (event) => {
+        if (event.key === "Escape" && !menu.hidden) {
+          event.preventDefault();
+          close({ restoreFocus: true });
+        }
+      },
+      { signal },
+    );
+  }
+
   function openReplyEditor(postId = null, quote = false) {
+    const topic = topics.find((item) => item.id === params().get("topic"));
+    if (!topicAllowsReplies(topic))
+      return notify(
+        topic?.is_closed
+          ? "Este tópico foi encerrado."
+          : "Tópico trancado. Novas respostas não são permitidas.",
+        true,
+      );
     if (!profileReady()) return openProfileEditor("reply");
     quotePostId = quote ? postId : null;
     const post = postId ? posts.find((item) => item.id === postId) : null;
@@ -1619,6 +1729,8 @@
   }
 
   function renderRoute() {
+    topicModerationController?.abort();
+    topicModerationController = null;
     const query = params();
     const publicProfile = query.get("profile");
     const topic = query.get("topic");
