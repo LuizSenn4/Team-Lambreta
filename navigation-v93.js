@@ -46,16 +46,30 @@
   const button = document.getElementById('tlMenuButton');
   const backdrop = document.getElementById('tlMenuBackdrop');
   if (!nav || !button || !backdrop || nav.dataset.navigationReady === 'true') return;
-  nav.dataset.navigationReady = 'true';
 
-  if (!nav.querySelector('a[href="participe.html"]')) {
-    const participate = document.createElement('a');
-    participate.className = 'tl-menu-link';
-    participate.href = 'participe.html';
-    participate.innerHTML = '<span>Participe</span>';
-    const store = nav.querySelector('a[href="loja.html"]');
-    nav.insertBefore(participate, store || null);
-  }
+  const globalNavigation = `
+    <a class="tl-menu-link" href="home.html"><span>Início</span></a>
+    <div class="tl-menu-group">
+      <button class="tl-menu-toggle" type="button" aria-expanded="false"><span>Lambreta</span><b aria-hidden="true">⌄</b></button>
+      <div class="tl-submenu"><a href="team.html"><span>Team</span></a><a href="streamers.html"><span>Streamers</span></a></div>
+    </div>
+    <div class="tl-menu-group">
+      <button class="tl-menu-toggle" type="button" aria-expanded="false"><span>Comunidade</span><b aria-hidden="true">⌄</b></button>
+      <div class="tl-submenu"><a href="forum.html"><span>Fórum</span></a><a href="buddy.html"><span>Buddy</span></a><a href="regras.html"><span>Regras</span></a><a href="ajuda.html"><span>Ajuda</span></a><a href="contacto.html"><span>Contacto</span></a></div>
+    </div>
+    <div class="tl-menu-group">
+      <button class="tl-menu-toggle" type="button" aria-expanded="false"><span>Destaques</span><b aria-hidden="true">⌄</b></button>
+      <div class="tl-submenu"><a href="eventos.html"><span>Eventos</span></a><a href="conquistas.html"><span>Conquistas</span></a><a href="midia.html"><span>Mídia</span></a></div>
+    </div>
+    <a class="tl-menu-link" href="participe.html"><span>Participe</span></a>
+    <a class="tl-menu-link" href="loja.html"><span>Loja</span></a>`;
+
+  nav.innerHTML = globalNavigation;
+  const currentPage = decodeURIComponent(location.pathname.split('/').pop() || 'home.html');
+  nav.querySelectorAll('a[href]').forEach(link => {
+    link.classList.toggle('is-current', link.getAttribute('href') === currentPage);
+  });
+  nav.dataset.navigationReady = 'true';
 
   let inboxAttempts = 0;
   const loadInbox = () => {
