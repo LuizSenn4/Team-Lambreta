@@ -18,6 +18,7 @@
       'forum-share':['[data-tour="forum-share"]','[data-share-topic]','#forumBoardView'],
       'topic-moderation':['[data-tour="topic-moderation"]','[data-topic-moderation-toggle]','#forumBoardView'],
       'buddy-list':['[data-tour="buddy-list"]','#buddyApp','.buddy-sidebar'],
+      'team-roster':['[data-tour="team-roster"]','#teamRosterGrid','.team-esports-grid'],
       'updates-page':['[data-tour="updates-page"]','.updates-page']
     };
     return (selectors[id]||[`[data-tour="${CSS.escape(id)}"]`]).map(s=>document.querySelector(s)).find(Boolean);

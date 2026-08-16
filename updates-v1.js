@@ -6,7 +6,7 @@ const TOUR_FALLBACK={
  'Perfis e editor do Fórum':{tour_url:'forum.html',tour_target:'forum-profile',tour_enabled:true},
  'Reações, partilhas e moderação':{tour_url:'forum.html',tour_target:'forum-share',tour_enabled:true},
  'Buddy com experiência de lista de amigos':{tour_url:'buddy.html',tour_target:'buddy-list',tour_enabled:true},
- 'Team mais consistente em qualquer tela':{tour_url:'atualizacoes.html',tour_target:'updates-page',tour_enabled:true}
+ 'Team mais consistente em qualquer tela':{tour_url:'team.html',tour_target:'team-roster',tour_enabled:true}
 };
 const FALLBACK={id:'2026.08.15',version:'2026.08.15',title:'Grande atualização da Comunidade',summary:'O Fórum, a Team, o Buddy e várias áreas do Team Lambreta receberam uma grande evolução.',content:'A comunidade ganhou uma base mais organizada para conversar, conhecer membros, acompanhar novidades e participar do Team. Esta atualização reúne as melhorias lançadas em 15 de agosto de 2026.',category:'COMUNIDADE',published_at:'2026-08-15',items:[
  {kind:'NOVO',title:'Fórum com estrutura de comunidade',body:'O Fórum agora organiza o conteúdo em categorias, pastas, tópicos e respostas. Cada tópico tem endereço próprio, breadcrumbs e links diretos para publicações, deixando a conversa muito mais fácil de acompanhar.'},
