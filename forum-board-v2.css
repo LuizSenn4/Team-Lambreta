@@ -1749,13 +1749,12 @@
     padding: 16px;
   }
   .forum-section-row {
-    grid-template-columns: 38px minmax(0, 1fr) 66px;
+    grid-template-columns: 38px minmax(0, 1fr) 52px 52px;
     padding: 12px 14px;
   }
   .forum-section-count {
-    justify-items: end;
+    justify-items: center;
   }
-  .forum-post-count,
   .forum-section-last {
     display: none;
   }
@@ -1829,11 +1828,12 @@
     display: none;
   }
   .forum-section-row {
-    grid-template-columns: 32px minmax(0, 1fr);
+    grid-template-columns: 32px minmax(0, 1fr) 44px 44px;
+    column-gap: 7px;
+    padding-inline: 10px;
   }
-  .forum-section-count {
-    display: none;
-  }
+  .forum-section-count b { font-size: .94rem; }
+  .forum-section-count small { font-size: .58rem; letter-spacing: .03em; }
   .forum-section-copy small {
     font-size: 0.75rem;
   }

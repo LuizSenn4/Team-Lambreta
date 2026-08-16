@@ -1038,7 +1038,7 @@
       : null;
     return {
       topicCount: sectionTopics.length,
-      postCount: sectionPosts.length,
+      replyCount: sectionPosts.filter((post) => !post.is_original).length,
       lastTopic,
       lastPost,
     };
@@ -1050,8 +1050,8 @@
     return `<a class="forum-section-row" href="forum.html?section=${encodeURIComponent(section.slug)}" data-route>
       <span class="forum-section-icon" aria-hidden="true">◆</span>
       <span class="forum-section-copy"><strong>${esc(section.name)}</strong><small>${esc(section.description)}</small></span>
-      <span class="forum-section-count"><b>${stats.topicCount}</b><small>Tópicos</small></span>
-      <span class="forum-section-count forum-post-count"><b>${stats.postCount}</b><small>Posts</small></span>
+      <span class="forum-section-count"><b>${stats.topicCount}</b><small>Tóp.</small></span>
+      <span class="forum-section-count forum-post-count"><b>${stats.replyCount}</b><small>Resp.</small></span>
       <span class="forum-section-last">${stats.lastTopic ? `<small>Última atividade</small><strong>${esc(stats.lastTopic.title)}</strong><span>por <b class="role-${esc(role(lastAuthor))}">${esc(personName(lastAuthor))}</b> · ${esc(relative(stats.lastTopic.last_activity_at))}</span>` : "<small>Sem atividade</small><span>Seja o primeiro a publicar.</span>"}</span>
     </a>`;
   }
