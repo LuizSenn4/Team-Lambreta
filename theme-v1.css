@@ -1,4 +1,5 @@
 :root{
+  --role-dev:#5ef3ff;
   --tl-theme-bg:#050403;
   --tl-theme-surface:#11100e;
   --tl-theme-surface-2:#1a1814;
@@ -8,6 +9,7 @@
   --tl-theme-shadow:0 18px 48px rgba(0,0,0,.28);
 }
 html[data-theme="light"]{
+  --role-dev:#5ef3ff;
   --tl-theme-bg:#eee9de;
   --tl-theme-surface:#fffdf7;
   --tl-theme-surface-2:#f6f0e4;

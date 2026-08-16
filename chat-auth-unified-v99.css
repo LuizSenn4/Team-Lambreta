@@ -58,7 +58,7 @@
   position:static;
   transform:none;
 }
-.chat-auth-user.role-master .chat-auth-user-role{color:#18e7ff}
+.chat-auth-user.role-master .chat-auth-user-role{color:var(--role-dev, #5ef3ff);text-shadow:0 0 8px color-mix(in srgb,var(--role-dev, #5ef3ff) 45%,transparent)}
 .chat-auth-user.role-admin .chat-auth-user-role{color:#ff405a}
 .chat-auth-user.role-moderator .chat-auth-user-role{color:#4da8ff}
 .chat-auth-user.role-staff .chat-auth-user-role{color:#b184ff}

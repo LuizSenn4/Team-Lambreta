@@ -7,6 +7,7 @@
   --gold-light: #fff0a8;
   --green: #73ff18;
   --red: #ff1736;
+  --role-dev: #5ef3ff;
   --text: #fff3c5;
   --muted: #b8a37b;
 }
@@ -3673,7 +3674,8 @@ input.action-lift-button:active {
 
 .sb-user { display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
 .sb-user small { font-size:9px; font-weight:1000; letter-spacing:.7px; }
-.sb-user.role-master span,.sb-user.role-master small,.sb-user.role-admin span,.sb-user.role-admin small { color:#7af2ff; }
+.sb-user.role-master span,.sb-user.role-master small { color:var(--role-dev, #5ef3ff); text-shadow:0 0 8px color-mix(in srgb,var(--role-dev, #5ef3ff) 45%,transparent); }
+.sb-user.role-admin span,.sb-user.role-admin small { color:#ff405a; }
 .sb-user.role-moderator small { color:#ddb4ff; }
 .sb-user.role-staff small { color:#9bc5ff; }
 
@@ -7759,7 +7761,7 @@ html, body { width:100%; max-width:100%; overflow-x:hidden; }
 .forum-author-line{display:flex;align-items:center;flex-wrap:wrap;gap:9px;margin:10px 0 3px}
 .forum-author-line>strong{color:#f4eee2}
 .forum-role{display:inline-flex;align-items:center;padding:4px 8px;border:1px solid currentColor;border-radius:999px;font-size:9px;font-weight:950;letter-spacing:1px;line-height:1;text-transform:uppercase}
-.forum-role.role-master{color:#5ef3ff}.forum-role.role-admin{color:#ff405a}.forum-role.role-moderator{color:#bb78ff}.forum-role.role-staff{color:#65a9ff}.forum-role.role-streamer{color:#ff72cf}.forum-role.role-vip1,.forum-role.role-vip2,.forum-role.role-vip3{color:#ffd65a}.forum-role.role-member{color:#73ff18}
+.forum-role.role-master,.forum-role.role-dev{color:var(--role-dev, #5ef3ff)}.forum-role.role-admin{color:#ff405a}.forum-role.role-moderator{color:#bb78ff}.forum-role.role-staff{color:#65a9ff}.forum-role.role-streamer{color:#ff72cf}.forum-role.role-vip1,.forum-role.role-vip2,.forum-role.role-vip3{color:#ffd65a}.forum-role.role-member{color:#73ff18}
 .forum-replies{display:grid;gap:10px;margin-top:17px;padding-top:15px;border-top:1px solid rgba(255,255,255,.06)}
 .forum-reply{padding:13px 15px;border:1px solid rgba(115,255,24,.14);border-radius:14px;background:rgba(115,255,24,.025)}
 .forum-reply.is-private{border-color:rgba(157,102,255,.3);background:rgba(157,102,255,.045)}
@@ -7865,7 +7867,7 @@ html, body { width:100%; max-width:100%; overflow-x:hidden; }
 .forum-reply[class*="role-frame-"]{position:relative;overflow:hidden}
 .forum-reply[class*="role-frame-"]::before{content:"";position:absolute;left:0;top:0;bottom:0;width:2px;background:#73ff18;box-shadow:0 0 12px #73ff18}
 .role-text-boss,.forum-role.role-boss{color:#ffd65a!important;text-shadow:0 0 10px rgba(255,214,90,.55)}
-.role-text-master,.forum-role.role-master{color:#5ef3ff!important;text-shadow:0 0 10px rgba(94,243,255,.6)}
+.role-text-master,.role-text-dev,.forum-role.role-master,.forum-role.role-dev{color:var(--role-dev, #5ef3ff)!important;text-shadow:0 0 10px color-mix(in srgb,var(--role-dev, #5ef3ff) 60%,transparent)}
 .role-text-admin,.forum-role.role-admin{color:#ff405a!important;text-shadow:0 0 10px rgba(255,64,90,.5)}
 .role-text-moderator,.forum-role.role-moderator{color:#bb78ff!important;text-shadow:0 0 10px rgba(187,120,255,.5)}
 .role-text-staff,.forum-role.role-staff{color:#65a9ff!important;text-shadow:0 0 10px rgba(101,169,255,.5)}
@@ -7873,7 +7875,7 @@ html, body { width:100%; max-width:100%; overflow-x:hidden; }
 .role-text-vip1,.role-text-vip2,.role-text-vip3,.forum-role.role-vip1,.forum-role.role-vip2,.forum-role.role-vip3{color:#ffd65a!important;text-shadow:0 0 8px rgba(255,214,90,.35)}
 .role-text-member,.forum-role.role-member{color:#73ff18!important}
 .role-frame-boss::before{background:#ffd65a!important;box-shadow:0 0 16px #ffd65a!important}
-.role-frame-master::before{background:#5ef3ff!important;box-shadow:0 0 16px #5ef3ff!important}
+.role-frame-master::before,.role-frame-dev::before{background:var(--role-dev, #5ef3ff)!important;box-shadow:0 0 16px var(--role-dev, #5ef3ff)!important}
 .role-frame-admin::before{background:#ff405a!important;box-shadow:0 0 16px #ff405a!important}
 .role-frame-moderator::before{background:#bb78ff!important;box-shadow:0 0 16px #bb78ff!important}
 .role-frame-staff::before{background:#65a9ff!important;box-shadow:0 0 16px #65a9ff!important}
@@ -7881,7 +7883,7 @@ html, body { width:100%; max-width:100%; overflow-x:hidden; }
 .role-frame-vip1::before,.role-frame-vip2::before,.role-frame-vip3::before{background:#ffd65a!important;box-shadow:0 0 14px #ffd65a!important}
 .role-frame-member::before{background:#73ff18!important;box-shadow:0 0 12px #73ff18!important}
 .forum-role.role-boss{border-color:#ffd65a;background:rgba(255,214,90,.07)}
-.forum-role.role-master{background:rgba(94,243,255,.07)}
+.forum-role.role-master,.forum-role.role-dev{background:color-mix(in srgb,var(--role-dev, #5ef3ff) 7%,transparent)}
 .forum-role.role-admin{background:rgba(255,64,90,.07)}
 .forum-role.role-moderator{background:rgba(187,120,255,.07)}
 .forum-role.role-staff{background:rgba(101,169,255,.07)}
@@ -8755,7 +8757,7 @@ html, body { width:100%; max-width:100%; overflow-x:hidden; }
 .hall-rank{position:absolute;right:25px;top:20px;color:rgba(243,230,179,.24);font:900 3.6rem Cinzel,serif}
 .hall-avatar{width:46px;height:46px;border-radius:50%;display:grid;place-items:center;background:linear-gradient(145deg,#17221a,#071009);border:1px solid rgba(115,255,24,.34);color:var(--hall-neon);font-weight:950;box-shadow:0 0 18px rgba(115,255,24,.08);flex:0 0 auto}.hall-avatar-main{width:96px;height:96px;font-size:2rem;margin-bottom:22px}
 .hall-champion-info h2{margin:9px 0 4px;color:#fff;font:800 1.9rem Cinzel,serif}.hall-champion-info p{margin:0;color:#8fa093}
-.hall-role{display:inline-flex;align-items:center;justify-content:center;padding:5px 9px;border-radius:999px;font-size:.62rem;font-weight:950;letter-spacing:.12em;border:1px solid currentColor;white-space:nowrap}.hall-role-dev{color:#5ef3ff}.hall-role-admin{color:#ff405a}.hall-role-staff{color:#65a9ff}.hall-role-mod{color:#bb78ff}.hall-role-vip{color:#ffd65a}
+.hall-role{display:inline-flex;align-items:center;justify-content:center;padding:5px 9px;border-radius:999px;font-size:.62rem;font-weight:950;letter-spacing:.12em;border:1px solid currentColor;white-space:nowrap}.hall-role-dev{color:var(--role-dev, #5ef3ff)}.hall-role-admin{color:#ff405a}.hall-role-staff{color:#65a9ff}.hall-role-mod{color:#bb78ff}.hall-role-vip{color:#ffd65a}
 .hall-xp,.hall-mini-xp,.hall-achievement-progress{display:block;height:6px;border-radius:999px;background:rgba(255,255,255,.07);overflow:hidden}.hall-xp{margin:26px 0 22px}.hall-xp span,.hall-mini-xp i,.hall-achievement-progress i{display:block;height:100%;width:var(--progress);background:linear-gradient(90deg,#73ff18,#f3e6b3);box-shadow:0 0 12px rgba(115,255,24,.52)}
 .hall-card-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}.hall-card-stats span{padding:12px 8px;border-radius:14px;background:rgba(255,255,255,.035);color:#859188;font-size:.72rem;text-align:center}.hall-card-stats b{display:block;color:#f3e6b3;font-size:1rem;margin-bottom:3px}
 .hall-ranking-panel{padding:28px}.hall-section-head{display:flex;align-items:center;justify-content:space-between;gap:18px;margin-bottom:20px}.hall-section-head h2,.hall-roadmap h2{margin:0;color:#f3e6b3;font:800 clamp(1.35rem,2.4vw,2rem) Cinzel,serif}.hall-info-button{width:36px;height:36px;border-radius:50%;border:1px solid rgba(115,255,24,.3);background:rgba(115,255,24,.05);color:var(--hall-neon);font-weight:950;cursor:pointer}
@@ -9307,7 +9309,7 @@ html.tl-modal-lock,html.tl-modal-lock body{overflow:hidden!important}
 .team-role-badges{display:flex;flex-wrap:wrap;gap:7px;align-items:center;margin:6px 0 4px}
 .team-role-badges.is-compact{gap:5px;margin:0}
 .team-role-badge{--role-color:#f1eee5;display:inline-flex;align-items:center;min-height:22px;padding:3px 8px;border:1px solid color-mix(in srgb,var(--role-color) 46%,transparent);border-radius:999px;background:color-mix(in srgb,var(--role-color) 8%,transparent);color:var(--role-color);font:900 11px/1 Inter,Arial,sans-serif;letter-spacing:.55px;text-transform:uppercase;text-shadow:0 0 9px color-mix(in srgb,var(--role-color) 48%,transparent);white-space:nowrap}
-.team-role-badge.role-dev{--role-color:#58f5ff}
+.team-role-badge.role-dev{--role-color:var(--role-dev, #5ef3ff)}
 .team-role-badge.role-admin{--role-color:#ff4c67}
 .team-role-badge.role-boss{--role-color:#f6c94a}
 .team-role-badge.role-moderador{--role-color:#5aa7ff}

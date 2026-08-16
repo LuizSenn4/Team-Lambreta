@@ -1707,7 +1707,7 @@
 }
 .role-master,
 .role-dev {
-  color: #5fb7ff !important;
+  color: var(--role-dev, #5ef3ff) !important;
 }
 .role-admin {
   color: #ff6262 !important;
@@ -1722,6 +1722,8 @@
 .role-moderador {
   color: #b483ff !important;
 }
+.forum-role-badge.role-master,
+.forum-role-badge.role-dev { color:var(--role-dev, #5ef3ff); border-color:var(--role-dev, #5ef3ff); text-shadow:0 0 8px color-mix(in srgb,var(--role-dev, #5ef3ff) 55%,transparent); }
 
 @media (max-width: 800px) {
   .forum-board-feedback {

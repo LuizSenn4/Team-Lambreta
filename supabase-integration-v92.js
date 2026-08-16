@@ -74,7 +74,7 @@
     return 'member';
   };
   const identityPalette = {
-    admin: { color:'#5ef3ff', rgb:'94,243,255' },
+    admin: { color:'var(--role-dev, #5ef3ff)', rgb:'94,243,255' },
     staff: { color:'#ff6679', rgb:'255,102,121' },
     moderator: { color:'#75b8ff', rgb:'117,184,255' },
     streamer: { color:'#ff74ec', rgb:'255,116,236' },

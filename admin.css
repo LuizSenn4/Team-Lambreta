@@ -629,7 +629,7 @@ html.admin-pending body { visibility: hidden; }
 .role-option{--role-color:#f5f0e5;display:inline-flex!important;align-items:center;gap:7px;width:auto!important;padding:8px 11px;border:1px solid color-mix(in srgb,var(--role-color) 42%,transparent);border-radius:999px;background:color-mix(in srgb,var(--role-color) 7%,#080808);color:var(--role-color);font-weight:900;font-size:12px;cursor:pointer;user-select:none}
 .role-option input{accent-color:var(--role-color);margin:0}
 .role-option:has(input:checked){box-shadow:0 0 16px color-mix(in srgb,var(--role-color) 28%,transparent);background:color-mix(in srgb,var(--role-color) 14%,#080808)}
-.role-dev{--role-color:#58f5ff}.role-admin{--role-color:#ff4c67}.role-boss{--role-color:#f6c94a}.role-moderador{--role-color:#5aa7ff}.role-staff{--role-color:#ff8a3d}.role-streamer{--role-color:#ff4fd8}.role-vip{--role-color:#ffd85a}.role-apoiador{--role-color:#73ff18}.role-member{--role-color:#f1eee5}
+.role-dev{--role-color:var(--role-dev, #5ef3ff)}.role-admin{--role-color:#ff4c67}.role-boss{--role-color:#f6c94a}.role-moderador{--role-color:#5aa7ff}.role-staff{--role-color:#ff8a3d}.role-streamer{--role-color:#ff4fd8}.role-vip{--role-color:#ffd85a}.role-apoiador{--role-color:#73ff18}.role-member{--role-color:#f1eee5}
 @media(max-width:720px){.team-role-options{gap:6px}.role-option{padding:7px 9px;font-size:11px}}
 /* V96 — inscrições competitivas e reforço responsivo do painel */
 .competition-admin-tools{display:grid;grid-template-columns:minmax(0,1fr) minmax(170px,240px);gap:12px;margin:18px 0}
