@@ -1,0 +1,88 @@
+/* Ajuste final do header do perfil do Fórum — identidade centralizada e compacta. */
+
+/* Centraliza verticalmente avatar + identidade em desktop/tablet também. */
+.forum-profile-cover-identity {
+  top: 50%;
+  right: 24px;
+  bottom: auto;
+  left: 24px;
+  transform: translateY(-50%);
+  align-items: center;
+}
+
+.forum-profile-cover-copy {
+  align-content: center;
+  justify-items: start;
+}
+
+/* O perfil usa sempre bandeira + sigla curta (ex.: 🇧🇷 BR). */
+.forum-profile-cover-country-full {
+  display: none !important;
+}
+
+.forum-profile-cover-country-compact {
+  display: inline-flex !important;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 6px;
+  min-height: 20px;
+  line-height: 1;
+}
+
+/* Badge DEV: compacto, realmente centralizado e com espaçamento visual D E V. */
+.forum-profile-cover-copy .forum-role-badge.role-dev,
+.forum-profile-cover-copy .forum-role-badge.role-master {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: max-content;
+  min-width: 0;
+  min-height: 20px;
+  box-sizing: border-box;
+  padding: 3px 9px;
+  font-size: 0;
+  line-height: 1;
+  letter-spacing: 0;
+}
+
+.forum-profile-cover-copy .forum-role-badge.role-dev::after,
+.forum-profile-cover-copy .forum-role-badge.role-master::after {
+  content: "D E V";
+  font-size: 0.64rem;
+  font-weight: 900;
+  line-height: 1;
+  letter-spacing: 0.08em;
+  white-space: nowrap;
+}
+
+@media (max-width: 800px) {
+  .forum-profile-cover-identity {
+    top: 50%;
+    right: 18px;
+    bottom: auto;
+    left: 18px;
+    transform: translateY(-50%);
+  }
+}
+
+@media (max-width: 480px) {
+  .forum-profile-cover-identity {
+    top: 50%;
+    right: 14px;
+    bottom: auto;
+    left: 14px;
+    transform: translateY(-50%);
+    align-items: center;
+  }
+
+  .forum-profile-cover-copy .forum-role-badge.role-dev,
+  .forum-profile-cover-copy .forum-role-badge.role-master {
+    min-height: 19px;
+    padding: 3px 8px;
+  }
+
+  .forum-profile-cover-copy .forum-role-badge.role-dev::after,
+  .forum-profile-cover-copy .forum-role-badge.role-master::after {
+    font-size: 0.58rem;
+  }
+}
