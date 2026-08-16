@@ -20,7 +20,7 @@ const FALLBACK={id:'2026.08.15',version:'2026.08.15',title:'Grande atualização
 ]};
 let updates=[],session=null,isAdmin=false;
 function tourMeta(item){return item?.tour_enabled&&item.tour_target?item:TOUR_FALLBACK[item?.title]||null}
-function runTourItem(meta){const start=()=>window.TLStartUpdateItem?window.TLStartUpdateItem(meta):setTimeout(start,120);start()}
+function runTourItem(meta){const copy=meta.tour_target==='forum-profile'?{title:'Perfil do Fórum',body:'Abra o seu perfil para configurar nickname, avatar, país, jogos e informações públicas.'}:meta;const start=()=>window.TLStartUpdateItem?window.TLStartUpdateItem({...meta,...copy}):setTimeout(start,120);start()}
 function decorateTours(){
   document.querySelector('.updates-page')?.setAttribute('data-tour','updates-page');
   const hero=document.querySelector('.updates-hero');

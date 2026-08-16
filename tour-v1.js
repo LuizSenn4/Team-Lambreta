@@ -15,7 +15,7 @@
   function targetEl(id){
     const selectors={
       'forum-structure':['[data-tour="forum-structure"]','#forumBoardView','#forumApplication'],
-      'forum-profile':['[data-tour="forum-profile"]','#forumMyProfileButton'],
+      'forum-profile':['[data-tour="forum-profile-header"]','[data-tour="forum-profile-button"]'],
       'forum-share':['[data-tour="forum-share"]','[data-share-topic]'],
       'topic-moderation':['[data-tour="topic-moderation"]','[data-topic-moderation-toggle]'],
       'buddy-list':['[data-tour="buddy-list"]','#buddyApp','.buddy-sidebar'],
