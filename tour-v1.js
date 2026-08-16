@@ -5,7 +5,7 @@
   const steps=[
     {target:'forum-structure',url:'forum.html',kind:'NOVO',title:'Fórum renovado',body:'Categorias, pastas, tópicos e respostas agora ficam organizados como uma comunidade real.'},
     {target:'forum-profile',url:'forum.html',kind:'NOVO',title:'Perfil do Fórum',body:'Abra o seu perfil para configurar nickname, avatar e informações públicas.'},
-    {target:'forum-share',url:'forum.html',kind:'MELHORIA',title:'Compartilhar publicação',body:'Use o compartilhamento para copiar ou enviar o deep link exato de um tópico ou resposta.'},
+    {target:'forum-share',url:'forum.html',kind:'MELHORIA',title:'Compartilhar publicação',body:'Use este botão para copiar ou enviar o link exato de um tópico ou resposta.'},
     {target:'topic-moderation',url:'forum.html',kind:'MELHORIA',title:'Moderação de tópicos',body:'Moderadores podem fixar, trancar e fechar tópicos sem apagar o conteúdo.'},
     {target:'buddy-list',url:'buddy.html',kind:'NOVO',title:'Buddy System',body:'Encontre Buddies, acompanhe presença e abra conversas privadas somente por texto.'},
     {target:'updates-page',url:'atualizacoes.html',kind:'COMUNIDADE',title:'Atualizações',body:'Consulte o histórico de novidades e reveja este tour quando quiser.'}
@@ -16,7 +16,7 @@
     const selectors={
       'forum-structure':['[data-tour="forum-structure"]','#forumBoardView','#forumApplication'],
       'forum-profile':['[data-tour="forum-profile-header"]','[data-tour="forum-profile-button"]'],
-      'forum-share':['[data-tour="forum-share"]','[data-share-topic]'],
+      'forum-share':['[data-tour="forum-share"]'],
       'topic-moderation':['[data-tour="topic-moderation"]','[data-topic-moderation-toggle]'],
       'buddy-list':['[data-tour="buddy-list"]','#buddyApp','.buddy-sidebar'],
       'team-roster':['[data-tour="team-roster"]','#teamRosterGrid','.team-esports-grid'],

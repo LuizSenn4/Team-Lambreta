@@ -11,7 +11,7 @@
   })();
   if (!document.querySelector('script[data-tl-tour]')) {
     const tourScript = document.createElement('script');
-    tourScript.src = 'tour-v1.js?v=1.0';
+    tourScript.src = 'tour-v1.js?v=1.1';
     tourScript.dataset.tlTour = 'true';
     document.body.appendChild(tourScript);
     const tourStyle = document.createElement('link');
