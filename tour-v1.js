@@ -1,22 +1,30 @@
 (()=>{
   'use strict';
   const KEY='tl_update_tour_v1';
-  const SUPABASE_URL='https://ahiatqnokyhfpailobjx.supabase.co',SUPABASE_KEY='sb_publishable_qgwMhZPrB_3cFv3yCMcToA_9nDvHz-O';
+  const RELEASE='2026.08.16';
+  const SUPABASE_URL='https://ahiatqnokyhfpailobjx.supabase.co';
+  const SUPABASE_KEY='sb_publishable_qgwMhZPrB_3cFv3yCMcToA_9nDvHz-O';
+  const sb=window.teamSupabase || (window.supabase?.createClient ? window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY) : null);
   let cachedForumTopicId=null;
+  const PROFILE_TARGETS=new Set(['forum-profile-cover','forum-profile-header','forum-profile-identity']);
+  const TOPIC_TARGETS=new Set(['forum-share','topic-moderation']);
   const steps=[
-    {target:'forum-structure',url:'forum.html',kind:'NOVO',title:'Fórum renovado',body:'Categorias, pastas, tópicos e respostas agora ficam organizados como uma comunidade real.'},
-    {target:'forum-profile',url:'forum.html',kind:'NOVO',title:'Perfil do Fórum',body:'Abra o seu perfil para configurar nickname, avatar e informações públicas.'},
-    {target:'forum-share',url:'forum.html',kind:'MELHORIA',title:'Compartilhar publicação',body:'Use este botão para copiar ou enviar o link exato de um tópico ou resposta.'},
-    {target:'topic-moderation',url:'forum.html',kind:'MELHORIA',title:'Moderação de tópicos',body:'Moderadores podem fixar, trancar e fechar tópicos sem apagar o conteúdo.'},
-    {target:'buddy-list',url:'buddy.html',kind:'NOVO',title:'Buddy System',body:'Encontre Buddies, acompanhe presença e abra conversas privadas somente por texto.'},
-    {target:'updates-page',url:'atualizacoes.html',kind:'COMUNIDADE',title:'Atualizações',body:'Consulte o histórico de novidades e reveja este tour quando quiser.'}
+    {target:'forum-profile-cover',url:'forum.html',kind:'NOVO',title:'Capas personalizáveis',body:'O perfil agora tem capas prontas. A área destacada é a capa real do membro e a Verde / preta é o padrão da V1.'},
+    {target:'forum-profile-header',url:'forum.html',kind:'VISUAL',title:'Novo header do perfil',body:'Avatar, nickname, cargo e país agora ficam integrados sobre a capa em um único header.'},
+    {target:'forum-profile-header',url:'forum.html',kind:'MELHORIA',title:'Perfil responsivo refinado',body:'O novo header se reorganiza para manter identidade e ações bem posicionadas no desktop, tablet e mobile.'},
+    {target:'forum-profile-identity',url:'forum.html',kind:'MELHORIA',title:'Identidade mais compacta',body:'Cargo e país ganharam uma leitura mais limpa, com badge compacto e bandeira acompanhada da sigla.'},
+    {target:'forum-structure',url:'forum.html',kind:'MELHORIA',title:'Contadores nas pastas',body:'As pastas do Fórum exibem tópicos e posts para mostrar melhor a atividade da comunidade.'},
+    {target:'updates-page',url:'atualizacoes.html',kind:'MELHORIA',title:'Tour mais preciso',body:'O Me mostra e o tour completo agora apontam para os componentes reais e navegam entre páginas sem perder a etapa.'}
   ];
   const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
   const page=()=>location.pathname.split('/').pop()||'home.html';
   function targetEl(id){
     const selectors={
       'forum-structure':['[data-tour="forum-structure"]','#forumBoardView','#forumApplication'],
-      'forum-profile':['[data-tour="forum-profile-header"]','[data-tour="forum-profile-button"]'],
+      'forum-profile':['[data-tour="forum-profile-header"]'],
+      'forum-profile-cover':['[data-cover-art]'],
+      'forum-profile-header':['[data-tour="forum-profile-header"]'],
+      'forum-profile-identity':['.forum-profile-cover-copy'],
       'forum-share':['[data-tour="forum-share"]'],
       'topic-moderation':['[data-tour="topic-moderation"]','[data-topic-moderation-toggle]'],
       'buddy-list':['[data-tour="buddy-list"]','#buddyApp','.buddy-sidebar'],
@@ -27,22 +35,84 @@
   }
   function validUrl(value){if(typeof value!=='string')return false;const raw=value.trim();if(!raw||raw==='undefined'||raw==='null')return false;try{const url=new URL(raw,location.href);return ['http:','https:'].includes(url.protocol)&&url.origin===location.origin&&/\.html$/i.test(url.pathname)}catch{return false}}
   function validTarget(value){return typeof value==='string'&&value.trim()&&value!=='undefined'&&value!=='null'}
-  function close(){const root=document.querySelector('.tl-tour-root');if(root?._reposition)window.removeEventListener('resize',root._reposition);root?.remove();document.querySelectorAll('.tl-tour-demo-menu').forEach(menu=>{menu.hidden=true;menu.classList.remove('tl-tour-demo-menu');menu.closest('.forum-topic-moderation')?.querySelector('[data-topic-moderation-toggle]')?.setAttribute('aria-expanded','false')});document.querySelectorAll('.tl-tour-target').forEach(el=>{el.classList.remove('tl-tour-target');el.style.removeProperty('z-index')});window.dispatchEvent(new CustomEvent('tl-tour-closed'));}
+  function close(){
+    const root=document.querySelector('.tl-tour-root');
+    if(root?._reposition)window.removeEventListener('resize',root._reposition);
+    root?.remove();
+    document.querySelectorAll('.tl-tour-demo-menu').forEach(menu=>{menu.hidden=true;menu.classList.remove('tl-tour-demo-menu');menu.closest('.forum-topic-moderation')?.querySelector('[data-topic-moderation-toggle]')?.setAttribute('aria-expanded','false')});
+    document.querySelectorAll('.tl-tour-target').forEach(el=>{el.classList.remove('tl-tour-target');el.style.removeProperty('z-index')});
+    window.dispatchEvent(new CustomEvent('tl-tour-closed'));
+  }
   function fallback(message='Esta novidade ainda não tem uma demonstração disponível.'){
-    close();const root=document.createElement('div');root.className='tl-tour-root';root.innerHTML=`<div class="tl-tour-overlay is-open" aria-hidden="true"></div><aside class="tl-tour-card tl-tour-fallback" role="status"><small>ATUALIZAÇÕES</small><h2>Me mostra</h2><p>${esc(message)}</p><div class="tl-tour-actions"><button type="button" data-tour-close>Fechar</button></div></aside>`;document.body.appendChild(root);root.querySelector('[data-tour-close]').onclick=close;root.querySelector('.tl-tour-overlay').onclick=close;}
-  function save(state){sessionStorage.setItem(KEY,JSON.stringify(state));}
+    close();
+    const root=document.createElement('div');root.className='tl-tour-root';
+    root.innerHTML=`<div class="tl-tour-overlay is-open" aria-hidden="true"></div><aside class="tl-tour-card tl-tour-fallback" role="status"><small>ATUALIZAÇÕES</small><h2>Me mostra</h2><p>${esc(message)}</p><div class="tl-tour-actions"><button type="button" data-tour-close>Fechar</button></div></aside>`;
+    document.body.appendChild(root);root.querySelector('[data-tour-close]').onclick=close;root.querySelector('.tl-tour-overlay').onclick=close;
+  }
+  function save(state){sessionStorage.setItem(KEY,JSON.stringify(state))}
   function current(){try{return JSON.parse(sessionStorage.getItem(KEY)||'null')}catch{return null}}
   function topicFromDom(){const rows=[...document.querySelectorAll('.forum-topic-row[href*="topic="]')];const welcome=rows.find(row=>/bem[- ]vindos/i.test(row.textContent||''));const link=welcome||rows[0];if(!link)return null;const url=new URL(link.getAttribute('href'),location.href);return url.searchParams.get('topic')||null}
   async function findForumTopic(){if(cachedForumTopicId)return cachedForumTopicId;cachedForumTopicId=topicFromDom();return cachedForumTopicId}
-  async function resolveStep(step,state={}){if(!step)return null;if(!['forum-share','topic-moderation'].includes(step.target))return {...step};const topicId=state.topicId||new URLSearchParams(location.search).get('topic')||await findForumTopic();return topicId?{...step,url:`forum.html?topic=${encodeURIComponent(topicId)}`,topicId}:{...step,url:'forum.html',needsTopic:true}}
+  async function currentUserId(){try{const result=await sb?.auth?.getSession?.();return result?.data?.session?.user?.id||null}catch{return null}}
+  async function resolveStep(step,state={}){
+    if(!step)return null;
+    if(PROFILE_TARGETS.has(step.target)){
+      const profileId=state.profileId||new URLSearchParams(location.search).get('profile')||await currentUserId();
+      return profileId?{...step,url:`forum.html?profile=${encodeURIComponent(profileId)}`,profileId}:{...step,url:'forum.html',needsProfile:true};
+    }
+    if(TOPIC_TARGETS.has(step.target)){
+      const topicId=state.topicId||new URLSearchParams(location.search).get('topic')||await findForumTopic();
+      return topicId?{...step,url:`forum.html?topic=${encodeURIComponent(topicId)}`,topicId}:{...step,url:'forum.html',needsTopic:true};
+    }
+    return {...step};
+  }
+  function sameDestination(step){
+    const targetUrl=new URL(step.url,location.href);if(page()!==targetUrl.pathname.split('/').pop())return false;
+    const q=new URLSearchParams(location.search);
+    if(PROFILE_TARGETS.has(step.target))return Boolean(step.profileId)&&q.get('profile')===String(step.profileId);
+    if(TOPIC_TARGETS.has(step.target))return Boolean(step.topicId)&&q.get('topic')===String(step.topicId);
+    return true;
+  }
   function placeCard(card,el){if(innerWidth<=650){card.style.top='';card.style.left='';return}const margin=18,gap=14,rect=el.getBoundingClientRect();card.style.maxHeight=`calc(100vh - ${margin*2}px)`;card.style.overflowY='auto';const width=Math.min(360,innerWidth-margin*2),height=Math.min(card.offsetHeight,innerHeight-margin*2);let top=rect.bottom+gap,left=rect.left;if(top+height>innerHeight-margin)top=rect.top-height-gap;if(top<margin){top=Math.max(margin,Math.min(innerHeight-height-margin,rect.top));left=rect.right+gap;if(left+width>innerWidth-margin)left=rect.left-width-gap}if(left+width>innerWidth-margin)left=innerWidth-width-margin;if(left<margin)left=margin;if(top+height>innerHeight-margin)top=innerHeight-height-margin;card.style.top=`${Math.round(top)}px`;card.style.left=`${Math.round(left)}px`}
   function showLoading(){let root=document.querySelector('.tl-tour-root');if(!root){root=document.createElement('div');root.className='tl-tour-root';root.innerHTML='<div class="tl-tour-overlay is-open" aria-hidden="true"></div>';document.body.appendChild(root)}root.querySelector('.tl-tour-card:not(.tl-tour-loading)')?.setAttribute('aria-hidden','true');if(!root.querySelector('.tl-tour-loading')){const card=document.createElement('aside');card.className='tl-tour-card tl-tour-loading';card.setAttribute('role','status');card.setAttribute('aria-live','polite');card.innerHTML='<span class="tl-tour-spinner" aria-hidden="true"></span><span>Carregando próxima novidade…</span>';root.appendChild(card)}}
-  function waitForTarget(id, onFound){const immediate=targetEl(id);if(immediate){onFound(immediate);return}const started=Date.now();const check=()=>{const el=targetEl(id);if(el){observer.disconnect();clearInterval(timer);onFound(el);return}if(Date.now()-started>8000){observer.disconnect();clearInterval(timer);fallback('O recurso ainda não está disponível nesta página.')}};const observer=new MutationObserver(check);observer.observe(document.body,{childList:true,subtree:true});const timer=setInterval(check,120);check()}
-  async function go(state,index){if(index===2)showLoading();const step=await resolveStep(steps[index],state);if(!step||!validUrl(step.url)||!validTarget(step.target)){fallback('Esta etapa do tour não possui um destino válido. Você pode continuar usando o site normalmente.');return}const nextState={...state,index,topicId:step.topicId||state.topicId,needsTopic:Boolean(step.needsTopic)};save(nextState);const targetUrl=new URL(step.url,location.href);if(page()!==targetUrl.pathname.split('/').pop()||(['forum-share','topic-moderation'].includes(step.target)&&new URLSearchParams(location.search).get('topic')!==step.topicId)){targetUrl.searchParams.set('tlTour','1');if(step.needsTopic)targetUrl.searchParams.set('tourTarget',step.target);location.href=targetUrl.href;return}open(nextState,index,step,false)}
-  function open(state,index,resolvedStep=null,individual=false){const step=resolvedStep||steps[index];if(!step||!validTarget(step.target)||!validUrl(step.url)){fallback('Esta novidade ainda não tem uma página demonstrável configurada.');return}const el=targetEl(step.target);if(!el){if(!individual&&index<steps.length-1)return go(state,index+1);fallback('O recurso ainda não está disponível nesta página.');return}close();el.classList.add('tl-tour-target');el.scrollIntoView({behavior:'smooth',block:'center',inline:'nearest'});if(step.target==='topic-moderation'){const menu=el.closest('.forum-topic-moderation')?.querySelector('.forum-topic-moderation-menu');if(menu){menu.hidden=false;menu.classList.add('tl-tour-demo-menu');el.setAttribute('aria-expanded','true')}}const root=document.createElement('div');root.className='tl-tour-root';root.innerHTML=`<div class="tl-tour-overlay is-open" aria-hidden="true"></div><aside class="tl-tour-card" role="dialog" aria-label="Tour da atualização"><small>${esc(step.kind||'NOVIDADE')}${individual?'':' · '+(index+1)+' de '+steps.length}</small><h2>${esc(step.title)}</h2><p>${esc(step.body)}</p><div class="tl-tour-actions"><button type="button" data-tour-skip>${individual?'Fechar':'Pular tour'}</button>${!individual&&index?'<button type="button" data-tour-prev>Voltar</button>':''}<button type="button" data-tour-next>${individual||index===steps.length-1?'Concluir':'Próximo →'}</button></div></aside>`;document.body.appendChild(root);const card=root.querySelector('.tl-tour-card');const reposition=()=>placeCard(card,el);root._reposition=reposition;requestAnimationFrame(()=>requestAnimationFrame(reposition));setTimeout(reposition,350);window.addEventListener('resize',reposition,{passive:true});root.querySelector('[data-tour-skip]').onclick=()=>{if(!individual)localStorage.setItem('tl_update_tour_seen','1');sessionStorage.removeItem(KEY);close()};root.querySelector('[data-tour-prev]')?.addEventListener('click',()=>go(state,Math.max(0,index-1)));root.querySelector('[data-tour-next]').onclick=()=>{if(individual){sessionStorage.removeItem(KEY);close();return}if(index===steps.length-1){localStorage.setItem('tl_update_tour_seen','1');sessionStorage.removeItem(KEY);close();location.href='home.html';return}go(state,index+1)};root.querySelector('.tl-tour-overlay').onclick=close;}
-  function startFull(){save({release:'2026.08.15',index:0});go({release:'2026.08.15'},0)}
-  async function startItem(meta){if(!meta||!validUrl(meta.tour_url||meta.url)||!validTarget(meta.tour_target||meta.target)){fallback('Esta novidade ainda não possui uma demonstração disponível.');return}let normalized={...meta,url:meta.tour_url||meta.url,target:meta.tour_target||meta.target};if(['forum-share','topic-moderation'].includes(normalized.target)){const topicId=await findForumTopic();normalized=topicId?{...normalized,url:`forum.html?topic=${encodeURIComponent(topicId)}`,topicId}:{...normalized,url:'forum.html',needsTopic:true}}const state={release:'2026.08.15',index:0,individual:normalized,topicId:normalized.topicId,needsTopic:Boolean(normalized.needsTopic)};sessionStorage.setItem(KEY,JSON.stringify(state));const targetUrl=new URL(normalized.url,location.href);if(page()!==targetUrl.pathname.split('/').pop()||normalized.topicId||normalized.needsTopic){targetUrl.searchParams.set('tlTour','1');if(normalized.needsTopic)targetUrl.searchParams.set('tourTarget',normalized.target);location.href=targetUrl.href;return}setTimeout(()=>open({...state},0,normalized,true),80)}
+  function waitForTarget(id,onFound){const immediate=targetEl(id);if(immediate){onFound(immediate);return}const started=Date.now();const check=()=>{const el=targetEl(id);if(el){observer.disconnect();clearInterval(timer);onFound(el);return}if(Date.now()-started>8000){observer.disconnect();clearInterval(timer);fallback('O recurso ainda não está disponível nesta página.')}};const observer=new MutationObserver(check);observer.observe(document.body,{childList:true,subtree:true});const timer=setInterval(check,120);check()}
+  async function go(state,index){
+    if(index>0)showLoading();
+    const step=await resolveStep(steps[index],state);
+    if(!step||!validUrl(step.url)||!validTarget(step.target)){fallback('Esta etapa do tour não possui um destino válido.');return}
+    const nextState={...state,index,release:RELEASE,profileId:step.profileId||state.profileId,topicId:step.topicId||state.topicId,needsProfile:Boolean(step.needsProfile),needsTopic:Boolean(step.needsTopic)};save(nextState);
+    if(!sameDestination(step)){
+      const targetUrl=new URL(step.url,location.href);targetUrl.searchParams.set('tlTour','1');if(step.needsProfile||step.needsTopic)targetUrl.searchParams.set('tourTarget',step.target);location.href=targetUrl.href;return;
+    }
+    open(nextState,index,step,false);
+  }
+  function open(state,index,resolvedStep=null,individual=false){
+    const step=resolvedStep||steps[index];if(!step||!validTarget(step.target)||!validUrl(step.url)){fallback('Esta novidade ainda não tem uma página demonstrável configurada.');return}
+    const el=targetEl(step.target);if(!el){if(!individual&&index<steps.length-1)return go(state,index+1);fallback('O recurso ainda não está disponível nesta página.');return}
+    close();el.classList.add('tl-tour-target');el.scrollIntoView({behavior:'smooth',block:'center',inline:'nearest'});
+    if(step.target==='topic-moderation'){const menu=el.closest('.forum-topic-moderation')?.querySelector('.forum-topic-moderation-menu');if(menu){menu.hidden=false;menu.classList.add('tl-tour-demo-menu');el.setAttribute('aria-expanded','true')}}
+    const root=document.createElement('div');root.className='tl-tour-root';root.innerHTML=`<div class="tl-tour-overlay is-open" aria-hidden="true"></div><aside class="tl-tour-card" role="dialog" aria-label="Tour da atualização"><small>${esc(step.kind||'NOVIDADE')}${individual?'':' · '+(index+1)+' de '+steps.length}</small><h2>${esc(step.title)}</h2><p>${esc(step.body)}</p><div class="tl-tour-actions"><button type="button" data-tour-skip>${individual?'Fechar':'Pular tour'}</button>${!individual&&index?'<button type="button" data-tour-prev>Voltar</button>':''}<button type="button" data-tour-next>${individual||index===steps.length-1?'Concluir':'Próximo →'}</button></div></aside>`;document.body.appendChild(root);
+    const card=root.querySelector('.tl-tour-card');const reposition=()=>placeCard(card,el);root._reposition=reposition;requestAnimationFrame(()=>requestAnimationFrame(reposition));setTimeout(reposition,350);window.addEventListener('resize',reposition,{passive:true});
+    root.querySelector('[data-tour-skip]').onclick=()=>{if(!individual)localStorage.setItem(`tl_update_tour_seen_${RELEASE}`,'1');sessionStorage.removeItem(KEY);close()};
+    root.querySelector('[data-tour-prev]')?.addEventListener('click',()=>go(state,Math.max(0,index-1)));
+    root.querySelector('[data-tour-next]').onclick=()=>{if(individual){sessionStorage.removeItem(KEY);close();return}if(index===steps.length-1){localStorage.setItem(`tl_update_tour_seen_${RELEASE}`,'1');sessionStorage.removeItem(KEY);close();location.href='home.html';return}go(state,index+1)};
+    root.querySelector('.tl-tour-overlay').onclick=close;
+  }
+  function startFull(){const state={release:RELEASE,index:0};save(state);go(state,0)}
+  async function startItem(meta){
+    if(!meta||!validUrl(meta.tour_url||meta.url)||!validTarget(meta.tour_target||meta.target)){fallback('Esta novidade ainda não possui uma demonstração disponível.');return}
+    const base={...meta,url:meta.tour_url||meta.url,target:meta.tour_target||meta.target};const normalized=await resolveStep(base,{});
+    const state={release:RELEASE,index:0,individual:normalized,profileId:normalized.profileId,topicId:normalized.topicId,needsProfile:Boolean(normalized.needsProfile),needsTopic:Boolean(normalized.needsTopic)};save(state);
+    if(!sameDestination(normalized)){
+      const targetUrl=new URL(normalized.url,location.href);targetUrl.searchParams.set('tlTour','1');if(normalized.needsProfile||normalized.needsTopic)targetUrl.searchParams.set('tourTarget',normalized.target);location.href=targetUrl.href;return;
+    }
+    setTimeout(()=>open(state,0,normalized,true),80);
+  }
   window.TLStartUpdateTour=startFull;window.TLStartUpdateItem=startItem;window.TLCloseTour=close;
-  async function init(){const state=current();const q=new URLSearchParams(location.search);if(!state||q.get('tlTour')!=='1')return;showLoading();if(state.individual){if(!validUrl(state.individual.url||state.individual.tour_url)||!validTarget(state.individual.target||state.individual.tour_target)){fallback('Esta novidade ainda não possui uma demonstração disponível.');return}const normalized={...state.individual,url:state.individual.url||state.individual.tour_url,target:state.individual.target||state.individual.tour_target};if(normalized.needsTopic&&!q.get('topic'))return;waitForTarget(normalized.target,()=>open({release:state.release,individual:normalized},0,normalized,true));return}const index=Number(state.index)||0;const step=await resolveStep(steps[index],state);if(!step||!validUrl(step.url)||!validTarget(step.target)){fallback('Esta etapa do tour não possui um destino válido.');return}if(step.needsTopic&&!q.get('topic'))return;if(new URL(step.url,location.href).pathname.split('/').pop()!==page()||(['forum-share','topic-moderation'].includes(step.target)&&q.get('topic')!==step.topicId)){save({...state,index,topicId:step.topicId||state.topicId});const targetUrl=new URL(step.url,location.href);targetUrl.searchParams.set('tlTour','1');location.href=targetUrl.href;return}waitForTarget(step.target,()=>open({...state,topicId:step.topicId||state.topicId},index,step,false))}
+  async function init(){
+    const state=current();const q=new URLSearchParams(location.search);if(!state||q.get('tlTour')!=='1')return;showLoading();
+    if(state.individual){const normalized=await resolveStep({...state.individual,url:state.individual.url||state.individual.tour_url,target:state.individual.target||state.individual.tour_target},state);if(!normalized||!validUrl(normalized.url)||!validTarget(normalized.target)){fallback('Esta novidade ainda não possui uma demonstração disponível.');return}if(!sameDestination(normalized)){save({...state,individual:normalized,profileId:normalized.profileId||state.profileId,topicId:normalized.topicId||state.topicId});const targetUrl=new URL(normalized.url,location.href);targetUrl.searchParams.set('tlTour','1');location.href=targetUrl.href;return}waitForTarget(normalized.target,()=>open({...state,individual:normalized},0,normalized,true));return}
+    const index=Number(state.index)||0;const step=await resolveStep(steps[index],state);if(!step||!validUrl(step.url)||!validTarget(step.target)){fallback('Esta etapa do tour não possui um destino válido.');return}if(!sameDestination(step)){save({...state,index,profileId:step.profileId||state.profileId,topicId:step.topicId||state.topicId});const targetUrl=new URL(step.url,location.href);targetUrl.searchParams.set('tlTour','1');location.href=targetUrl.href;return}waitForTarget(step.target,()=>open({...state,profileId:step.profileId||state.profileId,topicId:step.topicId||state.topicId},index,step,false));
+  }
   document.addEventListener('keydown',e=>{if(e.key==='Escape'&&document.querySelector('.tl-tour-root')){sessionStorage.removeItem(KEY);close()}});document.addEventListener('DOMContentLoaded',init);if(document.readyState!=='loading')init();
 })();
