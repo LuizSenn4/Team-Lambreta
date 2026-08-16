@@ -18,6 +18,12 @@
     tourStyle.rel = 'stylesheet'; tourStyle.href = 'tour-v1.css?v=1.2'; tourStyle.dataset.tlTour = 'true';
     document.head.appendChild(tourStyle);
   }
+  if (!document.querySelector('script[data-tl-member-mention-preview]')) {
+    const mentionPreviewScript = document.createElement('script');
+    mentionPreviewScript.src = 'member-mention-preview-v1.js?v=1.0';
+    mentionPreviewScript.dataset.tlMemberMentionPreview = 'true';
+    document.body.appendChild(mentionPreviewScript);
+  }
   const savedTheme = localStorage.getItem('tl_theme') || 'system';
   const applyTheme = value => {
     const resolved = value === 'system' ? (matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark') : value;
