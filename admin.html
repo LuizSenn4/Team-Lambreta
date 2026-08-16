@@ -5,6 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Admin - Team Lambreta</title>
   <link rel="stylesheet" href="admin.css?v=98.0" />
+  <link rel="stylesheet" href="theme-v1.css?v=1.0" />
+  <script>(()=>{const p=localStorage.getItem('tl_theme')||'system',r=p==='system'?(matchMedia('(prefers-color-scheme: light)').matches?'light':'dark'):p;document.documentElement.dataset.theme=r;document.documentElement.dataset.themePreference=p})()</script>
 </head>
 <body>
   <div id="supabaseAuthBar" class="sb-auth-bar"></div>
@@ -43,6 +45,7 @@
       <div><p>PAINEL DE CONTROLO</p><h1>Team Lambreta Admin</h1></div>
       <div class="admin-top-actions">
         <button id="exitAdminBtn" class="exit-admin-btn" type="button">← Voltar ao site</button>
+        <label class="tl-theme-control"><span>Tema</span><select id="tlThemeSelect" aria-label="Escolher tema"><option value="system">◐ Sistema</option><option value="light">☀ Claro</option><option value="dark">🌙 Escuro</option></select></label>
         <button id="saveAllBtn">Salvar tudo</button>
       </div>
     </header>

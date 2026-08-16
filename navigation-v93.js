@@ -1,6 +1,31 @@
 (() => {
   'use strict';
 
+  const themeLink = document.querySelector('link[data-tl-theme]') || (() => {
+    const link = document.createElement('link');
+    link.rel = 'stylesheet';
+    link.href = 'theme-v1.css?v=1.0';
+    link.dataset.tlTheme = 'true';
+    document.head.appendChild(link);
+    return link;
+  })();
+  if (!document.querySelector('script[data-tl-tour]')) {
+    const tourScript = document.createElement('script');
+    tourScript.src = 'tour-v1.js?v=1.0';
+    tourScript.dataset.tlTour = 'true';
+    document.body.appendChild(tourScript);
+    const tourStyle = document.createElement('link');
+    tourStyle.rel = 'stylesheet'; tourStyle.href = 'tour-v1.css?v=1.0'; tourStyle.dataset.tlTour = 'true';
+    document.head.appendChild(tourStyle);
+  }
+  const savedTheme = localStorage.getItem('tl_theme') || 'system';
+  const applyTheme = value => {
+    const resolved = value === 'system' ? (matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark') : value;
+    document.documentElement.dataset.theme = resolved;
+    document.documentElement.dataset.themePreference = value;
+  };
+  applyTheme(savedTheme);
+
   /* V93.9.6 — patch de correção preservado sobre a versão atual.
      1) Normaliza nomes/nicks usados por cargos e moderação.
      2) Corrige o título do chat para não ficar absoluto/sobreposto em telas menores.
@@ -64,9 +89,17 @@
       <div class="tl-submenu"><a href="eventos.html"><span>Eventos</span></a><a href="conquistas.html"><span>Conquistas</span></a><a href="midia.html"><span>Mídia</span></a></div>
     </div>
     <a class="tl-menu-link" href="participe.html"><span>Participe</span></a>
-    <a class="tl-menu-link" href="loja.html"><span>Loja</span></a>`;
+    <a class="tl-menu-link" href="loja.html"><span>Loja</span></a>
+    <label class="tl-theme-control"><span>Tema</span><select id="tlThemeSelect" aria-label="Escolher tema"><option value="system">◐ Sistema</option><option value="light">☀ Claro</option><option value="dark">🌙 Escuro</option></select></label>`;
 
   nav.innerHTML = globalNavigation;
+  const themeSelect = nav.querySelector('#tlThemeSelect');
+  if (themeSelect) {
+    themeSelect.value = savedTheme;
+    themeSelect.addEventListener('change', () => { localStorage.setItem('tl_theme', themeSelect.value); applyTheme(themeSelect.value); });
+  }
+  const mediaTheme = matchMedia('(prefers-color-scheme: light)');
+  mediaTheme.addEventListener?.('change', () => { if ((localStorage.getItem('tl_theme') || 'system') === 'system') applyTheme('system'); });
   const updatesLink = nav.querySelector('a[href="atualizacoes.html"]');
   if (updatesLink && localStorage.getItem('tl_seen_update_2026.08.15') !== '1') {
     updatesLink.dataset.updatesNew = 'true';

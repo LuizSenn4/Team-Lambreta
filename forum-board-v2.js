@@ -1331,7 +1331,7 @@
     const canReply = topicAllowsReplies(topic);
     const moderationMenu = isModerator()
       ? `<div class="forum-topic-moderation">
-          <button class="forum-icon-action" type="button" data-topic-moderation-toggle aria-label="Moderação do tópico" aria-expanded="false" aria-controls="forumTopicModerationMenu">${moderationIcon}</button>
+          <button class="forum-icon-action" type="button" data-tour="topic-moderation" data-topic-moderation-toggle aria-label="Moderação do tópico" aria-expanded="false" aria-controls="forumTopicModerationMenu">${moderationIcon}</button>
           <div id="forumTopicModerationMenu" class="forum-topic-moderation-menu" role="menu" hidden>
             <button type="button" role="menuitem" data-topic-state="${topic.is_pinned ? "unpin" : "pin"}">${topic.is_pinned ? "Desafixar tópico" : "Fixar tópico"}</button>
             <button type="button" role="menuitem" data-topic-state="${topic.is_locked ? "unlock" : "lock"}">${topic.is_locked ? "Destrancar tópico" : "Trancar tópico"}</button>
@@ -1340,7 +1340,7 @@
         </div>`
       : "";
     view.innerHTML = `<section class="forum-topic-page">
-      <header class="forum-topic-page-head"><div><div class="forum-topic-title-line"><h3>${esc(topic.title)}</h3><span class="forum-topic-badges">${topicStateBadges(topic)}</span></div><p>Iniciado por <b class="role-${esc(role(topic.author_id))}">${esc(personName(topic.author_id))}</b> · ${esc(fmt(topic.created_at))}</p></div><div class="forum-topic-actions"><button class="forum-icon-action" type="button" data-share-topic data-tooltip="Compartilhar publicação" aria-label="Compartilhar publicação">${shareIcon}</button>${canDeleteTopic ? `<button class="forum-icon-action forum-topic-delete-action" type="button" data-delete-topic-post="${esc(originalPost.id)}" data-tooltip="Deletar publicação" aria-label="Deletar publicação">${trashIcon}</button>` : ""}${moderationMenu}</div></header>
+      <header class="forum-topic-page-head"><div><div class="forum-topic-title-line"><h3>${esc(topic.title)}</h3><span class="forum-topic-badges">${topicStateBadges(topic)}</span></div><p>Iniciado por <b class="role-${esc(role(topic.author_id))}">${esc(personName(topic.author_id))}</b> · ${esc(fmt(topic.created_at))}</p></div><div class="forum-topic-actions"><button class="forum-icon-action" type="button" data-tour="forum-share" data-share-topic data-tooltip="Compartilhar publicação" aria-label="Compartilhar publicação">${shareIcon}</button>${canDeleteTopic ? `<button class="forum-icon-action forum-topic-delete-action" type="button" data-delete-topic-post="${esc(originalPost.id)}" data-tooltip="Deletar publicação" aria-label="Deletar publicação">${trashIcon}</button>` : ""}${moderationMenu}</div></header>
       ${topic.status === "pending" ? '<div class="forum-pending-notice">Este tópico está visível apenas para você e para a moderação enquanto aguarda aprovação.</div>' : ""}
       <div class="forum-post-stack">${topicPosts.map(postCard).join("")}</div>
       ${canReply ? '<button id="forumReplyButton" class="forum-primary-button forum-reply-button" type="button">Responder</button>' : topic.is_closed ? '<p class="forum-locked-note">Este tópico foi encerrado.</p>' : topic.is_locked ? '<p class="forum-locked-note">Tópico trancado. Novas respostas não são permitidas.</p>' : ""}

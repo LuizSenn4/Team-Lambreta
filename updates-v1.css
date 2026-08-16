@@ -6,3 +6,4 @@
 .updates-item h3{font-size:16px;line-height:1.35}
 .updates-item p{margin-top:7px;font-size:15px;line-height:1.58}
 .updates-badge{font-size:10px}
+.updates-show-button,.updates-tour-button{display:inline-flex;align-items:center;margin-top:12px;padding:7px 10px;border:1px solid rgba(115,255,24,.35);border-radius:9px;background:rgba(115,255,24,.07);color:#73ff18;font:800 12px var(--tl-font-ui,Inter,sans-serif);cursor:pointer}.updates-show-button:hover,.updates-tour-button:hover{background:rgba(115,255,24,.15);border-color:#73ff18}.updates-tour-button{margin:14px auto 0}

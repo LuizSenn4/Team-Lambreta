@@ -1,0 +1,34 @@
+:root{
+  --tl-theme-bg:#050403;
+  --tl-theme-surface:#11100e;
+  --tl-theme-surface-2:#1a1814;
+  --tl-theme-text:#fff3c5;
+  --tl-theme-muted:#b8a37b;
+  --tl-theme-border:rgba(217,164,65,.22);
+  --tl-theme-shadow:0 18px 48px rgba(0,0,0,.28);
+}
+html[data-theme="light"]{
+  --tl-theme-bg:#eee9de;
+  --tl-theme-surface:#fffdf7;
+  --tl-theme-surface-2:#f6f0e4;
+  --tl-theme-text:#1c241b;
+  --tl-theme-muted:#5e6659;
+  --tl-theme-border:rgba(104,86,42,.22);
+  --tl-theme-shadow:0 18px 48px rgba(48,38,14,.14);
+}
+html[data-theme="light"] body{background:var(--tl-theme-bg);color:var(--tl-theme-text)}
+html[data-theme="light"] .site-header.tl-header-v88{background:rgba(255,253,247,.94)!important;border-bottom-color:var(--tl-theme-border)!important}
+html[data-theme="light"] .tl-main-nav .tl-menu-link,html[data-theme="light"] .tl-main-nav .tl-menu-toggle{color:var(--tl-theme-text)!important}
+html[data-theme="light"] .tl-main-nav .tl-submenu{background:var(--tl-theme-surface)!important;box-shadow:var(--tl-theme-shadow)!important}
+html[data-theme="light"] .updates-page,html[data-theme="light"] .buddy-page,html[data-theme="light"] .forum-page{background:var(--tl-theme-bg);color:var(--tl-theme-text)}
+html[data-theme="light"] .updates-release,html[data-theme="light"] .updates-item,html[data-theme="light"] .buddy-app,html[data-theme="light"] .forum-board-view,html[data-theme="light"] .forum-board-dialog{background:var(--tl-theme-surface);color:var(--tl-theme-text)}
+html[data-theme="light"] .updates-release-head h2,html[data-theme="light"] .updates-item h3,html[data-theme="light"] .buddy-hero h1{color:#3e320f}
+html[data-theme="light"] .updates-release-head p,html[data-theme="light"] .updates-item p,html[data-theme="light"] .updates-hero span{color:var(--tl-theme-muted)}
+html[data-theme="light"] .tl-mobile-menu-button{background:var(--tl-theme-surface)!important}
+html[data-theme="light"] .admin-main{background:var(--tl-theme-bg);color:var(--tl-theme-text)}
+html[data-theme="light"] .admin-card,html[data-theme="light"] .admin-top,html[data-theme="light"] .admin-sidebar{background:var(--tl-theme-surface);color:var(--tl-theme-text)}
+html,body{transition:background-color .2s ease,color .2s ease}
+@media(prefers-reduced-motion:reduce){html,body{transition:none}}
+.tl-theme-control{display:inline-flex;align-items:center;gap:6px;margin-left:auto;color:var(--tl-theme-muted);font:600 11px var(--tl-font-ui,Inter,sans-serif);white-space:nowrap}
+.tl-theme-control select{padding:6px 8px;border:1px solid var(--tl-theme-border);border-radius:8px;background:var(--tl-theme-surface);color:var(--tl-theme-text);font:600 11px var(--tl-font-ui,Inter,sans-serif)}
+@media(max-width:900px){.tl-theme-control{width:100%;justify-content:space-between;margin:8px 0 0;padding:10px 12px;border:1px solid var(--tl-theme-border);border-radius:10px}.tl-theme-control select{min-width:130px}}
