@@ -676,6 +676,12 @@
   color: #828e86;
   font-size: 0.72rem;
 }
+.forum-cover-preset-hint { margin: 0 0 9px; color: #8f9b92; font-size: .78rem; }
+.forum-cover-preset-options { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 9px; }
+.forum-cover-preset { display: grid; grid-template-columns: 88px minmax(0,1fr); align-items: center; gap: 9px; min-width: 0; padding: 5px; border: 1px solid rgba(200,164,72,.16); border-radius: 9px; background: transparent; color: #b9c3bb; text-align: left; cursor: pointer; }
+.forum-cover-preset span { display: block; height: 42px; border-radius: 6px; background-color: #111712; background-repeat: no-repeat; background-size: cover; }
+.forum-cover-preset strong { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: .78rem; }
+.forum-cover-preset.is-active { border-color: rgba(115,255,24,.65); color: #eff8ef; box-shadow: 0 0 0 1px rgba(115,255,24,.12); }
 .forum-profile-chips {
   display: flex;
   flex-wrap: wrap;
@@ -782,7 +788,27 @@
   background: #0c100e;
   overflow: hidden;
 }
+.forum-profile-cover-prototype { padding: 0; background: #0c100e; }
+.forum-profile-cover-art { position: relative; min-height: 320px; border: 0; border-radius: 0; background-color: #111712; background-position: var(--cover-position-desktop, 70% center); background-repeat: no-repeat; background-size: cover; overflow: hidden; }
+.forum-profile-cover-art::after { content: ""; position: absolute; inset: 0; pointer-events: none; background: linear-gradient(90deg, rgba(5,8,6,.78), rgba(5,8,6,.08) 68%, rgba(5,8,6,.28)); }
+.forum-profile-cover-edit { position: absolute; right: 10px; bottom: 10px; z-index: 1; width: 32px; height: 32px; display: grid; place-items: center; border: 1px solid rgba(255,255,255,.24); border-radius: 50%; background: rgba(7,10,8,.72); color: #f1d77a; cursor: pointer; }
+.forum-profile-cover-gallery { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 9px; padding: 10px 14px 12px; }
+.forum-profile-cover-choice { display: grid; grid-template-columns: 72px minmax(0,1fr); align-items: center; gap: 9px; min-width: 0; padding: 5px; border: 1px solid rgba(200,164,72,.15); border-radius: 9px; background: transparent; color: #aeb9b0; text-align: left; cursor: pointer; }
+.forum-profile-cover-choice.is-active { border-color: rgba(115,255,24,.58); color: #eef5ee; }
+.forum-profile-cover-choice span { display: block; height: 38px; border-radius: 6px; background-color: #111712; background-position: 78% center; background-repeat: no-repeat; background-size: cover; }
+.forum-profile-cover-choice small { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+@media (min-width: 801px) {
+  .forum-profile-cover-art[data-cover-preset="cover_competitive"] { min-height: 336px; }
+  .forum-profile-cover-art[data-cover-preset="cover_gold"] { min-height: 360px; }
+  .forum-profile-cover-art[data-cover-preset="cover_lambretta_classic"] { min-height: 380px; }
+}
+@media (min-width: 481px) and (max-width: 800px) {
+  .forum-profile-cover-art[data-cover-preset="cover_competitive"] { min-height: 286px; }
+  .forum-profile-cover-art[data-cover-preset="cover_gold"] { min-height: 305px; }
+  .forum-profile-cover-art[data-cover-preset="cover_lambretta_classic"] { min-height: 320px; }
+}
 .forum-full-profile > header {
+  position: relative;
   display: grid;
   grid-template-columns: auto minmax(0, 1fr) auto;
   align-items: center;
@@ -815,6 +841,12 @@
 }
 .forum-full-profile > header button {
   padding: 0 14px;
+}
+.forum-full-profile > header button[data-edit-profile] {
+  position: absolute;
+  right: 20px;
+  bottom: 18px;
+  margin: 0;
 }
 .forum-profile-stats {
   display: grid;
@@ -906,6 +938,7 @@
 }
 
 @media (max-width: 800px) {
+  .forum-profile-cover-art { min-height: 270px; background-position: var(--cover-position-tablet, 58% center); }
   .forum-post-author {
     display: none;
   }
@@ -952,6 +985,13 @@
 }
 
 @media (max-width: 480px) {
+  .forum-cover-preset-options { grid-template-columns: 1fr; }
+  .forum-cover-preset span { height: 54px; }
+  .forum-profile-cover-prototype { padding: 0; }
+  .forum-profile-cover-art { min-height: 170px; background-position: var(--cover-position-mobile, 50% center); background-size: cover; }
+  .forum-profile-cover-art::after { background: linear-gradient(180deg, rgba(5,8,6,.18), rgba(5,8,6,.5)); }
+  .forum-profile-cover-gallery { grid-template-columns: 1fr; }
+  .forum-profile-cover-choice span { height: 54px; background-size: contain; }
   .forum-toolbar-actions {
     gap: 5px;
   }
@@ -1000,13 +1040,18 @@
   .forum-full-profile > header {
     grid-template-columns: 82px minmax(0, 1fr);
     gap: 15px;
-    padding: 18px;
+    padding: 18px 18px 56px;
   }
   .forum-full-profile > header .is-profile {
     width: 82px;
   }
   .forum-full-profile > header button {
     grid-column: 1 / -1;
+  }
+  .forum-full-profile > header button[data-edit-profile] {
+    right: 14px;
+    bottom: 14px;
+    margin: 0;
   }
   .forum-profile-details {
     padding: 18px;

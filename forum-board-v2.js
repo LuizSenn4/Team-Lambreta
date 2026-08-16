@@ -43,6 +43,14 @@
     ["ios", "iOS"],
     ["cloud-gaming", "Cloud Gaming"],
   ];
+  const COVER_PRESETS = [
+    { id: "cover_green_black", label: "Verde / preta", asset: "assets/profile-covers/cover-green-black.png", overlay: "linear-gradient(115deg,rgba(5,45,25,.8),rgba(4,8,6,.22))", desktopPosition: "72% 63%", tabletPosition: "64% 61%", mobilePosition: "50% center" },
+    { id: "cover_neon", label: "Neon", asset: "assets/profile-covers/cover-neon.png", overlay: "linear-gradient(115deg,rgba(0,34,42,.7),rgba(8,5,21,.18))", desktopPosition: "74% 70%", tabletPosition: "66% 68%", mobilePosition: "50% center" },
+    { id: "cover_lambretta_classic", label: "Lambreta clássica", asset: "assets/profile-covers/cover-lambretta-classic.png", overlay: "linear-gradient(90deg,rgba(5,8,6,.58),rgba(5,8,6,.08))", desktopPosition: "64% 68%", tabletPosition: "58% 65%", mobilePosition: "50% center" },
+    { id: "cover_competitive", label: "Competitiva", asset: "assets/profile-covers/cover-competitive.png", overlay: "linear-gradient(115deg,rgba(22,17,5,.78),rgba(80,25,8,.18))", desktopPosition: "74% 63%", tabletPosition: "66% 60%", mobilePosition: "50% center" },
+    { id: "cover_minimal", label: "Minimalista", asset: "assets/profile-covers/cover-minimal.png", overlay: "linear-gradient(115deg,rgba(12,16,14,.9),rgba(12,16,14,.22))", desktopPosition: "50% center", tabletPosition: "50% center", mobilePosition: "50% center" },
+  ];
+  const DEFAULT_COVER_PRESET = "cover_lambretta_classic";
   const profiles = new Map();
   const forumProfiles = new Map();
   const progress = new Map();
@@ -57,6 +65,7 @@
   let gameResultsOpen = false;
   let countryResultsOpen = false;
   let selectedCountryCode = "";
+  let selectedCoverPreset = DEFAULT_COVER_PRESET;
   let sharePopover = null;
   let activeShareTrigger = null;
   let topicModerationController = null;
@@ -729,6 +738,17 @@
       : '<p class="forum-picker-empty">Selecione um jogo para escolher modos.</p>';
   }
 
+  const coverPreset = (id) => COVER_PRESETS.find((item) => item.id === id) || COVER_PRESETS.find((item) => item.id === DEFAULT_COVER_PRESET) || COVER_PRESETS[0];
+  const coverPresetStyle = (id) => {
+    const preset = coverPreset(id);
+    return `--cover-position-desktop:${preset.desktopPosition};--cover-position-tablet:${preset.tabletPosition};--cover-position-mobile:${preset.mobilePosition};background-image:${preset.overlay},url('${preset.asset}')`;
+  };
+  function renderCoverPresetOptions() {
+    const host = $("forumCoverPresetOptions");
+    if (!host) return;
+    host.innerHTML = COVER_PRESETS.map((preset) => `<button type="button" class="forum-cover-preset ${preset.id === selectedCoverPreset ? "is-active" : ""}" data-cover-preset="${preset.id}" aria-pressed="${preset.id === selectedCoverPreset}"><span style="${coverPresetStyle(preset.id)}"></span><strong>${esc(preset.label)}</strong></button>`).join("");
+  }
+
   function setGameResultsOpen(open, { restoreFocus = false } = {}) {
     const search = $("forumGameSearch");
     const host = $("forumGameResults");
@@ -823,6 +843,7 @@
     $("forumProfileNickname").value =
       item.forum_nickname || profile?.game_nickname || "";
     selectedCountryCode = countryInfo(item.country)?.code || "";
+    selectedCoverPreset = coverPreset(item.cover_preset).id;
     $("forumProfileCountry").value = "";
     renderSelectedCountry();
     renderCountryResults("");
@@ -839,6 +860,7 @@
     selectedModes.clear();
     (item.game_modes || []).forEach((mode) => selectedModes.add(mode));
     renderProfilePickers();
+    renderCoverPresetOptions();
     renderGameResults("");
     setAvatarPreview(
       item.avatar_external_url || item.avatar_signed_url || profile?.avatar_url,
@@ -908,6 +930,7 @@
         ),
         p_bio: $("forumProfileBio").value.trim(),
         p_discord: $("forumProfileDiscord").value.trim(),
+        p_cover_preset: selectedCoverPreset,
       });
       if (error) throw error;
       if (
@@ -945,12 +968,19 @@
       (post) =>
         post.author_id === userId && !post.is_original && !post.deleted_at,
     );
+    const activeCoverPreset = coverPreset(member.cover_preset);
     setHeading("PERFIL DO FÓRUM", personName(userId));
     renderBreadcrumb([
       { label: "Fórum", href: "forum.html" },
       { label: personName(userId) },
     ]);
     view.innerHTML = `<section class="forum-full-profile">
+      <section class="forum-profile-cover-prototype" aria-label="Protótipo de capas do perfil">
+        <div class="forum-profile-cover-art" data-cover-art data-cover-preset="${esc(activeCoverPreset.id)}" style="${coverPresetStyle(activeCoverPreset.id)}">
+          ${userId === session.user.id ? '<button type="button" class="forum-profile-cover-edit" data-cover-edit aria-label="Editar capa" title="Editar capa">✎</button>' : ""}
+        </div>
+        <div class="forum-profile-cover-gallery" aria-label="Galeria de capas">${COVER_PRESETS.map((preset) => `<button type="button" class="forum-profile-cover-choice ${preset.id === activeCoverPreset.id ? "is-active" : ""}" data-cover-choice="${preset.id}" aria-pressed="${preset.id === activeCoverPreset.id}"><span style="${coverPresetStyle(preset.id)}"></span><small>${esc(preset.label)}</small></button>`).join("")}</div>
+      </section>
       <header data-tour="forum-profile-header">${avatarMarkup(userId, "is-profile")}<div><h3 class="role-${esc(role(userId))}">${esc(personName(userId))}</h3><span class="forum-role-badge role-${esc(role(userId))}">${esc(roleLabel(userId))}</span><p>${esc(countryFullLabel(member.country))}</p></div>${userId === session.user.id ? '<button type="button" data-edit-profile>Editar perfil</button>' : ""}</header>
       <div class="forum-profile-stats"><article><b>${stats.topics}</b><small>Tópicos</small></article><article><b>${stats.posts}</b><small>Respostas</small></article><article><b>${stats.xp}</b><small>XP</small></article><article><b>${stats.accountCreatedAt ? esc(fmtDate(stats.accountCreatedAt)) : "—"}</b><small>Membro desde</small></article></div>
       <div id="forumProfileOverview" class="forum-profile-details"><section><h4>Perfil</h4><p>${esc(member.bio || "Este membro ainda não adicionou uma bio.")}</p></section><dl><div><dt>Jogos</dt><dd>${gameChips(member)}</dd></div><div><dt>Plataformas</dt><dd>${member.platforms?.length ? `<span class="forum-public-chips">${member.platforms.map((item) => `<span>${esc(platformLabel(item))}</span>`).join("")}</span>` : "—"}</dd></div><div><dt>Modos de jogo</dt><dd>${member.game_modes?.length ? `<span class="forum-public-chips">${member.game_modes.map((item) => `<span>${esc(item.split("::")[1] || item)}</span>`).join("")}</span>` : "—"}</dd></div>${member.discord ? `<div><dt>Discord</dt><dd>${esc(member.discord)}</dd></div>` : ""}</dl></div>
@@ -960,6 +990,20 @@
     view
       .querySelector("[data-edit-profile]")
       ?.addEventListener("click", () => openProfileEditor());
+    const coverArt = view.querySelector("[data-cover-art]");
+    view.querySelectorAll("[data-cover-choice]").forEach((choice) =>
+      choice.addEventListener("click", () => {
+        const preset = coverPreset(choice.dataset.coverChoice);
+        if (!coverArt || !preset) return;
+        coverArt.style.cssText = coverPresetStyle(preset.id);
+        coverArt.dataset.coverPreset = preset.id;
+        view.querySelectorAll("[data-cover-choice]").forEach((item) => {
+          const active = item === choice;
+          item.classList.toggle("is-active", active);
+          item.setAttribute("aria-pressed", String(active));
+        });
+      }),
+    );
     view.querySelectorAll("[data-profile-tab]").forEach((button) =>
       button.addEventListener("click", () => {
         view
@@ -1889,6 +1933,12 @@
   $("forumEditPostForm")?.addEventListener("submit", submitPostEdit);
   $("forumDeletePostForm")?.addEventListener("submit", submitPostDelete);
   $("forumProfileForm")?.addEventListener("submit", saveForumProfile);
+  $("forumCoverPresetOptions")?.addEventListener("click", (event) => {
+    const choice = event.target.closest("[data-cover-preset]");
+    if (!choice || !coverPreset(choice.dataset.coverPreset)) return;
+    selectedCoverPreset = choice.dataset.coverPreset;
+    renderCoverPresetOptions();
+  });
   $("forumProfileAvatar")?.addEventListener("change", (event) => {
     const file = event.target.files?.[0];
     if (!file) return;
