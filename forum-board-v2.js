@@ -1734,6 +1734,16 @@
     const topic = query.get("topic");
     const section = query.get("section");
     if (publicProfile) return renderProfile(publicProfile);
+    const tourTarget = query.get("tourTarget");
+    if (!topic && (tourTarget === "forum-share" || tourTarget === "topic-moderation")) {
+      const approvedTopics = topics.filter((item) => item.status === "approved" && !topicOriginalRemoved(item.id));
+      const welcomeTopic = approvedTopics.find((item) => /bem[- ]vindos/i.test(String(item.title || ""))) || approvedTopics.find((item) => item.is_pinned) || approvedTopics[0];
+      if (welcomeTopic) {
+        const targetUrl = `forum.html?topic=${encodeURIComponent(welcomeTopic.id)}&tlTour=1`;
+        window.location.replace(targetUrl);
+        return;
+      }
+    }
     if (topic) return renderTopic(topic);
     if (section) return renderSection(section);
     renderHome(query.get("category") || "");
