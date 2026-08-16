@@ -421,17 +421,12 @@
   }
 
   function topicParticipants(topicId) {
-    const topic = topics.find((item) => item.id === topicId);
-    if (!topic) return [];
-    const ordered = posts
-      .filter((post) => post.topic_id === topicId && !post.is_original)
+    const recent = posts
+      .filter((post) => post.topic_id === topicId && !post.deleted_at && !post.is_deleted)
       .sort((a, b) => String(b.created_at).localeCompare(String(a.created_at)))
+      .slice(0, 20)
       .map((post) => post.author_id);
-    ordered.push(topic.author_id);
-    posts
-      .filter((post) => post.topic_id === topicId)
-      .forEach((post) => ordered.push(post.author_id));
-    return [...new Set(ordered)]
+    return [...new Set(recent)]
       .filter((userId) => userId !== session?.user?.id)
       .filter((userId) => forumProfiles.has(userId) || profiles.has(userId));
   }
@@ -472,7 +467,10 @@
       const active = list.querySelectorAll("[data-mention-option]")[
         activeIndex
       ];
-      if (active) textarea.setAttribute("aria-activedescendant", active.id);
+      if (active) {
+        textarea.setAttribute("aria-activedescendant", active.id);
+        active.scrollIntoView({ block: "nearest" });
+      }
     };
     const select = (userId) => {
       const context = mentionQuery(textarea);

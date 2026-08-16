@@ -35,6 +35,7 @@
   const AWAY_AFTER_MS = 5 * 60 * 1000;
   const OFFLINE_AFTER_MS = 150 * 1000;
   let mentionProfiles = [];
+  let mentionContextReady = false;
   let mentionActiveIndex = 0;
   let currentMentionRows = [];
 
@@ -205,9 +206,13 @@
     if(!box) return;
     const token=activeMentionQuery(input);
     if(!token){closeMentionSuggestions();return;}
-    if(!mentionProfiles.length) await loadMentionProfiles();
+    if(!mentionContextReady && !mentionProfiles.length) await loadMentionProfiles();
     const q=token.query.toLowerCase();
-    const matches=mentionProfiles.filter(p=>String(p.game_nickname).toLowerCase().startsWith(q)).slice(0,8);
+    const matches=mentionProfiles.filter(p=>{
+      const nickname=String(p.game_nickname||'').toLocaleLowerCase('pt-PT');
+      const visible=String(p.full_name||'').toLocaleLowerCase('pt-PT');
+      return nickname.includes(q)||visible.includes(q);
+    }).slice(0,20);
     if(!matches.length){closeMentionSuggestions();return;}
     mentionActiveIndex=Math.min(mentionActiveIndex,matches.length-1);
     box.innerHTML=matches.map((p,i)=>`<button type="button" class="tl-mention-option ${i===mentionActiveIndex?'is-active':''}" data-mention-index="${i}"><strong>@${esc(p.game_nickname)}</strong><small>${roleLabel(p.role)}</small></button>`).join('');
@@ -216,6 +221,8 @@
       btn.onmousedown=e=>e.preventDefault();
       btn.onclick=()=>chooseMention(input,matches[Number(btn.dataset.mentionIndex)]);
     });
+    const active=box.querySelector(`[data-mention-index="${mentionActiveIndex}"]`);
+    active?.scrollIntoView({block:'nearest'});
     box._matches=matches;
   }
 
@@ -653,6 +660,14 @@
     if (error) { box.innerHTML = `<p>${esc(error.message)}</p>`; return; }
     const blockedIds = await getBlockedChatUserIds();
     const rows = [...(data || [])].reverse().filter(row => !blockedIds.has(String(row.user_id)));
+    const recentParticipants = new Map();
+    for (const row of (data || []).slice(0, 20)) {
+      if (blockedIds.has(String(row.user_id)) || recentParticipants.has(String(row.user_id))) continue;
+      const participant = row.profiles ? {...row.profiles, id: row.user_id} : null;
+      if (participant?.game_nickname || participant?.full_name) recentParticipants.set(String(row.user_id), participant);
+    }
+    mentionProfiles = [...recentParticipants.values()];
+    mentionContextReady = true;
     box.innerHTML = rows.map(row => {
       const p=row.profiles||{};
       const name=p.game_nickname||p.full_name||'Jogador';
