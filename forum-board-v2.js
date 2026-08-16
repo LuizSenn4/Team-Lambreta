@@ -969,6 +969,9 @@
         post.author_id === userId && !post.is_original && !post.deleted_at,
     );
     const activeCoverPreset = coverPreset(member.cover_preset);
+    const memberCountry = countryInfo(member.country);
+    const memberCountryCode = memberCountry?.code || String(member.country || "").toUpperCase();
+    const memberCountryFlag = memberCountry?.flag || "🌍";
     setHeading("PERFIL DO FÓRUM", personName(userId));
     renderBreadcrumb([
       { label: "Fórum", href: "forum.html" },
@@ -979,7 +982,7 @@
         <div class="forum-profile-cover-art" data-cover-art data-cover-preset="${esc(activeCoverPreset.id)}" style="${coverPresetStyle(activeCoverPreset.id)}">
           <div class="forum-profile-cover-identity" data-tour="forum-profile-header">
             ${avatarMarkup(userId, "is-profile")}
-            <div class="forum-profile-cover-copy"><h3 class="role-${esc(role(userId))}">${esc(personName(userId))}</h3><span class="forum-role-badge role-${esc(role(userId))}">${esc(roleLabel(userId))}</span><p>${esc(countryFullLabel(member.country))}</p></div>
+            <div class="forum-profile-cover-copy"><h3 class="role-${esc(role(userId))}">${esc(personName(userId))}</h3><span class="forum-role-badge role-${esc(role(userId))}">${esc(roleLabel(userId))}</span><p class="forum-profile-cover-country"><span class="forum-profile-cover-country-full">${esc(countryFullLabel(member.country))}</span><span class="forum-profile-cover-country-compact">${esc(memberCountryFlag)} ${esc(memberCountryCode || "—")}</span></p></div>
           </div>
           ${userId === session.user.id ? '<button type="button" class="forum-profile-cover-edit-profile" data-edit-profile>Editar perfil</button>' : ""}
         </div>
