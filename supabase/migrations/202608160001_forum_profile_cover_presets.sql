@@ -2,7 +2,7 @@
 begin;
 
 alter table public.forum_profiles
-  add column if not exists cover_preset text not null default 'cover_lambretta_classic';
+  add column if not exists cover_preset text not null default 'cover_green_black';
 
 alter table public.forum_profiles
   drop constraint if exists forum_profiles_cover_preset_check;
@@ -29,7 +29,7 @@ create or replace function public.tl_forum_save_profile_v2(
   p_game_modes text[] default '{}',
   p_bio text default '',
   p_discord text default '',
-  p_cover_preset text default 'cover_lambretta_classic'
+  p_cover_preset text default 'cover_green_black'
 ) returns public.forum_profiles
 language plpgsql security definer set search_path=public,extensions
 as $$
@@ -41,7 +41,7 @@ declare
   v_platforms text[]:=coalesce(p_platforms,'{}');
   v_modes text[]:=coalesce(p_game_modes,'{}');
   v_url text:=nullif(trim(coalesce(p_avatar_external_url,'')),'');
-  v_cover text:=coalesce(nullif(trim(p_cover_preset),''),'cover_lambretta_classic');
+  v_cover text:=coalesce(nullif(trim(p_cover_preset),''),'cover_green_black');
   v_row public.forum_profiles;
   v_platform_allowlist constant text[]:=array['pc','playstation-5','playstation-4','xbox-series','xbox-one','nintendo-switch','nintendo-switch-2','android','ios','cloud-gaming'];
 begin

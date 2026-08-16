@@ -50,7 +50,7 @@
     { id: "cover_competitive", label: "Competitiva", asset: "assets/profile-covers/cover-competitive.png", overlay: "linear-gradient(115deg,rgba(22,17,5,.78),rgba(80,25,8,.18))", desktopPosition: "74% 63%", tabletPosition: "66% 60%", mobilePosition: "50% center" },
     { id: "cover_minimal", label: "Minimalista", asset: "assets/profile-covers/cover-minimal.png", overlay: "linear-gradient(115deg,rgba(12,16,14,.9),rgba(12,16,14,.22))", desktopPosition: "50% center", tabletPosition: "50% center", mobilePosition: "50% center" },
   ];
-  const DEFAULT_COVER_PRESET = "cover_lambretta_classic";
+  const DEFAULT_COVER_PRESET = "cover_green_black";
   const profiles = new Map();
   const forumProfiles = new Map();
   const progress = new Map();
@@ -977,11 +977,13 @@
     view.innerHTML = `<section class="forum-full-profile">
       <section class="forum-profile-cover-prototype" aria-label="Protótipo de capas do perfil">
         <div class="forum-profile-cover-art" data-cover-art data-cover-preset="${esc(activeCoverPreset.id)}" style="${coverPresetStyle(activeCoverPreset.id)}">
-          ${userId === session.user.id ? '<button type="button" class="forum-profile-cover-edit" data-cover-edit aria-label="Editar capa" title="Editar capa">✎</button>' : ""}
+          <div class="forum-profile-cover-identity" data-tour="forum-profile-header">
+            ${avatarMarkup(userId, "is-profile")}
+            <div class="forum-profile-cover-copy"><h3 class="role-${esc(role(userId))}">${esc(personName(userId))}</h3><span class="forum-role-badge role-${esc(role(userId))}">${esc(roleLabel(userId))}</span><p>${esc(countryFullLabel(member.country))}</p></div>
+          </div>
+          ${userId === session.user.id ? '<button type="button" class="forum-profile-cover-edit-profile" data-edit-profile>Editar perfil</button>' : ""}
         </div>
-        <div class="forum-profile-cover-gallery" aria-label="Galeria de capas">${COVER_PRESETS.map((preset) => `<button type="button" class="forum-profile-cover-choice ${preset.id === activeCoverPreset.id ? "is-active" : ""}" data-cover-choice="${preset.id}" aria-pressed="${preset.id === activeCoverPreset.id}"><span style="${coverPresetStyle(preset.id)}"></span><small>${esc(preset.label)}</small></button>`).join("")}</div>
       </section>
-      <header data-tour="forum-profile-header">${avatarMarkup(userId, "is-profile")}<div><h3 class="role-${esc(role(userId))}">${esc(personName(userId))}</h3><span class="forum-role-badge role-${esc(role(userId))}">${esc(roleLabel(userId))}</span><p>${esc(countryFullLabel(member.country))}</p></div>${userId === session.user.id ? '<button type="button" data-edit-profile>Editar perfil</button>' : ""}</header>
       <div class="forum-profile-stats"><article><b>${stats.topics}</b><small>Tópicos</small></article><article><b>${stats.posts}</b><small>Respostas</small></article><article><b>${stats.xp}</b><small>XP</small></article><article><b>${stats.accountCreatedAt ? esc(fmtDate(stats.accountCreatedAt)) : "—"}</b><small>Membro desde</small></article></div>
       <div id="forumProfileOverview" class="forum-profile-details"><section><h4>Perfil</h4><p>${esc(member.bio || "Este membro ainda não adicionou uma bio.")}</p></section><dl><div><dt>Jogos</dt><dd>${gameChips(member)}</dd></div><div><dt>Plataformas</dt><dd>${member.platforms?.length ? `<span class="forum-public-chips">${member.platforms.map((item) => `<span>${esc(platformLabel(item))}</span>`).join("")}</span>` : "—"}</dd></div><div><dt>Modos de jogo</dt><dd>${member.game_modes?.length ? `<span class="forum-public-chips">${member.game_modes.map((item) => `<span>${esc(item.split("::")[1] || item)}</span>`).join("")}</span>` : "—"}</dd></div>${member.discord ? `<div><dt>Discord</dt><dd>${esc(member.discord)}</dd></div>` : ""}</dl></div>
       <div class="forum-profile-tabs" role="tablist"><button class="is-active" type="button" data-profile-tab="profile">Perfil</button><button type="button" data-profile-tab="topics">Tópicos</button><button type="button" data-profile-tab="replies">Respostas</button><button type="button" data-profile-tab="activity">Atividade</button></div>
