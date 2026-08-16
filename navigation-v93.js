@@ -38,6 +38,8 @@
         width: 1px !important;
         height: 1px !important;
       }
+
+      .tl-menu-link[data-updates-new] b{margin-left:4px;color:#73ff18;font-size:9px;letter-spacing:.04em}
     `;
     document.head.appendChild(patchStyle);
   }
@@ -55,7 +57,7 @@
     </div>
     <div class="tl-menu-group">
       <button class="tl-menu-toggle" type="button" aria-expanded="false"><span>Comunidade</span><b aria-hidden="true">⌄</b></button>
-      <div class="tl-submenu"><a href="forum.html"><span>Fórum</span></a><a href="buddy.html"><span>Buddy</span></a><a href="regras.html"><span>Regras</span></a><a href="ajuda.html"><span>Ajuda</span></a><a href="contacto.html"><span>Contacto</span></a></div>
+      <div class="tl-submenu"><a href="forum.html"><span>Fórum</span></a><a href="buddy.html"><span>Buddy</span></a><a href="atualizacoes.html"><span>Atualizações</span></a><a href="regras.html"><span>Regras</span></a><a href="ajuda.html"><span>Ajuda</span></a><a href="contacto.html"><span>Contacto</span></a></div>
     </div>
     <div class="tl-menu-group">
       <button class="tl-menu-toggle" type="button" aria-expanded="false"><span>Destaques</span><b aria-hidden="true">⌄</b></button>
@@ -65,6 +67,11 @@
     <a class="tl-menu-link" href="loja.html"><span>Loja</span></a>`;
 
   nav.innerHTML = globalNavigation;
+  const updatesLink = nav.querySelector('a[href="atualizacoes.html"]');
+  if (updatesLink && localStorage.getItem('tl_seen_update_2026.08.15') !== '1') {
+    updatesLink.dataset.updatesNew = 'true';
+    updatesLink.querySelector('span').insertAdjacentHTML('beforeend', ' <b aria-label="Novidade">• NOVO</b>');
+  }
   const currentPage = decodeURIComponent(location.pathname.split('/').pop() || 'home.html');
   nav.querySelectorAll('a[href]').forEach(link => {
     link.classList.toggle('is-current', link.getAttribute('href') === currentPage);
