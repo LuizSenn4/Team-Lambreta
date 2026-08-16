@@ -11,11 +11,11 @@
   })();
   if (!document.querySelector('script[data-tl-tour]')) {
     const tourScript = document.createElement('script');
-    tourScript.src = 'tour-v1.js?v=1.2';
+    tourScript.src = 'tour-v1.js?v=1.3';
     tourScript.dataset.tlTour = 'true';
     document.body.appendChild(tourScript);
     const tourStyle = document.createElement('link');
-    tourStyle.rel = 'stylesheet'; tourStyle.href = 'tour-v1.css?v=1.1'; tourStyle.dataset.tlTour = 'true';
+    tourStyle.rel = 'stylesheet'; tourStyle.href = 'tour-v1.css?v=1.2'; tourStyle.dataset.tlTour = 'true';
     document.head.appendChild(tourStyle);
   }
   const savedTheme = localStorage.getItem('tl_theme') || 'system';
