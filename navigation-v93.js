@@ -11,7 +11,7 @@
   })();
   if (!document.querySelector('script[data-tl-tour]')) {
     const tourScript = document.createElement('script');
-    tourScript.src = 'tour-v1.js?v=1.3';
+    tourScript.src = 'tour-v1.js?v=1.4';
     tourScript.dataset.tlTour = 'true';
     document.body.appendChild(tourScript);
     const tourStyle = document.createElement('link');
@@ -101,7 +101,7 @@
   const mediaTheme = matchMedia('(prefers-color-scheme: light)');
   mediaTheme.addEventListener?.('change', () => { if ((localStorage.getItem('tl_theme') || 'system') === 'system') applyTheme('system'); });
   const updatesLink = nav.querySelector('a[href="atualizacoes.html"]');
-  if (updatesLink && localStorage.getItem('tl_seen_update_2026.08.15') !== '1') {
+  if (updatesLink && localStorage.getItem('tl_seen_update_2026.08.16') !== '1') {
     updatesLink.dataset.updatesNew = 'true';
     updatesLink.querySelector('span').insertAdjacentHTML('beforeend', ' <b aria-label="Novidade">• NOVO</b>');
   }
