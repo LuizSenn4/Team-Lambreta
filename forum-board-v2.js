@@ -495,7 +495,7 @@
         .filter((userId) =>
           personName(userId).toLocaleLowerCase("pt-PT").includes(needle),
         )
-        .slice(0, 8);
+        .slice(0, 20);
       activeIndex = 0;
       list.hidden = false;
       list.innerHTML = matches.length
