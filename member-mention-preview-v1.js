@@ -86,6 +86,10 @@ html[data-theme="light"] .tl-member-preview{background:rgba(255,253,247,.98);col
   document.addEventListener('keydown',e=>{if(e.key==='Escape')hide(0);if((e.key==='Enter'||e.key===' ')&&e.target.matches?.('.tl-chat-mention,.tl-global-mention')){e.preventDefault();show(e.target)}});
   window.addEventListener('resize',()=>active&&position(active),{passive:true});window.addEventListener('scroll',()=>{if(active&&innerWidth>650)position(active)},{passive:true,capture:true});
 
-  const start=()=>{ensureStyle();enhance();const mo=new MutationObserver(ms=>ms.forEach(m=>m.addedNodes.forEach(n=>{if(n.nodeType===1)enhance(n)})));mo.observe(document.body,{childList:true,subtree:true})};
+  const loadForumEnhancements=()=>{
+    if(!document.getElementById('forumProfileForm')||document.querySelector('script[data-forum-profile-enhancements]'))return;
+    const script=document.createElement('script');script.src='forum-profile-enhancements-v1.js?v=1.0';script.defer=true;script.dataset.forumProfileEnhancements='1';document.body.appendChild(script);
+  };
+  const start=()=>{ensureStyle();enhance();loadForumEnhancements();const mo=new MutationObserver(ms=>ms.forEach(m=>m.addedNodes.forEach(n=>{if(n.nodeType===1){enhance(n);loadForumEnhancements()}})));mo.observe(document.body,{childList:true,subtree:true})};
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',start);else start();
 })();
