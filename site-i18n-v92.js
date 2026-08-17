@@ -1,18 +1,4 @@
 (()=>{'use strict';
-const LANGS={
-'pt-BR':{label:'🇧🇷 Português — Brasil',compact:'🇧🇷 BR'},'pt-PT':{label:'🇵🇹 Português — Portugal',compact:'🇵🇹 PT'},
-'pl':{label:'🇵🇱 Polski',compact:'🇵🇱 PL'},'es':{label:'🇪🇸 Español',compact:'🇪🇸 ES'},'fr':{label:'🇫🇷 Français',compact:'🇫🇷 FR'},
-'en-US':{label:'🇺🇸 English — US',compact:'🇺🇸 US'},'en-GB':{label:'🇬🇧 English — UK',compact:'🇬🇧 GB'}
-};
-const ZONES=[
- {country:'Portugal',flag:'🇵🇹',cities:[['Lisboa','Europe/Lisbon'],['Porto','Europe/Lisbon'],['Madeira','Atlantic/Madeira'],['Açores','Atlantic/Azores']]},
- {country:'Brasil',flag:'🇧🇷',cities:[['Brasília','America/Sao_Paulo'],['São Paulo','America/Sao_Paulo'],['Rio de Janeiro','America/Sao_Paulo'],['Manaus','America/Manaus'],['Cuiabá','America/Cuiaba'],['Rio Branco','America/Rio_Branco'],['Fernando de Noronha','America/Noronha']]},
- {country:'Polónia',flag:'🇵🇱',cities:[['Varsóvia','Europe/Warsaw'],['Cracóvia','Europe/Warsaw'],['Wrocław','Europe/Warsaw'],['Gdańsk','Europe/Warsaw']]},
- {country:'França',flag:'🇫🇷',cities:[['Paris','Europe/Paris'],['Lyon','Europe/Paris'],['Marselha','Europe/Paris'],['Toulouse','Europe/Paris']]},
- {country:'Alemanha',flag:'🇩🇪',cities:[['Berlim','Europe/Berlin'],['Munique','Europe/Berlin'],['Frankfurt','Europe/Berlin'],['Hamburgo','Europe/Berlin']]},
- {country:'Espanha',flag:'🇪🇸',cities:[['Madrid','Europe/Madrid'],['Barcelona','Europe/Madrid'],['Valência','Europe/Madrid'],['Ilhas Canárias','Atlantic/Canary']]},
- {country:'Estados Unidos',flag:'🇺🇸',cities:[['Nova York','America/New_York'],['Chicago','America/Chicago'],['Denver','America/Denver'],['Los Angeles','America/Los_Angeles']]}
-];
 const map={
 'pl':{'Início':'Start','Sobre':'O nas','Team':'Zespół','Fórum':'Forum','Loja':'Sklep','Contato':'Kontakt','Entrar com Google':'Zaloguj przez Google','Guardar perfil':'Zapisz profil','Cancelar':'Anuluj','País':'Kraj','Idade':'Wiek','Jogo':'Gra','Modo':'Tryb','Tipo de armas':'Rodzaj broni','Estilo':'Styl','Escreve no lobby...':'Napisz na lobby...','Traduzir para':'Tłumacz na','Enviar original':'Wyślij oryginał','Sempre usar':'Zawsze używaj'},
 'es':{'Início':'Inicio','Sobre':'Sobre nosotros','Team':'Equipo','Fórum':'Foro','Loja':'Tienda','Contato':'Contacto','Entrar com Google':'Entrar con Google','Guardar perfil':'Guardar perfil','Cancelar':'Cancelar','País':'País','Idade':'Edad','Jogo':'Juego','Modo':'Modo','Tipo de armas':'Tipo de armas','Estilo':'Estilo','Escreve no lobby...':'Escribe en el lobby...','Traduzir para':'Traducir a','Enviar original':'Enviar original','Sempre usar':'Usar siempre'},
@@ -21,34 +7,59 @@ const map={
 'en-GB':{'Início':'Home','Sobre':'About','Team':'Team','Fórum':'Forum','Loja':'Shop','Contato':'Contact','Entrar com Google':'Sign in with Google','Guardar perfil':'Save profile','Cancelar':'Cancel','País':'Country','Idade':'Age','Jogo':'Game','Modo':'Mode','Tipo de armas':'Weapon type','Estilo':'Style','Escreve no lobby...':'Write in the lobby...','Traduzir para':'Translate to','Enviar original':'Send original','Sempre usar':'Always use'},
 'pt-PT':{},'pt-BR':{}
 };
-const detected=(()=>{const n=(navigator.language||'pt-PT').toLowerCase();if(n.startsWith('pl'))return'pl';if(n.startsWith('es'))return'es';if(n.startsWith('fr'))return'fr';if(n==='pt-br')return'pt-BR';if(n.startsWith('pt'))return'pt-PT';if(n==='en-us')return'en-US';if(n.startsWith('en'))return'en-GB';return'pt-PT'})();
-let lang=localStorage.getItem('tl_language')||detected;localStorage.setItem('tl_language',lang);
-let zone=(()=>{try{return JSON.parse(localStorage.getItem('tl_clock_zone'))}catch(_){return null}})()||{country:'Portugal',flag:'🇵🇹',city:'Lisboa',timeZone:'Europe/Lisbon'};
+
+const detected=(()=>{
+  const raw=(navigator.languages?.[0]||navigator.language||'pt-PT').toLowerCase();
+  if(raw.startsWith('pl'))return'pl';
+  if(raw.startsWith('es'))return'es';
+  if(raw.startsWith('fr'))return'fr';
+  if(raw==='pt-br')return'pt-BR';
+  if(raw.startsWith('pt'))return'pt-PT';
+  if(raw==='en-us')return'en-US';
+  if(raw.startsWith('en'))return'en-GB';
+  return'pt-PT';
+})();
+const lang=detected;
+try{localStorage.removeItem('tl_language')}catch(_){}
+
 const original=new WeakMap();
-function translateNode(node){if(node.nodeType!==Node.TEXT_NODE)return;const t=node.nodeValue.trim();if(!t)return;if(!original.has(node))original.set(node,node.nodeValue);const base=original.get(node),raw=base.trim(),value=(map[lang]||{})[raw];node.nodeValue=value?base.replace(raw,value):base}
-function apply(){document.documentElement.lang=lang;const w=document.createTreeWalker(document.body,NodeFilter.SHOW_TEXT,{acceptNode:n=>/^(SCRIPT|STYLE|TEXTAREA|OPTION)$/.test(n.parentElement?.tagName)?NodeFilter.FILTER_REJECT:NodeFilter.FILTER_ACCEPT});let n;while(n=w.nextNode())translateNode(n);document.querySelectorAll('[placeholder]').forEach(el=>{el.dataset.tlOriginalPlaceholder||=(el.getAttribute('placeholder')||'');el.placeholder=(map[lang]||{})[el.dataset.tlOriginalPlaceholder]||el.dataset.tlOriginalPlaceholder})}
-function zoneMenu(host,clock,label){
- const menu=document.createElement('div');menu.className='tl-zone-menu';menu.hidden=true;
- menu.innerHTML=`<div class="tl-zone-menu-head"><strong>Idioma e horário</strong><button type="button" aria-label="Fechar">×</button></div><label class="tl-zone-language"><span>Idioma do site</span><select aria-label="Idioma do site"></select></label><div class="tl-zone-section-title">Fuso horário</div><button class="tl-zone-device" type="button">⌖ Usar o fuso do dispositivo</button><div class="tl-zone-groups"></div>`;
- const languageSelect=menu.querySelector('.tl-zone-language select');
- Object.entries(LANGS).forEach(([value,item])=>{const option=document.createElement('option');option.value=value;option.textContent=item.label;languageSelect.appendChild(option)});
- languageSelect.value=lang;
- languageSelect.onchange=()=>{lang=languageSelect.value;localStorage.setItem('tl_language',lang);location.reload()};
- const deviceButton=menu.querySelector('.tl-zone-device');
- const refreshSelection=()=>{
-   deviceButton.classList.toggle('is-active',!zone.timeZone);
-   menu.querySelectorAll('.tl-zone-country button').forEach(button=>button.classList.toggle('is-active',Boolean(zone.timeZone)&&button.dataset.country===zone.country&&button.dataset.city===zone.city));
- };
- const groups=menu.querySelector('.tl-zone-groups');
- ZONES.forEach(group=>{const details=document.createElement('details');details.className='tl-zone-country';if(group.country===zone.country)details.open=true;details.innerHTML=`<summary>${group.flag} ${group.country}<span>›</span></summary><div></div>`;const list=details.querySelector('div');group.cities.forEach(([city,timeZone])=>{const b=document.createElement('button');b.type='button';b.textContent=city;b.dataset.country=group.country;b.dataset.city=city;b.onclick=()=>{zone={country:group.country,flag:group.flag,city,timeZone};localStorage.setItem('tl_clock_zone',JSON.stringify(zone));refreshSelection();menu.hidden=true;tickClock(clock)};list.appendChild(b)});groups.appendChild(details)});
- menu.querySelector('.tl-zone-menu-head button').onclick=()=>menu.hidden=true;
- deviceButton.onclick=()=>{zone={country:'Dispositivo',flag:'⌖',city:'Local',timeZone:null};localStorage.setItem('tl_clock_zone',JSON.stringify(zone));refreshSelection();menu.hidden=true;tickClock(clock)};
- refreshSelection();
- host.appendChild(menu);return menu;
+function translateNode(node){
+  if(node.nodeType!==Node.TEXT_NODE)return;
+  const t=node.nodeValue.trim();if(!t)return;
+  if(!original.has(node))original.set(node,node.nodeValue);
+  const base=original.get(node),raw=base.trim(),value=(map[lang]||{})[raw];
+  node.nodeValue=value?base.replace(raw,value):base;
 }
-function tickClock(clock){const opts={dateStyle:'short',timeStyle:'short'};if(zone.timeZone)opts.timeZone=zone.timeZone;try{clock.textContent=new Intl.DateTimeFormat(lang,opts).format(new Date())}catch(_){delete opts.timeZone;clock.textContent=new Intl.DateTimeFormat(lang,opts).format(new Date())}}
-function tools(){if(document.querySelector('.tl-global-tools'))return;const box=document.createElement('div');box.className='tl-global-tools';
- const zoneWrap=document.createElement('div');zoneWrap.className='tl-zone-wrap';const zoneButton=document.createElement('button');zoneButton.type='button';zoneButton.className='tl-zone-button';const zoneLabel=document.createElement('span');zoneLabel.textContent=LANGS[lang]?.compact||LANGS['pt-PT'].compact;zoneButton.append(zoneLabel);const clock=document.createElement('time');clock.className='tl-local-clock';tickClock(clock);setInterval(()=>tickClock(clock),30000);const menu=zoneMenu(zoneWrap,clock,zoneLabel);zoneButton.onclick=()=>menu.hidden=!menu.hidden;zoneWrap.appendChild(zoneButton);
- box.append(zoneWrap,clock);const header=document.querySelector('.site-header.tl-header-v88,.site-header');(header||document.body).appendChild(box);const existingKey=document.querySelector('.tl-admin-key');if(existingKey)box.appendChild(existingKey);
- document.addEventListener('click',e=>{if(!zoneWrap.contains(e.target))menu.hidden=true});let lastY=Math.max(0,scrollY),ticking=false;const updateTools=()=>{const y=Math.max(0,scrollY);if(y>lastY&&y>90)box.classList.add('tl-tools-hidden');else if(y<lastY-3||y<36)box.classList.remove('tl-tools-hidden');lastY=y;ticking=false};addEventListener('scroll',()=>{if(!ticking){requestAnimationFrame(updateTools);ticking=true}},{passive:true})}
-function boot(){tools();apply();new MutationObserver(()=>apply()).observe(document.body,{childList:true,subtree:true})}if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot);else boot();window.TLI18n={getLanguage:()=>lang,getZone:()=>zone};})();
+function apply(){
+  document.documentElement.lang=lang;
+  const w=document.createTreeWalker(document.body,NodeFilter.SHOW_TEXT,{acceptNode:n=>/^(SCRIPT|STYLE|TEXTAREA|OPTION)$/.test(n.parentElement?.tagName)?NodeFilter.FILTER_REJECT:NodeFilter.FILTER_ACCEPT});
+  let n;while(n=w.nextNode())translateNode(n);
+  document.querySelectorAll('[placeholder]').forEach(el=>{
+    el.dataset.tlOriginalPlaceholder||=(el.getAttribute('placeholder')||'');
+    el.placeholder=(map[lang]||{})[el.dataset.tlOriginalPlaceholder]||el.dataset.tlOriginalPlaceholder;
+  });
+}
+function tickClock(clock){
+  try{clock.textContent=new Intl.DateTimeFormat(lang,{dateStyle:'short',timeStyle:'short'}).format(new Date())}
+  catch(_){clock.textContent=new Date().toLocaleString()}
+}
+function tools(){
+  if(document.querySelector('.tl-global-tools'))return;
+  const box=document.createElement('div');box.className='tl-global-tools tl-global-tools-auto';
+  const clock=document.createElement('time');clock.className='tl-local-clock';clock.setAttribute('aria-label','Data e hora local');
+  tickClock(clock);setInterval(()=>tickClock(clock),30000);
+  box.append(clock);
+  const header=document.querySelector('.site-header.tl-header-v88,.site-header');
+  (header||document.body).appendChild(box);
+  const existingKey=document.querySelector('.tl-admin-key');if(existingKey)box.appendChild(existingKey);
+  let lastY=Math.max(0,scrollY),ticking=false;
+  const updateTools=()=>{const y=Math.max(0,scrollY);if(y>lastY&&y>90)box.classList.add('tl-tools-hidden');else if(y<lastY-3||y<36)box.classList.remove('tl-tools-hidden');lastY=y;ticking=false};
+  addEventListener('scroll',()=>{if(!ticking){requestAnimationFrame(updateTools);ticking=true}},{passive:true});
+}
+function boot(){
+  tools();apply();
+  new MutationObserver(()=>apply()).observe(document.body,{childList:true,subtree:true});
+}
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot);else boot();
+window.TLI18n={getLanguage:()=>lang,getZone:()=>({country:'Dispositivo',flag:'⌖',city:'Local',timeZone:Intl.DateTimeFormat().resolvedOptions().timeZone||null})};
+})();
