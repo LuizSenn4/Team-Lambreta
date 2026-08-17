@@ -140,8 +140,7 @@ html[data-theme="light"] [class*="description"]{
 }
 html[data-theme="light"] a{opacity:1}
 
-/* Componentes de comunidade: preserva cards escuros quando fazem parte da identidade,
-   mas torna todo texto de interface externo legível. */
+/* Componentes de comunidade */
 html[data-theme="light"] .updates-release-head h2,
 html[data-theme="light"] .updates-item h3,
 html[data-theme="light"] .buddy-hero h1{color:#5d430f}
@@ -168,38 +167,46 @@ html[data-theme="light"] .tag{
   color:#293027;
 }
 
-/* Home: painel do lobby continua escuro para manter contraste dos balões do chat,
-   mas títulos e rótulos externos recebem cores fortes. */
+/* Home: mantém mensagens escuras, mas torna toda interface externa legível. */
 html[data-theme="light"] .home-v22{color:var(--tl-theme-text)}
 html[data-theme="light"] .home-v22 .chat-head h2,
 html[data-theme="light"] .home-v22 .chat-head h3{color:#7d590f!important}
 html[data-theme="light"] .home-v22 .chat-head small,
-html[data-theme="light"] .home-v22 .chat-head label{color:#30452b!important;opacity:1!important}
-html[data-theme="light"] .home-v22 .chat-panel,
-html[data-theme="light"] .home-v22 .chat-list,
-html[data-theme="light"] .home-v22 .chat-message{
-  color:#f3f5f1;
+html[data-theme="light"] .home-v22 .chat-head label,
+html[data-theme="light"] .chat-delay-info,
+html[data-theme="light"] .chat-moderation-info,
+html[data-theme="light"] .tl-enter-toggle,
+html[data-theme="light"] .tl-chat-remember,
+html[data-theme="light"] .chat-translate-controls,
+html[data-theme="light"] .chat-translate-controls label,
+html[data-theme="light"] .chat-translate-controls span{
+  color:#39443a!important;
+  opacity:1!important;
 }
-html[data-theme="light"] .home-v22 .chat-message p,
-html[data-theme="light"] .home-v22 .chat-message span,
-html[data-theme="light"] .home-v22 .chat-message time{opacity:1}
+html[data-theme="light"] .home-v22 .chat-message,
+html[data-theme="light"] .home-v22 .chat-message p{
+  color:#eef5ef!important;
+  opacity:1!important;
+}
+html[data-theme="light"] .home-v22 .chat-message time,
+html[data-theme="light"] .home-v22 .chat-message small{
+  color:#b9c2bb!important;
+  opacity:1!important;
+}
 
-/* Perfil do Fórum no tema claro: superfície branca simétrica sobre base escura, criando profundidade 3D. */
+/* Perfil do Fórum no tema claro: superfície branca sobre base escura 3D. */
 html[data-theme="light"] .forum-full-profile{
   background:#fffdf8!important;
   border-color:rgba(111,86,30,.30)!important;
   border-radius:16px!important;
-  box-shadow:8px 8px 0 #101410, 0 18px 38px rgba(44,35,14,.16)!important;
+  box-shadow:8px 8px 0 #101410,0 18px 38px rgba(44,35,14,.16)!important;
   overflow:hidden;
 }
 html[data-theme="light"] .forum-profile-cover-prototype{
   background:#fffdf8!important;
   border-radius:16px 16px 0 0!important;
 }
-html[data-theme="light"] .forum-profile-cover-art{
-  border-radius:15px 15px 0 0!important;
-}
-/* O header fica sobre fotografia escura: não herdar as cores marrons globais do modo claro. */
+html[data-theme="light"] .forum-profile-cover-art{border-radius:15px 15px 0 0!important}
 html[data-theme="light"] .forum-profile-cover-copy{
   align-content:center;
   justify-items:start;
@@ -241,12 +248,146 @@ html[data-theme="light"] .forum-profile-cover-copy .forum-role-badge.role-master
   white-space:nowrap!important;
 }
 
+/* Fórum claro — corrige os contrastes que ficavam quase invisíveis. */
+html[data-theme="light"] .forum-profile-stats,
+html[data-theme="light"] .forum-profile-details,
+html[data-theme="light"] .forum-profile-tabs,
+html[data-theme="light"] .forum-profile-activity-row,
+html[data-theme="light"] .forum-category-block,
+html[data-theme="light"] .forum-section-row,
+html[data-theme="light"] .forum-topic-row{
+  color:#273029!important;
+}
+html[data-theme="light"] .forum-profile-stats small,
+html[data-theme="light"] .forum-profile-details dt,
+html[data-theme="light"] .forum-profile-details p,
+html[data-theme="light"] .forum-profile-details dd,
+html[data-theme="light"] .forum-profile-activity-row span,
+html[data-theme="light"] .forum-profile-activity-row small,
+html[data-theme="light"] .forum-section-row small,
+html[data-theme="light"] .forum-topic-row small{
+  color:#566058!important;
+  opacity:1!important;
+}
+html[data-theme="light"] .forum-profile-details h4,
+html[data-theme="light"] .forum-profile-details strong,
+html[data-theme="light"] .forum-section-row strong,
+html[data-theme="light"] .forum-topic-row strong{
+  color:#5c430e!important;
+}
+html[data-theme="light"] .forum-public-chips span,
+html[data-theme="light"] .forum-profile-chips button,
+html[data-theme="light"] .forum-profile-chips span,
+html[data-theme="light"] .forum-choice-chip span{
+  background:#e6f4e8!important;
+  border-color:#9bcba5!important;
+  color:#24522f!important;
+  opacity:1!important;
+  text-shadow:none!important;
+}
+html[data-theme="light"] .forum-profile-tabs button{
+  background:#172019!important;
+  border-color:#2c4a34!important;
+  color:#f4f7f4!important;
+}
+html[data-theme="light"] .forum-profile-tabs button.is-active{
+  background:#0f1a13!important;
+  border-color:#26a64e!important;
+  color:#72ef93!important;
+}
+html[data-theme="light"] .forum-profile-stats article b{color:#d7a929!important}
+html[data-theme="light"] .forum-profile-stats article small{color:#687169!important}
+
+/* Buddy: superfícies claras e texto forte; conversas escuras preservam texto claro. */
+html[data-theme="light"] .buddy-app,
+html[data-theme="light"] .buddy-sidebar,
+html[data-theme="light"] .buddy-main,
+html[data-theme="light"] .buddy-panel,
+html[data-theme="light"] .buddy-list,
+html[data-theme="light"] .buddy-profile-card{
+  color:#263028!important;
+}
+html[data-theme="light"] .buddy-app p,
+html[data-theme="light"] .buddy-app small,
+html[data-theme="light"] .buddy-app label,
+html[data-theme="light"] .buddy-app .buddy-meta{
+  color:#59645b!important;
+  opacity:1!important;
+}
+html[data-theme="light"] #buddyMessages,
+html[data-theme="light"] #buddyMessages p{
+  color:#eef5ef!important;
+}
+html[data-theme="light"] #buddyMessages small{color:#aeb9b0!important}
+
+/* Atualizações / ajuda / regras / páginas institucionais. */
+html[data-theme="light"] .updates-release-body,
+html[data-theme="light"] .updates-release-intro,
+html[data-theme="light"] .updates-admin,
+html[data-theme="light"] .help-card,
+html[data-theme="light"] .rule-card,
+html[data-theme="light"] .rules-card,
+html[data-theme="light"] .contact-card{
+  color:#2b332c!important;
+}
+html[data-theme="light"] .updates-release-intro,
+html[data-theme="light"] .help-card p,
+html[data-theme="light"] .rule-card p,
+html[data-theme="light"] .rules-card p,
+html[data-theme="light"] .contact-card p{
+  color:#566058!important;
+  opacity:1!important;
+}
+
+/* Team / Streamers / Loja / eventos e cards públicos. */
+html[data-theme="light"] .team-card,
+html[data-theme="light"] .team-member-card,
+html[data-theme="light"] .streamer-card,
+html[data-theme="light"] .store-card,
+html[data-theme="light"] .shop-card,
+html[data-theme="light"] .event-card,
+html[data-theme="light"] .achievement-card,
+html[data-theme="light"] .media-card{
+  color:#273029!important;
+}
+html[data-theme="light"] .team-card p,
+html[data-theme="light"] .team-member-card p,
+html[data-theme="light"] .streamer-card p,
+html[data-theme="light"] .store-card p,
+html[data-theme="light"] .shop-card p,
+html[data-theme="light"] .event-card p,
+html[data-theme="light"] .achievement-card p,
+html[data-theme="light"] .media-card p{
+  color:#596159!important;
+  opacity:1!important;
+}
+
+/* Participe / formulários / Admin: labels e dados nunca ficam lavados. */
+html[data-theme="light"] .participation-card,
+html[data-theme="light"] .participation-panel,
+html[data-theme="light"] .admin-main,
+html[data-theme="light"] .admin-card,
+html[data-theme="light"] .admin-section,
+html[data-theme="light"] .admin-row,
+html[data-theme="light"] table{
+  color:#242c25!important;
+}
+html[data-theme="light"] .participation-card p,
+html[data-theme="light"] .participation-panel p,
+html[data-theme="light"] .admin-main p,
+html[data-theme="light"] .admin-main small,
+html[data-theme="light"] .admin-main label,
+html[data-theme="light"] th,
+html[data-theme="light"] td{
+  color:#525d54!important;
+  opacity:1!important;
+}
+html[data-theme="light"] th{color:#38423a!important;font-weight:800}
+
 /* Botões claros e secundários */
 html[data-theme="light"] button:not(.tl-mobile-menu-button):not(.tl-menu-toggle),
 html[data-theme="light"] .button,
-html[data-theme="light"] .btn{
-  opacity:1;
-}
+html[data-theme="light"] .btn{opacity:1}
 html[data-theme="light"] button:disabled,
 html[data-theme="light"] .is-disabled{opacity:.62!important}
 
