@@ -93,8 +93,9 @@
         clearInterval(timer);
         trigger.click();
         q.delete('edit');
-        const next=`${location.pathname}?${q.toString()}${location.hash}`;
-        history.replaceState({},'',next.replace('?'+'' ,''));
+        const search=q.toString();
+        const next=`${location.pathname}${search?`?${search}`:''}${location.hash}`;
+        history.replaceState({},'',next);
       }else if(tries>80){clearInterval(timer)}
     },100);
   }
