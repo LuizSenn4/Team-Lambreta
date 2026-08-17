@@ -4,7 +4,7 @@
   const themeLink = document.querySelector('link[data-tl-theme]') || (() => {
     const link = document.createElement('link');
     link.rel = 'stylesheet';
-    link.href = 'theme-v1.css?v=1.1';
+    link.href = 'theme-v1.css?v=1.2';
     link.dataset.tlTheme = 'true';
     document.head.appendChild(link);
     return link;
