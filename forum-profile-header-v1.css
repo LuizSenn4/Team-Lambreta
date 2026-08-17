@@ -103,6 +103,8 @@ html[data-theme="light"] .forum-profile-cover-copy .forum-role-badge.role-master
   background: rgba(0,35,39,.78) !important;
   color: #eaffff !important;
   text-shadow: 0 0 8px rgba(94,243,255,.72) !important;
+  font-size: 0 !important;
+  letter-spacing: 0 !important;
 }
 
 @media (max-width: 800px) {
