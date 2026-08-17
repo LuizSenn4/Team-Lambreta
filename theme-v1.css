@@ -184,6 +184,63 @@ html[data-theme="light"] .home-v22 .chat-message p,
 html[data-theme="light"] .home-v22 .chat-message span,
 html[data-theme="light"] .home-v22 .chat-message time{opacity:1}
 
+/* Perfil do Fórum no tema claro: superfície branca simétrica sobre base escura, criando profundidade 3D. */
+html[data-theme="light"] .forum-full-profile{
+  background:#fffdf8!important;
+  border-color:rgba(111,86,30,.30)!important;
+  border-radius:16px!important;
+  box-shadow:8px 8px 0 #101410, 0 18px 38px rgba(44,35,14,.16)!important;
+  overflow:hidden;
+}
+html[data-theme="light"] .forum-profile-cover-prototype{
+  background:#fffdf8!important;
+  border-radius:16px 16px 0 0!important;
+}
+html[data-theme="light"] .forum-profile-cover-art{
+  border-radius:15px 15px 0 0!important;
+}
+/* O header fica sobre fotografia escura: não herdar as cores marrons globais do modo claro. */
+html[data-theme="light"] .forum-profile-cover-copy{
+  align-content:center;
+  justify-items:start;
+  gap:7px;
+  color:#f4fbf7!important;
+  text-shadow:0 2px 14px rgba(0,0,0,.78)!important;
+}
+html[data-theme="light"] .forum-profile-cover-copy h3{
+  color:#5ef3ff!important;
+  text-shadow:0 2px 14px rgba(0,0,0,.82)!important;
+}
+html[data-theme="light"] .forum-profile-cover-copy p,
+html[data-theme="light"] .forum-profile-cover-country-full,
+html[data-theme="light"] .forum-profile-cover-country-compact{
+  color:#fff!important;
+  opacity:1!important;
+  text-shadow:0 2px 10px rgba(0,0,0,.88)!important;
+}
+html[data-theme="light"] .forum-profile-cover-copy .forum-role-badge.role-dev,
+html[data-theme="light"] .forum-profile-cover-copy .forum-role-badge.role-master{
+  display:inline-flex!important;
+  width:max-content!important;
+  min-width:0!important;
+  min-height:20px!important;
+  box-sizing:border-box!important;
+  align-items:center!important;
+  justify-content:center!important;
+  padding:3px 9px!important;
+  border:1px solid #5ef3ff!important;
+  border-radius:999px!important;
+  color:#eaffff!important;
+  background:rgba(0,35,39,.72)!important;
+  font-size:.60rem!important;
+  font-weight:900!important;
+  line-height:1!important;
+  letter-spacing:.20em!important;
+  text-align:center!important;
+  text-shadow:0 0 8px rgba(94,243,255,.72)!important;
+  white-space:nowrap!important;
+}
+
 /* Botões claros e secundários */
 html[data-theme="light"] button:not(.tl-mobile-menu-button):not(.tl-menu-toggle),
 html[data-theme="light"] .button,
