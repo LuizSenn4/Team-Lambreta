@@ -1,5 +1,8 @@
 /* Header do perfil do Fórum — fonte única de verdade para alinhamento e identidade. */
 
+/* O Fórum é apenas visualização do perfil. A edição vive na Home. */
+.forum-profile-cover-edit-profile{display:none!important}
+
 .forum-profile-cover-identity {
   top: 50%;
   right: 24px;
