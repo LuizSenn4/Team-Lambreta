@@ -1,4 +1,4 @@
-/* Tema claro V5 — camada única e autoritativa. */
+/* Tema claro V6 — camada única e autoritativa. */
 html[data-theme="light"]{
   --tl-theme-bg:#cfc8bb;
   --tl-theme-surface:#f5f1e8;
@@ -9,6 +9,7 @@ html[data-theme="light"]{
   --tl-theme-input:#f7f4ed;
   --tl-cyan:#5ef3ff;
   --tl-gold:#f6c945;
+  --role-dev:#5ef3ff;
 }
 html[data-theme="light"],html[data-theme="light"] body,html[data-theme="light"] .site-content,html[data-theme="light"] .home-v22,html[data-theme="light"] .forum-page,html[data-theme="light"] .buddy-page,html[data-theme="light"] .team-page,html[data-theme="light"] .updates-page,html[data-theme="light"] .participe-page,html[data-theme="light"] .loja-page,html[data-theme="light"] .admin-main{background:#cfc8bb!important}
 
@@ -32,7 +33,7 @@ html[data-theme="light"] .status-picker[data-status="away"]{border-color:#ffad32
 /* Lobby — ciano neon igual ao dark, não lavado. */
 html[data-theme="light"] .online-chat{background:#9a9488!important}
 html[data-theme="light"] .chat-messages{background:#777268!important;border-radius:18px!important}
-html[data-theme="light"] .tl-chat-card{background:#0a0f0c!important;color:#f3f6f3!important;border-color:#19d8eb!important;box-shadow:inset 5px 0 0 #19d8eb,0 0 14px rgba(25,216,235,.12)!important}
+html[data-theme="light"] .tl-chat-card{background:#0a0f0c!important;color:#f3f6f3!important;border-color:#5ef3ff!important;box-shadow:inset 5px 0 0 #5ef3ff,0 0 18px rgba(94,243,255,.20)!important}
 html[data-theme="light"] .tl-chat-card .tl-chat-name,
 html[data-theme="light"] .tl-chat-name,
 html[data-theme="light"] .tl-chat-card[data-identity="admin"] .tl-chat-name,
@@ -41,7 +42,7 @@ html[data-theme="light"] .tl-chat-card[data-identity="staff"] .tl-chat-name,
 html[data-theme="light"] .tl-chat-card[data-identity="moderator"] .tl-chat-name{
   color:#5ef3ff!important;
   opacity:1!important;
-  text-shadow:0 0 3px rgba(94,243,255,.95),0 0 8px rgba(94,243,255,.55),0 0 14px rgba(94,243,255,.22)!important;
+  text-shadow:0 0 2px #5ef3ff,0 0 7px rgba(94,243,255,.85),0 0 14px rgba(94,243,255,.40)!important;
 }
 html[data-theme="light"] .tl-chat-card p{color:#f5f7f5!important;opacity:1!important}
 html[data-theme="light"] .tl-chat-card time,html[data-theme="light"] .tl-chat-card small{color:#c1c8c3!important;opacity:1!important}
