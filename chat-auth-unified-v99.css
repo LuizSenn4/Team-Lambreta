@@ -1,129 +1,23 @@
 /* Identidade autenticada compacta dentro do rodapé do chat. */
 .sb-auth-bar[hidden]{display:none!important}
-.chat-auth-footer.is-connected{
-  display:block!important;
-  width:100%;
-  min-width:0;
-}
-.chat-auth-user{
-  display:flex;
-  align-items:center;
-  gap:5px;
-  width:100%;
-  min-width:0;
-  padding:2px 0;
-}
-.chat-auth-user-avatar{
-  display:grid;
-  place-items:center;
-  width:28px;
-  height:28px;
-  flex:0 0 28px;
-  overflow:hidden;
-  border:1px solid rgba(217,164,65,.38);
-  border-radius:50%;
-  background:#10120f;
-  color:#f2d986;
-  object-fit:cover;
-  font-size:11px;
-  font-weight:900;
-}
-.chat-auth-user-name{
-  display:inline-flex;
-  align-items:center;
-  flex:0 1 auto;
-  min-width:0;
-  overflow:hidden;
-  color:#f2ead7;
-  font-size:12px;
-  font-weight:850;
-  line-height:1;
-  text-overflow:ellipsis;
-  white-space:nowrap;
-}
-.chat-auth-user-role{
-  display:inline-flex;
-  align-items:center;
-  justify-content:center;
-  flex:0 0 auto;
-  align-self:center;
-  width:auto;
-  min-width:32px;
-  height:18px;
-  margin:0;
-  padding:0 7px;
-  box-sizing:border-box;
-  border:1px solid currentColor;
-  border-radius:999px;
-  color:#f7faf8;
-  background:rgba(8,14,11,.92);
-  font-size:8px;
-  font-weight:950;
-  line-height:1;
-  letter-spacing:.7px;
-  text-align:center;
-  text-transform:uppercase;
-  position:static;
-  top:auto;
-  transform:none;
-  text-shadow:none;
-}
-.chat-auth-user.role-master .chat-auth-user-name,
-.chat-auth-user.role-dev .chat-auth-user-name{
-  color:#00e7f5!important;
-  -webkit-text-stroke:.8px rgba(0,0,0,1);
-  paint-order:stroke fill;
-  text-shadow:0 0 1px rgba(255,255,255,.95),0 0 4px rgba(255,255,255,.72),0 0 8px rgba(255,255,255,.30)!important;
-}
-.chat-auth-user.role-master .chat-auth-user-role,
-.chat-auth-user.role-dev .chat-auth-user-role{
-  color:#f7faf8;
-  border-color:var(--role-dev,#5ef3ff);
-  background:#09191b;
-  box-shadow:0 0 8px rgba(94,243,255,.18);
-  text-shadow:none;
-}
+.chat-auth-footer.is-connected{display:block!important;width:100%;min-width:0}
+.chat-auth-user{display:flex;align-items:center;gap:5px;width:100%;min-width:0;padding:2px 0}
+.chat-auth-user-avatar{display:grid;place-items:center;width:28px;height:28px;flex:0 0 28px;overflow:hidden;border:1px solid rgba(217,164,65,.38);border-radius:50%;background:#10120f;color:#f2d986;object-fit:cover;font-size:11px;font-weight:900}
+.chat-auth-user-name{display:inline-flex;align-items:center;flex:0 1 auto;min-width:0;overflow:hidden;color:#f2ead7;font-size:12px;font-weight:850;line-height:1;text-overflow:ellipsis;white-space:nowrap}
+.chat-auth-user-role{display:inline-flex;align-items:center;justify-content:center;flex:0 0 auto;align-self:center;width:auto;min-width:32px;height:18px;margin:0;padding:0 7px;box-sizing:border-box;border:1px solid currentColor;border-radius:999px;color:#f7faf8;background:rgba(8,14,11,.92);font-size:8px;font-weight:950;line-height:1;letter-spacing:.7px;text-align:center;text-transform:uppercase;position:static;top:auto;transform:none;text-shadow:none}
+.chat-auth-user.role-master .chat-auth-user-name,.chat-auth-user.role-dev .chat-auth-user-name{color:#00dff2!important;-webkit-text-stroke:.8px rgba(255,255,255,1);paint-order:stroke fill;text-shadow:0 1px 0 #fff,0 0 3px rgba(255,255,255,.30)!important}
+.chat-auth-user.role-master .chat-auth-user-role,.chat-auth-user.role-dev .chat-auth-user-role{color:#f7faf8;border-color:var(--role-dev,#5ef3ff);background:#09191b;box-shadow:0 0 8px rgba(94,243,255,.18);text-shadow:none}
 .chat-auth-user.role-admin .chat-auth-user-role{color:#fff;border-color:#ff405a;background:#20090e}
 .chat-auth-user.role-moderator .chat-auth-user-role{color:#fff;border-color:#4da8ff;background:#091522}
 .chat-auth-user.role-staff .chat-auth-user-role{color:#fff;border-color:#b184ff;background:#160d22}
 .chat-auth-user.role-streamer .chat-auth-user-role{color:#fff;border-color:#ff42d0;background:#21091d}
-.chat-auth-logout{
-  display:inline-flex;
-  align-items:center;
-  justify-content:center;
-  flex:0 0 auto;
-  align-self:center;
-  min-height:28px;
-  margin-left:auto;
-  padding:0 9px;
-  border:1px solid rgba(255,64,90,.42);
-  border-radius:8px;
-  background:rgba(90,8,20,.24);
-  color:#ff6378;
-  font-size:10px;
-  font-weight:900;
-  line-height:1;
-  cursor:pointer;
-}
+.chat-auth-logout{display:inline-flex;align-items:center;justify-content:center;flex:0 0 auto;align-self:center;min-height:28px;margin-left:auto;padding:0 9px;border:1px solid rgba(255,64,90,.42);border-radius:8px;background:rgba(90,8,20,.24);color:#ff6378;font-size:10px;font-weight:900;line-height:1;cursor:pointer}
 .chat-auth-logout:hover,.chat-auth-logout:focus-visible{border-color:#ff6378;outline:none}
 
-/* Tema claro: nome e cargo seguem uma hierarquia de cor legível. */
-html[data-theme="light"] .chat-auth-user-name{
-  color:#202720!important;
-  text-shadow:none!important;
-}
-html[data-theme="light"] .chat-auth-user.role-master .chat-auth-user-name,
-html[data-theme="light"] .chat-auth-user.role-dev .chat-auth-user-name{
-  color:#00dff2!important;
-  -webkit-text-stroke:.8px rgba(0,0,0,1);
-  paint-order:stroke fill;
-  text-shadow:0 1px 0 #000,0 0 3px rgba(0,223,242,.26)!important;
-}
-html[data-theme="light"] .chat-auth-logout{
-  background:rgba(58,35,38,.78);
-  border-color:rgba(255,64,90,.72);
-  color:#ff6378;
-}
+/* Tema claro: mesma identidade visual; muda apenas o contorno/sombra do nick DEV para preto. */
+html[data-theme="light"] .chat-auth-user-name{color:#202720!important;text-shadow:none!important}
+html[data-theme="light"] .chat-auth-user.role-master .chat-auth-user-name,html[data-theme="light"] .chat-auth-user.role-dev .chat-auth-user-name{color:#00dff2!important;-webkit-text-stroke:.8px rgba(0,0,0,1);paint-order:stroke fill;text-shadow:0 1px 0 #000,0 0 3px rgba(0,0,0,.30)!important}
+html[data-theme="light"] .chat-auth-logout{background:rgba(58,35,38,.78);border-color:rgba(255,64,90,.72);color:#ff6378}
 html[data-theme="light"] .chat-auth-user.role-admin .chat-auth-user-name{color:#c91f3d!important}
 html[data-theme="light"] .chat-auth-user.role-moderator .chat-auth-user-name{color:#176bb3!important}
 html[data-theme="light"] .chat-auth-user.role-staff .chat-auth-user-name{color:#7042a8!important}
@@ -131,42 +25,8 @@ html[data-theme="light"] .chat-auth-user.role-streamer .chat-auth-user-name{colo
 html[data-theme="light"] .chat-auth-user.role-vip .chat-auth-user-name{color:#8a6500!important}
 html[data-theme="light"] .chat-auth-user.role-supporter .chat-auth-user-name{color:#317a0b!important}
 html[data-theme="light"] .chat-auth-user.role-member .chat-auth-user-name{color:#202720!important}
+html[data-theme="light"] .chat-auth-user.role-member .chat-auth-user-role{color:#202720!important;border-color:#6a746c!important;background:#e9e5dc!important}
+html[data-theme="light"] .chat-auth-user.role-vip .chat-auth-user-role{color:#4b3800!important;border-color:#d4a900!important;background:#f5e7a6!important}
+html[data-theme="light"] .chat-auth-user.role-supporter .chat-auth-user-role{color:#184d08!important;border-color:#54b81c!important;background:#e1f4d6!important}
 
-html[data-theme="light"] .chat-auth-user.role-member .chat-auth-user-role{
-  color:#202720!important;
-  border-color:#6a746c!important;
-  background:#e9e5dc!important;
-}
-html[data-theme="light"] .chat-auth-user.role-vip .chat-auth-user-role{
-  color:#4b3800!important;
-  border-color:#d4a900!important;
-  background:#f5e7a6!important;
-}
-html[data-theme="light"] .chat-auth-user.role-supporter .chat-auth-user-role{
-  color:#184d08!important;
-  border-color:#54b81c!important;
-  background:#e1f4d6!important;
-}
-
-@media(max-width:430px){
-  .chat-auth-user{
-    flex-wrap:nowrap;
-    column-gap:5px;
-    row-gap:0;
-  }
-  .chat-auth-user-name{
-    flex:0 1 auto;
-    min-width:0;
-  }
-  .chat-auth-user-role{
-    flex:0 0 auto;
-    align-self:center;
-    height:18px;
-    line-height:1;
-  }
-  .chat-auth-logout{
-    flex:0 0 auto;
-    align-self:center;
-    margin-left:auto;
-  }
-}
+@media(max-width:430px){.chat-auth-user{flex-wrap:nowrap;column-gap:5px;row-gap:0}.chat-auth-user-name{flex:0 1 auto;min-width:0}.chat-auth-user-role{flex:0 0 auto;align-self:center;height:18px;line-height:1}.chat-auth-logout{flex:0 0 auto;align-self:center;margin-left:auto}}
