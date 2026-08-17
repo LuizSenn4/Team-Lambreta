@@ -9,6 +9,13 @@
     document.head.appendChild(link);
     return link;
   })();
+  if (!document.querySelector('link[data-tl-light-polish]')) {
+    const polishLink = document.createElement('link');
+    polishLink.rel = 'stylesheet';
+    polishLink.href = 'theme-light-polish-v2.css?v=2.0';
+    polishLink.dataset.tlLightPolish = 'true';
+    document.head.appendChild(polishLink);
+  }
   if (!document.querySelector('script[data-tl-tour]')) {
     const tourScript = document.createElement('script');
     tourScript.src = 'tour-v1.js?v=1.4';
