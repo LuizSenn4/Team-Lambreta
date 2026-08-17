@@ -1,4 +1,4 @@
-/* Tema claro V2 — acabamento global, status centralizado e neon do Fórum. */
+/* Tema claro V2 — acabamento global, status centralizado e contraste do Fórum. */
 html[data-theme="light"]{
   --tl-theme-bg:#d2ccbf;
   --tl-theme-surface:#f7f3ea;
@@ -8,197 +8,39 @@ html[data-theme="light"]{
   --tl-theme-heading:#6f4d08;
   --tl-theme-border:rgba(74,61,34,.36);
   --tl-theme-input:#fbf8f1;
-  --tl-neon-cyan:#5ef3ff;
-  --tl-neon-gold:#ffd84a;
-  --tl-neon-gold-core:#fff4a3;
-  --tl-neon-gold-deep:#e8a900;
+  --tl-neon-cyan:#53e7f8;
+  --tl-neon-gold:#f4c94f;
+  --tl-neon-gold-core:#ffe9a0;
+  --tl-neon-gold-deep:#c58b16;
 }
 
-html[data-theme="light"],
-html[data-theme="light"] body,
-html[data-theme="light"] .site-content{
-  background-color:#d2ccbf!important;
-}
-html[data-theme="light"] body{
-  background-image:
-    radial-gradient(circle at 12% 0,rgba(115,255,24,.045),transparent 30%),
-    radial-gradient(circle at 88% 0,rgba(255,216,74,.06),transparent 30%)!important;
-}
+html[data-theme="light"],html[data-theme="light"] body,html[data-theme="light"] .site-content{background-color:#d2ccbf!important}
+html[data-theme="light"] body{background-image:radial-gradient(circle at 12% 0,rgba(115,255,24,.045),transparent 30%),radial-gradient(circle at 88% 0,rgba(244,201,79,.045),transparent 30%)!important}
 
-/* Lobby: status tipo cápsula, sem retângulo branco interno. */
-html[data-theme="light"] .status-picker{
-  display:grid!important;
-  grid-template-columns:9px minmax(72px,1fr)!important;
-  align-items:center!important;
-  justify-content:center!important;
-  column-gap:6px!important;
-  min-width:108px!important;
-  min-height:30px!important;
-  padding:4px 8px!important;
-  background:#171b18!important;
-  border-radius:999px!important;
-}
-html[data-theme="light"] .status-picker .online-dot,
-html[data-theme="light"] .status-picker #onlineDot{
-  width:9px!important;
-  height:9px!important;
-  margin:0!important;
-}
-html[data-theme="light"] .status-picker select,
-html[data-theme="light"] #userStatus{
-  width:100%!important;
-  min-width:0!important;
-  height:22px!important;
-  margin:0!important;
-  padding:0 15px 0 0!important;
-  border:0!important;
-  border-radius:0!important;
-  background:transparent!important;
-  color:#f7faf7!important;
-  font-weight:900!important;
-  line-height:22px!important;
-  text-align:center!important;
-  text-align-last:center!important;
-  box-shadow:none!important;
-  outline:none!important;
-  color-scheme:dark;
-}
-html[data-theme="light"] .status-picker select option{
-  background:#171b18!important;
-  color:#f7faf7!important;
-}
-html[data-theme="light"] .status-picker[data-status="online"]{
-  border-color:#73ff18!important;
-  box-shadow:0 0 12px rgba(115,255,24,.24)!important;
-}
-html[data-theme="light"] .status-picker[data-status="busy"]{
-  border-color:#ff3046!important;
-  box-shadow:0 0 12px rgba(255,48,70,.24)!important;
-}
-html[data-theme="light"] .status-picker[data-status="away"]{
-  border-color:#ffae2b!important;
-  box-shadow:0 0 12px rgba(255,174,43,.24)!important;
-}
+html[data-theme="light"] .status-picker{display:grid!important;grid-template-columns:9px minmax(72px,1fr)!important;align-items:center!important;justify-content:center!important;column-gap:6px!important;min-width:108px!important;min-height:30px!important;padding:4px 8px!important;background:#171b18!important;border-radius:999px!important}
+html[data-theme="light"] .status-picker .online-dot,html[data-theme="light"] .status-picker #onlineDot{width:9px!important;height:9px!important;margin:0!important}
+html[data-theme="light"] .status-picker select,html[data-theme="light"] #userStatus{width:100%!important;min-width:0!important;height:22px!important;margin:0!important;padding:0 15px 0 0!important;border:0!important;border-radius:0!important;background:transparent!important;color:#f7faf7!important;font-weight:900!important;line-height:22px!important;text-align:center!important;text-align-last:center!important;box-shadow:none!important;outline:none!important;color-scheme:dark}
+html[data-theme="light"] .status-picker select option{background:#171b18!important;color:#f7faf7!important}
+html[data-theme="light"] .status-picker[data-status="online"]{border-color:#73ff18!important;box-shadow:0 0 8px rgba(115,255,24,.18)!important}
+html[data-theme="light"] .status-picker[data-status="busy"]{border-color:#ff3046!important;box-shadow:0 0 8px rgba(255,48,70,.18)!important}
+html[data-theme="light"] .status-picker[data-status="away"]{border-color:#ffae2b!important;box-shadow:0 0 8px rgba(255,174,43,.18)!important}
 
-/* Tema claro menos estourado/lavado nas áreas principais. */
-html[data-theme="light"] .home-v22,
-html[data-theme="light"] .forum-page,
-html[data-theme="light"] .team-page,
-html[data-theme="light"] .updates-page,
-html[data-theme="light"] .buddy-page,
-html[data-theme="light"] .participe-page,
-html[data-theme="light"] .loja-page,
-html[data-theme="light"] .admin-main{
-  background-color:#d2ccbf!important;
-}
-html[data-theme="light"] .forum-hero-v38,
-html[data-theme="light"] .page-hero-center,
-html[data-theme="light"] .team-hero,
-html[data-theme="light"] .updates-hero,
-html[data-theme="light"] .buddy-hero{
-  background-color:#d2ccbf!important;
-}
+html[data-theme="light"] .home-v22,html[data-theme="light"] .forum-page,html[data-theme="light"] .team-page,html[data-theme="light"] .updates-page,html[data-theme="light"] .buddy-page,html[data-theme="light"] .participe-page,html[data-theme="light"] .loja-page,html[data-theme="light"] .admin-main{background-color:#d2ccbf!important}
+html[data-theme="light"] .forum-hero-v38,html[data-theme="light"] .page-hero-center,html[data-theme="light"] .team-hero,html[data-theme="light"] .updates-hero,html[data-theme="light"] .buddy-hero{background-color:#d2ccbf!important}
 
-/* Badges de título — mantém identidade, mas com contraste mais elegante. */
-html[data-theme="light"] .page-title-badge,
-html[data-theme="light"] .forum-title-badge{
-  background:#8a8377!important;
-  border-color:rgba(255,216,74,.55)!important;
-  color:var(--tl-neon-gold-core)!important;
-  text-shadow:
-    0 0 3px rgba(255,244,163,.95),
-    0 0 9px rgba(255,216,74,.70),
-    0 0 18px rgba(232,169,0,.42)!important;
-  box-shadow:inset 0 0 0 1px rgba(255,255,255,.08),0 0 14px rgba(255,216,74,.12)!important;
-}
-html[data-theme="light"] .page-title-badge::before,
-html[data-theme="light"] .page-title-badge::after,
-html[data-theme="light"] .forum-title-badge::before,
-html[data-theme="light"] .forum-title-badge::after{
-  background:linear-gradient(90deg,transparent,rgba(255,216,74,.68))!important;
-  box-shadow:0 0 7px rgba(255,216,74,.30)!important;
-}
+html[data-theme="light"] .page-title-badge,html[data-theme="light"] .forum-title-badge{background:#4b4d47!important;border-color:rgba(214,169,40,.78)!important;color:#ffe49a!important;text-shadow:0 1px 0 rgba(115,72,0,.75),0 0 2px rgba(255,239,178,.72),0 0 5px rgba(235,177,38,.22)!important;box-shadow:inset 0 1px 0 rgba(255,255,255,.12),inset 0 -1px 0 rgba(0,0,0,.22),0 2px 5px rgba(25,22,15,.18)!important}
+html[data-theme="light"] .page-title-badge::before,html[data-theme="light"] .page-title-badge::after,html[data-theme="light"] .forum-title-badge::before,html[data-theme="light"] .forum-title-badge::after{background:linear-gradient(90deg,transparent,rgba(210,164,47,.62))!important;box-shadow:none!important}
 
-/* Fórum: os cards continuam escuros no claro; texto precisa parecer neon, não apagado. */
-html[data-theme="light"] .forum-category-block,
-html[data-theme="light"] .forum-topic-list-panel,
-html[data-theme="light"] .forum-topic-page{
-  background:#0c100e!important;
-  border-color:rgba(255,216,74,.34)!important;
-  box-shadow:0 14px 36px rgba(20,20,16,.24)!important;
-}
-html[data-theme="light"] .forum-category-block>header,
-html[data-theme="light"] .forum-topic-list-panel>header{
-  background:linear-gradient(90deg,#202a23,#101512)!important;
-}
-html[data-theme="light"] .forum-category-block>header h3,
-html[data-theme="light"] .forum-category-block>header h3 a,
-html[data-theme="light"] .forum-topic-list-panel>header h3,
-html[data-theme="light"] .forum-section-copy strong,
-html[data-theme="light"] .forum-section-last strong,
-html[data-theme="light"] .forum-topic-copy strong{
-  color:var(--tl-neon-gold)!important;
-  text-shadow:
-    0 0 2px rgba(255,244,163,.90),
-    0 0 8px rgba(255,216,74,.55),
-    0 0 14px rgba(232,169,0,.30)!important;
-}
-html[data-theme="light"] .forum-category-block>header p,
-html[data-theme="light"] .forum-category-block>header>span,
-html[data-theme="light"] .forum-section-copy small,
-html[data-theme="light"] .forum-section-count small,
-html[data-theme="light"] .forum-section-last small,
-html[data-theme="light"] .forum-section-last span,
-html[data-theme="light"] .forum-topic-copy small,
-html[data-theme="light"] .forum-topic-metric small,
-html[data-theme="light"] .forum-topic-activity small{
-  color:#aeb8b1!important;
-  opacity:1!important;
-  text-shadow:none!important;
-}
-html[data-theme="light"] .forum-section-count b,
-html[data-theme="light"] .forum-topic-metric b,
-html[data-theme="light"] .forum-topic-activity strong{
-  color:#f3f6f4!important;
-  text-shadow:0 0 7px rgba(255,255,255,.08)!important;
-}
-html[data-theme="light"] .forum-section-last b,
-html[data-theme="light"] .forum-topic-copy b,
-html[data-theme="light"] .forum-mention,
-html[data-theme="light"] .role-dev,
-html[data-theme="light"] .role-master{
-  color:var(--tl-neon-cyan)!important;
-  text-shadow:
-    0 0 3px rgba(94,243,255,.95),
-    0 0 9px rgba(94,243,255,.62),
-    0 0 16px rgba(28,192,255,.34)!important;
-}
-html[data-theme="light"] .forum-section-row{
-  color:#e9efeb!important;
-}
-html[data-theme="light"] .forum-section-row:hover,
-html[data-theme="light"] .forum-section-row:focus-visible{
-  background:rgba(94,243,255,.045)!important;
-}
+html[data-theme="light"] .forum-category-block,html[data-theme="light"] .forum-topic-list-panel,html[data-theme="light"] .forum-topic-page{background:#0c100e!important;border-color:rgba(206,165,63,.30)!important;box-shadow:0 14px 36px rgba(20,20,16,.24)!important}
+html[data-theme="light"] .forum-category-block>header,html[data-theme="light"] .forum-topic-list-panel>header{background:linear-gradient(90deg,#202a23,#101512)!important}
+html[data-theme="light"] .forum-category-block>header h3,html[data-theme="light"] .forum-category-block>header h3 a,html[data-theme="light"] .forum-topic-list-panel>header h3,html[data-theme="light"] .forum-section-copy strong,html[data-theme="light"] .forum-section-last strong,html[data-theme="light"] .forum-topic-copy strong{color:#f5c84b!important;text-shadow:0 1px 0 #7a5105,0 0 2px rgba(255,239,174,.62),0 0 4px rgba(230,169,32,.20)!important}
+html[data-theme="light"] .forum-category-block>header p,html[data-theme="light"] .forum-category-block>header>span,html[data-theme="light"] .forum-section-copy small,html[data-theme="light"] .forum-section-count small,html[data-theme="light"] .forum-section-last small,html[data-theme="light"] .forum-section-last span,html[data-theme="light"] .forum-topic-copy small,html[data-theme="light"] .forum-topic-metric small,html[data-theme="light"] .forum-topic-activity small{color:#aeb8b1!important;opacity:1!important;text-shadow:none!important}
+html[data-theme="light"] .forum-section-count b,html[data-theme="light"] .forum-topic-metric b,html[data-theme="light"] .forum-topic-activity strong{color:#f3f6f4!important;text-shadow:none!important}
+html[data-theme="light"] .forum-section-last b,html[data-theme="light"] .forum-topic-copy b,html[data-theme="light"] .forum-mention,html[data-theme="light"] .role-dev,html[data-theme="light"] .role-master{color:#50e3f5!important;text-shadow:0 0 2px rgba(80,227,245,.46),0 0 5px rgba(27,171,211,.18)!important}
+html[data-theme="light"] .forum-section-row{color:#e9efeb!important}
+html[data-theme="light"] .forum-section-row:hover,html[data-theme="light"] .forum-section-row:focus-visible{background:rgba(80,227,245,.035)!important}
 
-/* Inputs do chat mantêm superfície escura ao redor, mas campo legível sem parecer colado em branco puro. */
-html[data-theme="light"] .tl-chat-compose-box{
-  background:#6f6a60!important;
-  border-color:rgba(255,216,74,.30)!important;
-}
-html[data-theme="light"] .tl-chat-compose-box textarea,
-html[data-theme="light"] #chatInput{
-  background:#f4f1ea!important;
-  color:#232823!important;
-}
+html[data-theme="light"] .tl-chat-compose-box{background:#6f6a60!important;border-color:rgba(214,169,40,.30)!important}
+html[data-theme="light"] .tl-chat-compose-box textarea,html[data-theme="light"] #chatInput{background:#f4f1ea!important;color:#232823!important}
 
-@media(max-width:900px){
-  html[data-theme="light"] .status-picker{
-    min-width:102px!important;
-    padding:4px 7px!important;
-  }
-  html[data-theme="light"] .status-picker select,
-  html[data-theme="light"] #userStatus{
-    font-size:10px!important;
-  }
-}
+@media(max-width:900px){html[data-theme="light"] .status-picker{min-width:102px!important;padding:4px 7px!important}html[data-theme="light"] .status-picker select,html[data-theme="light"] #userStatus{font-size:10px!important}}
