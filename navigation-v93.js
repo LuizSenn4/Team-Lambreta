@@ -22,7 +22,9 @@
     tourScript.dataset.tlTour = 'true';
     document.body.appendChild(tourScript);
     const tourStyle = document.createElement('link');
-    tourStyle.rel = 'stylesheet'; tourStyle.href = 'tour-v1.css?v=1.2'; tourStyle.dataset.tlTour = 'true';
+    tourStyle.rel = 'stylesheet';
+    tourStyle.href = 'tour-v1.css?v=1.2';
+    tourStyle.dataset.tlTour = 'true';
     document.head.appendChild(tourStyle);
   }
   if (!document.querySelector('script[data-tl-member-mention-preview]')) {
@@ -31,18 +33,19 @@
     mentionPreviewScript.dataset.tlMemberMentionPreview = 'true';
     document.body.appendChild(mentionPreviewScript);
   }
-  const savedTheme = localStorage.getItem('tl_theme') || 'system';
+
+  const storedTheme = localStorage.getItem('tl_theme');
+  const savedTheme = storedTheme === 'light' || storedTheme === 'dark'
+    ? storedTheme
+    : (matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark');
+
   const applyTheme = value => {
-    const resolved = value === 'system' ? (matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark') : value;
+    const resolved = value === 'light' ? 'light' : 'dark';
     document.documentElement.dataset.theme = resolved;
-    document.documentElement.dataset.themePreference = value;
+    document.documentElement.dataset.themePreference = resolved;
   };
   applyTheme(savedTheme);
 
-  /* V93.9.6 — patch de correção preservado sobre a versão atual.
-     1) Normaliza nomes/nicks usados por cargos e moderação.
-     2) Corrige o título do chat para não ficar absoluto/sobreposto em telas menores.
-     3) Evita overflow horizontal causado por checkboxes visuais ocultos. */
   if (typeof window.normalizeChatName !== 'function') {
     window.normalizeChatName = function normalizeChatName(name) {
       return String(name || '')
@@ -77,7 +80,66 @@
         height: 1px !important;
       }
 
-      .tl-menu-link[data-updates-new] b{margin-left:4px;color:#73ff18;font-size:9px;letter-spacing:.04em}
+      .tl-menu-link[data-updates-new] b{
+        margin-left:4px;
+        color:#73ff18;
+        font-size:9px;
+        letter-spacing:.04em;
+      }
+
+      .tl-theme-icons{
+        display:inline-flex!important;
+        align-items:center!important;
+        justify-content:center!important;
+        gap:4px!important;
+        flex:0 0 auto!important;
+        padding:4px!important;
+        margin:0!important;
+        border:1px solid rgba(217,164,65,.38)!important;
+        border-radius:12px!important;
+        background:rgba(9,8,6,.92)!important;
+        box-sizing:border-box!important;
+      }
+      .tl-theme-icon{
+        appearance:none!important;
+        display:grid!important;
+        place-items:center!important;
+        width:30px!important;
+        height:30px!important;
+        min-width:30px!important;
+        min-height:30px!important;
+        padding:0!important;
+        margin:0!important;
+        border:0!important;
+        border-radius:8px!important;
+        background:transparent!important;
+        color:#bfb39a!important;
+        font:700 17px/1 system-ui!important;
+        cursor:pointer!important;
+        transition:background .16s ease,color .16s ease,box-shadow .16s ease!important;
+      }
+      .tl-theme-icon:hover,
+      .tl-theme-icon:focus-visible{
+        color:#fff0a8!important;
+        background:rgba(217,164,65,.10)!important;
+        outline:none!important;
+      }
+      .tl-theme-icon.is-active{
+        color:#ffe06a!important;
+        background:rgba(217,164,65,.15)!important;
+        box-shadow:inset 0 0 0 1px rgba(217,164,65,.34),0 0 9px rgba(217,164,65,.13)!important;
+      }
+      html[data-theme="light"] .tl-theme-icons{
+        background:#f6f1e6!important;
+        border-color:rgba(111,86,30,.36)!important;
+      }
+      html[data-theme="light"] .tl-theme-icon{
+        color:#5d584f!important;
+      }
+      html[data-theme="light"] .tl-theme-icon.is-active{
+        color:#9b6d00!important;
+        background:#fff8df!important;
+      }
     `;
     document.head.appendChild(patchStyle);
   }
@@ -103,16 +165,31 @@
     </div>
     <a class="tl-menu-link" href="participe.html"><span>Participe</span></a>
     <a class="tl-menu-link" href="loja.html"><span>Loja</span></a>
-    <label class="tl-theme-control"><span>Tema</span><select id="tlThemeSelect" aria-label="Escolher tema"><option value="system">◐ Sistema</option><option value="light">☀ Claro</option><option value="dark">🌙 Escuro</option></select></label>`;
+    <div class="tl-theme-icons" role="group" aria-label="Escolher tema">
+      <button class="tl-theme-icon" type="button" data-theme-choice="light" aria-label="Tema claro" title="Tema claro">☀</button>
+      <button class="tl-theme-icon" type="button" data-theme-choice="dark" aria-label="Tema escuro" title="Tema escuro">☾</button>
+    </div>`;
 
   nav.innerHTML = globalNavigation;
-  const themeSelect = nav.querySelector('#tlThemeSelect');
-  if (themeSelect) {
-    themeSelect.value = savedTheme;
-    themeSelect.addEventListener('change', () => { localStorage.setItem('tl_theme', themeSelect.value); applyTheme(themeSelect.value); });
-  }
-  const mediaTheme = matchMedia('(prefers-color-scheme: light)');
-  mediaTheme.addEventListener?.('change', () => { if ((localStorage.getItem('tl_theme') || 'system') === 'system') applyTheme('system'); });
+
+  const themeButtons = [...nav.querySelectorAll('[data-theme-choice]')];
+  const syncThemeButtons = value => {
+    themeButtons.forEach(themeButton => {
+      const active = themeButton.dataset.themeChoice === value;
+      themeButton.classList.toggle('is-active', active);
+      themeButton.setAttribute('aria-pressed', String(active));
+    });
+  };
+  syncThemeButtons(savedTheme);
+  themeButtons.forEach(themeButton => {
+    themeButton.addEventListener('click', () => {
+      const value = themeButton.dataset.themeChoice;
+      localStorage.setItem('tl_theme', value);
+      applyTheme(value);
+      syncThemeButtons(value);
+    });
+  });
+
   const updatesLink = nav.querySelector('a[href="atualizacoes.html"]');
   if (updatesLink && localStorage.getItem('tl_seen_update_2026.08.16') !== '1') {
     updatesLink.dataset.updatesNew = 'true';
@@ -188,20 +265,35 @@
       closeGroups(open ? group : null);
       setGroup(group, open);
     });
-    group.addEventListener('mouseenter', () => { if (!mobile.matches) { closeGroups(group); setGroup(group, true); } });
-    group.addEventListener('mouseleave', () => { if (!mobile.matches) setGroup(group, false); });
+    group.addEventListener('mouseenter', () => {
+      if (!mobile.matches) {
+        closeGroups(group);
+        setGroup(group, true);
+      }
+    });
+    group.addEventListener('mouseleave', () => {
+      if (!mobile.matches) setGroup(group, false);
+    });
   });
 
   nav.querySelectorAll('a[href]').forEach(link => link.addEventListener('click', () => setMenu(false)));
-  document.addEventListener('pointerdown', event => { if (!mobile.matches && !nav.contains(event.target)) closeGroups(); });
+  document.addEventListener('pointerdown', event => {
+    if (!mobile.matches && !nav.contains(event.target)) closeGroups();
+  });
   document.addEventListener('keydown', event => {
     if (event.key === 'Escape') setMenu(false);
     if (event.key === 'Tab' && nav.classList.contains('is-mobile-open')) {
       const focusable = [...nav.querySelectorAll('a[href],button:not([disabled])')].filter(el => el.offsetParent !== null);
       if (!focusable.length) return;
-      const first = focusable[0], last = focusable[focusable.length - 1];
-      if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last.focus(); }
-      else if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first.focus(); }
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+      if (event.shiftKey && document.activeElement === first) {
+        event.preventDefault();
+        last.focus();
+      } else if (!event.shiftKey && document.activeElement === last) {
+        event.preventDefault();
+        first.focus();
+      }
     }
   });
   mobile.addEventListener?.('change', () => setMenu(false));
