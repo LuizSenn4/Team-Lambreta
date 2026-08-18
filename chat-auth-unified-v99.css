@@ -71,6 +71,20 @@
   text-shadow:none;
 }
 
+/* Dark deve usar exatamente a mesma geometria aprovada no tema claro. */
+html:not([data-theme="light"]) .chat-auth-user{align-items:center!important}
+html:not([data-theme="light"]) .chat-auth-user-name{line-height:18px!important}
+html:not([data-theme="light"]) .chat-auth-user-role{
+  align-self:center!important;
+  height:18px!important;
+  min-height:18px!important;
+  padding:0 7px!important;
+  margin:0!important;
+  line-height:16px!important;
+  transform:none!important;
+  top:auto!important;
+}
+
 /* Tema escuro: DEV nítido, logo após o nick e alinhado na mesma altura. */
 .chat-auth-user.role-master .chat-auth-user-name,
 .chat-auth-user.role-dev .chat-auth-user-name{
