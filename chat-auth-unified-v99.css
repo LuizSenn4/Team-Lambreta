@@ -67,7 +67,7 @@
   text-transform:uppercase;
   position:static;
   top:auto;
-  transform:translateY(-1px);
+  transform:none;
   text-shadow:none;
 }
 
@@ -115,7 +115,7 @@
 }
 .chat-auth-logout:hover,.chat-auth-logout:focus-visible{border-color:#ff6378;outline:none}
 
-/* Tema claro: preserva o visual aprovado; só remove o pequeno deslocamento usado no dark. */
+/* Tema claro: preserva o visual aprovado. */
 html[data-theme="light"] .chat-auth-user-name{color:#202720!important;text-shadow:none!important}
 html[data-theme="light"] .chat-auth-user.role-master .chat-auth-user-name,
 html[data-theme="light"] .chat-auth-user.role-dev .chat-auth-user-name{
