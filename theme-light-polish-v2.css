@@ -71,11 +71,8 @@ html[data-theme="light"] .tl-member-preview-meta,html[data-theme="light"] .tl-me
 html[data-theme="light"] .tl-member-preview-role{color:#fff!important;background:#092329!important;border-color:#5ef3ff!important;min-height:18px!important;padding:3px 7px!important;display:inline-flex!important;align-items:center!important;justify-content:center!important;line-height:1!important;text-shadow:none!important}
 html[data-theme="light"] .tl-member-preview-go{background:#102013!important;color:#5ef3ff!important;border-color:#5ef3ff!important}
 
-/* Auth/cargo */
-html[data-theme="light"] .chat-auth-user{align-items:center!important}
-html[data-theme="light"] .chat-auth-user-name{line-height:18px!important}
-html[data-theme="light"] .chat-auth-user-role{align-self:center!important;height:18px!important;min-height:18px!important;padding:0 7px!important;margin:0!important;line-height:16px!important;transform:none!important;top:auto!important;color:#fff!important;text-shadow:none!important}
-html[data-theme="light"] .chat-auth-user.role-master .chat-auth-user-role,html[data-theme="light"] .chat-auth-user.role-dev .chat-auth-user-role{color:#fff!important;border-color:#5ef3ff!important;background:#09191b!important;box-shadow:0 0 8px rgba(94,243,255,.18)!important}
+/* Auth/cargo foi movido para chat-auth-unified-v99.css.
+   Não duplicar regras de .chat-auth-user* aqui. */
 
 /* Fórum */
 html[data-theme="light"] .forum-category-block,html[data-theme="light"] .forum-topic-list-panel,html[data-theme="light"] .forum-topic-page{background:#0b100d!important;border-color:rgba(205,169,54,.34)!important}
