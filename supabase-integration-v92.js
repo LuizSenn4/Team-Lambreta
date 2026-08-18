@@ -44,7 +44,7 @@
   if ($('chatAuthBox') && !document.querySelector('link[data-chat-auth-unified]')) {
     const authStyles = document.createElement('link');
     authStyles.rel = 'stylesheet';
-    authStyles.href = 'chat-auth-unified-v99.css?v=99.0';
+    authStyles.href = 'chat-auth-unified-v99.css?v=99.1';
     authStyles.dataset.chatAuthUnified = '1';
     document.head.appendChild(authStyles);
   }

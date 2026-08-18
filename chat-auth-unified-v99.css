@@ -77,8 +77,25 @@
   cursor:pointer;
 }
 .chat-auth-logout:hover,.chat-auth-logout:focus-visible{border-color:#ff6378;outline:none}
+
+/* Tema escuro: identidade nítida, sem glow ou blur. O tema claro mantém a aparência existente. */
+html:not([data-theme="light"]) .chat-auth-user{
+  flex-wrap:nowrap;
+}
+html:not([data-theme="light"]) .chat-auth-user-name{
+  flex:1 1 auto;
+  color:#00dff2;
+  -webkit-text-stroke:.7px #fff;
+  paint-order:stroke fill;
+  text-shadow:none;
+  filter:none;
+  opacity:1;
+}
+html:not([data-theme="light"]) .chat-auth-user.role-master .chat-auth-user-role{
+  text-shadow:none;
+}
 @media(max-width:430px){
-  .chat-auth-user{flex-wrap:wrap;column-gap:7px;row-gap:5px}
+  .chat-auth-user{column-gap:7px;row-gap:5px}
   .chat-auth-user-name{flex:1 1 110px}
   .chat-auth-logout{margin-left:auto}
 }
