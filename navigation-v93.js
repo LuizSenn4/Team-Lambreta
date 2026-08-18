@@ -21,6 +21,7 @@
   loadCss('link[data-tl-tour]', 'tour-v1.css?v=1.2', 'tlTour');
   loadScript('script[data-tl-tour]', 'tour-v1.js?v=1.4', 'tlTour');
   loadScript('script[data-tl-member-mention-preview]', 'member-mention-preview-v1.js?v=1.1', 'tlMemberMentionPreview');
+  loadScript('script[data-tl-auth-profile-menu]', 'auth-profile-menu-v1.js?v=1.0', 'tlAuthProfileMenu');
   if (/home\.html$/i.test(location.pathname) || location.pathname === '/' || location.pathname === '') {
     loadScript('script[data-tl-home-profile-editor]', 'home-profile-editor-v1.js?v=1.0', 'tlHomeProfileEditor');
   }
