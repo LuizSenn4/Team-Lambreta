@@ -30,7 +30,28 @@
     pending=true;
     const button=form.querySelector('button[type="submit"]'); button.disabled=true; say('Enviando…');
     const values=Object.fromEntries(new FormData(form));
-    const row={...values,user_id:session.user.id,age:Number(values.age),power_ranking:values.power_ranking?Number(values.power_ranking):null,status:'pendente'};
+    const mode=String(values.preferred_mode||'');
+    const buildPreference=mode==='Zero Build'?'zero_build':mode==='Battle Royale'?'build':'ambos';
+    const row={
+      user_id:session.user.id,
+      full_name:values.full_name,
+      epic_nickname:values.epic_nickname,
+      age:Number(values.age),
+      country:values.region_text,
+      discord:values.discord,
+      platform:values.platform,
+      input_method:'Não informado',
+      region:values.region_text,
+      build_preference:buildPreference,
+      main_mode:mode,
+      competitive_experience:`Tempo de Fortnite: ${values.fortnite_time}\nExperiência em torneios: ${values.tournament_experience}`,
+      power_ranking:null,
+      tracker_links:values.epic_id,
+      availability:values.availability,
+      motivation:values.motivation,
+      notes:`Rank atual: ${values.current_rank}`,
+      status:'pendente'
+    };
     const {data,error}=await sb.from('competition_applications').insert(row).select('id').single();
     if(error){pending=false;button.disabled=false;say(error.code==='23505'?'Você já possui uma inscrição pendente.':`Não foi possível enviar: ${error.message}`,true);return;}
     form.reset();
