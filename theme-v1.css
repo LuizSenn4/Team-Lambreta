@@ -22,3 +22,31 @@ html[data-theme="light"]{
 .tl-theme-control[data-theme-control]{
   display:none!important;
 }
+
+/* Streamers: preencher a box por completo, sem margens internas.
+   Esta regra prevalece sobre os antigos object-fit:contain do style-v92.css. */
+.streamers-page .streamer-card-photo,
+.streamers-page .streamer-live-preview,
+.streamer-photo-preview-shell{
+  overflow:hidden!important;
+}
+
+.streamers-page .streamer-card-photo img,
+.streamers-page .streamer-live-preview img,
+.streamer-photo-preview-shell #streamerPhotoPreview{
+  width:100%!important;
+  height:100%!important;
+  display:block!important;
+  object-fit:cover!important;
+  object-position:center center!important;
+  background:transparent!important;
+}
+
+/* O preview do painel representa fielmente o resultado publico. */
+.streamer-photo-preview-shell #streamerPhotoPreview{
+  max-width:none!important;
+  max-height:none!important;
+  min-width:100%!important;
+  min-height:100%!important;
+  border-radius:inherit!important;
+}
