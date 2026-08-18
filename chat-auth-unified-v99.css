@@ -89,9 +89,9 @@ html:not([data-theme="light"]) .chat-auth-user-role{
 .chat-auth-user.role-master .chat-auth-user-name,
 .chat-auth-user.role-dev .chat-auth-user-name{
   color:#00dff2!important;
-  -webkit-text-stroke:0 transparent;
-  paint-order:normal;
-  text-shadow:0 0 2px rgba(255,255,255,.72),0 0 5px rgba(255,255,255,.28)!important;
+  -webkit-text-stroke:.45px rgba(255,255,255,.78);
+  paint-order:stroke fill;
+  text-shadow:0 1px 0 rgba(255,255,255,.28)!important;
 }
 
 .chat-auth-user.role-master .chat-auth-user-role,
