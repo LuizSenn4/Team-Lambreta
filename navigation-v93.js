@@ -44,6 +44,7 @@
       .tl-enter-toggle>input,.tl-chat-remember input{width:1px!important;height:1px!important}
       .tl-menu-link[data-updates-new] b{margin-left:3px;color:#73ff18;font-size:8px;letter-spacing:.03em}
       .tl-header-actions{display:inline-flex!important;align-items:center!important;justify-content:center!important;gap:0!important;flex:0 0 auto!important;margin:0!important;white-space:nowrap!important;height:36px!important}
+      .tl-admin-key{display:none!important}
       .tl-admin-key-mini{display:none;place-items:center;align-self:center;width:29px;height:29px;min-width:29px;min-height:29px;padding:0;margin:0;border:0!important;border-radius:7px;background:transparent!important;color:#d7d7d7;text-decoration:none;opacity:.88;cursor:pointer;box-shadow:none!important;outline:0;transition:color .16s ease,opacity .16s ease,transform .16s ease,background .16s ease}
       .tl-admin-key-mini.is-visible{display:grid}
       .tl-admin-key-mini:hover,.tl-admin-key-mini:focus-visible{opacity:1;color:#fff;background:rgba(255,255,255,.07)!important;transform:translateY(-1px);outline:none}
