@@ -58,11 +58,11 @@
   position:static;
   transform:none;
 }
-.chat-auth-user.role-master .chat-auth-user-role{color:var(--role-dev, #5ef3ff);text-shadow:0 0 8px color-mix(in srgb,var(--role-dev, #5ef3ff) 45%,transparent)}
-.chat-auth-user.role-admin .chat-auth-user-role{color:#ff405a}
-.chat-auth-user.role-moderator .chat-auth-user-role{color:#4da8ff}
-.chat-auth-user.role-staff .chat-auth-user-role{color:#b184ff}
-.chat-auth-user.role-streamer .chat-auth-user-role{color:#ff42d0}
+.chat-auth-user.role-master .chat-auth-user-role,
+.chat-auth-user.role-admin .chat-auth-user-role,
+.chat-auth-user.role-moderator .chat-auth-user-role,
+.chat-auth-user.role-staff .chat-auth-user-role,
+.chat-auth-user.role-streamer .chat-auth-user-role{color:inherit}
 .chat-auth-logout{
   flex:0 0 auto;
   min-height:28px;
@@ -78,22 +78,6 @@
 }
 .chat-auth-logout:hover,.chat-auth-logout:focus-visible{border-color:#ff6378;outline:none}
 
-/* Tema escuro: identidade nítida, sem glow ou blur. O tema claro mantém a aparência existente. */
-html:not([data-theme="light"]) .chat-auth-user{
-  flex-wrap:nowrap;
-}
-html:not([data-theme="light"]) .chat-auth-user-name{
-  flex:1 1 auto;
-  color:#00dff2;
-  -webkit-text-stroke:.7px #fff;
-  paint-order:stroke fill;
-  text-shadow:none;
-  filter:none;
-  opacity:1;
-}
-html:not([data-theme="light"]) .chat-auth-user.role-master .chat-auth-user-role{
-  text-shadow:none;
-}
 @media(max-width:430px){
   .chat-auth-user{column-gap:7px;row-gap:5px}
   .chat-auth-user-name{flex:1 1 110px}

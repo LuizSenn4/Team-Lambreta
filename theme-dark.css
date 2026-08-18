@@ -1,0 +1,120 @@
+/* Tema escuro — única camada visual noturna do Team Lambreta. */
+:root,
+html[data-theme="dark"] {
+  --tl-theme-bg: #050403;
+  --tl-theme-surface: #11100e;
+  --tl-theme-surface-2: #1a1814;
+  --tl-theme-text: #fff3c5;
+  --tl-theme-muted: #b8a37b;
+  --tl-theme-border: rgba(217, 164, 65, .22);
+  --tl-theme-shadow: 0 18px 48px rgba(0, 0, 0, .28);
+  --tl-theme-overlay: rgba(3, 5, 4, .78);
+  --role-dev: #5ef3ff;
+}
+
+html[data-theme="dark"] body,
+html[data-theme="dark"] .site-content,
+html[data-theme="dark"] .home-page,
+html[data-theme="dark"] .forum-page,
+html[data-theme="dark"] .buddy-page {
+  background: var(--tl-theme-bg);
+  color: var(--tl-theme-text);
+}
+
+html[data-theme="dark"] .site-header.tl-header-v88 {
+  background: rgba(8, 8, 7, .94);
+  border-bottom-color: var(--tl-theme-border);
+}
+
+html[data-theme="dark"] .forum-board-view,
+html[data-theme="dark"] .forum-category-block,
+html[data-theme="dark"] .forum-topic-list-panel,
+html[data-theme="dark"] .forum-topic-page,
+html[data-theme="dark"] .forum-full-profile,
+html[data-theme="dark"] .forum-board-dialog,
+html[data-theme="dark"] .forum-profile-picker,
+html[data-theme="dark"] .forum-post-card,
+html[data-theme="dark"] .forum-topic,
+html[data-theme="dark"] .buddy-app,
+html[data-theme="dark"] .updates-release,
+html[data-theme="dark"] .updates-item {
+  background: var(--tl-theme-surface);
+  color: var(--tl-theme-text);
+  border-color: var(--tl-theme-border);
+  box-shadow: var(--tl-theme-shadow);
+}
+
+html[data-theme="dark"] .forum-profile-cover-prototype,
+html[data-theme="dark"] .forum-profile-cover-art {
+  background-color: var(--tl-theme-surface-2);
+}
+
+html[data-theme="dark"] .forum-category-block > header,
+html[data-theme="dark"] .forum-topic-list-panel > header,
+html[data-theme="dark"] .forum-full-profile > header {
+  background: var(--tl-theme-surface-2);
+  border-bottom-color: var(--tl-theme-border);
+}
+
+html[data-theme="dark"] .forum-board-dialog input,
+html[data-theme="dark"] .forum-board-dialog select,
+html[data-theme="dark"] .forum-board-dialog textarea,
+html[data-theme="dark"] .forum-category-select {
+  background: #090c0a;
+  border-color: rgba(217, 164, 65, .28);
+  color: var(--tl-theme-text);
+}
+
+html[data-theme="dark"] .forum-profile-tabs,
+html[data-theme="dark"] .forum-post-card > footer,
+html[data-theme="dark"] .site-footer {
+  border-color: rgba(217, 164, 65, .14);
+}
+
+html[data-theme="dark"] .forum-board-dialog::backdrop {
+  background: rgba(0, 0, 0, .72);
+}
+
+html[data-theme="dark"] input,
+html[data-theme="dark"] textarea,
+html[data-theme="dark"] select,
+html[data-theme="dark"] button {
+  color-scheme: dark;
+}
+
+html[data-theme="dark"] .forum-country-results,
+html[data-theme="dark"] .forum-game-results,
+html[data-theme="dark"] .forum-topic-moderation-menu,
+html[data-theme="dark"] .tl-main-nav .tl-submenu {
+  background: var(--tl-theme-surface-2);
+  border-color: var(--tl-theme-border);
+  box-shadow: var(--tl-theme-shadow);
+}
+
+html[data-theme="dark"] .forum-profile-cover-copy .forum-role-badge.role-dev,
+html[data-theme="dark"] .forum-profile-cover-copy .forum-role-badge.role-master {
+  color: #5ef3ff;
+  border-color: #5ef3ff;
+}
+
+html[data-theme="dark"] .chat-auth-user {
+  flex-wrap: nowrap;
+}
+
+html[data-theme="dark"] .chat-auth-user-name {
+  color: #00dff2;
+  -webkit-text-stroke: .7px #fff;
+  paint-order: stroke fill;
+  text-shadow: none;
+  filter: none;
+  opacity: 1;
+}
+
+html[data-theme="dark"] .chat-auth-user.role-master .chat-auth-user-role {
+  color: #5ef3ff;
+  text-shadow: none;
+}
+html[data-theme="dark"] .chat-auth-user.role-admin .chat-auth-user-role { color: #ff405a; }
+html[data-theme="dark"] .chat-auth-user.role-moderator .chat-auth-user-role { color: #4da8ff; }
+html[data-theme="dark"] .chat-auth-user.role-staff .chat-auth-user-role { color: #b184ff; }
+html[data-theme="dark"] .chat-auth-user.role-streamer .chat-auth-user-role { color: #ff42d0; }

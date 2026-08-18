@@ -1,0 +1,20 @@
+/* Estrutura compacta dos seletores do perfil; cores pertencem aos temas. */
+#forumPlatformOptions {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  max-height: 150px;
+  margin: 8px 0 0;
+  overflow-y: auto;
+}
+
+#forumModeOptions {
+  max-height: 220px;
+  overflow-y: auto;
+}
+
+@media (max-width: 480px) {
+  #forumPlatformOptions {
+    grid-template-columns: 1fr;
+    max-height: 170px;
+  }
+}
