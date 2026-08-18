@@ -1,7 +1,7 @@
 /* Chat auth footer — fonte única de estilo para avatar, nick, cargo e sair. */
 .sb-auth-bar[hidden]{display:none!important}
 
-/* Neutraliza regras antigas de .chat-auth-box/.chat-auth-footer no CSS legado. */
+/* HARD RESET: neutraliza qualquer CSS legado antes de reconstruir o componente. */
 .chat-auth-box.chat-auth-compact.chat-auth-footer{
   display:block!important;
   width:100%!important;
@@ -19,6 +19,8 @@
 .chat-auth-footer.is-connected{display:block!important;width:100%!important;min-width:0!important}
 
 .chat-auth-user{
+  all:unset!important;
+  box-sizing:border-box!important;
   display:flex!important;
   align-items:center!important;
   justify-content:flex-start!important;
@@ -32,6 +34,8 @@
 }
 
 .chat-auth-user-avatar{
+  all:unset!important;
+  box-sizing:border-box!important;
   display:grid!important;
   place-items:center!important;
   width:28px!important;
@@ -44,15 +48,19 @@
   background:#10120f!important;
   color:#f2d986!important;
   object-fit:cover!important;
+  font-family:Inter,Arial,sans-serif!important;
   font-size:11px!important;
   font-weight:900!important;
   line-height:28px!important;
-  transform:none!important;
+  vertical-align:middle!important;
 }
 
 .chat-auth-user-name{
+  all:unset!important;
+  box-sizing:border-box!important;
   display:inline-flex!important;
   align-items:center!important;
+  justify-content:flex-start!important;
   flex:0 1 auto!important;
   min-width:0!important;
   height:18px!important;
@@ -60,16 +68,18 @@
   padding:0!important;
   overflow:hidden!important;
   color:#00dff2!important;
+  font-family:Inter,Arial,sans-serif!important;
   font-size:12px!important;
   font-weight:850!important;
   line-height:18px!important;
   text-overflow:ellipsis!important;
   white-space:nowrap!important;
   vertical-align:middle!important;
-  transform:none!important;
 }
 
 .chat-auth-user-role{
+  all:unset!important;
+  box-sizing:border-box!important;
   display:inline-flex!important;
   align-items:center!important;
   justify-content:center!important;
@@ -81,11 +91,11 @@
   min-height:18px!important;
   margin:0!important;
   padding:0 7px!important;
-  box-sizing:border-box!important;
   border:1px solid currentColor!important;
   border-radius:999px!important;
-  background:rgba(8,14,11,.92)!important;
-  color:#f7faf8!important;
+  background:#09191b!important;
+  color:#fff!important;
+  font-family:Inter,Arial,sans-serif!important;
   font-size:8px!important;
   font-weight:950!important;
   line-height:16px!important;
@@ -93,13 +103,10 @@
   text-align:center!important;
   text-transform:uppercase!important;
   vertical-align:middle!important;
-  position:static!important;
-  inset:auto!important;
-  transform:none!important;
   text-shadow:none!important;
 }
 
-/* DEV: MESMA proporção e MESMO efeito. Só muda preto <-> branco entre os temas. */
+/* DEV: mesma geometria nos dois temas; só muda preto <-> branco no contorno do nick. */
 html:not([data-theme="light"]) .chat-auth-user.role-master .chat-auth-user-name,
 html:not([data-theme="light"]) .chat-auth-user.role-dev .chat-auth-user-name{
   color:#00dff2!important;
@@ -140,6 +147,8 @@ html[data-theme="light"] .chat-auth-user.role-vip .chat-auth-user-role{color:#4b
 html[data-theme="light"] .chat-auth-user.role-supporter .chat-auth-user-role{color:#184d08!important;border-color:#54b81c!important;background:#e1f4d6!important}
 
 .chat-auth-logout{
+  all:unset!important;
+  box-sizing:border-box!important;
   display:inline-flex!important;
   align-items:center!important;
   justify-content:center!important;
@@ -153,11 +162,11 @@ html[data-theme="light"] .chat-auth-user.role-supporter .chat-auth-user-role{col
   border-radius:8px!important;
   background:rgba(90,8,20,.24)!important;
   color:#ff6378!important;
+  font-family:Inter,Arial,sans-serif!important;
   font-size:10px!important;
   font-weight:900!important;
   line-height:1!important;
   vertical-align:middle!important;
-  transform:none!important;
   cursor:pointer!important;
 }
 .chat-auth-logout:hover,.chat-auth-logout:focus-visible{border-color:#ff6378!important;outline:none!important}
