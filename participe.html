@@ -6,6 +6,21 @@
   <title>Participe - Team Lambreta</title>
   <link rel="stylesheet" href="style-v92.css?v=97.2">
   <link rel="stylesheet" href="ui-core-v93.css?v=93.0">
+  <style>
+    .participate-shell{width:min(980px,calc(100% - 28px));margin:32px auto 56px}
+    .tl-join-card{border:1px solid rgba(217,164,65,.35);border-radius:22px;background:#0b0e0b;box-shadow:0 18px 50px rgba(0,0,0,.34);overflow:hidden}
+    .tl-join-head{text-align:center;padding:28px 22px 22px;border-bottom:1px solid rgba(217,164,65,.22)}
+    .tl-join-head small{display:block;color:#f2cb61;font-weight:900;letter-spacing:.08em}.tl-join-head h1{margin:8px 0 8px;color:#fff;font-size:clamp(26px,4vw,42px)}.tl-join-head p{margin:0;color:#b9c3bc;font-size:15px}
+    .tl-join-body{display:grid;gap:18px;padding:22px}
+    .tl-join-section{border:1px solid rgba(94,243,255,.16);border-radius:16px;padding:18px;background:#0f1410}
+    .tl-join-section h2{margin:0 0 14px;color:#f0cf68;font-size:18px}
+    .tl-join-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+    .tl-join-grid label{display:grid;gap:7px;color:#dfe6e1;font-size:12px;font-weight:800}.tl-join-grid label.full{grid-column:1/-1}
+    .tl-join-grid input,.tl-join-grid select,.tl-join-grid textarea{width:100%;box-sizing:border-box;border:1px solid rgba(255,255,255,.14);border-radius:11px;background:#080b09;color:#f5f7f5;padding:12px 13px;font:600 14px system-ui;outline:none}.tl-join-grid textarea{resize:vertical;min-height:110px}.tl-join-grid input:focus,.tl-join-grid select:focus,.tl-join-grid textarea:focus{border-color:#5ef3ff;box-shadow:0 0 0 2px rgba(94,243,255,.08)}
+    .tl-requirements{margin:0;padding-left:20px;color:#dce4de;line-height:1.8}.tl-goodluck{text-align:center;padding:4px 10px 2px;color:#fff}.tl-goodluck strong{display:block;color:#f3d76e;font-size:18px;margin-top:6px}
+    .participation-current{margin-bottom:4px}.participation-submit{display:flex;align-items:center;justify-content:space-between;gap:14px;padding-top:2px}.participation-submit p{margin:0;color:#8ff8ff}.participation-submit p.error{color:#ff7182}.participation-submit button{min-height:42px;padding:0 22px;border-radius:999px;border:1px solid #5ef3ff;background:#09252a;color:#8ff8ff;font-weight:900;cursor:pointer}
+    @media(max-width:700px){.participate-shell{width:min(100% - 14px,980px);margin-top:14px}.tl-join-body{padding:12px}.tl-join-section{padding:14px}.tl-join-grid{grid-template-columns:1fr}.tl-join-grid label.full{grid-column:auto}.participation-submit{align-items:stretch;flex-direction:column}.participation-submit button{width:100%}}
+  </style>
 </head>
 <body class="participate-page">
   <div id="supabaseAuthBar" class="sb-auth-bar"></div>
@@ -16,41 +31,73 @@
       <div id="tlMenuBackdrop" class="tl-mobile-menu-backdrop" hidden></div>
       <nav id="tlMainNav" class="tl-main-nav" aria-label="Menu principal"></nav>
     </header>
+
     <main class="participate-shell">
-      <section class="participate-hero"><span>FORTNITE COMPETITIVO</span><h1>Faça parte da próxima formação</h1><p>Conte-nos sobre você, a sua experiência e disponibilidade. A equipa analisará cada inscrição individualmente.</p></section>
-      <section class="participate-layout">
-        <aside class="participate-aside"><strong>Antes de enviar</strong><ul><li>Entre com a sua conta Google.</li><li>Informe dados verdadeiros e links próprios.</li><li>Só é permitida uma inscrição pendente por pessoa.</li><li>A resposta chegará na sua Caixa de entrada.</li></ul><div id="participationCurrent" class="participation-current"></div></aside>
-        <form id="participationForm" class="participation-form">
-          <div class="participation-form-head"><div><span>INSCRIÇÃO</span><h2>Perfil competitivo</h2></div><small>* campos obrigatórios</small></div>
-          <div class="participation-fields">
-            <label>Nick / Epic Games *<input name="epic_nickname" required maxlength="60" autocomplete="off"></label>
-            <label>Nome *<input name="full_name" required maxlength="100" autocomplete="name"></label>
-            <label>Idade *<input name="age" type="number" required min="13" max="99"></label>
-            <label>País *<input name="country" required maxlength="60" autocomplete="country-name"></label>
-            <label>Discord *<input name="discord" required maxlength="100" placeholder="utilizador ou utilizador#0000"></label>
-            <label>Plataforma *<select name="platform" required><option value="">Selecione</option><option>PC</option><option>PlayStation</option><option>Xbox</option><option>Switch</option><option>Mobile</option></select></label>
-            <label>Comando *<select name="input_method" required><option value="controle">Controle</option><option value="teclado_mouse">Teclado e mouse</option></select></label>
-            <label>Região / servidor *<select name="region" required><option value="">Selecione</option><option value="EU">Europa</option><option value="BR">Brasil</option><option value="NAE">NA East</option><option value="NAC">NA Central</option><option value="NAW">NA West</option><option value="ME">Middle East</option><option value="OCE">Oceania</option><option value="ASIA">Ásia</option></select></label>
-            <label>Build ou Zero Build *<select name="build_preference" required><option value="build">Build</option><option value="zero_build">Zero Build</option><option value="ambos">Ambos</option></select></label>
-            <label>Modo principal *<input name="main_mode" required maxlength="80" placeholder="Solo, Dupla, Trio..."></label>
-            <label class="full">Experiência competitiva *<textarea name="competitive_experience" required maxlength="1500" rows="5"></textarea></label>
-            <label>PR, caso tenha<input name="power_ranking" type="number" min="0" step="1"></label>
-            <label>Tracker / perfil competitivo<input name="tracker_links" type="url" maxlength="500" placeholder="https://..."></label>
-            <label class="full">Disponibilidade de horários *<textarea name="availability" required maxlength="1000" rows="4"></textarea></label>
-            <label class="full">Por que gostaria de participar? *<textarea name="motivation" required maxlength="1500" rows="5"></textarea></label>
-            <label class="full">Observações<textarea name="notes" maxlength="1000" rows="4"></textarea></label>
-          </div>
+      <form id="participationForm" class="tl-join-card">
+        <header class="tl-join-head">
+          <small>INSCRIÇÃO — TEAM LAMBRETA | FORTNITE</small>
+          <h1>🛴 Queres fazer parte da Team Lambreta? 🎮</h1>
+          <p>Estamos à procura de jogadores de Fortnite com vontade de competir, evoluir e representar a equipa!</p>
+        </header>
+
+        <div class="tl-join-body">
+          <div id="participationCurrent" class="participation-current"></div>
+
+          <section class="tl-join-section">
+            <h2>📝 Dados do jogador</h2>
+            <div class="tl-join-grid">
+              <label>Nome<input name="full_name" required maxlength="100" autocomplete="name"></label>
+              <label>Nick no Fortnite<input name="epic_nickname" required maxlength="60" autocomplete="off"></label>
+              <label>Idade<input name="age" type="number" required min="13" max="99"></label>
+              <label>Região<input name="region_text" required maxlength="80" placeholder="Ex.: Europa"></label>
+              <label>Plataforma<select name="platform" required><option value="">Seleciona</option><option>PC</option><option>PlayStation</option><option>Xbox</option><option>Switch</option></select></label>
+              <label>ID da Epic Games<input name="epic_id" required maxlength="100"></label>
+              <label class="full">Discord<input name="discord" required maxlength="100"></label>
+            </div>
+          </section>
+
+          <section class="tl-join-section">
+            <h2>🏆 Experiência</h2>
+            <div class="tl-join-grid">
+              <label>Há quanto tempo jogas Fortnite?<input name="fortnite_time" required maxlength="120"></label>
+              <label>Modo preferido<select name="preferred_mode" required><option value="">Seleciona</option><option>Battle Royale</option><option>Zero Build</option><option>Outro</option></select></label>
+              <label>Rank atual<input name="current_rank" required maxlength="80"></label>
+              <label>Experiência em torneios<input name="tournament_experience" required maxlength="300"></label>
+            </div>
+          </section>
+
+          <section class="tl-join-section">
+            <h2>🔥 Sobre ti</h2>
+            <div class="tl-join-grid">
+              <label class="full">Qual é o teu objetivo ao entrar na Team Lambreta?<textarea name="motivation" required maxlength="1500"></textarea></label>
+              <label class="full">Disponibilidade para treinos/jogos<textarea name="availability" required maxlength="1000"></textarea></label>
+            </div>
+          </section>
+
+          <section class="tl-join-section">
+            <h2>📌 Requisitos</h2>
+            <ul class="tl-requirements">
+              <li>Ter espírito de equipa.</li>
+              <li>Respeitar os restantes jogadores.</li>
+              <li>Ser ativo e comprometido.</li>
+              <li>Ter vontade de aprender e evoluir.</li>
+              <li>Manter uma atitude competitiva e positiva.</li>
+            </ul>
+          </section>
+
+          <div class="tl-goodluck">Boa sorte! 🛴🔥<strong>Bem-vindo à estrada, futuro jogador da Team Lambreta!</strong></div>
           <div class="participation-submit"><p id="participationFeedback" role="status"></p><button type="submit">Enviar inscrição</button></div>
-        </form>
-      </section>
+        </div>
+      </form>
     </main>
+
     <footer class="site-footer"><p>© <span id="year"></span> Team Lambreta — Juntos somos mais fortes.</p></footer>
   </section>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="supabase-integration-v92.js?v=93.9.6"></script>
   <script src="navigation-v93.js?v=93.9.6"></script>
   <script src="user-inbox-v96.js?v=97.2"></script>
-  <script src="participation-v96.js?v=98.1"></script>
+  <script src="participation-v96.js?v=98.2"></script>
   <script src="site-i18n-v92.js"></script>
 </body>
 </html>
