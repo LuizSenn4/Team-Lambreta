@@ -129,6 +129,13 @@ html[data-theme="light"] .chat-auth-user.role-dev .chat-auth-user-name{
   background:#09191b!important;
   box-shadow:0 0 8px rgba(94,243,255,.18)!important;
 }
+
+/* Correção óptica exclusiva do tema noite: o contorno branco faz o selo parecer mais baixo. */
+html:not([data-theme="light"]) .chat-auth-user.role-master .chat-auth-user-role,
+html:not([data-theme="light"]) .chat-auth-user.role-dev .chat-auth-user-role{
+  transform:translateY(-1px)!important;
+}
+
 .chat-auth-user.role-admin .chat-auth-user-role{color:#fff!important;border-color:#ff405a!important;background:#20090e!important}
 .chat-auth-user.role-moderator .chat-auth-user-role{color:#fff!important;border-color:#4da8ff!important;background:#091522!important}
 .chat-auth-user.role-staff .chat-auth-user-role{color:#fff!important;border-color:#b184ff!important;background:#160d22!important}
