@@ -1,0 +1,50 @@
+/* Streamers: imagem encostada na moldura, sem faixa interna escura. */
+.streamers-page .streamer-card-photo-wrap{
+  padding:0!important;
+}
+
+.streamers-page .streamer-card-photo{
+  width:100%!important;
+  height:100%!important;
+  margin:0!important;
+  padding:0!important;
+  border-radius:inherit!important;
+  overflow:hidden!important;
+  background:transparent!important;
+}
+
+.streamers-page .streamer-card-photo img{
+  display:block!important;
+  width:100%!important;
+  height:100%!important;
+  margin:0!important;
+  padding:0!important;
+  object-fit:contain!important;
+  object-position:center center!important;
+  background:transparent!important;
+  border-radius:inherit!important;
+}
+
+/* Usa a própria imagem como extensão visual para ocupar qualquer sobra sem faixa preta,
+   mantendo a arte principal inteira por cima. */
+.streamers-page .streamer-card-photo::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  z-index:0;
+  background:inherit;
+  background-size:cover;
+  background-position:center;
+  filter:blur(18px) brightness(.7);
+  transform:scale(1.08);
+}
+
+.streamers-page .streamer-card-photo img{
+  position:relative;
+  z-index:1;
+}
+
+@media(max-width:900px){
+  .streamers-page .streamer-card-photo-wrap{padding:0!important}
+  .streamers-page .streamer-card-photo{width:100%!important;max-width:none!important;margin:0!important}
+}
