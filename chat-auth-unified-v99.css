@@ -91,7 +91,7 @@ html:not([data-theme="light"]) .chat-auth-user-role{
   color:#00dff2!important;
   -webkit-text-stroke:0 transparent;
   paint-order:normal;
-  text-shadow:none!important;
+  text-shadow:0 0 2px rgba(255,255,255,.72),0 0 5px rgba(255,255,255,.28)!important;
 }
 
 .chat-auth-user.role-master .chat-auth-user-role,
