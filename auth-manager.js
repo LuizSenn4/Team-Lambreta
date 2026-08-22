@@ -39,14 +39,18 @@
     client.auth.onAuthStateChange((event, nextSession) => {
       session = nextSession || null;
       if (event === 'SIGNED_IN') console.info('[AUTH] retorno OAuth');
-      if (session) console.info('[AUTH] sessão encontrada');
+      if (session) {
+        console.info('[AUTH] sessão encontrada');
+      }
       queueMicrotask(() => notify(event));
     });
     client.auth.getSession().then(({ data, error }) => {
       if (error) console.error('[AUTH] falha ao recuperar sessão', error.message);
       session = data?.session || null;
       initialized = true;
-      if (session) console.info('[AUTH] sessão encontrada');
+      if (session) {
+        console.info('[AUTH] sessão encontrada');
+      }
       resolveReady(session);
       notify('INITIAL_SESSION');
     });
