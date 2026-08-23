@@ -20,11 +20,7 @@
   const variantMenu = document.getElementById('liveVariantMenu');
   if (!iframe) return;
 
-  const SUPABASE_URL = 'https://ahiatqnokyhfpailobjx.supabase.co';
-  const SUPABASE_KEY = 'sb_publishable_qgwMhZPrB_3cFv3yCMcToA_9nDvHz-O';
-  const liveSb = window.supabase?.createClient(SUPABASE_URL, SUPABASE_KEY, {
-    auth: { persistSession: true, autoRefreshToken: true, detectSessionInUrl: false }
-  });
+  const liveSb = window.teamSupabase;
 
   const FALLBACK_GAMES = ['Fortnite'];
   const FALLBACK_MODES = {

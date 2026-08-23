@@ -1,9 +1,7 @@
 (() => {
   'use strict';
 
-  const SUPABASE_URL='https://ahiatqnokyhfpailobjx.supabase.co';
-  const KEY='sb_publishable_qgwMhZPrB_3cFv3yCMcToA_9nDvHz-O';
-  const sb=window.supabase?.createClient(SUPABASE_URL,KEY);
+  const sb=window.teamSupabase;
   if(!sb) return;
 
   const $=id=>document.getElementById(id);

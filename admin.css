@@ -360,7 +360,8 @@ html.admin-pending body { visibility: hidden; }
 .streamer-photo-preview-shell{
   position:relative;
   width:150px;
-  height:150px;
+  height:auto;
+  aspect-ratio:4/5;
   overflow:hidden;
   border:1px solid rgba(217,164,65,.28);
   border-radius:18px;
@@ -407,7 +408,7 @@ html.admin-pending body { visibility: hidden; }
 
 .streamer-photo-url-row{
   display:grid;
-  grid-template-columns:minmax(0,1fr) auto;
+  grid-template-columns:minmax(0,1fr) auto auto;
   gap:8px;
   align-items:center;
 }
@@ -466,9 +467,15 @@ html.admin-pending body { visibility: hidden; }
   .streamer-photo-preview-shell{
     width:100%;
     height:auto;
-    aspect-ratio:4/3;
+    aspect-ratio:4/5;
   }
 }
+
+/* Cropper 4:5 dos posters públicos de streamers. */
+.streamer-crop-modal{position:fixed;inset:0;z-index:3000;display:grid;place-items:center;padding:20px;background:rgba(0,0,0,.82);backdrop-filter:blur(9px)}
+.streamer-crop-modal[hidden]{display:none!important}.streamer-crop-dialog{width:min(900px,100%);max-height:calc(100dvh - 32px);overflow:auto;border:1px solid rgba(0,229,255,.3);border-radius:22px;background:#0c131b;box-shadow:0 30px 100px #000}.streamer-crop-dialog>header,.streamer-crop-dialog>footer{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:18px 22px;border-bottom:1px solid rgba(255,255,255,.09)}.streamer-crop-dialog>footer{justify-content:flex-end;border-top:1px solid rgba(255,255,255,.09);border-bottom:0}.streamer-crop-dialog header small{color:#50deef;font-size:10px;font-weight:900;letter-spacing:.15em}.streamer-crop-dialog h2{margin:4px 0 0;color:#fff}.streamer-crop-dialog header>button{width:40px;height:40px;padding:0;font-size:25px}.streamer-crop-layout{display:grid;grid-template-columns:minmax(280px,400px) minmax(240px,1fr);gap:28px;align-items:center;padding:24px}.streamer-crop-frame{position:relative;width:min(400px,100%);aspect-ratio:4/5;overflow:hidden;touch-action:none;cursor:grab;border:2px solid #00dff5;border-radius:18px;background:#05080b;box-shadow:0 0 0 7px rgba(0,223,245,.06),0 22px 55px #0008}.streamer-crop-frame.is-dragging{cursor:grabbing}.streamer-crop-frame:after{content:"";position:absolute;inset:0;pointer-events:none;background:linear-gradient(90deg,transparent 33.15%,rgba(255,255,255,.18) 33.3%,transparent 33.45%,transparent 66.5%,rgba(255,255,255,.18) 66.65%,transparent 66.8%),linear-gradient(transparent 33.15%,rgba(255,255,255,.18) 33.3%,transparent 33.45%,transparent 66.5%,rgba(255,255,255,.18) 66.65%,transparent 66.8%)}.streamer-crop-frame img{position:absolute;left:0;top:0;max-width:none!important;max-height:none!important;user-select:none;pointer-events:none;transform-origin:0 0}.streamer-crop-controls{display:grid;gap:13px}.streamer-crop-controls p{margin:0 0 5px;color:#9cabb9;line-height:1.55}.streamer-crop-controls>label{color:#fff}.streamer-crop-zoom{display:grid;grid-template-columns:42px 1fr 42px;gap:9px;align-items:center}.streamer-crop-zoom button{height:42px;padding:0;font-size:22px}.streamer-crop-zoom input{padding:0;accent-color:#00dff5}.streamer-crop-controls>button{min-height:42px}.streamer-crop-controls small{min-height:34px;color:#7f91a2;line-height:1.4}
+@media(max-width:700px){.streamer-crop-modal{padding:8px}.streamer-crop-dialog{max-height:calc(100dvh - 16px);border-radius:16px}.streamer-crop-layout{grid-template-columns:1fr;padding:16px}.streamer-crop-frame{width:min(310px,80vw);margin:auto}.streamer-crop-controls{grid-template-columns:1fr 1fr}.streamer-crop-controls p,.streamer-crop-controls>label,.streamer-crop-zoom,.streamer-crop-controls small{grid-column:1/-1}.streamer-crop-dialog>header,.streamer-crop-dialog>footer{padding:14px 16px}}
+@media(max-width:460px){.streamer-photo-url-row{grid-template-columns:1fr 1fr}.streamer-photo-url-row input{grid-column:1/-1}.streamer-crop-frame{width:min(270px,76vw)}}
 
 
 /* V92.26 — horários de live editáveis */

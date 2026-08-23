@@ -1,7 +1,7 @@
 (()=>{'use strict';
 const URL='https://ahiatqnokyhfpailobjx.supabase.co',KEY='sb_publishable_qgwMhZPrB_3cFv3yCMcToA_9nDvHz-O';
 if(!window.supabase)return;
-const sb=window.supabase.createClient(URL,KEY,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:false}});
+const sb=window.teamSupabase||window.supabase.createClient(URL,KEY,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:false}});
 let uid=null,channel=null,unread=0,profiles=new Map(),me=null,audio=null,audioUnlocked=false,audioCtx=null;
 const SOUND_SRC=new URL('assets/sounds/buddy-message.wav',document.baseURI).href;
 const soundKey=id=>`tl_buddy_sound_${uid||'anon'}_${id}`;

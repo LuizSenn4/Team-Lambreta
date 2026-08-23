@@ -1,7 +1,6 @@
 (() => {
-  const URL = 'https://ahiatqnokyhfpailobjx.supabase.co';
-  const KEY = 'sb_publishable_qgwMhZPrB_3cFv3yCMcToA_9nDvHz-O';
-  const sb = window.supabase?.createClient(URL, KEY);
+  // TEMPORÁRIO: UI aprovada dos cards; dados usam exclusivamente o cliente V102.
+  const sb = window.teamSupabase;
   if (!sb) return;
 
   const $ = (id) => document.getElementById(id);
@@ -182,95 +181,29 @@
     return globalIndex % 2 === 0 ? 'tone-red' : 'tone-green';
   }
 
+  function streamerSlug(row = {}) {
+    const source = row.slug || row.tiktok_username || row.display_name || row.id || 'streamer';
+    return String(source).normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+  }
+
   function buildCard(row, globalIndex) {
     row = normalizeStreamer(row);
     const tone = row.is_static ? 'tone-red' : getTone(globalIndex);
-    const socials = socialData(row);
     const live = Boolean(row.force_live || row.manual_live || row.auto_live);
-    const watchUrl = row.live_url || row.tiktok_url || row.twitch_url || row.youtube_url || row.instagram_url || '';
-    const watchLabel = live ? 'ASSISTIR AGORA' : `ABRIR ${platformName(row).toUpperCase()}`;
-    const parsedSchedule = parseSchedule(row.description, row.schedule_text);
-    const cleanDescription = parsedSchedule.cleanDescription;
-    const scheduleMarkup = structuredScheduleMarkup(row.schedule_json) || parsedSchedule.scheduleMarkup;
-    const titleLine = row.title ? esc(row.title) : 'Streamer Oficial';
-    const gameLine = row.main_game ? esc(row.main_game) : 'Fortnite';
+    const slug = streamerSlug(row);
     const mainPhoto = row.photo_url
-      ? `<img src="${esc(row.photo_url)}" alt="${esc(row.display_name)}" loading="lazy">`
+      ? `<img src="${esc(row.photo_url)}" alt="${esc(row.display_name)}" loading="lazy" onerror="this.hidden=true;this.nextElementSibling.hidden=false"><div class="streamer-photo-placeholder" hidden>TL</div>`
       : '<div class="streamer-photo-placeholder">🎥</div>';
-    const previewPhoto = row.photo_url
-      ? `<img src="${esc(row.photo_url)}" alt="Prévia de ${esc(row.display_name)}" loading="lazy">`
-      : '<div class="streamer-photo-placeholder streamer-photo-placeholder--small">🎥</div>';
-    const notifyText = row.notify_text || 'Ativa as notificações e acompanha as redes para não perder a próxima live.';
 
     return `
-      <article class="streamer-unified-card ${tone} ${live ? 'is-live' : ''}" data-streamer-id="${esc(row.id)}">
-        <div class="streamer-card-top">
-          <div class="streamer-card-photo-wrap">
-            <div class="streamer-card-photo">
-              ${mainPhoto}
-            </div>
-          </div>
-
-          <div class="streamer-card-main">
-            <p class="streamer-card-kicker"><span class="live-dot"></span>${live ? 'AO VIVO AGORA' : 'PERFIL OFICIAL'}</p>
-            <h2 class="streamer-card-name ${nameClass(row.display_name)}">${esc(row.display_name || 'STREAMER')}</h2>
-            <div class="streamer-card-meta"><span>${titleLine}</span><span>${gameLine}</span></div>
-            <p class="streamer-card-bio">${esc(cleanDescription || 'Streamer oficial do Team Lambreta.')}</p>
-
-            <div class="streamer-card-facts">
-              ${row.game_nickname ? `<div class="streamer-fact"><small>NICK NO JOGO</small><strong>${esc(row.game_nickname)}</strong></div>` : ''}
-              ${row.main_game ? `<div class="streamer-fact"><small>JOGO PRINCIPAL</small><strong>${esc(row.main_game)}</strong></div>` : ''}
-            </div>
-          </div>
-
-          <aside class="streamer-card-socials">
-            <h3>REDES SOCIAIS</h3>
-            <div class="streamer-social-list">
-              ${socials.length ? socials.map((social) => `
-                <a class="streamer-social-chip ${platformClass(social.name)}" href="${esc(social.url)}" target="_blank" rel="noopener noreferrer">
-                  <span class="streamer-social-icon">${platformIcon(social.name)}</span>
-                  <strong>${esc(social.name)}</strong>
-                  <b>→</b>
-                </a>
-              `).join('') : '<div class="streamer-social-empty">Redes em atualização</div>'}
-            </div>
-          </aside>
+      <a class="streamer-unified-card streamer-poster-card ${tone} ${live ? 'is-live' : ''}" data-streamer-id="${esc(row.id)}" href="streamer.html?slug=${encodeURIComponent(slug)}" aria-label="Abrir página de ${esc(row.display_name || 'streamer')}">
+        <div class="streamer-card-photo">${mainPhoto}</div>
+        <div class="streamer-poster-caption">
+          <h2>${esc(row.display_name || 'STREAMER')}</h2>
+          <span class="streamer-poster-status"><i class="live-dot"></i>${live ? 'AO VIVO' : 'OFFLINE'}</span>
+          <p>${esc(row.main_game || 'Jogo em atualização')}</p>
         </div>
-
-        <div class="streamer-card-bottom">
-          <section class="streamer-card-panel streamer-card-schedule">
-            <h3><span>◔</span>HORÁRIOS DE LIVE</h3>
-            <div class="streamer-schedule-list">${scheduleMarkup}</div>
-          </section>
-
-          <section class="streamer-card-panel streamer-card-notify">
-            <h3><span>◉</span>NÃO PERCA A LIVE!</h3>
-            <p>${esc(notifyText)}</p>
-            ${watchUrl ? `<a class="streamer-panel-button streamer-panel-button--notify" href="${esc(watchUrl)}" target="_blank" rel="noopener noreferrer">ATIVAR NOTIFICAÇÕES</a>` : '<span class="streamer-panel-button streamer-panel-button--ghost">EM BREVE</span>'}
-          </section>
-
-          <section class="streamer-card-panel streamer-card-live" ${row.auto_probe_live && row.tiktok_username ? `data-live-probe="tiktok" data-tiktok-user="${esc(row.tiktok_username)}"` : ''}>
-            <div class="streamer-live-head">
-              <h3><span class="live-dot"></span><span data-live-label>${live ? 'AO VIVO AGORA' : 'LIVE'}</span></h3>
-              <span>${esc(row.main_game || 'Fortnite')}</span>
-            </div>
-            <div class="streamer-live-preview">
-              <div class="streamer-live-fallback" data-live-fallback>
-                ${previewPhoto}
-                <div class="streamer-live-overlay">
-                  <span>${esc(row.display_name || 'STREAMER')}</span>
-                  <strong data-live-status-text>${live ? 'Acompanha a transmissão' : 'Veja quando estiver ao vivo'}</strong>
-                </div>
-              </div>
-              ${row.auto_probe_live && row.tiktok_username ? `<iframe class="streamer-live-probe-frame" data-live-frame hidden src="https://www.tiktok.com/embed/live/@${esc(row.tiktok_username)}?autoplay=1&muted=1&controls=1&embed_domain=${encodeURIComponent(location.hostname)}" allow="autoplay; fullscreen" allowfullscreen loading="lazy" title="TikTok LIVE de ${esc(row.display_name || 'streamer')}"></iframe>` : ''}
-            </div>
-            <div class="streamer-live-cta">
-              ${row.live_page_url ? `<a class="streamer-panel-button streamer-panel-button--watch" data-watch-here href="${esc(row.live_page_url)}">ASSISTIR AQUI</a>` : ''}
-              ${watchUrl ? `<a class="streamer-panel-button streamer-panel-button--secondary" data-open-platform href="${esc(watchUrl)}" target="_blank" rel="noopener noreferrer">${watchLabel}</a>` : '<span class="streamer-panel-button streamer-panel-button--ghost">LIVE EM BREVE</span>'}
-            </div>
-          </section>
-        </div>
-      </article>
+      </a>
     `;
   }
 
@@ -348,7 +281,6 @@
     grid.innerHTML = rows.length
       ? rows.map((row, index) => buildCard(row, (currentPage === 1 ? index : index + PAGE_SIZE))).join('')
       : '<article class="empty-card"><h3>Mais streamers em breve</h3><p>Os perfis adicionados pelo painel aparecerão aqui.</p></article>';
-    requestAnimationFrame(setupTikTokLiveProbes);
 
     if (!pager) return;
     if (totalPages <= 1) {

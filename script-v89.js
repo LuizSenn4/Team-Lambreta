@@ -179,6 +179,7 @@ function statusClass(status){
 }
 
 function updateStatusDot(){
+  if(window.TL_CORE_V102)return;
   const select=document.getElementById("userStatus");
   const dot=document.getElementById("onlineDot");
   if(!select || !dot)return;
@@ -188,6 +189,7 @@ function updateStatusDot(){
 }
 
 function loadStatus(){
+  if(window.TL_CORE_V102)return;
   const select=document.getElementById("userStatus");
   if(!select)return;
   const saved=localStorage.getItem("team_lambreta_presence_v1") || "online";

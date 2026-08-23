@@ -1,8 +1,3 @@
-if (sessionStorage.getItem('tl_admin_unlocked') !== '1') {
-  location.replace('home.html?admin=locked');
-  throw new Error('Painel administrativo bloqueado.');
-}
-
 let data = getTeamData();
 
 const fields = {
@@ -78,9 +73,9 @@ const sections = {
   store: {
     id: "storeAdminList",
     title: "PRODUTO",
-    labels: ["Produto", "Descrição/Preço", "Imagem URL"],
-    keys: ["title", "description", "image"],
-    empty: { title: "", description: "", image: "" }
+    labels: ["Produto", "Preço (€)", "Categoria", "Descrição", "Imagem URL", "Estoque", "Ativo"],
+    keys: ["title", "price", "category", "description", "image", "stock", "active"],
+    empty: { title: "", price: "0.00", category: "Vestuário", description: "", image: "", stock: "", active: true }
   },
   pendingUsers: {
     id: "pendingUsersAdminList",
@@ -151,6 +146,10 @@ function inputHTML(type,key,label,item,index){
     return `<label class="check-row"><input type="checkbox" data-field="${key}" data-type="${type}" data-index="${index}" ${value ? "checked" : ""}>Fixado</label>`;
   }
 
+  if(key === "active" && type === "store"){
+    return `<label class="check-row"><input type="checkbox" data-field="${key}" data-type="${type}" data-index="${index}" ${value !== false ? "checked" : ""}>Produto ativo</label>`;
+  }
+
   if(key === "image"){
     const preview = value ? `<img class="admin-upload-preview" src="${value}" alt="Preview">` : `<div class="admin-upload-empty">Sem imagem</div>`;
     return `<label>${label}<input maxlength="5000000" data-field="${key}" data-type="${type}" data-index="${index}" value="${value || ""}" placeholder="Cole um link ou carregue uma imagem"><div class="admin-upload-row"><input class="admin-file-input" type="file" accept="image/*" data-file-field="${key}" data-type="${type}" data-index="${index}">${preview}</div></label>`;
@@ -161,7 +160,7 @@ function inputHTML(type,key,label,item,index){
   }
 
   const max = key === "name" ? 24 : key === "title" ? 60 : key === "reward" ? 80 : key === "totalDonated" ? 8 : 180;
-  const typeAttr = key === "totalDonated" ? 'type="number" min="0" step="1"' : '';
+  const typeAttr = key === "totalDonated" ? 'type="number" min="0" step="1"' : key === "price" ? 'type="number" min="0" step="0.01"' : key === "stock" ? 'type="number" min="0" step="1"' : '';
   return `<label>${label}<input ${typeAttr} maxlength="${max}" data-field="${key}" data-type="${type}" data-index="${index}" value="${value ?? ""}"></label>`;
 }
 

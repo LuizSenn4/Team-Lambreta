@@ -1,0 +1,5 @@
+@import url('tl-design-system-v100.css?v=100.0');
+.tl-header-v102 .tl-user-avatar[data-avatar-fallback]{display:grid;place-items:center;font-size:11px;font-weight:800}
+.tl-header-v102 .tl-account-menu a[hidden]{display:none}
+html.tl-shell-loading .site-header{min-height:var(--tl-header-h,76px)}
+.tl-notification-toast{position:fixed;right:18px;bottom:18px;z-index:10000;display:grid;gap:5px;width:min(330px,calc(100vw - 28px));padding:14px 16px;border:1px solid var(--tl-border-bright);border-radius:12px;background:#101923;color:var(--tl-text);box-shadow:var(--tl-shadow);text-decoration:none;opacity:0;transform:translateY(12px);transition:.2s}.tl-notification-toast.show{opacity:1;transform:none}.tl-notification-toast span{color:var(--tl-muted);font-size:12px}

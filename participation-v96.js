@@ -12,7 +12,7 @@
   const setFormEnabled=enabled=>form.querySelectorAll('input,select,textarea,button').forEach(el=>{el.disabled=!enabled});
 
   async function load(){
-    const auth=await sb.auth.getSession(); session=auth.data.session;
+    session=await window.TeamAuth?.getSession();
     current.innerHTML='';
     if(!session){setFormEnabled(false);say('Entre com sua conta Google para enviar sua inscrição.',true);return;}
     setFormEnabled(true);
@@ -25,7 +25,7 @@
   form.addEventListener('submit',async event=>{
     event.preventDefault();
     if(pending)return;
-    const auth=await sb.auth.getSession();session=auth.data.session;
+    session=await window.TeamAuth?.getSession();
     if(!session){say('Entre com sua conta Google para enviar sua inscrição.',true);return;}
     pending=true;
     const button=form.querySelector('button[type="submit"]'); button.disabled=true; say('Enviando…');
@@ -37,7 +37,7 @@
     sb.functions.invoke('competition-email',{body:{action:'notify',kind:'boss',application_id:data.id}}).catch(()=>{});
     pending=false;await load();say('Inscrição enviada com sucesso. A resposta aparecerá na sua Caixa de Entrada.');
   });
-  sb.auth.onAuthStateChange(()=>setTimeout(load,0));
+  window.TeamAuth?.subscribe(()=>setTimeout(load,0));
   document.getElementById('year').textContent=new Date().getFullYear();
   load();
 })();

@@ -1,11 +1,10 @@
 (() => {
   'use strict';
 
-  const SUPABASE_URL = 'https://ahiatqnokyhfpailobjx.supabase.co';
-  const SUPABASE_PUBLISHABLE_KEY = 'sb_publishable_qgwMhZPrB_3cFv3yCMcToA_9nDvHz-O';
-  const sb = window.supabase?.createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY);
-  if (!sb) { console.error('[Team Lambreta] Supabase SDK não carregou.'); return; }
-  window.teamSupabase = sb;
+  // LEGACY TEMPORÁRIO: este módulo conserva apenas chat/contactos enquanto as
+  // páginas migram. Cliente, Auth e presença pertencem exclusivamente ao core V102.
+  const sb = window.teamSupabase;
+  if (!sb) { console.error('[Team Lambreta] Cliente V102 não carregou.'); return; }
 
   // V93.7.0 — salas de chat isoladas e sessões temporárias por transmissão.
   // Home usa 'lobby'; páginas de live definem window.TL_CHAT_ROOM antes deste script.
@@ -48,17 +47,17 @@
     authStyles.dataset.chatAuthUnified = '1';
     document.head.appendChild(authStyles);
   }
-  const normalizeRole = role => ({dev:'master',developer:'master',owner:'master',boss:'master',administrador:'admin',mod:'moderator',moderador:'moderator',helper:'staff',suporte:'staff',apoiador:'supporter',support:'supporter',user:'member',usuario:'member',membro:'member'}[String(role||'').trim().toLowerCase()] || String(role||'member').trim().toLowerCase() || 'member');
+  const normalizeRole = role => window.TeamPermissions?.normalizeRole(role) || String(role || 'member').trim().toLowerCase();
   const teamRoles = new Set(['moderator','staff','admin','master']);
   const moderationRoles = new Set(['moderator','staff','admin','master']);
   const roleRank = { member:0, supporter:0, vip:0, staff:1, moderator:2, admin:3, master:4 };
   const isTeam = () => teamRoles.has(normalizeRole(profile?.role));
-  const canModerate = () => moderationRoles.has(normalizeRole(profile?.role));
-  const canManageRoles = () => ['admin','master'].includes(normalizeRole(profile?.role));
+  const canModerate = () => window.TeamPermissions?.canForRole(profile?.role, 'chat.moderate') ?? moderationRoles.has(normalizeRole(profile?.role));
+  const canManageRoles = () => window.TeamPermissions?.canForRole(profile?.role, 'admin.full') ?? ['admin','master'].includes(normalizeRole(profile?.role));
   const statusDb = v => ({busy:'busy',away:'away',online:'online'}[v] || 'online');
   const statusUi = v => ({busy:'busy',away:'away',online:'online',offline:'offline'}[v] || 'offline');
   const roleClass = role => { const mapped = normalizeRole(role); return ['master','admin','moderator','staff','vip','supporter','member'].includes(mapped) ? mapped : 'member'; };
-  const roleLabel = role => ({master:'DEV',admin:'ADMIN',moderator:'MODERADOR',staff:'STAFF',vip:'VIP',supporter:'APOIADOR',member:'MEMBRO'}[normalizeRole(role)] || 'MEMBRO');
+  const roleLabel = role => window.TeamPermissions?.roleLabel(role) || 'MEMBRO';
   const isVip = p => Boolean(p?.vip_until && Number.isFinite(new Date(p.vip_until).getTime()) && new Date(p.vip_until).getTime() > Date.now());
   const isStreamer = p => p?.is_streamer === true || String(p?.is_streamer).toLowerCase() === 'true';
   const extraBadges = p => isStreamer(p) ? '<small class="streamer-badge">STREAMER</small>' : (isVip(p) ? '<small class="vip-badge">VIP</small>' : '');
@@ -295,15 +294,20 @@
   }
 
   async function loginGoogle() {
-    const redirectTo = `${location.origin}${location.pathname}`;
-    const { error } = await sb.auth.signInWithOAuth({ provider:'google', options:{ redirectTo } });
-    if (error) alert(`Erro no login: ${error.message}`);
+    try {
+      if (!window.TeamAuth) throw new Error('AuthManager V102 indisponível.');
+      await window.TeamAuth.signInWithGoogle();
+    } catch(error) { alert(`Erro no login: ${error.message}`); }
   }
-  async function logout() { sessionStorage.removeItem('tl_admin_unlocked'); await sb.auth.signOut(); location.reload(); }
+  async function logout() { await window.TeamAuth?.signOut(); }
 
   async function loadProfile() {
     profile = null;
     if (!session?.user) return;
+    if (window.TeamProfiles) {
+      profile = await window.TeamProfiles.getCurrentProfile({ fresh: true });
+      return;
+    }
     const { data, error } = await sb.from('profiles').select('*').eq('id', session.user.id).single();
     if (!error) profile = data;
     if (currentMentionRows.length) updateMentionBadge(currentMentionRows);
@@ -329,6 +333,7 @@
 
   function renderAdminKey() {
     document.querySelector('.tl-admin-key')?.remove();
+    if (window.TL_CORE_V102) return;
     if (!session || !['master','admin','moderator','staff'].includes(profile?.role)) return;
     const role = roleClass(profile?.role);
     const button = document.createElement('button');
@@ -405,6 +410,14 @@
   async function setPresence(value, {manual=true}={}) {
     if (!session) return;
     const presence = statusDb(value);
+    if (window.TeamPresence) {
+      if (manual) await window.TeamPresence.setManual(presence);
+      const state = window.TeamPresence.getState();
+      if (profile) profile.presence = state.status;
+      const picker = $('userStatus'); if (picker) picker.value = state.status;
+      updateStatusUi(state.status);
+      return;
+    }
     if (manual) { manualPresence = presence; autoAway = false; }
     const now = new Date().toISOString();
     const { error } = await sb.from('profiles').update({presence,last_seen:now,updated_at:now}).eq('id',session.user.id);
@@ -458,6 +471,7 @@
   }
 
   function startPresenceTracking() {
+    if (window.TeamPresence) return;
     clearInterval(heartbeatTimer);
     ['pointerdown','keydown','scroll','touchstart'].forEach(evt=>window.addEventListener(evt,registerActivity,{passive:true}));
     heartbeatTimer=setInterval(presenceHeartbeat,45000);
@@ -1078,13 +1092,9 @@
     $('tlPwdForm').addEventListener('submit', async ev => {
       ev.preventDefault();
       const feedback = $('tlPwdFeedback');
-      const password = $('tlAdminPassword').value;
       feedback.textContent = 'A validar…';
       if (!session) { feedback.textContent = 'Primeiro entra com a tua conta Google.'; return; }
-      if (!['admin','master'].includes(profile?.role)) { feedback.textContent = 'Esta conta não possui acesso administrativo.'; return; }
-      const { data, error } = await sb.rpc('verify_admin_password', { candidate_password: password });
-      if (error || data !== true) { feedback.textContent = 'Senha administrativa incorreta.'; return; }
-      sessionStorage.setItem('tl_admin_unlocked', '1');
+      if (!await window.TeamPermissions?.can('admin.full')) { feedback.textContent = 'Esta conta não possui acesso administrativo.'; return; }
       location.href = 'admin.html';
     });
     return modal;
@@ -1245,15 +1255,21 @@
     if ($('supabasePrivateInbox')||$('supabaseInboxBadge')) inboxChannel=sb.channel('team-inbox-ui').on('postgres_changes',{event:'*',schema:'public',table:'contact_messages'},renderInbox).subscribe();
   }
 
+  let handlersBound = false;
+  async function handleSession(newSession) {
+    session = newSession || null;
+    await loadProfile(); renderAuth();
+    if (session) { await ensureNickname(); }
+    await renderChat(); await renderInbox(); await renderAdminChatReports(); subscribe();
+  }
   async function boot() {
-    const { data }=await sb.auth.getSession(); session=data.session; await loadProfile(); renderAuth();
-    if(session){ manualPresence=profile?.presence==='busy'?'busy':'online'; lastActivityAt=Date.now(); await ensureNickname(); await setPresence(manualPresence,{manual:false}); startPresenceTracking(); }
-    bindChat(); bindContact(); bindPwdAccess(); bindAdminChatReports(); await renderChat(); await renderInbox(); await renderAdminChatReports(); subscribe();
-    sb.auth.onAuthStateChange(async (_event,newSession)=>{session=newSession;await loadProfile();renderAuth();if(session){manualPresence=profile?.presence==='busy'?'busy':'online';lastActivityAt=Date.now();startPresenceTracking();}await renderChat();await renderInbox();await renderAdminChatReports();subscribe();});
+    if (!window.TeamAuth) { console.error('[Team Lambreta] AuthManager V102 não carregou.'); return; }
+    if (!handlersBound) { bindChat(); bindContact(); bindPwdAccess(); bindAdminChatReports(); handlersBound = true; }
+    window.TeamPresence?.subscribe(state => { if (profile) profile.presence = state.status; updateStatusUi(state.status); const picker=$('userStatus'); if(picker) picker.value=state.status; });
+    window.TeamAuth.subscribe(nextSession => { handleSession(nextSession).catch(error => console.error('[Team Lambreta] sessão', error)); });
     document.addEventListener('visibilitychange',()=>{if(!document.hidden)renderChat();});
     window.addEventListener('focus',()=>renderChat());
     window.addEventListener('online',()=>{subscribe();renderChat();});
-    window.addEventListener('beforeunload',()=>{ if(session) sb.from('profiles').update({presence:'offline',last_seen:new Date().toISOString()}).eq('id',session.user.id); });
   }
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',boot); else boot();
 })();

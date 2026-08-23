@@ -1,7 +1,5 @@
 (() => {
-  const URL='https://ahiatqnokyhfpailobjx.supabase.co';
-  const KEY='sb_publishable_qgwMhZPrB_3cFv3yCMcToA_9nDvHz-O';
-  const sb=window.teamSupabase || window.supabase?.createClient(URL,KEY);
+  const sb=window.teamSupabase;
   const rankingEl=document.getElementById('hallRankingList');
   const grid=document.getElementById('hallAchievementGrid');
   const modal=document.getElementById('hallModal');
@@ -12,6 +10,7 @@
   const roleClass=r=>String(r||'member').toLowerCase().replace(/[^a-z0-9_-]/g,'');
   const pct=(v,max)=>Math.max(0,Math.min(100,Math.round((Number(v||0)/max)*100)));
   const hours=s=>Math.floor(Number(s||0)/3600);
+  const avatarMarkup=p=>p?.avatar_url?`<img src="${esc(p.avatar_url)}" alt="Avatar de ${esc(name(p))}">`:esc(name(p).charAt(0).toUpperCase());
 
   function achievementList(p={}){
     return [
@@ -51,7 +50,7 @@
     const displayName=name(pr);
     const role=String(pr.role||'MEMBRO').toUpperCase();
     const achievements=achievementList(champion).filter(a=>a.progress===100).length;
-    if(avatarEl)avatarEl.textContent=(displayName.charAt(0)||'—').toUpperCase();
+    if(avatarEl)avatarEl.innerHTML=avatarMarkup(pr);
     if(roleEl){roleEl.textContent=role;roleEl.className=`hall-role hall-role-${roleClass(pr.role)}`;}
     if(nameEl)nameEl.textContent=displayName;
     if(levelEl)levelEl.textContent=`Nível ${champion.level||1} · ${champion.xp||0} XP`;
@@ -64,7 +63,7 @@
   function renderRanking(){
     if(!rankingEl)return;
     const top=progress.slice(0,5);
-    rankingEl.innerHTML=top.length?top.map((p,i)=>{const pr=profiles.find(x=>x.id===p.user_id)||{};return `<button type="button" class="hall-ranking-row"><span class="hall-ranking-number">${String(i+1).padStart(2,'0')}</span><span class="hall-avatar">${esc(name(pr).charAt(0).toUpperCase())}</span><span class="hall-ranking-user"><strong>${esc(name(pr))}</strong><small>Nível ${p.level||1} · ${p.xp||0} XP</small></span><span class="hall-role hall-role-${roleClass(pr.role)}">${esc(String(pr.role||'MEMBRO').toUpperCase())}</span><span class="hall-mini-xp"><i style="--progress:${Math.round(((p.xp||0)%250)/250*100)}%"></i></span></button>`}).join(''):'<p class="hall-empty">O ranking começa assim que os membros acumularem XP.</p>';
+    rankingEl.innerHTML=top.length?top.map((p,i)=>{const pr=profiles.find(x=>x.id===p.user_id)||{};return `<button type="button" class="hall-ranking-row"><span class="hall-ranking-number">${String(i+1).padStart(2,'0')}</span><span class="hall-avatar">${avatarMarkup(pr)}</span><span class="hall-ranking-user"><strong>${esc(name(pr))}</strong><small>Nível ${p.level||1} · ${p.xp||0} XP</small></span><span class="hall-role hall-role-${roleClass(pr.role)}">${esc(String(pr.role||'MEMBRO').toUpperCase())}</span><span class="hall-mini-xp"><i style="--progress:${Math.round(((p.xp||0)%250)/250*100)}%"></i></span></button>`}).join(''):'<p class="hall-empty">O ranking começa assim que os membros acumularem XP.</p>';
   }
 
   function renderAchievements(filter='all'){
@@ -90,10 +89,13 @@
   async function load(){
     if(!sb){renderChampion();renderRanking();renderAchievements();renderMetrics();return;}
     const sess=await sb.auth.getSession();
-    const r=await sb.from('profiles').select('id,game_nickname,full_name,role,avatar_url').order('game_nickname');
-    profiles=r.data||[];me=profiles.find(p=>p.id===sess.data.session?.user?.id)||null;
-    const pr=await sb.from('community_progress').select('*').order('xp',{ascending:false}).order('active_seconds',{ascending:false}).limit(100);
-    progress=pr.data||[];
+    const ranking=await sb.rpc('tl_hall_ranking');
+    if(ranking.error){console.error('[TL Hall] Não foi possível carregar o ranking:',ranking.error.message);progress=[];profiles=[];}
+    else{
+      progress=(ranking.data||[]).map(({display_name,role,avatar_url,...row})=>row);
+      profiles=(ranking.data||[]).map(row=>({id:row.user_id,game_nickname:row.display_name,role:row.role,avatar_url:row.avatar_url}));
+    }
+    me=profiles.find(p=>p.id===sess.data.session?.user?.id)||null;
     renderChampion();renderRanking();renderAchievements();renderMetrics();
   }
 

@@ -1,5 +1,5 @@
 (()=>{'use strict';
-const URL='https://ahiatqnokyhfpailobjx.supabase.co',KEY='sb_publishable_qgwMhZPrB_3cFv3yCMcToA_9nDvHz-O';const sb=window.supabase?.createClient(URL,KEY);if(!sb)return;
+const URL='https://ahiatqnokyhfpailobjx.supabase.co',KEY='sb_publishable_qgwMhZPrB_3cFv3yCMcToA_9nDvHz-O';const sb=window.teamSupabase||window.supabase?.createClient(URL,KEY);if(!sb)return;
 const $=id=>document.getElementById(id),esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 let session=null,me=null,profiles=[],relations=[],blocks=[],tab='people',selected=null,holdTimer=null,previewCloseTimer=null,previewAnchor=null,previewUserId=null,longPressOpened=false,privateChannel=null,messagePollTimer=null,lastMessageSignature='',renderedMessageIds=new Set();
 function syncMobileViewport(){const h=Math.round(window.visualViewport?.height||window.innerHeight);document.documentElement.style.setProperty('--buddy-visible-height',h+'px');if(selected&&innerWidth<=760)requestAnimationFrame(()=>{const box=$('buddyMessages');if(box)box.scrollTop=box.scrollHeight})}

@@ -1,8 +1,7 @@
 (() => {
   'use strict';
-  const URL='https://ahiatqnokyhfpailobjx.supabase.co';
-  const KEY='sb_publishable_qgwMhZPrB_3cFv3yCMcToA_9nDvHz-O';
-  const sb=window.supabase?.createClient(URL,KEY);
+  // TEMPORÁRIO: UI aprovada do Team; dados usam exclusivamente o cliente V102.
+  const sb=window.teamSupabase;
   if(!sb) return;
   const grid=document.getElementById('teamRosterGrid');
   const pager=document.getElementById('teamRosterPager');

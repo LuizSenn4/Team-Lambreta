@@ -4,8 +4,10 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Loja - Team Lambreta</title>
-  <link rel="stylesheet" href="style-v92.css" />
+  <link rel="stylesheet" href="style-v92.css?v=97.0" />
   <link rel="stylesheet" href="ui-core-v93.css?v=93.0" />
+  <link rel="stylesheet" href="tl-design-system-v100.css?v=100.0" />
+  <link rel="stylesheet" href="tl-polish-v100.css?v=100.0" />
 </head>
 <body>
   <section id="siteContent" class="site-content store-page">
@@ -64,15 +66,20 @@
     
 <main class="store-page-shell">
   <section class="store-hero page-hero-center">
-    <div class="page-title-badge">Loja</div>
-    <h1>Drop Lambreta</h1>
-    <p>Roupas, acessórios, peças da marca e futuros lançamentos oficiais do Team Lambreta.</p>
+    <div><div class="page-title-badge">Loja</div><h1>Drop Lambreta</h1>
+    <p>Preview do futuro catálogo oficial. Itens marcados como demonstração não representam estoque disponível.</p></div>
+    <button id="storeCartOpen" class="store-cart-button" type="button">Carrinho <span id="storeCartCount">0</span></button>
   </section>
 
   <section class="store-showcase">
-    <div id="storeGrid" class="store-grid"></div>
+    <article id="storeFeatured" class="store-featured"></article>
+    <div class="store-toolbar"><label>Pesquisar<input id="storeSearch" type="search" placeholder="Nome ou descrição"></label><label>Categoria<select id="storeCategory"><option value="all">Todas</option></select></label></div>
+    <div id="storeGrid" class="store-grid" aria-live="polite"></div>
   </section>
 </main>
+
+<dialog id="storeProductDialog" class="store-dialog"></dialog>
+<aside id="storeCart" class="store-cart" aria-label="Carrinho" hidden><div class="store-cart-backdrop" data-cart-close></div><section><header><div><small>LOJA</small><h2>Seu carrinho</h2></div><button type="button" data-cart-close aria-label="Fechar">×</button></header><div id="storeCartItems"></div><footer><span>Subtotal <strong id="storeSubtotal">€ 0,00</strong></span><button id="storeCheckout" type="button">Solicitar pedido por e-mail</button><small>Pagamento online ainda não está configurado.</small></footer></section></aside>
 
     <footer class="site-footer">
       <p>© <span id="year"></span> Team Lambreta — Juntos somos mais fortes.</p>
@@ -81,11 +88,10 @@
 
   <script src="data.js"></script>
   <script src="script-v89.js"></script>
-  <script src="navigation-v93.js?v=93.0"></script>
+  <script src="store-v97.js?v=97.0"></script>
 
   <script src="error-codes-v92.js"></script>
-  <script src="site-i18n-v92.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="community-safety-v9347.js?v=93.4.7"></script><script src="buddy-presence-v95.js?v=92.39.4.5"></script><script src="buddy-global-notifications-v94.js?v=92.39.4.5"></script><script src="community-progress-v938.js?v=93.8.6"></script>
+  <script src="supabase-client.js?v=102.0"></script><script src="auth-manager.js?v=102.0"></script><script src="presence-manager.js?v=102.0"></script><script src="services/profile-service.js?v=102.0"></script><script src="services/permission-service.js?v=102.0"></script><script src="tl-shell-v102.js?v=102.0"></script><script src="community-progress-v938.js?v=93.8.6"></script>
 </body>
 </html>

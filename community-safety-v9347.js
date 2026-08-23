@@ -1,9 +1,7 @@
 (()=>{
-  const URL='https://ahiatqnokyhfpailobjx.supabase.co';
-  const KEY='sb_publishable_qgwMhZPrB_3cFv3yCMcToA_9nDvHz-O';
   const TERMS_VERSION='2026-08-07-v1';
-  if(!window.supabase?.createClient) return;
-  const sb=window.supabase.createClient(URL,KEY,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:false}});
+  const sb=window.teamSupabase;
+  if(!sb) return;
   let currentSession=null;
   let termsAccepted=false;
   let termsPromise=null;
@@ -220,11 +218,10 @@
   }
 
   window.TLChatRequireTerms=async()=>{
-    if(!currentSession){const {data}=await sb.auth.getSession();currentSession=data.session;}
+    if(!currentSession) currentSession=await window.TeamAuth?.getSession();
     return enforceTerms();
   };
   window.TLCommunityRules={version:TERMS_VERSION,rules:RULES};
 
-  sb.auth.getSession().then(({data})=>bootForSession(data.session));
-  sb.auth.onAuthStateChange((_event,session)=>{setTimeout(()=>bootForSession(session),0);});
+  window.TeamAuth?.subscribe(session=>{setTimeout(()=>bootForSession(session),0);});
 })();

@@ -1,7 +1,7 @@
 (() => {
   'use strict';
   if(window.TLUserInboxLoaded)return; window.TLUserInboxLoaded=true;
-  const sb=window.teamSupabase||window.supabase?.createClient('https://ahiatqnokyhfpailobjx.supabase.co','sb_publishable_qgwMhZPrB_3cFv3yCMcToA_9nDvHz-O');
+  const sb=window.teamSupabase;
   if(!sb)return;
   let session=null,rows=[],view='active',channel=null;
   const expandedIds=new Set();
@@ -29,5 +29,5 @@
   trigger.onclick=()=>{modal.hidden=false;document.body.classList.add('tl-modal-open');load()};shell.querySelectorAll('[data-close]').forEach(x=>x.onclick=()=>{modal.hidden=true;document.body.classList.remove('tl-modal-open')});
   shell.querySelector('nav').onclick=e=>{const b=e.target.closest('[data-view]');if(!b)return;view=b.dataset.view;expandedIds.clear();shell.querySelectorAll('[data-view]').forEach(x=>x.classList.toggle('active',x===b));render()};
   list.onclick=async e=>{const item=e.target.closest('[data-id]');if(!item)return;const id=Number(item.dataset.id),row=rows.find(x=>x.id===id);if(!row)return;const deleteButton=e.target.closest('.tl-inbox-delete');if(deleteButton){e.preventDefault();e.stopPropagation();expandedIds.delete(id);await sb.from('user_inbox_messages').update({deleted_at:view==='deleted'?null:new Date().toISOString()}).eq('id',id);return load();}expandedIds.has(id)?expandedIds.delete(id):expandedIds.add(id);if(!row.read_at){row.read_at=new Date().toISOString();render();await sb.from('user_inbox_messages').update({read_at:row.read_at}).eq('id',id);return;}render()};
-  sb.auth.getSession().then(({data})=>{session=data.session;if(!session){trigger.hidden=true;return;}load();channel=sb.channel(`user-inbox-${session.user.id}`).on('postgres_changes',{event:'*',schema:'public',table:'user_inbox_messages',filter:`user_id=eq.${session.user.id}`},load).subscribe()});
+  window.TeamAuth?.subscribe(nextSession=>{session=nextSession;if(channel){sb.removeChannel(channel);channel=null;}if(!session){trigger.hidden=true;return;}trigger.hidden=false;load();channel=sb.channel(`user-inbox-${session.user.id}`).on('postgres_changes',{event:'*',schema:'public',table:'user_inbox_messages',filter:`user_id=eq.${session.user.id}`},load).subscribe()});
 })();

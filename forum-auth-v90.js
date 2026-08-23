@@ -3,7 +3,7 @@
 
   const URL = 'https://ahiatqnokyhfpailobjx.supabase.co';
   const KEY = 'sb_publishable_qgwMhZPrB_3cFv3yCMcToA_9nDvHz-O';
-  const sb = window.supabase?.createClient(URL, KEY);
+  const sb = window.teamSupabase || window.supabase?.createClient(URL, KEY);
   if (!sb) return;
 
   const ROOMS = {
@@ -53,6 +53,10 @@
   }[ch]));
   const now = () => new Date().toISOString();
   const makeId = () => `forum_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`;
+  const dateTime = value => {
+    const date = new Date(value || Date.now());
+    return Number.isNaN(date.getTime()) ? '' : new Intl.DateTimeFormat('pt-PT',{dateStyle:'medium',timeStyle:'short'}).format(date);
+  };
   const normalizeRole = role => ({
     dev: 'master', developer: 'master', owner: 'master', boss: 'master', administrador: 'admin',
     mod: 'moderator', moderador: 'moderator', helper: 'staff', suporte: 'staff', user: 'member'
@@ -102,6 +106,17 @@
     feedback.classList.toggle('error', error);
     feedback.classList.add('is-visible');
     setTimeout(() => feedback.classList.remove('is-visible'), 3500);
+  }
+
+  async function verifyForumXp(action, rpcResult) {
+    const { data: snapshot, error } = await sb.rpc('tl_forum_xp_snapshot');
+    if (error) {
+      console.error(`[TL Fórum XP] ${action}: falha ao confirmar persistência`, error);
+      showFeedback(`${action} concluída, mas o XP não pôde ser confirmado: ${error.message}`, true);
+      return null;
+    }
+    console.info(`[TL Fórum XP] ${action}`, { rpcResult, snapshot });
+    return snapshot;
   }
 
   function canSeeTopic(topic) {
@@ -211,7 +226,11 @@
   function replyMarkup(reply, topic) {
     if (reply.private && !canModerate() && topic.userId !== uid()) return '';
     const person = resolvedIdentity(reply.userId, reply.authorRole, reply.author || 'Equipa');
-    return `<div class="forum-reply ${reply.private ? 'is-private' : ''} role-frame-${roleClass(person.role)}"><div class="forum-reply-head">${person.avatar ? `<img src="${esc(person.avatar)}" alt="">` : ''}<strong class="role-text-${roleClass(person.role)}">${esc(person.name)}</strong>${roleBadge(person)}<small>${reply.private ? 'PRIVADA' : 'RESPOSTA'}</small></div><p>${esc(reply.text || '')}</p></div>`;
+    const initial=esc((person.name||'M').charAt(0).toUpperCase());
+    return `<article class="forum-reply ${reply.private ? 'is-private' : ''} role-frame-${roleClass(person.role)}" data-reply-id="${esc(reply.id)}">
+      <aside class="forum-reply-author"><span class="forum-reply-avatar">${person.avatar ? `<img src="${esc(person.avatar)}" alt="Avatar de ${esc(person.name)}">` : `<b>${initial}</b>`}</span><div><strong class="role-text-${roleClass(person.role)}">${esc(person.name)}</strong>${roleBadge(person)}</div></aside>
+      <div class="forum-reply-main"><header><span>${reply.private ? 'RESPOSTA PRIVADA' : 'RESPOSTA'}</span><time datetime="${esc(reply.createdAt || '')}">${esc(dateTime(reply.createdAt))}</time></header><p>${esc(reply.text || '')}</p>${session&&topic.status!=='Fechado'?`<footer><button type="button" data-reply-to="${esc(reply.id)}">Responder</button></footer>`:''}</div>
+    </article>`;
   }
 
 
@@ -269,11 +288,12 @@
   }
 
   function controls(topic, pending) {
-    if (!canModerate()) return '';
+    const publicReply = session && !pending && topic.status !== 'Fechado' ? '<button data-action="reply">Responder</button>' : '';
+    if (!canModerate()) return publicReply ? `<div class="forum-mod-actions forum-user-actions">${publicReply}</div>` : '';
     if (pending) {
       return '<div class="forum-mod-actions"><button data-action="approve">Aprovar</button><button data-action="reject" class="danger">Recusar</button><button data-action="edit">Editar</button><button data-action="private-reply">Responder em privado</button><button data-action="move">Mover</button></div>';
     }
-    return `<div class="forum-mod-actions"><button data-action="reply">Responder</button><button data-action="private-reply">Privado</button><button data-action="edit">Editar</button><button data-action="move">Mover</button><button data-action="fix">${topic.fixed ? 'Desfixar' : 'Fixar'}</button><button data-action="close">${topic.status === 'Fechado' ? 'Reabrir' : 'Fechar'}</button><button data-action="remove" class="danger">Remover</button></div>`;
+    return `<div class="forum-mod-actions">${publicReply}<button data-action="private-reply">Privado</button><button data-action="edit">Editar</button><button data-action="move">Mover</button><button data-action="fix">${topic.fixed ? 'Desfixar' : 'Fixar'}</button><button data-action="close">${topic.status === 'Fechado' ? 'Reabrir' : 'Fechar'}</button><button data-action="remove" class="danger">Remover</button></div>`;
   }
 
   function card(topic, pending = false) {
@@ -327,20 +347,25 @@
     if (targetId) setTimeout(() => grid.querySelector(`[data-topic-id="${CSS.escape(targetId)}"]`)?.scrollIntoView({ behavior: 'smooth', block: 'center' }), 50);
   }
 
-  function askText(label) {
-    const value = window.prompt(label, '');
-    return value === null ? null : value.trim();
+  function ensureReplyDialog() {
+    const dialog=createDialog('forumReplyDialog','forum-admin-dialog forum-reply-dialog',`<form method="dialog" class="forum-admin-form"><div class="forum-admin-head"><div><small>FÓRUM</small><h3 id="forumReplyDialogTitle">Responder tópico</h3></div><button type="button" class="forum-admin-close" aria-label="Fechar">×</button></div><label>Resposta<textarea id="forumReplyText" maxlength="2000" rows="9" required placeholder="Escreva a sua resposta. As quebras de linha serão preservadas."></textarea></label><p class="forum-admin-note">A resposta pública concede 8 XP uma única vez após ser validada pelo Supabase.</p><div class="forum-admin-actions"><button type="button" class="secondary" data-dialog-cancel>Cancelar</button><button type="submit" class="primary">Publicar resposta</button></div></form>`);
+    dialog.querySelector('.forum-admin-close').onclick=()=>dialog.close();dialog.querySelector('[data-dialog-cancel]').onclick=()=>dialog.close();return dialog;
   }
 
-  function addReply(topic, privateReply) {
-    const text = askText(privateReply ? 'Resposta privada para o autor:' : 'Resposta pública:');
-    if (!text) return null;
-    const reply = {
-      id: makeId(), text, private: privateReply, author: currentName(), authorRole: roleOf(profile),
-      authorLabel: isBoss() ? 'BOSS' : roleLabel(roleOf(profile)), userId: uid(), createdAt: now()
+  function addReply(topic,privateReply,quotedReply=null) {
+    const dialog=ensureReplyDialog(),textarea=dialog.querySelector('#forumReplyText'),formEl=dialog.querySelector('form');
+    dialog.querySelector('#forumReplyDialogTitle').textContent=privateReply?'Resposta privada':'Responder tópico';
+    textarea.value=quotedReply?`@${resolvedIdentity(quotedReply.userId,quotedReply.authorRole,quotedReply.author).name} `:'';
+    formEl.onsubmit=async event=>{
+      event.preventDefault();const text=textarea.value.trim();if(!text)return;
+      const reply={id:makeId(),text,private:privateReply,author:currentName(),authorRole:roleOf(profile),authorLabel:isBoss()?'BOSS':roleLabel(roleOf(profile)),userId:uid(),createdAt:now()};
+      const submit=formEl.querySelector('.primary');submit.disabled=true;
+      const {data:rpcResult,error}=await sb.rpc('tl_forum_create_reply',{p_topic_key:topic.id,p_reply_key:reply.id,p_body:text,p_private:privateReply});
+      submit.disabled=false;if(error){showFeedback(`XP/resposta não gravados: ${error.message}`,true);return;}
+      if(!privateReply)await verifyForumXp('Resposta +8 XP',rpcResult);
+      topic.replies.push(reply);const data=getData();save(data,privateReply?'Resposta privada enviada.':'Resposta publicada · +8 XP');dialog.close();window.dispatchEvent(new Event('tl:progress'));
     };
-    topic.replies.push(reply);
-    return reply;
+    dialog.showModal();setTimeout(()=>textarea.focus(),30);
   }
 
   function createDialog(id, className, markup) {
@@ -458,19 +483,38 @@
         const own = button.dataset.reaction === 'like' ? topic.reactions.likes : topic.reactions.dislikes;
         const other = button.dataset.reaction === 'like' ? topic.reactions.dislikes : topic.reactions.likes;
         const index = own.indexOf(me);
-        if (index >= 0) own.splice(index, 1); else {
+        if (index >= 0) {
+          if(button.dataset.reaction==='like'){
+            const {error}=await sb.rpc('tl_forum_unlike_topic',{p_topic_key:topic.id});
+            if(error)return showFeedback(`Não foi possível remover o like: ${error.message}`,true);
+          }
+          own.splice(index, 1);
+        } else {
           const otherIndex = other.indexOf(me);
-          if (otherIndex >= 0) other.splice(otherIndex, 1);
+          if (otherIndex >= 0) {
+            if(button.dataset.reaction==='dislike'){
+              const {error}=await sb.rpc('tl_forum_unlike_topic',{p_topic_key:topic.id});
+              if(error)return showFeedback(`Não foi possível trocar a reação: ${error.message}`,true);
+            }
+            other.splice(otherIndex, 1);
+          }
           own.push(me);
           if (button.dataset.reaction === 'like' && topic.userId && topic.userId !== me) {
-            window.TeamProgress?.thank?.(topic.userId, topic.id);
+            const {data:rpcResult,error}=await sb.rpc('tl_forum_like_topic',{p_topic_key:topic.id});
+            if(error){own.splice(own.indexOf(me),1);showFeedback(`Like não contabilizado: ${error.message}`,true);return;}
+            await verifyForumXp('Like +5 XP para o autor',rpcResult);
+            showFeedback('Like contabilizado · o autor recebeu 5 XP.');
+            window.dispatchEvent(new Event('tl:progress'));
           }
         }
         save(data);
       };
     });
+    grid.querySelectorAll('[data-reply-to]').forEach(button=>{
+      button.onclick=()=>{const cardEl=button.closest('[data-topic-id]');const topic=(data.forum||[]).find(item=>item.id===cardEl?.dataset.topicId);const reply=topic?.replies?.find(item=>item.id===button.dataset.replyTo);if(topic&&reply)addReply(topic,false,reply);};
+    });
     grid.querySelectorAll('[data-action]').forEach(button => {
-      button.onclick = () => {
+      button.onclick = async () => {
         const cardEl = button.closest('[data-topic-id]');
         const id = cardEl.dataset.topicId;
         const pending = cardEl.dataset.pending === '1';
@@ -481,12 +525,15 @@
         const action = button.dataset.action;
 
         if (action === 'approve') {
+          const {error}=await sb.rpc('tl_forum_approve_topic',{p_topic_key:topic.id});
+          if(error)return showFeedback(`Não foi possível aprovar/atribuir XP: ${error.message}`,true);
           list.splice(index, 1);
           topic.approved = true;
           topic.status = 'Aberto';
           data.forum.push(topic);
           setFilter('approved');
-          return save(data, 'Tópico aprovado.');
+          window.dispatchEvent(new Event('tl:progress'));
+          return save(data, 'Tópico aprovado · 20 XP atribuídos ao autor.');
         }
         if (action === 'reject') {
           if (confirm('Recusar este tópico?')) {
@@ -515,20 +562,13 @@
           return save(data, closing ? 'Tópico fechado.' : 'Tópico reaberto.');
         }
         if (action === 'reply' || action === 'private-reply') {
-          const reply = addReply(topic, action === 'private-reply');
-          if (reply) {
-            save(data, action === 'private-reply' ? 'Resposta privada enviada.' : 'Resposta publicada.');
-            if (action === 'reply') {
-              window.TeamProgress?.event?.('forum_reply', `reply:${reply.id}`, { topic: topic.id, reply: reply.id })
-                .then(result => { if (!result) console.warn('[TL Progress] resposta não contabilizada'); });
-            }
-          }
+          addReply(topic, action === 'private-reply');
         }
       };
     });
   }
 
-  form?.addEventListener('submit', event => {
+  form?.addEventListener('submit', async event => {
     event.preventDefault();
     if (!session) return updateAuth();
 
@@ -548,11 +588,15 @@
       status: 'Aberto', fixed: false, replies: [], createdAt: now()
     };
 
-    if (canModerate()) {
+    const {data:cloudResult,error:cloudError}=await sb.rpc('tl_forum_create_topic',{p_topic_key:topic.id,p_title:title,p_body:description,p_category:category,p_private:topic.private});
+    if(cloudError)return showFeedback(`Tópico/XP não gravados: ${cloudError.message}`,true);
+    const approved=Boolean(cloudResult?.approved);
+    if(approved)await verifyForumXp('Tópico +20 XP',cloudResult);
+    if (approved) {
       topic.approved = true;
       data.forum.push(topic);
       setFilter('approved');
-      showFeedback('Tópico publicado.', false);
+      showFeedback('Tópico publicado · +20 XP.', false);
     } else {
       topic.approved = false;
       data.pendingForum.push(topic);
@@ -560,8 +604,7 @@
     }
 
     saveTeamData(data);
-    window.TeamProgress?.event?.('forum_topic', `topic:${topic.id}`, { topic: topic.id, category: topic.category })
-      .then(result => { if (!result) console.warn('[TL Progress] tópico não contabilizado'); });
+    window.dispatchEvent(new Event('tl:progress'));
     $('topicTitle').value = '';
     $('topicDescription').value = '';
     renderRooms();

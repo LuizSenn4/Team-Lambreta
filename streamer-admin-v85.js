@@ -1,7 +1,5 @@
 (() => {
-  const URL = 'https://ahiatqnokyhfpailobjx.supabase.co';
-  const KEY = 'sb_publishable_qgwMhZPrB_3cFv3yCMcToA_9nDvHz-O';
-  const sb = window.supabase?.createClient(URL, KEY);
+  const sb = window.teamSupabase;
   if (!sb) return;
 
   const $ = id => document.getElementById(id);
@@ -9,6 +7,13 @@
   let currentProfile = null;
   let currentRows = [];
   let scheduleRows = [];
+  let pendingCroppedFile = null;
+  let pendingOriginalFile = null;
+  let pendingPreviewUrl = '';
+  let editingPhotoUrl = '';
+  const STREAMER_POSTER_RATIO = 4 / 5;
+  const STREAMER_OUTPUT = { width: 1200, height: 1500 };
+  const cropState = { naturalWidth:0,naturalHeight:0,frameWidth:0,frameHeight:0,minScale:1,zoom:1,x:0,y:0,dragging:false,startX:0,startY:0,originX:0,originY:0,sourceFile:null,sourceName:'streamer-original' };
 
   const WEEK_DAYS = [
     ['monday','Segunda-feira'],['tuesday','Terça-feira'],['wednesday','Quarta-feira'],
@@ -154,7 +159,95 @@
     const fileInput = $('streamerPhotoFile');
     if (urlInput) urlInput.value = '';
     if (fileInput) fileInput.value = '';
+    pendingCroppedFile = null;
+    pendingOriginalFile = null;
+    if (pendingPreviewUrl) URL.revokeObjectURL(pendingPreviewUrl);
+    pendingPreviewUrl = '';
     setStreamerPhotoPreview('');
+  }
+
+  function clampCropPosition() {
+    const width=cropState.naturalWidth*cropState.minScale*cropState.zoom;
+    const height=cropState.naturalHeight*cropState.minScale*cropState.zoom;
+    cropState.x=Math.min(0,Math.max(cropState.frameWidth-width,cropState.x));
+    cropState.y=Math.min(0,Math.max(cropState.frameHeight-height,cropState.y));
+  }
+
+  function paintCrop() {
+    const image=$('streamerCropImage');
+    if(!image||!cropState.naturalWidth) return;
+    const scale=cropState.minScale*cropState.zoom;
+    image.style.width=`${cropState.naturalWidth*scale}px`;
+    image.style.height=`${cropState.naturalHeight*scale}px`;
+    image.style.transform=`translate3d(${cropState.x}px,${cropState.y}px,0)`;
+    const slider=$('streamerCropZoom'); if(slider) slider.value=String(cropState.zoom);
+    const info=$('streamerCropInfo'); if(info) info.textContent=`Saída: ${STREAMER_OUTPUT.width} × ${STREAMER_OUTPUT.height}px · zoom ${Math.round(cropState.zoom*100)}%`;
+  }
+
+  function centerCrop() {
+    const scale=cropState.minScale*cropState.zoom;
+    cropState.x=(cropState.frameWidth-cropState.naturalWidth*scale)/2;
+    cropState.y=(cropState.frameHeight-cropState.naturalHeight*scale)/2;
+    clampCropPosition(); paintCrop();
+  }
+
+  function setCropZoom(value) {
+    const next=Math.min(3,Math.max(1,Number(value)||1));
+    const oldScale=cropState.minScale*cropState.zoom;
+    const newScale=cropState.minScale*next;
+    const cx=cropState.frameWidth/2, cy=cropState.frameHeight/2;
+    cropState.x=cx-(cx-cropState.x)*(newScale/oldScale);
+    cropState.y=cy-(cy-cropState.y)*(newScale/oldScale);
+    cropState.zoom=next; clampCropPosition(); paintCrop();
+  }
+
+  function fitCrop() { cropState.zoom=1; centerCrop(); }
+
+  async function sourceToFile(source, name='streamer-original') {
+    if(source instanceof File) return source;
+    const response=await fetch(source,{mode:'cors'});
+    if(!response.ok) throw new Error('Não foi possível carregar esta imagem para enquadramento.');
+    const blob=await response.blob();
+    return new File([blob],`${name}.${blob.type.split('/')[1]||'jpg'}`,{type:blob.type||'image/jpeg'});
+  }
+
+  async function openCropper(source, name='streamer-original') {
+    const file=await sourceToFile(source,name);
+    if(!file.type.startsWith('image/')) throw new Error('Selecione um ficheiro de imagem válido.');
+    const modal=$('streamerCropModal'), frame=$('streamerCropFrame'), image=$('streamerCropImage');
+    modal.hidden=false;
+    const objectUrl=URL.createObjectURL(file);
+    cropState.sourceFile=file; cropState.sourceName=name;
+    await new Promise((resolve,reject)=>{image.onload=resolve;image.onerror=()=>reject(new Error('Não foi possível ler a imagem.'));image.src=objectUrl;});
+    URL.revokeObjectURL(objectUrl);
+    cropState.naturalWidth=image.naturalWidth;cropState.naturalHeight=image.naturalHeight;
+    cropState.frameWidth=frame.clientWidth;cropState.frameHeight=frame.clientHeight;
+    cropState.minScale=Math.max(cropState.frameWidth/cropState.naturalWidth,cropState.frameHeight/cropState.naturalHeight);
+    cropState.zoom=1;centerCrop();
+  }
+
+  function closeCropper({discard=false}={}) {
+    $('streamerCropModal').hidden=true;
+    cropState.dragging=false;
+    if(discard&&cropState.sourceFile===$('streamerPhotoFile')?.files?.[0]) $('streamerPhotoFile').value='';
+    cropState.sourceFile=null;
+  }
+
+  async function saveCrop() {
+    const image=$('streamerCropImage');
+    const canvas=document.createElement('canvas');canvas.width=STREAMER_OUTPUT.width;canvas.height=STREAMER_OUTPUT.height;
+    const ctx=canvas.getContext('2d',{alpha:false});ctx.fillStyle='#070b10';ctx.fillRect(0,0,canvas.width,canvas.height);
+    const outputScale=canvas.width/cropState.frameWidth;
+    const scale=cropState.minScale*cropState.zoom;
+    ctx.drawImage(image,cropState.x*outputScale,cropState.y*outputScale,cropState.naturalWidth*scale*outputScale,cropState.naturalHeight*scale*outputScale);
+    const blob=await new Promise(resolve=>canvas.toBlob(resolve,'image/webp',.88));
+    if(!blob) throw new Error('Não foi possível gerar a imagem final.');
+    pendingOriginalFile=cropState.sourceFile;
+    pendingCroppedFile=new File([blob],`${cropState.sourceName.replace(/\.[^.]+$/,'')}-4x5.webp`,{type:'image/webp'});
+    if(pendingPreviewUrl) URL.revokeObjectURL(pendingPreviewUrl);
+    pendingPreviewUrl=URL.createObjectURL(pendingCroppedFile);
+    $('streamerPhotoUrl').value='';$('streamerPhotoFile').value='';setStreamerPhotoPreview(pendingPreviewUrl);
+    closeCropper();feedback('Enquadramento guardado. Guarde o streamer para enviar ao storage.');
   }
 
   async function ensureAdmin() {
@@ -174,6 +267,7 @@
     $('streamerAllowChat').checked = true;
     $('streamerPublished').checked = true;
     clearStreamerPhoto();
+    editingPhotoUrl='';
     setScheduleRows([]);
     $('streamerEditorMode').textContent = 'NOVO STREAMER';
     $('streamerEditorTitle').textContent = 'Adicionar streamer';
@@ -181,11 +275,15 @@
   }
 
   function openEditor(row=null) {
+    pendingCroppedFile=null;pendingOriginalFile=null;
+    if(pendingPreviewUrl) URL.revokeObjectURL(pendingPreviewUrl);
+    pendingPreviewUrl='';
     $('streamerEditor').hidden = false;
     $('streamerAdminPreview').hidden = true;
     if (!row) {
       resetForm();
     } else {
+      editingPhotoUrl=row.photo_url||'';
       $('streamerEditorMode').textContent = 'EDITAR STREAMER';
       $('streamerEditorTitle').textContent = row.display_name || 'Streamer';
       $('streamerId').value = row.id;
@@ -265,12 +363,18 @@
     return normalizeTikTokIdentity(row);
   }
 
-  async function uploadPhoto(file) {
+  async function uploadPhoto(file, originalFile=null) {
     if (!file) return null;
-    const ext = file.name.split('.').pop()?.toLowerCase() || 'jpg';
+    const ext = file.name.split('.').pop()?.toLowerCase() || 'webp';
     const path = `${currentSession.user.id}/${crypto.randomUUID()}.${ext}`;
     const { error } = await sb.storage.from('streamer-images').upload(path,file,{upsert:false});
     if(error) throw error;
+    if(originalFile){
+      const originalExt=originalFile.name.split('.').pop()?.toLowerCase()||'jpg';
+      const originalPath=`${currentSession.user.id}/originals/${crypto.randomUUID()}.${originalExt}`;
+      const originalResult=await sb.storage.from('streamer-images').upload(originalPath,originalFile,{upsert:false});
+      if(originalResult.error) console.warn('[Streamers] O original não foi preservado:',originalResult.error.message);
+    }
     return sb.storage.from('streamer-images').getPublicUrl(path).data.publicUrl;
   }
 
@@ -280,10 +384,11 @@
 
     const row=collectForm();
     if(!row.display_name) return feedback('Preencha o nome de exibição.',true);
+    if(row.photo_url && row.photo_url!==editingPhotoUrl && !pendingCroppedFile) return feedback('Abra “Enquadrar” e salve o recorte 4:5 antes de guardar.',true);
 
-    const file=$('streamerPhotoFile')?.files?.[0];
+    const file=pendingCroppedFile;
     try {
-      if(file) row.photo_url = await uploadPhoto(file);
+      if(file) row.photo_url = await uploadPhoto(file,pendingOriginalFile);
 
       const id=$('streamerId').value;
       let response;
@@ -299,6 +404,9 @@
 
       if(response.error) throw response.error;
       feedback('Streamer guardado com sucesso.');
+      pendingCroppedFile=null;pendingOriginalFile=null;
+      if(pendingPreviewUrl) URL.revokeObjectURL(pendingPreviewUrl);
+      pendingPreviewUrl='';
       await loadStreamers();
       window.setTimeout(closeEditor,700);
     } catch(error) {
@@ -392,6 +500,9 @@
   $('streamerPhotoUrl')?.addEventListener('input',event=>{
     const url=event.target.value.trim();
     if (url) $('streamerPhotoFile').value = '';
+    pendingCroppedFile=null;pendingOriginalFile=null;
+    if(pendingPreviewUrl) URL.revokeObjectURL(pendingPreviewUrl);
+    pendingPreviewUrl='';
     setStreamerPhotoPreview(url);
   });
 
@@ -399,8 +510,36 @@
     const file=event.target.files?.[0];
     if(!file) return;
     $('streamerPhotoUrl').value = '';
-    setStreamerPhotoPreview(URL.createObjectURL(file));
+    openCropper(file,file.name).catch(error=>{event.target.value='';feedback(error.message||'Não foi possível abrir o enquadramento.',true);});
   });
+
+  $('cropStreamerPhotoUrlBtn')?.addEventListener('click',()=>{
+    const url=$('streamerPhotoUrl')?.value?.trim();
+    if(!url) return feedback('Cole primeiro o link de uma imagem.',true);
+    openCropper(url,'streamer-link').catch(error=>feedback(error.message||'A imagem remota não permite enquadramento.',true));
+  });
+
+  $('recropStreamerPhotoBtn')?.addEventListener('click',()=>{
+    const source=pendingCroppedFile||$('streamerPhotoUrl')?.value?.trim()||$('streamerPhotoPreview')?.src;
+    if(!source) return feedback('Não existe imagem para reenquadrar.',true);
+    openCropper(source,pendingCroppedFile?.name||'streamer-atual').catch(error=>feedback(error.message||'Não foi possível reabrir a imagem.',true));
+  });
+
+  $('streamerCropZoom')?.addEventListener('input',event=>setCropZoom(event.target.value));
+  $('streamerCropZoomOut')?.addEventListener('click',()=>setCropZoom(cropState.zoom-.1));
+  $('streamerCropZoomIn')?.addEventListener('click',()=>setCropZoom(cropState.zoom+.1));
+  $('streamerCropCenter')?.addEventListener('click',centerCrop);
+  $('streamerCropFit')?.addEventListener('click',fitCrop);
+  $('streamerCropSave')?.addEventListener('click',()=>saveCrop().catch(error=>feedback(error.message||'Falha ao guardar o enquadramento.',true)));
+  $('streamerCropCancel')?.addEventListener('click',()=>closeCropper({discard:true}));
+  $('streamerCropClose')?.addEventListener('click',()=>closeCropper({discard:true}));
+  $('streamerCropModal')?.addEventListener('pointerdown',event=>{if(event.target===event.currentTarget)closeCropper({discard:true});});
+  const cropFrame=$('streamerCropFrame');
+  cropFrame?.addEventListener('pointerdown',event=>{cropState.dragging=true;cropState.startX=event.clientX;cropState.startY=event.clientY;cropState.originX=cropState.x;cropState.originY=cropState.y;cropFrame.setPointerCapture(event.pointerId);cropFrame.classList.add('is-dragging');});
+  cropFrame?.addEventListener('pointermove',event=>{if(!cropState.dragging)return;cropState.x=cropState.originX+(event.clientX-cropState.startX);cropState.y=cropState.originY+(event.clientY-cropState.startY);clampCropPosition();paintCrop();});
+  const finishCropDrag=event=>{if(!cropState.dragging)return;cropState.dragging=false;cropFrame.classList.remove('is-dragging');if(cropFrame.hasPointerCapture?.(event.pointerId))cropFrame.releasePointerCapture(event.pointerId);};
+  cropFrame?.addEventListener('pointerup',finishCropDrag);cropFrame?.addEventListener('pointercancel',finishCropDrag);
+  document.addEventListener('keydown',event=>{if(event.key==='Escape'&&!$('streamerCropModal')?.hidden)closeCropper({discard:true});});
 
   $('clearStreamerPhotoBtn')?.addEventListener('click',()=>{
     clearStreamerPhoto();
@@ -439,6 +578,8 @@
     await loadStreamers();
     startAdminCloudSync();
   }
+
+  window.TeamStreamerCropper = Object.freeze({ aspectRatio:STREAMER_POSTER_RATIO, output:{...STREAMER_OUTPUT}, coverScale:(imageWidth,imageHeight,frameWidth,frameHeight)=>Math.max(frameWidth/imageWidth,frameHeight/imageHeight) });
 
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',bootAdminStreamers);
   else bootAdminStreamers();

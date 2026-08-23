@@ -1,8 +1,6 @@
 (() => {
   'use strict';
-  const URL='https://ahiatqnokyhfpailobjx.supabase.co';
-  const KEY='sb_publishable_qgwMhZPrB_3cFv3yCMcToA_9nDvHz-O';
-  const sb=window.teamSupabase || window.supabase?.createClient(URL,KEY);
+  const sb=window.teamSupabase;
   if(!sb) return;
 
   let session=null;
@@ -18,7 +16,7 @@
 
   async function getSession(){
     if(session) return session;
-    const r=await sb.auth.getSession(); session=r.data.session||null; return session;
+    session=await window.TeamAuth?.getSession()||null; return session;
   }
 
   async function forumProgress(type,metadata={}){

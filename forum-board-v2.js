@@ -567,12 +567,10 @@
 
   async function loginGoogle() {
     sessionStorage.setItem(RETURN_KEY, safeReturn(currentUrl()));
-    const redirectTo = `${location.origin}${location.pathname}${location.search}`;
-    const { error } = await sb.auth.signInWithOAuth({
-      provider: "google",
-      options: { redirectTo },
-    });
-    if (error) notify("Não foi possível iniciar o login Google.", true);
+    try {
+      if (!window.TeamAuth) throw new Error('AuthManager V102 indisponível.');
+      await window.TeamAuth.signInWithGoogle();
+    } catch (_) { notify("Não foi possível iniciar o login Google.", true); }
   }
 
   async function loadProfile() {
@@ -1226,8 +1224,8 @@
       topics.find((topic) => topic.id === post.topic_id),
     );
     return `<article id="${esc(postHash)}" class="forum-post-card" data-post-id="${esc(post.id)}">
-      <header><a class="forum-post-author-mobile" href="forum.html?profile=${encodeURIComponent(post.author_id)}" data-route>${avatarMarkup(post.author_id, "is-mobile")}<span><strong class="role-${esc(role(post.author_id))}">${esc(personName(post.author_id))}</strong><small>${countryFlag(author.country)} · ${stats.totalPosts} posts</small></span><span class="forum-role-badge role-${esc(role(post.author_id))}">${esc(roleLabel(post.author_id))}</span></a><div><time datetime="${esc(post.created_at)}">${esc(fmt(post.created_at))}</time><a href="#${esc(postHash)}" data-share-post="${esc(post.id)}" aria-label="Copiar link do post ${index + 1}">#${index + 1}</a></div></header>
-      <div class="forum-post-layout"><aside class="forum-post-author"><a href="forum.html?profile=${encodeURIComponent(post.author_id)}" data-route>${avatarMarkup(post.author_id, "is-post")}<strong class="role-${esc(role(post.author_id))}">${esc(personName(post.author_id))}</strong></a><span class="forum-role-badge role-${esc(role(post.author_id))}">${esc(roleLabel(post.author_id))}</span><small class="forum-post-country" title="${esc(countryInfo(author.country)?.name || "País não informado")}">${countryFlag(author.country)}</small><dl><div><dt>Jogos</dt><dd>${gameLabels(author).length ? esc(gameLabels(author).map((label) => `${label} -`).join("\n")) : "—"}</dd></div><div><dt>Posts</dt><dd>${stats.totalPosts}</dd></div><div><dt>XP</dt><dd>${stats.xp}</dd></div><div><dt>Likes</dt><dd class="forum-author-likes" data-author-likes="${esc(post.author_id)}">${likeIcon}<span>${stats.likes}</span></dd></div><div><dt>Publicado</dt><dd>${esc(relative(post.created_at))}</dd></div><div><dt>Membro desde</dt><dd>${memberSince ? esc(fmtDate(memberSince)) : "—"}</dd></div></dl></aside>
+      <header><a class="forum-post-author-mobile" href="profile.html?user=${encodeURIComponent(post.author_id)}">${avatarMarkup(post.author_id, "is-mobile")}<span><strong class="role-${esc(role(post.author_id))}">${esc(personName(post.author_id))}</strong><small>${countryFlag(author.country)} · ${stats.totalPosts} posts</small></span><span class="forum-role-badge role-${esc(role(post.author_id))}">${esc(roleLabel(post.author_id))}</span></a><div><time datetime="${esc(post.created_at)}">${esc(fmt(post.created_at))}</time><a href="#${esc(postHash)}" data-share-post="${esc(post.id)}" aria-label="Copiar link do post ${index + 1}">#${index + 1}</a></div></header>
+      <div class="forum-post-layout"><aside class="forum-post-author"><a href="profile.html?user=${encodeURIComponent(post.author_id)}">${avatarMarkup(post.author_id, "is-post")}<strong class="role-${esc(role(post.author_id))}">${esc(personName(post.author_id))}</strong></a><span class="forum-role-badge role-${esc(role(post.author_id))}">${esc(roleLabel(post.author_id))}</span><small class="forum-post-country" title="${esc(countryInfo(author.country)?.name || "País não informado")}">${countryFlag(author.country)}</small><dl><div><dt>Jogos</dt><dd>${gameLabels(author).length ? esc(gameLabels(author).map((label) => `${label} -`).join("\n")) : "—"}</dd></div><div><dt>Posts</dt><dd>${stats.totalPosts}</dd></div><div><dt>XP</dt><dd>${stats.xp}</dd></div><div><dt>Likes</dt><dd class="forum-author-likes" data-author-likes="${esc(post.author_id)}">${likeIcon}<span>${stats.likes}</span></dd></div><div><dt>Publicado</dt><dd>${esc(relative(post.created_at))}</dd></div><div><dt>Membro desde</dt><dd>${memberSince ? esc(fmtDate(memberSince)) : "—"}</dd></div></dl></aside>
       <div class="forum-post-main">${quoted ? `<blockquote class="forum-linked-quote"><a href="#post-${esc(quoted.id)}">${esc(personName(quoted.author_id))} escreveu:</a><p>${quoted.deleted_at ? "Conteúdo removido." : renderTlMark(quoted.body.slice(0, 500))}</p></blockquote>` : ""}<div class="forum-post-body ${removed ? "is-removed" : ""}">${removed ? "Esta publicação foi removida." : renderTlMark(post.body)}</div>${post.edited_at && !removed ? `<p class="forum-post-edited">Editado em ${esc(fmt(post.edited_at))}</p>` : ""}</div></div>
       <footer><div class="forum-post-footer-meta"><span>${post.is_original ? "POST ORIGINAL" : `ID ${esc(post.id)}`}</span>${removed ? "" : reactionButtons(post.id)}</div><div class="forum-post-actions">${removed ? "" : `${canReply ? `<button type="button" data-reply-post="${esc(post.id)}">Responder</button><button type="button" data-quote-post="${esc(post.id)}">Citar</button>` : ""}${canManage ? `<button type="button" data-edit-post="${esc(post.id)}">Editar</button>${post.is_original ? "" : `<button type="button" class="forum-delete-action" data-delete-post="${esc(post.id)}">Apagar resposta</button>`}` : ""}`}<button type="button" data-share-post="${esc(post.id)}">Compartilhar</button></div></footer>
     </article>`;
@@ -1282,7 +1280,7 @@
     const member = person(userId);
     const preview = ensureMentionPreview();
     clearTimeout(preview.hideTimer);
-    preview.innerHTML = `<header>${avatarMarkup(userId, "is-mention-preview")}<div><strong class="role-${esc(role(userId))}">${esc(personName(userId))}</strong><span class="forum-role-badge role-${esc(role(userId))}">${esc(roleLabel(userId))}</span></div></header><dl>${member.country ? `<div><dt>País</dt><dd>${esc(countryFullLabel(member.country))}</dd></div>` : ""}${gameLabels(member).length ? `<div><dt>Jogos</dt><dd>${esc(gameLabels(member).join(" · "))}</dd></div>` : ""}${member.game_modes?.length ? `<div><dt>Modos</dt><dd>${esc(member.game_modes.map((item) => item.split("::")[1] || item).join(" · "))}</dd></div>` : ""}</dl><a href="forum.html?profile=${encodeURIComponent(userId)}">Ver perfil →</a>`;
+    preview.innerHTML = `<header>${avatarMarkup(userId, "is-mention-preview")}<div><strong class="role-${esc(role(userId))}">${esc(personName(userId))}</strong><span class="forum-role-badge role-${esc(role(userId))}">${esc(roleLabel(userId))}</span></div></header><dl>${member.country ? `<div><dt>País</dt><dd>${esc(countryFullLabel(member.country))}</dd></div>` : ""}${gameLabels(member).length ? `<div><dt>Jogos</dt><dd>${esc(gameLabels(member).join(" · "))}</dd></div>` : ""}${member.game_modes?.length ? `<div><dt>Modos</dt><dd>${esc(member.game_modes.map((item) => item.split("::")[1] || item).join(" · "))}</dd></div>` : ""}</dl><a href="profile.html?user=${encodeURIComponent(userId)}">👤 Ver perfil</a>${userId !== session?.user?.id ? `<a href="buddy.html?user=${encodeURIComponent(userId)}">👥+ Adicionar Buddy</a>` : ""}`;
     preview.hidden = false;
     const rect = trigger.getBoundingClientRect();
     const width = Math.min(310, window.innerWidth - 24);
@@ -1297,16 +1295,7 @@
         : Math.max(12, rect.top - preview.offsetHeight - 8);
     preview.style.left = `${left}px`;
     preview.style.top = `${top}px`;
-    preview.querySelector("a").addEventListener("click", (event) => {
-      event.preventDefault();
-      preview.hidden = true;
-      history.pushState(
-        {},
-        "",
-        `forum.html?profile=${encodeURIComponent(userId)}`,
-      );
-      renderRoute();
-    });
+    preview.querySelector("a").addEventListener("click", () => { preview.hidden = true; });
   }
 
   function bindMentions() {
@@ -1914,8 +1903,7 @@
 
   async function init() {
     sessionStorage.setItem(RETURN_KEY, safeReturn(currentUrl()));
-    const { data } = await sb.auth.getSession();
-    session = data.session;
+    session = await window.TeamAuth?.getSession();
     if (!session) {
       app.hidden = true;
       gate.hidden = false;
@@ -1930,9 +1918,7 @@
       ? $("forumCreateDialog").showModal()
       : openProfileEditor("create"),
   );
-  $("forumMyProfileButton")?.addEventListener("click", () =>
-    profileReady() ? setUrl({ profile: session.user.id }) : openProfileEditor(),
-  );
+  $("forumMyProfileButton")?.addEventListener("click", () => { location.href = profileReady() ? `profile.html?user=${encodeURIComponent(session.user.id)}` : 'profile-edit.html'; });
   $("forumCreateForm")?.addEventListener("submit", submitTopic);
   $("forumReplyForm")?.addEventListener("submit", submitReply);
   $("forumEditPostForm")?.addEventListener("submit", submitPostEdit);
@@ -2130,7 +2116,7 @@
     (setGameResultsOpen(false), setCountryResultsOpen(false)),
   );
   window.addEventListener("popstate", () => session && renderRoute());
-  sb.auth.onAuthStateChange((_event, nextSession) => {
+  window.TeamAuth?.subscribe((nextSession) => {
     const changed = nextSession?.user?.id !== session?.user?.id;
     session = nextSession;
     if (changed && session) activate();

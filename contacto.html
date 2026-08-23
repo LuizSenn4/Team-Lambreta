@@ -4,8 +4,10 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Contacto - Team Lambreta</title>
-  <link rel="stylesheet" href="style-v92.css" />
+  <link rel="stylesheet" href="style-v92.css?v=97.0" />
   <link rel="stylesheet" href="ui-core-v93.css?v=93.0" />
+  <link rel="stylesheet" href="tl-design-system-v100.css?v=100.0" />
+  <link rel="stylesheet" href="tl-polish-v100.css?v=100.0" />
 </head>
 <body>
   <section id="siteContent" class="site-content contact-page">
@@ -71,10 +73,12 @@
 
   <section class="contact-layout">
     <div class="contact-card-main">
-      <h2>Fala com a família</h2>
-      <p>Links cadastrados pelo admin aparecem aqui. TikTok, Instagram, YouTube e Discord.</p>
+      <small>CONTACTO OFICIAL</small><h2>Fala com a família</h2>
+      <p>Para dúvidas, propostas ou suporte, fale diretamente com o Team Lambreta.</p>
+      <a class="contact-email" href="mailto:dudu11ogato@gmail.com">dudu11ogato@gmail.com</a>
+      <form id="contactEmailForm" class="contact-email-form"><label>Nome<input name="name" required maxlength="80" autocomplete="name"></label><label>Seu e-mail<input name="email" required type="email" maxlength="120" autocomplete="email"></label><label>Assunto<input name="subject" required maxlength="100"></label><label>Mensagem<textarea name="message" required maxlength="1500" rows="6"></textarea></label><button type="submit">Preparar e-mail</button><p id="contactFeedback" role="status"></p></form>
     </div>
-    <div id="socialLinks" class="contact-social-grid"></div>
+    <div><h2 class="contact-social-title">Nossas redes</h2><div id="socialLinks" class="contact-social-grid"></div></div>
   </section>
 </main>
 
@@ -85,13 +89,11 @@
 
   <script src="data.js"></script>
   <script src="script-v89.js"></script>
+  <script src="contact-v97.js?v=97.0"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="community-safety-v9347.js?v=93.4.7"></script>
-  <script src="supabase-integration-v92.js?v=93.4.8"></script>
-  <script src="buddy-presence-v95.js?v=92.39.4.5"></script><script src="buddy-global-notifications-v94.js?v=92.39.4.5"></script><script src="navigation-v93.js?v=93.0"></script>
+  <script src="supabase-client.js?v=102.0"></script><script src="auth-manager.js?v=102.0"></script><script src="presence-manager.js?v=102.0"></script><script src="services/profile-service.js?v=102.0"></script><script src="services/permission-service.js?v=102.0"></script><script src="tl-shell-v102.js?v=102.0"></script>
 
   <script src="error-codes-v92.js"></script>
-  <script src="site-i18n-v92.js"></script>
 <script src="community-progress-v938.js?v=93.8.6"></script>
 </body>
 </html>

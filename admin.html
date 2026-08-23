@@ -260,6 +260,7 @@
                 <label>Colar link da foto
                   <div class="streamer-photo-url-row">
                     <input id="streamerPhotoUrl" type="url" placeholder="https://...">
+                    <button id="cropStreamerPhotoUrlBtn" type="button">Enquadrar</button>
                     <button id="clearStreamerPhotoBtn" type="button">Limpar</button>
                   </div>
                 </label>
@@ -268,7 +269,8 @@
                   <input id="streamerPhotoFile" type="file" accept="image/*">
                 </label>
 
-                <small>Use link ou ficheiro. Ao escolher um, o outro será limpo automaticamente.</small>
+                <button id="recropStreamerPhotoBtn" type="button">Reabrir enquadramento atual</button>
+                <small>A arte final é guardada em 4:5, exatamente como a moldura pública. O upload só acontece depois de guardar o streamer.</small>
               </div>
             </div>
           </fieldset>
@@ -408,6 +410,7 @@
 
     <section id="loja" class="admin-card">
       <div class="card-head"><h2>Loja</h2><button data-add="store">Adicionar produto</button></div>
+      <p class="hint">Catálogo local da Loja. Produtos sem estoque informado aparecem como “sob consulta”; desative um item para ocultá-lo da página pública.</p>
       <div id="storeAdminList" class="admin-list"></div>
     </section>
 
@@ -567,13 +570,29 @@
     </section>
   </main>
 
+  <div id="streamerCropModal" class="streamer-crop-modal" hidden>
+    <section class="streamer-crop-dialog" role="dialog" aria-modal="true" aria-labelledby="streamerCropTitle">
+      <header><div><small>PREVIEW DO CARD · 4:5</small><h2 id="streamerCropTitle">Enquadrar arte do streamer</h2></div><button id="streamerCropClose" type="button" aria-label="Fechar enquadramento">×</button></header>
+      <div class="streamer-crop-layout">
+        <div id="streamerCropFrame" class="streamer-crop-frame" aria-label="Moldura final da arte"><img id="streamerCropImage" alt="Arte a enquadrar" draggable="false"></div>
+        <aside class="streamer-crop-controls">
+          <p>Arraste a imagem dentro da moldura. O limite mínimo de zoom impede espaços vazios.</p>
+          <label for="streamerCropZoom">Zoom</label>
+          <div class="streamer-crop-zoom"><button id="streamerCropZoomOut" type="button" aria-label="Diminuir zoom">−</button><input id="streamerCropZoom" type="range" min="1" max="3" step="0.01" value="1"><button id="streamerCropZoomIn" type="button" aria-label="Aumentar zoom">+</button></div>
+          <button id="streamerCropCenter" type="button">Centralizar</button>
+          <button id="streamerCropFit" type="button">Ajustar</button>
+          <small id="streamerCropInfo" aria-live="polite"></small>
+        </aside>
+      </div>
+      <footer><button id="streamerCropCancel" type="button">Cancelar</button><button id="streamerCropSave" class="primary" type="button">Salvar enquadramento</button></footer>
+    </section>
+  </div>
   <div id="toast">Salvo!</div>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="community-safety-v9347.js?v=93.4.7"></script>
+  <script src="supabase-client.js?v=102.0"></script><script src="auth-manager.js?v=102.0"></script><script src="presence-manager.js?v=102.0"></script><script src="services/profile-service.js?v=102.0"></script><script src="services/permission-service.js?v=102.0"></script>
   <script src="admin-gate.js"></script>
   <script src="data.js"></script>
   <script src="admin.js"></script>
-  <script src="supabase-integration-v92.js?v=93.4.8"></script>
   <script src="forum-admin-v1.js?v=1.0"></script>
   <script src="streamer-admin-v85.js"></script>
   <script src="team-admin-v92.js?v=98.0"></script>
@@ -581,7 +600,5 @@
   <script src="admin-help.js?v=1.0"></script>
   <script src="admin-updates-v1.js?v=1.0"></script>
   <script src="error-codes-v92.js"></script>
-  <script src="site-i18n-v92.js"></script>
-<script src="buddy-presence-v95.js?v=92.39.4.5"></script><script src="buddy-global-notifications-v94.js?v=92.39.4.5"></script><script src="community-progress-v938.js?v=93.8.6"></script>
 </body>
 </html>
