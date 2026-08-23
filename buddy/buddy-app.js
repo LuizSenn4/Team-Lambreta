@@ -40,8 +40,13 @@
   async function openChat(id) {
     const profile=state.profiles.get(id) || state.searchResults.find(p=>p.id===id); if(!profile || friendState(id)!=='buddy') return;
     state.current=profile; state.messages=[]; state.oldest=null; state.hasOlder=true; state.loading=true; root.classList.add('chat-open'); renderChat(); renderInfo();
-    try { const rows=await messages.page(id); state.messages=rows; state.oldest=rows[0]?.created_at || null; state.hasOlder=rows.length===50; state.unread[id]=0; await messages.markRead(id); await messages.setTypingPeer(id, active=>renderTyping(active)); renderChat(); updateUnread(); requestAnimationFrame(()=>{const list=$('#buddyMessages');list.scrollTop=list.scrollHeight;}); }
-    catch(error){toast(friendlyError(error,'Falha ao carregar a conversa.'),'error');} finally {state.loading=false;}
+    try { const rows=await messages.page(id); state.messages=rows; state.oldest=rows[0]?.created_at || null; state.hasOlder=rows.length===50; state.unread[id]=0; await messages.markRead(id); await messages.setTypingPeer(id, active=>renderTyping(active)); updateUnread(); }
+    catch(error){toast(friendlyError(error,'Falha ao carregar a conversa.'),'error');}
+    finally {
+      state.loading=false;
+      renderChat();
+      requestAnimationFrame(()=>{const list=$('#buddyMessages');if(list)list.scrollTop=list.scrollHeight;});
+    }
   }
   function renderChatHeader() { const p=state.current; $('#buddyChatHeader').innerHTML = p ? `<button class="buddy-mobile-back" type="button" data-back aria-label="Voltar aos contactos">←</button><span class="buddy-avatar-wrap">${avatar(p)}<i class="buddy-dot ${presence(p)}"></i></span><div class="buddy-chat-title"><strong>${esc(profileName(p))}</strong><span>${statusLabel(presence(p))}</span></div><div class="buddy-chat-actions"><button type="button" data-info aria-label="Informações do contacto">ⓘ</button><button type="button" data-chat-menu aria-label="Mais ações">⋯</button></div>` : '';
   }
