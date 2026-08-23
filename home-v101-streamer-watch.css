@@ -18,6 +18,39 @@
 .home101-platform-icon.is-instagram{color:#f4a1dd}
 .home101-streamer-card:hover .home101-platform-icon{border-color:#3e5d71;transform:translateY(-1px)}
 
+/*
+  IMAGEM DO CARD — REGRA APROVADA
+  --------------------------------
+  A área acima do nickname deve ser SEMPRE 100% preenchida pela imagem.
+  Não usar contain, fundo duplicado, blur ou faixas laterais para compensar proporções.
+  Imagens fora da proporção da box usam cover e são cortadas somente nas extremidades,
+  mantendo o foco inicialmente no centro. O futuro editor de enquadramento do Admin
+  poderá alterar o ponto de foco sem mudar esta regra de preenchimento.
+*/
+.home101-streamer-card .smart-media{
+  overflow:hidden;
+  background:#080d13;
+}
+.home101-streamer-card .smart-media-bg{
+  display:none!important;
+}
+.home101-streamer-card .smart-media:after{
+  display:none!important;
+}
+.home101-streamer-card .smart-media>img{
+  position:absolute!important;
+  inset:0!important;
+  z-index:1!important;
+  width:100%!important;
+  height:100%!important;
+  max-width:none!important;
+  max-height:none!important;
+  display:block!important;
+  object-fit:cover!important;
+  object-position:center center!important;
+  background:transparent!important;
+}
+
 body.home101-modal-open{overflow:hidden}
 .home101-watch-modal[hidden]{display:none!important}
 .home101-watch-modal{position:fixed;inset:0;z-index:10050;display:grid;place-items:center;padding:20px}
