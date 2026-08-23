@@ -82,7 +82,7 @@
         return ref.href;
       }
     } catch {}
-    return 'home-v101-preview.html';
+    return 'home.html';
   }
 
   function deny(reason) {
@@ -91,7 +91,7 @@
   }
 
   function leaveAdmin() {
-    location.href = 'home-v101-preview.html';
+    location.href = 'home.html';
   }
 
   function bindExitButtons() {
