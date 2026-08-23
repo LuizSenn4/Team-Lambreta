@@ -10,6 +10,7 @@
   const title = document.getElementById('adminV102Title');
   const roleNode = document.getElementById('adminV102Role');
   const nameNode = document.getElementById('adminV102Name');
+  const TEST_MODE = /git-v102-unified-site/i.test(location.hostname);
 
   function deny(reason) {
     console.warn('[ADMIN V102] acesso negado:', reason);
@@ -36,6 +37,19 @@
   }
 
   async function boot() {
+    if (TEST_MODE) {
+      roleNode.textContent = 'DEV / PREVIEW';
+      nameNode.textContent = 'Preview V102';
+      document.documentElement.classList.remove('admin-v102-pending');
+      document.documentElement.dataset.adminRole = 'master';
+      document.documentElement.dataset.previewMode = '1';
+      guard.hidden = true;
+      app.hidden = false;
+      bindNavigation();
+      window.dispatchEvent(new CustomEvent('tl:admin-v102-ready', { detail:{ userId:null, role:'master', profile:{ role:'master' }, testMode:true } }));
+      return;
+    }
+
     if (!window.teamSupabase || !window.TeamAuth) return deny('núcleo V102 indisponível');
     await window.TeamAuth.ready;
     const session = await window.TeamAuth.getSession();
@@ -58,5 +72,5 @@
     window.dispatchEvent(new CustomEvent('tl:admin-v102-ready', { detail:{ userId, role, profile } }));
   }
 
-  boot().catch(error => deny(error?.message || String(error)));
+  boot().catch(error => TEST_MODE ? console.error(error) : deny(error?.message || String(error)));
 })();
