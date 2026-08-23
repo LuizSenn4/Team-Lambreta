@@ -35,11 +35,17 @@
     return window.teamSupabase;
   }
 
+  const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
+
   const deny = reason => {
     console.warn('[ADMIN GATE] acesso negado:', reason || 'sem detalhe');
-    const target = document.referrer && new URL(document.referrer).origin === location.origin
-      ? document.referrer
-      : 'home-v101-preview.html';
+    let target = 'home-v101-preview.html';
+    try {
+      if (document.referrer) {
+        const ref = new URL(document.referrer);
+        if (ref.origin === location.origin) target = ref.href;
+      }
+    } catch {}
     location.replace(target);
   };
 
@@ -53,33 +59,15 @@
   }
 
   async function restoreSession(sb) {
-    const first = await sb.auth.getSession();
-    if (first?.data?.session?.user?.id) return first.data.session;
-
-    // Em navegadores móveis/retornos OAuth a restauração pode chegar alguns ms depois.
-    return await new Promise(resolve => {
-      let finished = false;
-      const done = session => {
-        if (finished) return;
-        finished = true;
-        clearTimeout(timer);
-        subscription?.unsubscribe?.();
-        resolve(session || null);
-      };
-
-      const { data } = sb.auth.onAuthStateChange((_event, session) => {
-        if (session?.user?.id) done(session);
-      });
-      const subscription = data?.subscription;
-      const timer = setTimeout(async () => {
-        try {
-          const retry = await sb.auth.getSession();
-          done(retry?.data?.session || null);
-        } catch {
-          done(null);
-        }
-      }, 1800);
-    });
+    // Alguns navegadores restauram a sessão persistida alguns instantes após o parse da página.
+    // Fazer tentativas curtas evita expulsar um admin válido prematuramente.
+    for (let attempt = 0; attempt < 5; attempt += 1) {
+      const result = await sb.auth.getSession();
+      const session = result?.data?.session || null;
+      if (session?.user?.id) return session;
+      if (attempt < 4) await sleep(350);
+    }
+    return null;
   }
 
   async function verifyAccess() {
