@@ -6,6 +6,25 @@
   const esc = value => String(value ?? '').replace(/[&<>'"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]));
   const sb = window.teamSupabase;
 
+  const PLATFORM_INFO = {
+    tiktok: {
+      label: 'TikTok', urlKey: 'tiktok_url',
+      icon: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14.2 3v10.2a4.3 4.3 0 1 1-3.7-4.25v2.5a1.9 1.9 0 1 0 1.25 1.78V3h2.45Zm0 0c.7 2.05 2.05 3.35 4.15 3.85v2.45c-1.7-.2-3.05-.85-4.15-1.8V3Z"/></svg>'
+    },
+    twitch: {
+      label: 'Twitch', urlKey: 'twitch_url',
+      icon: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 3h15v11l-4 4h-4l-2.5 2.5V18H5V3Zm2.2 2.2v10.6h4.2v1.3l1.3-1.3h2.4l2.7-2.7V5.2H7.2Zm3.1 2.2h2v5h-2v-5Zm4.4 0h2v5h-2v-5Z"/></svg>'
+    },
+    youtube: {
+      label: 'YouTube', urlKey: 'youtube_url',
+      icon: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 8.2c-.2-1.15-.85-2-2-2.2C17.4 5.7 14.2 5.6 12 5.6S6.6 5.7 5 6C3.85 6.2 3.2 7.05 3 8.2 2.8 9.4 2.7 10.7 2.7 12s.1 2.6.3 3.8c.2 1.15.85 2 2 2.2 1.6.3 4.8.4 7 .4s5.4-.1 7-.4c1.15-.2 1.8-1.05 2-2.2.2-1.2.3-2.5.3-3.8s-.1-2.6-.3-3.8ZM10.2 15.5v-7l5.9 3.5-5.9 3.5Z"/></svg>'
+    },
+    instagram: {
+      label: 'Instagram', urlKey: 'instagram_url',
+      icon: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 3h8a5 5 0 0 1 5 5v8a5 5 0 0 1-5 5H8a5 5 0 0 1-5-5V8a5 5 0 0 1 5-5Zm0 2.2A2.8 2.8 0 0 0 5.2 8v8A2.8 2.8 0 0 0 8 18.8h8a2.8 2.8 0 0 0 2.8-2.8V8A2.8 2.8 0 0 0 16 5.2H8Zm8.7 1.65a1.1 1.1 0 1 1 0 2.2 1.1 1.1 0 0 1 0-2.2ZM12 7.4a4.6 4.6 0 1 1 0 9.2 4.6 4.6 0 0 1 0-9.2Zm0 2.2a2.4 2.4 0 1 0 0 4.8 2.4 2.4 0 0 0 0-4.8Z"/></svg>'
+    }
+  };
+
   function safeUrl(value, fallback = '') {
     if (!value) return fallback;
     try {
@@ -95,11 +114,107 @@
     return `${days[active.start_day] || active.start_day} · ${active.start_time}`;
   }
 
+  function activePlatforms(row) {
+    let selected = Array.isArray(row?.active_live_platforms) ? row.active_live_platforms : [];
+    if (!selected.length && row?.live_platform) selected = [String(row.live_platform).toLowerCase()];
+    return [...new Set(selected.map(value => String(value).toLowerCase()))]
+      .filter(key => PLATFORM_INFO[key] && safeUrl(row?.[PLATFORM_INFO[key].urlKey]))
+      .slice(0, 3);
+  }
+
+  function platformIconRow(row) {
+    const keys = activePlatforms(row);
+    if (!keys.length) return '';
+    return `<div class="home101-platform-icons" aria-label="Plataformas ativas">${keys.map(key => `<span class="home101-platform-icon is-${key}" title="${esc(PLATFORM_INFO[key].label)}" aria-label="${esc(PLATFORM_INFO[key].label)}">${PLATFORM_INFO[key].icon}</span>`).join('')}</div>`;
+  }
+
+  function extractTikTokUser(row) {
+    const raw = String(row?.tiktok_url || row?.live_url || '').trim();
+    const match = raw.match(/tiktok\.com\/@([^/?#]+)/i) || raw.match(/^@([^/?#]+)/);
+    return match?.[1] ? decodeURIComponent(match[1]).replace(/^@/, '') : '';
+  }
+
+  function slugifyRoom(value) {
+    return String(value || 'live').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/[^a-z0-9._-]+/g,'-').replace(/^-+|-+$/g,'').slice(0,32) || 'live';
+  }
+
+  function liveRoomUrl(row) {
+    const user = extractTikTokUser(row) || slugifyRoom(row?.game_nickname || displayName(row));
+    const selected = activePlatforms(row);
+    const params = new URLSearchParams({
+      user,
+      name: displayName(row),
+      game: row?.main_game || 'Gaming',
+      streamer: row?.id || '',
+      platform: selected[0] || String(row?.live_platform || '')
+    });
+    return `live.html?${params.toString()}`;
+  }
+
+  function ensureStreamerModal() {
+    let modal = $('#homeStreamerWatchModal');
+    if (modal) return modal;
+    modal = document.createElement('div');
+    modal.id = 'homeStreamerWatchModal';
+    modal.className = 'home101-watch-modal';
+    modal.hidden = true;
+    modal.innerHTML = `
+      <div class="home101-watch-backdrop" data-watch-close></div>
+      <section class="home101-watch-dialog" role="dialog" aria-modal="true" aria-labelledby="homeStreamerWatchTitle">
+        <button class="home101-watch-close" type="button" data-watch-close aria-label="Fechar">×</button>
+        <small>STREAMER TEAM LAMBRETA</small>
+        <h2 id="homeStreamerWatchTitle">Onde quer assistir?</h2>
+        <p id="homeStreamerWatchMeta"></p>
+        <div id="homeStreamerWatchPlatforms" class="home101-watch-platforms"></div>
+        <div class="home101-watch-separator"><span>OU</span></div>
+        <a id="homeStreamerWatchHere" class="home101-watch-here" href="live.html">▶ ASSISTA AQUI</a>
+        <span class="home101-watch-hint">Abre a sala Team Lambreta com player + chat da live.</span>
+      </section>`;
+    document.body.appendChild(modal);
+    modal.querySelectorAll('[data-watch-close]').forEach(node => node.addEventListener('click', closeStreamerModal));
+    document.addEventListener('keydown', event => { if (event.key === 'Escape' && !modal.hidden) closeStreamerModal(); });
+    return modal;
+  }
+
+  function closeStreamerModal() {
+    const modal = $('#homeStreamerWatchModal');
+    if (!modal) return;
+    modal.hidden = true;
+    document.body.classList.remove('home101-modal-open');
+  }
+
+  function openStreamerModal(row) {
+    const modal = ensureStreamerModal();
+    const keys = activePlatforms(row);
+    $('#homeStreamerWatchTitle', modal).textContent = `Onde quer assistir ${displayName(row)}?`;
+    $('#homeStreamerWatchMeta', modal).textContent = `${row?.main_game || 'Gaming'}${isLive(row) ? ' · AO VIVO AGORA' : ' · próxima transmissão'}`;
+    const platforms = $('#homeStreamerWatchPlatforms', modal);
+    platforms.innerHTML = keys.length ? keys.map(key => {
+      const info = PLATFORM_INFO[key];
+      const url = safeUrl(row?.[info.urlKey]);
+      return `<a class="home101-watch-platform is-${key}" href="${esc(url)}" target="_blank" rel="noopener noreferrer" aria-label="Abrir ${esc(info.label)}" title="Abrir ${esc(info.label)}">${info.icon}<span class="sr-only">${esc(info.label)}</span></a>`;
+    }).join('') : '<span class="home101-watch-none">Plataformas externas em atualização.</span>';
+    $('#homeStreamerWatchHere', modal).href = liveRoomUrl(row);
+    modal.hidden = false;
+    document.body.classList.add('home101-modal-open');
+    modal.querySelector('.home101-watch-close')?.focus();
+  }
+
   function streamerCard(row) {
     const live = isLive(row);
-    const card = document.createElement('a');
+    const card = document.createElement('article');
     card.className = 'home101-streamer-card';
-    card.href = live ? `streamers.html?streamer=${encodeURIComponent(row.id)}` : `streamers.html?focus=${encodeURIComponent(row.id)}`;
+    card.tabIndex = 0;
+    card.setAttribute('role','button');
+    card.setAttribute('aria-label', `Abrir opções para assistir ${displayName(row)}`);
+    card.addEventListener('click', () => openStreamerModal(row));
+    card.addEventListener('keydown', event => {
+      if (event.key === 'Enter' || event.key === ' ') {
+        event.preventDefault();
+        openStreamerModal(row);
+      }
+    });
+
     const media = smartMedia(row.photo_url, displayName(row));
     card.append(media);
 
@@ -108,7 +223,8 @@
     const badge = live ? '<span class="home101-live-pill">AO VIVO</span>' : `<span class="home101-upcoming-pill">${esc(nextSchedule(row))}</span>`;
     copy.innerHTML = `
       <div class="home101-streamer-top"><h3>${esc(displayName(row))}</h3>${badge}</div>
-      <div class="home101-streamer-meta"><span>${esc(row.main_game || 'Gaming')}</span>${row.live_game_mode ? `<span>${esc(row.live_game_mode)}</span>` : ''}${row.live_platform ? `<span>${esc(String(row.live_platform).toUpperCase())}</span>` : ''}</div>
+      <div class="home101-streamer-meta"><span>${esc(row.main_game || 'Gaming')}</span>${row.live_game_mode ? `<span>${esc(row.live_game_mode)}</span>` : ''}</div>
+      ${platformIconRow(row)}
       <p>${esc(row.description || (live ? 'Entra na sala e acompanha a transmissão.' : 'Segue o streamer e acompanha a próxima transmissão.'))}</p>`;
     card.append(copy);
     return card;
@@ -122,7 +238,7 @@
       return;
     }
     const result = await sb.from('streamers')
-      .select('id,display_name,game_nickname,main_game,title,description,photo_url,live_url,live_platform,manual_live,auto_live,force_live,is_featured,display_order,schedule_json,live_game_mode')
+      .select('id,display_name,game_nickname,main_game,title,description,photo_url,live_url,live_platform,active_live_platforms,tiktok_url,twitch_url,youtube_url,instagram_url,allow_embed,allow_live_chat,manual_live,auto_live,force_live,is_featured,display_order,schedule_json,live_game_mode')
       .eq('is_published', true).eq('is_archived', false)
       .order('is_featured', { ascending: false }).order('display_order', { ascending: true });
     if (result.error) throw result.error;
@@ -215,6 +331,7 @@
   async function boot() {
     initStaticMedia();
     initHero();
+    ensureStreamerModal();
     renderLocalEvents();
     $('#year').textContent = new Date().getFullYear();
     document.querySelector('.tl-main-nav a[href="home.html"]')?.classList.add('is-current');
