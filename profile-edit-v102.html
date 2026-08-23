@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="pt-PT">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <title>Editar perfil — Team Lambreta</title>
+  <link rel="stylesheet" href="tl-design-system-v100.css?v=102.0">
+  <link rel="stylesheet" href="tl-polish-v100.css?v=102.0">
+  <link rel="stylesheet" href="profile-edit-v102.css?v=102.0">
+</head>
+<body class="profile-edit-v102-page">
+  <section class="site-content">
+    <header class="site-header"></header>
+    <main class="profile-edit-shell">
+      <section class="profile-edit-head">
+        <div><small>MEU PERFIL</small><h1>Editar perfil</h1><p>Altera só o que importa. Guarda e pronto.</p></div>
+        <a class="profile-view-link" id="profileViewLink" href="forum.html">Ver meu perfil</a>
+      </section>
+
+      <section class="profile-edit-card" id="profileEditorCard" hidden>
+        <form id="profileEditForm">
+          <div class="profile-avatar-row">
+            <div id="profileAvatarPreview" class="profile-avatar-preview">TL</div>
+            <label class="profile-avatar-field">Foto do perfil
+              <input id="profileAvatarUrl" type="url" inputmode="url" placeholder="https://.../foto.jpg">
+              <small>Cole um link HTTPS da imagem.</small>
+            </label>
+          </div>
+
+          <div class="profile-form-grid">
+            <label>Nick no site *<input id="profileNickname" required minlength="3" maxlength="32"></label>
+            <label>País<input id="profileCountry" maxlength="60" placeholder="Portugal"></label>
+            <label>Jogo principal<input id="profileMainGame" maxlength="80" placeholder="Fortnite"></label>
+            <label>Plataforma<input id="profilePlatform" maxlength="80" placeholder="PC, PS5, Mobile..."></label>
+            <label class="full">Modos de jogo<input id="profileModes" maxlength="180" placeholder="Zero Build, Reload..."></label>
+            <label class="full">Outros jogos<input id="profileGames" maxlength="220" placeholder="Fortnite, GTA, LoL..."></label>
+            <label class="full">Discord<input id="profileDiscord" maxlength="80" placeholder="Opcional"></label>
+            <label class="full">Bio<textarea id="profileBio" rows="5" maxlength="500" placeholder="Conta um pouco sobre ti..."></textarea></label>
+          </div>
+
+          <div class="profile-edit-actions">
+            <a href="home.html">Cancelar</a>
+            <button id="profileSaveButton" type="submit">Guardar alterações</button>
+          </div>
+          <p id="profileEditFeedback" class="profile-edit-feedback" role="status"></p>
+        </form>
+      </section>
+
+      <section id="profileEditLoading" class="profile-edit-loading"><span></span><strong>A carregar o teu perfil…</strong></section>
+    </main>
+  </section>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="supabase-client.js?v=102.0"></script>
+  <script src="auth-manager.js?v=102.0"></script>
+  <script src="presence-manager.js?v=102.0"></script>
+  <script src="site-shell-v102.js?v=102.3"></script>
+  <script src="profile-edit-v102.js?v=102.0"></script>
+</body>
+</html>
