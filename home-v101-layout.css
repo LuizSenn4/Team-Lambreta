@@ -1,3 +1,5 @@
+@import url("streamer-media-standard-v101.css?v=101.0");
+
 /*
   HOME v101 — CONTRATO DE LAYOUT APROVADO
   ----------------------------------------
@@ -12,6 +14,11 @@
   - Setas do slider são SVG vetoriais, sem box, flutuantes nas extremidades e com glow ciano.
   - Não reduzir novamente as alturas abaixo sem testar 1400/1366/1050/700/430/390px.
   - Este arquivo deve carregar DEPOIS de home-v101-preview.css, pois substitui regras legadas do hero.
+
+  MEDIA STREAMERS:
+  - padrão oficial da Home: 1536×1024 px (3:2)
+  - regras estão centralizadas em streamer-media-standard-v101.css
+  - não voltar a alturas fixas de imagem que alterem a proporção 3:2.
 
   Estado visual aprovado em 23/08/2026.
 */
