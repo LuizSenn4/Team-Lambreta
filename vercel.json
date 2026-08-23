@@ -25,7 +25,13 @@
       ]
     },
     {
-      "source": "/navigation-v100.js",
+      "source": "/navigation-v101.js",
+      "headers": [
+        { "key": "Cache-Control", "value": "no-store, max-age=0" }
+      ]
+    },
+    {
+      "source": "/forum-route-actions-v101.js",
       "headers": [
         { "key": "Cache-Control", "value": "no-store, max-age=0" }
       ]
