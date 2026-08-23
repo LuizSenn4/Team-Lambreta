@@ -1,278 +1,124 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="pt-PT">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Início - Team Lambreta</title>
-  <link rel="stylesheet" href="style-v92.css?v=98.2" />
-  <link rel="stylesheet" href="ui-core-v93.css?v=93.0" />
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <title>Início — Team Lambreta</title>
+  <meta name="description" content="Portal oficial Team Lambreta — comunidade, streamers, eventos, Buddy e competição.">
+  <link rel="stylesheet" href="style-v92.css?v=92.39.4.4">
+  <link rel="stylesheet" href="ui-core-v93.css?v=93.0">
+  <link rel="stylesheet" href="tl-design-system-v100.css?v=100.0">
+  <link rel="stylesheet" href="tl-polish-v100.css?v=100.0">
+  <link rel="stylesheet" href="home-v101-preview.css?v=101.0">
+  <link rel="stylesheet" href="home-v101-layout.css?v=101.4">
+  <link rel="stylesheet" href="home-v101-streamer-watch.css?v=101.2">
 </head>
-<body>
-  <div id="supabaseAuthBar" class="sb-auth-bar"></div>
-  <section id="siteContent" class="site-content home-page">
-    <header class="site-header tl-header-v88">
-  <a href="home.html" class="brand brand-logo-link" aria-label="Team Lambreta — página inicial">
-    <img class="brand-logo-image" src="img/team-lambreta-header-logo.svg" alt="Team Lambreta — Lambreta é uma família">
-  </a>
+<body class="home-portal-page">
+  <section class="site-content">
+    <header class="site-header"></header>
 
-  <button id="tlMenuButton" class="tl-mobile-menu-button" type="button"
-          aria-label="Abrir menu" aria-expanded="false" aria-controls="tlMainNav">
-    <span></span><span></span><span></span>
-  </button>
+    <main class="home101-shell">
+      <section class="home101-hero" id="homeHero" aria-label="Destaques Team Lambreta">
+        <div class="home101-hero-track">
+          <article class="home101-hero-slide is-active" data-hero-slide>
+            <div class="home101-hero-media smart-media" data-media="img/team-lambreta-welcome-hero-clean-16x9.jpg">
+              <span class="smart-media-bg"></span>
+              <img src="img/team-lambreta-welcome-hero-clean-16x9.jpg" alt="Team Lambreta" loading="eager">
+            </div>
+            <div class="home101-hero-copy">
+              <small>TEAM LAMBRETA</small>
+              <h1>Uma família dentro e fora do jogo.</h1>
+              <p>Lives, eventos, comunidade, Buddy e competição — cada área no lugar certo.</p>
+              <div class="home101-actions"><a class="primary" href="participe.html">JUNTAR-ME À TEAM</a><a href="streamers.html">VER STREAMERS</a></div>
+            </div>
+          </article>
 
-  <div id="tlMenuBackdrop" class="tl-mobile-menu-backdrop" hidden></div>
+          <article class="home101-hero-slide" data-hero-slide>
+            <div class="home101-hero-media smart-media" data-media="img/home-slider-2-team-lambreta-comunidade.png">
+              <span class="smart-media-bg"></span>
+              <img src="img/home-slider-2-team-lambreta-comunidade.png" alt="Comunidade Team Lambreta" loading="lazy">
+            </div>
+            <div class="home101-hero-copy">
+              <small>COMUNIDADE</small>
+              <h2>Encontra a tua malta.</h2>
+              <p>Conversa no Buddy, participa no Fórum e entra nas próximas atividades da comunidade.</p>
+              <div class="home101-actions"><a class="primary" href="buddy.html">ABRIR BUDDY</a><a href="forum.html">IR AO FÓRUM</a></div>
+            </div>
+          </article>
 
-  <nav id="tlMainNav" class="tl-main-nav" aria-label="Menu principal">
-    <a class="tl-menu-link" href="home.html"><span>Início</span></a>
+          <article class="home101-hero-slide home101-hero-slide-copy" data-hero-slide>
+            <div class="home101-hero-copy wide">
+              <small>PRÓXIMO NÍVEL</small>
+              <h2>Eventos, salas de live e sorteios estão a caminho.</h2>
+              <p>O novo portal vai ligar streamers, espectadores, participantes, rankings e recompensas numa única experiência.</p>
+              <div class="home101-actions"><a class="primary" href="eventos.html">VER EVENTOS</a><a href="atualizacoes.html">ATUALIZAÇÕES</a></div>
+            </div>
+          </article>
+        </div>
+        <button class="home101-hero-arrow prev" type="button" data-hero-prev aria-label="Banner anterior">
+          <svg viewBox="0 0 36 64" aria-hidden="true"><path d="M29 6 7 32l22 26"/></svg>
+        </button>
+        <button class="home101-hero-arrow next" type="button" data-hero-next aria-label="Próximo banner">
+          <svg viewBox="0 0 36 64" aria-hidden="true"><path d="m7 6 22 26L7 58"/></svg>
+        </button>
+        <div class="home101-hero-dots" data-hero-dots></div>
+      </section>
 
-    <div class="tl-menu-group">
-      <button class="tl-menu-toggle" type="button" aria-expanded="false">
-        <span>Lambreta</span><b aria-hidden="true">⌄</b>
-      </button>
-      <div class="tl-submenu">
-        <a href="team.html"><span>Team</span></a>
-        <a href="streamers.html"><span>Streamers</span></a>
-      </div>
-    </div>
+      <section class="home101-section" aria-labelledby="liveTitle">
+        <div class="home101-section-head">
+          <div><small class="eyebrow">TRANSMISSÕES</small><h2 id="liveTitle">Streamers</h2><p id="liveSubtitle">A carregar o estado das transmissões…</p></div>
+          <a href="streamers.html">VER TODOS →</a>
+        </div>
+        <div id="homeLiveGrid" class="home101-live-grid" aria-live="polite"></div>
+      </section>
 
-    <div class="tl-menu-group">
-      <button class="tl-menu-toggle" type="button" aria-expanded="false">
-        <span>Comunidade</span><b aria-hidden="true">⌄</b>
-      </button>
-      <div class="tl-submenu">
-        <a href="forum.html"><span>Fórum</span></a>
-        <a href="buddy.html"><span>Buddy</span></a>
-        <a href="regras.html"><span>Regras</span></a>
-        <a href="ajuda.html"><span>Ajuda</span></a>
-        <a href="contacto.html"><span>Contacto</span></a>
-      </div>
-    </div>
+      <section class="home101-two-col">
+        <article class="home101-section home101-event-feature">
+          <div class="home101-section-head compact"><div><small class="eyebrow">EVENTOS</small><h2>Próximos eventos</h2></div><a href="eventos.html">AGENDA →</a></div>
+          <div id="homeEvents" class="home101-event-body">
+            <div class="home101-event-date"><strong>EM BREVE</strong><span>Eventos 2.0</span></div>
+            <div><h3>Participar vai ser muito mais do que clicar num botão.</h3><p>Inscrição, presença na live, regras, resultados, rankings e sorteios auditáveis vão viver aqui.</p><a class="home101-inline-link" href="eventos.html">Ver agenda atual →</a></div>
+          </div>
+        </article>
 
-    <div class="tl-menu-group">
-      <button class="tl-menu-toggle" type="button" aria-expanded="false">
-        <span>Destaques</span><b aria-hidden="true">⌄</b>
-      </button>
-      <div class="tl-submenu">
-        <a href="eventos.html"><span>Eventos</span></a>
-        <a href="conquistas.html"><span>Conquistas</span></a>
-        <a href="midia.html"><span>Mídia</span></a>
-      </div>
-    </div>
+        <article class="home101-section home101-community-feature">
+          <div class="home101-section-head compact"><div><small class="eyebrow">COMUNIDADE</small><h2>O teu espaço</h2></div></div>
+          <div class="home101-community-links">
+            <a href="buddy.html"><span>💬</span><div><strong>Buddy</strong><small>Mensagens privadas e amizades.</small></div><b>→</b></a>
+            <a href="forum.html"><span>◫</span><div><strong>Fórum</strong><small>Tópicos, opiniões e discussões.</small></div><b>→</b></a>
+            <a href="team.html"><span>🛵</span><div><strong>Team</strong><small>Conhece quem faz parte da Lambreta.</small></div><b>→</b></a>
+          </div>
+        </article>
+      </section>
 
-    <a class="tl-menu-link" href="loja.html"><span>Loja</span></a>
-  </nav>
-</header>
-    
-<main id="home" class="home-v22">
-  <section class="home-main">
-    <section class="lb-banner-final lb-banner-static" aria-label="Bem-vindo ao Team Lambreta">
-      <img src="img/team-lambreta-welcome-hero-clean-16x9.jpg"
-           alt="Banner de boas-vindas do Team Lambreta com scooter Lambreta"
-           loading="eager"
-           decoding="async">
-    </section>
+      <section class="home101-two-col home101-lower-grid">
+        <article class="home101-section">
+          <div class="home101-section-head compact"><div><small class="eyebrow">FÓRUM</small><h2>Últimas conversas</h2></div><a href="forum.html">ABRIR FÓRUM →</a></div>
+          <div id="homeForum" class="home101-feed"><div class="home101-skeleton"></div><div class="home101-skeleton"></div><div class="home101-skeleton"></div></div>
+        </article>
 
-    <section class="lb-banner-final" id="lbBannerFinal">
-      <button class="lb-arrow lb-left" type="button" onclick="lbBannerMove(-1)" aria-label="Banner anterior">‹</button>
-      <button class="lb-arrow lb-right" type="button" onclick="lbBannerMove(1)" aria-label="Próximo banner">›</button>
+        <article class="home101-section">
+          <div class="home101-section-head compact"><div><small class="eyebrow">CHANGELOG</small><h2>Atualizações</h2></div><a href="atualizacoes.html">VER TODAS →</a></div>
+          <div id="homeUpdates" class="home101-feed"><div class="home101-skeleton"></div><div class="home101-skeleton"></div></div>
+        </article>
+      </section>
 
-      <div class="lb-slide lb-slide--media is-active">
-        <img src="img/home-slider-1-team-lambreta-merch.png"
-             alt="Slider Team Lambreta com produtos exclusivos e merchandising oficial"
-             loading="eager"
-             decoding="async">
-      </div>
+      <section class="home101-cta-strip">
+        <div><small>TEAM LAMBRETA</small><h2>Não precisas estar logado para descobrir a comunidade.</h2><p>Quando quiseres participar, conversar ou entrar num evento, o Google login entra em ação.</p></div>
+        <div class="home101-actions"><a class="primary" href="participe.html">PARTICIPAR</a><a href="ajuda.html">COMO FUNCIONA</a></div>
+      </section>
+    </main>
 
-      <div class="lb-slide lb-slide--media">
-        <img src="img/home-slider-2-team-lambreta-comunidade.png"
-             alt="Slider Team Lambreta sobre comunidade, identidade e família"
-             loading="lazy"
-             decoding="async">
-      </div>
-
-      <div class="lb-slide lb-slide--copy">
-        <h2>Próximo slider em breve</h2>
-        <p>O terceiro banner será adicionado em breve para completar a sequência oficial do lobby.</p>
-      </div>
-
-      <div class="lb-dots">
-        <button class="is-active" type="button" onclick="lbBannerGo(0)" aria-label="Banner 1"></button>
-        <button type="button" onclick="lbBannerGo(1)" aria-label="Banner 2"></button>
-        <button type="button" onclick="lbBannerGo(2)" aria-label="Banner 3"></button>
-      </div>
-
-      <script>
-        window.lbBannerIndex = 0;
-        window.lbBannerTimer = null;
-
-        window.lbBannerRender = function(index) {
-          const banner = document.getElementById("lbBannerFinal");
-          if (!banner) return;
-
-          const slides = Array.from(banner.querySelectorAll(".lb-slide"));
-          const dots = Array.from(banner.querySelectorAll(".lb-dots button"));
-
-          if (!slides.length) return;
-
-          window.lbBannerIndex = (index + slides.length) % slides.length;
-
-          slides.forEach(function(slide, i) {
-            slide.classList.toggle("is-active", i === window.lbBannerIndex);
-          });
-
-          dots.forEach(function(dot, i) {
-            dot.classList.toggle("is-active", i === window.lbBannerIndex);
-          });
-
-          console.log("[LB Banner Final] slide:", window.lbBannerIndex + 1);
-        };
-
-        window.lbBannerGo = function(index) {
-          window.lbBannerRender(index);
-          window.lbBannerRestart();
-        };
-
-        window.lbBannerMove = function(direction) {
-          window.lbBannerRender(window.lbBannerIndex + direction);
-          window.lbBannerRestart();
-        };
-
-        window.lbBannerRestart = function() {
-          clearInterval(window.lbBannerTimer);
-          window.lbBannerTimer = setInterval(function() {
-            window.lbBannerRender(window.lbBannerIndex + 1);
-          }, 6500);
-        };
-
-        window.lbBannerDebug = function() {
-          const banner = document.getElementById("lbBannerFinal");
-          return {
-            found: !!banner,
-            index: window.lbBannerIndex,
-            slides: banner ? banner.querySelectorAll(".lb-slide").length : 0,
-            dots: banner ? banner.querySelectorAll(".lb-dots button").length : 0
-          };
-        };
-
-        window.lbBannerRender(0);
-        window.lbBannerRestart();
-
-        (function enableMobileBannerSwipe() {
-          const banner = document.getElementById("lbBannerFinal");
-          if (!banner) return;
-          let startX = 0;
-          let startY = 0;
-
-          banner.addEventListener("touchstart", function(event) {
-            if (!window.matchMedia("(max-width: 768px)").matches || event.touches.length !== 1) return;
-            startX = event.touches[0].clientX;
-            startY = event.touches[0].clientY;
-          }, { passive: true });
-
-          banner.addEventListener("touchend", function(event) {
-            if (!window.matchMedia("(max-width: 768px)").matches || !event.changedTouches.length) return;
-            const deltaX = event.changedTouches[0].clientX - startX;
-            const deltaY = event.changedTouches[0].clientY - startY;
-            if (Math.abs(deltaX) < 45 || Math.abs(deltaX) <= Math.abs(deltaY)) return;
-            window.lbBannerMove(deltaX < 0 ? 1 : -1);
-          }, { passive: true });
-        })();
-      </script>
-    </section>
+    <footer class="site-footer"><p>© <span id="year"></span> Team Lambreta — Juntos somos mais fortes.</p></footer>
   </section>
 
-  <aside class="online-chat">
-    <div class="chat-head">
-      <div>
-        <p>CHAT ONLINE</p>
-        <h2>Lobby ao vivo</h2>
-      </div>
-      <div class="status-picker" data-status="online">
-        <span id="onlineDot" class="online-dot online"></span>
-        <span id="chatUnreadBadge" class="chat-unread-badge" hidden>0</span>
-        <select id="userStatus" aria-label="Escolher status">
-          <option value="online">Online</option>
-          <option value="busy">Ocupado</option>
-          <option value="away">Ausente</option>
-        </select>
-      </div>
-    </div>
-
-    <div id="chatMessages" class="chat-messages"></div>
-    <button id="chatMentionBadge" class="tl-mention-badge" type="button" hidden aria-label="Ver menções"></button>
-
-    <form id="chatForm" class="chat-form tl-chat-compose">
-      <div class="tl-chat-compose-box">
-        <textarea id="chatInput" maxlength="240" rows="1" placeholder="Escreve no lobby..." autocomplete="off"></textarea>
-        <button class="tl-chat-send tl-chat-send-svg" type="submit" aria-label="Enviar mensagem" title="Enviar"><svg viewBox="0 0 48 48" aria-hidden="true"><path d="M5 6.8 43 24 5 41.2l5.6-14.1L30.5 24l-19.9-3.1L5 6.8Z"/></svg></button>
-        <div id="chatMentionSuggestions" class="tl-mention-suggestions" hidden></div>
-      </div>
-      <label class="tl-enter-toggle">
-        <input id="enterBreakToggle" type="checkbox">
-        <span class="tl-toggle-track" aria-hidden="true"><i></i></span>
-        <span>Enter quebra linha</span>
-      </label>
-    </form>
-
-    <div class="chat-auth-box chat-auth-compact chat-auth-footer" id="chatAuthBox">
-      <button id="googleLoginBtn" class="google-login-btn" type="button">Entrar com Google</button>
-    </div>
-
-    <p id="chatDelayInfo" class="chat-delay-info"></p>
-    <p id="chatModerationInfo" class="chat-moderation-info"></p>
-
-    <div id="moderationPanel" class="moderation-panel">
-      <strong id="moderationTarget">Usuário</strong>
-      <button type="button" data-mod-action="block-1">Bloquear 1 min</button>
-      <button type="button" data-mod-action="block-5">Bloquear 5 min</button>
-      <button type="button" data-mod-action="block-15">Bloquear 15 min</button>
-      <button type="button" data-mod-action="unblock">Remover silêncio</button>
-      <button type="button" data-mod-action="ban">Bloquear permanentemente</button>
-      <button type="button" data-mod-action="unban">Remover bloqueio permanente</button>
-      <button type="button" data-mod-action="lock-chat">Lock chat</button>
-      <button type="button" data-mod-action="unlock-chat">Unlock chat</button>
-
-      <div class="role-assign-box">
-        <span>Atribuir cargo</span>
-        <button type="button" data-role-set="master">Admin Master</button>
-        <button type="button" data-role-set="admin">Admin</button>
-        <button type="button" data-role-set="staff">Staff</button>
-        <button type="button" data-role-set="vip">VIP</button>
-        <button type="button" data-role-set="supporter">Apoiador</button>
-        <button type="button" data-role-set="moderator">Moderador</button>
-        <button type="button" data-badge-set="streamer" data-enabled="true">Dar STREAMER</button>
-        <button type="button" data-badge-set="streamer" data-enabled="false">Remover STREAMER</button>
-        <button type="button" data-badge-set="vip" data-enabled="true">Dar VIP por 365 dias</button>
-        <button type="button" data-badge-set="vip" data-enabled="false">Remover VIP</button>
-        <button type="button" data-role-set="user">Usuário</button>
-      </div>
-
-      <button type="button" data-mod-action="close">Fechar</button>
-    </div>
-
-  </aside>
-<!-- V44 slider debug active -->
-</main>
-
-    <footer class="site-footer">
-      <p>© <span id="year"></span> Team Lambreta — Juntos somos mais fortes.</p>
-    </footer>
-  </section>
-
-  <script>window.TEAM_SUPABASE_MODE = true;</script>
-  <script src="data.js"></script>
-  <script src="script-v89.js?v=93.1.1"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="community-safety-v9347.js?v=93.4.7"></script>
-  <script>window.TL_CHAT_ROOM="lobby";</script>
-  <script src="supabase-integration-v92.js?v=93.6.10"></script>
-  <script src="buddy-presence-v95.js?v=92.39.4.5"></script><script src="buddy-global-notifications-v94.js?v=92.39.4.5"></script><script src="navigation-v93.js?v=93.0"></script>
-  <script src="account-profile-entry-v1.js?v=1.1"></script>
-  <script src="profile-ui-polish-v1.js?v=1.0"></script>
-
-  <script src="error-codes-v92.js"></script>
-  <script src="site-i18n-v92.js"></script>
-  <script src="chat-translate-v92.js"></script>
-<script src="community-progress-v938.js?v=93.8.6"></script>
+  <script src="supabase-client.js?v=100.0"></script>
+  <script src="auth-manager.js?v=100.0"></script>
+  <script src="presence-manager.js?v=100.0"></script>
+  <script src="navigation-v100.js?v=100.0"></script>
+  <script src="data.js"></script>
+  <script src="home-v101-preview.js?v=101.1"></script>
+  <script src="home-streamer-smart-extend-v1.js?v=1.0"></script>
 </body>
 </html>
