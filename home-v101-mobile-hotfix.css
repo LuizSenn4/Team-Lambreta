@@ -1,0 +1,22 @@
+/* Home v101 mobile spacing hotfix */
+@media (max-width:700px){
+  .home101-hero,.home101-hero-track{min-height:560px}
+  .home101-hero-copy{
+    justify-content:flex-end;
+    padding:22px 24px 54px;
+    transform:translateY(-18px);
+  }
+  .home101-hero-copy h1,.home101-hero-copy h2{
+    margin-top:8px;
+    margin-bottom:12px;
+  }
+  .home101-hero-copy p{line-height:1.55}
+  .home101-actions{margin-top:18px;gap:9px}
+  .home101-actions a{min-height:42px}
+  .home101-hero-dots{bottom:10px}
+}
+@media (max-width:420px){
+  .home101-hero,.home101-hero-track{min-height:575px}
+  .home101-hero-copy{padding:20px 20px 56px;transform:translateY(-20px)}
+  .home101-hero-copy h1,.home101-hero-copy h2{font-size:41px}
+}
