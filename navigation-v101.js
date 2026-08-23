@@ -16,7 +16,7 @@
   */
 
   const sb = window.teamSupabase || null;
-  const esc = value => String(value ?? '').replace(/[&<>'\"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','\"':'&quot;'}[c]));
+  const esc = value => String(value ?? '').replace(/[&<>'"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]));
   const normalizeRole = value => ({
     dev:'master', developer:'master', owner:'master', boss:'master',
     administrador:'admin', moderador:'moderator', mod:'moderator',
@@ -201,14 +201,15 @@
   }
 
   async function login() {
-    try { (await authManager()).signInWithGoogle(); }
+    try { await (await authManager()).signInWithGoogle(); }
     catch (error) { console.error('[SHELL V101] login', error?.message || error); }
   }
 
   async function logout() {
     try {
-      await (await authManager()).signOut();
+      cachedIdentity = null;
       localStorage.removeItem(CACHE_KEY);
+      await (await authManager()).signOut();
     } catch (error) { console.error('[SHELL V101] logout', error?.message || error); }
   }
 
@@ -279,6 +280,8 @@
     if (!session) {
       profile = null;
       forumProfile = null;
+      cachedIdentity = null;
+      try { localStorage.removeItem(CACHE_KEY); } catch (_) {}
       manager?.disconnect();
       paintStatus('offline');
       await paintAccount();
