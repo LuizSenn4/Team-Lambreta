@@ -1,44 +1,29 @@
 (() => {
   'use strict';
-  if (window.__TL_FORUM_ROUTE_ACTIONS_V101__) return;
-  window.__TL_FORUM_ROUTE_ACTIONS_V101__ = true;
+  if (window.__TL_FORUM_PROFILE_LOADER_V101__) return;
+  window.__TL_FORUM_PROFILE_LOADER_V101__ = true;
 
   /*
-    Adaptador temporário da migração v100/v101.
-    O Fórum ainda usa o board legado, mas o header novo envia:
-      forum.html?profile=<uid>          -> ver perfil público
-      forum.html?profile=<uid>&edit=1   -> editar o próprio perfil
-
-    Não cria editor novo. Reutiliza o botão [data-edit-profile] que o
-    forum-board-v2.js só renderiza quando o perfil aberto pertence à sessão.
+    LOADER DE MIGRAÇÃO DO PERFIL V101
+    ---------------------------------
+    O Fórum ainda usa a página/board legado, então navigation-v93 carrega este
+    adaptador. A lógica real de perfil fica somente em forum-profile-v101.js.
+    Quando o Fórum for migrado para o shell novo, este loader pode ser removido.
   */
 
-  const query = new URLSearchParams(location.search);
-  if (query.get('edit') !== '1' || !query.get('profile')) return;
+  if (!document.querySelector('link[data-forum-profile-v101]')) {
+    const link = document.createElement('link');
+    link.rel = 'stylesheet';
+    link.href = 'forum-profile-v101.css?v=101.1';
+    link.dataset.forumProfileV101 = '1';
+    document.head.appendChild(link);
+  }
 
-  let attempts = 0;
-  const MAX_ATTEMPTS = 100; // ~10 s
-
-  const timer = setInterval(() => {
-    attempts += 1;
-    const button = document.querySelector('[data-edit-profile]');
-
-    if (button) {
-      clearInterval(timer);
-
-      // Remove a ação efêmera da URL antes de abrir para impedir reabertura
-      // após salvar/recarregar os dados do perfil.
-      const clean = new URL(location.href);
-      clean.searchParams.delete('edit');
-      history.replaceState({}, '', `${clean.pathname}${clean.search}${clean.hash}`);
-
-      button.click();
-      return;
-    }
-
-    if (attempts >= MAX_ATTEMPTS) {
-      clearInterval(timer);
-      console.warn('[FORUM ROUTE] editor não disponível para este perfil/sessão');
-    }
-  }, 100);
+  if (!document.querySelector('script[data-forum-profile-v101]')) {
+    const script = document.createElement('script');
+    script.src = 'forum-profile-v101.js?v=101.1';
+    script.defer = true;
+    script.dataset.forumProfileV101 = '1';
+    document.body.appendChild(script);
+  }
 })();
