@@ -1,6 +1,15 @@
 (() => {
   'use strict';
 
+  /*
+    NAVEGACAO V93 — LEGADO EM MIGRACAO
+    ----------------------------------
+    Este ficheiro ainda e usado por paginas que nao foram migradas para o header v100.
+    O acesso administrativo antigo por icone/chave foi REMOVIDO de proposito.
+    O unico acesso Admin permitido deve vir do menu de conta do header v100.
+    Nao reintroduzir .tl-admin-key / .tl-admin-key-mini aqui.
+  */
+
   const loadCss = (selector, href, dataKey) => {
     if (document.querySelector(selector)) return;
     const link = document.createElement('link');
@@ -26,7 +35,6 @@
     loadScript('script[data-tl-home-profile-editor]', 'home-profile-editor-v1.js?v=1.0', 'tlHomeProfileEditor');
   }
 
-  // Dark-only: remove qualquer preferência clara antiga e mantém o site sempre no tema escuro.
   localStorage.setItem('tl_theme', 'dark');
   document.documentElement.dataset.theme = 'dark';
   document.documentElement.dataset.themePreference = 'dark';
@@ -43,23 +51,11 @@
     style.textContent = `
       .chat-head h2{position:static;margin:4px 0 0;width:auto;max-width:100%;text-align:left;font-family:Cinzel,serif;color:var(--gold);line-height:1.15;transform:none;white-space:normal}
       .tl-enter-toggle>input,.tl-chat-remember input{width:1px!important;height:1px!important}
-      .tl-menu-link[data-updates-new] b{margin-left:3px;color:#73ff18;font-size:8px;letter-spacing:.03em}
-      .tl-header-actions{display:inline-flex!important;align-items:center!important;justify-content:center!important;gap:0!important;flex:0 0 auto!important;margin:0!important;white-space:nowrap!important;height:36px!important}
-      .tl-admin-key{display:none!important}
-      .tl-admin-key-mini{display:none;place-items:center;align-self:center;width:29px;height:29px;min-width:29px;min-height:29px;padding:0;margin:0;border:0!important;border-radius:7px;background:transparent!important;color:#d7d7d7;text-decoration:none;opacity:.88;cursor:pointer;box-shadow:none!important;outline:0;transition:color .16s ease,opacity .16s ease,transform .16s ease,background .16s ease}
-      .tl-admin-key-mini.is-visible{display:grid}
-      .tl-admin-key-mini:hover,.tl-admin-key-mini:focus-visible{opacity:1;color:#fff;background:rgba(255,255,255,.07)!important;transform:translateY(-1px);outline:none}
-      .tl-admin-key-mini svg{width:17px;height:17px;display:block;fill:none!important;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;filter:none!important}
       @media(min-width:901px){
         .site-header.tl-header-v88{gap:12px!important;padding-left:clamp(14px,2vw,30px)!important;padding-right:clamp(14px,2vw,30px)!important;align-items:center!important}
         .tl-header-v88 .tl-main-nav{justify-content:center!important;align-items:center!important;align-self:center!important;gap:clamp(7px,.72vw,11px)!important;flex-wrap:nowrap!important;white-space:nowrap!important;min-width:0!important;height:44px!important}
         .tl-main-nav>.tl-menu-link,.tl-main-nav>.tl-menu-group>.tl-menu-toggle{display:inline-flex!important;align-items:center!important;justify-content:center!important;min-height:40px!important;height:40px!important;padding:5px 2px!important;margin:0!important;font-size:clamp(18px,1.42vw,23px)!important;line-height:1!important;white-space:nowrap!important}
         .tl-main-nav .tl-menu-toggle b{margin-left:4px!important;line-height:1!important}
-        .tl-header-actions{align-self:center!important}
-      }
-      @media(max-width:900px){
-        .tl-header-actions{width:100%;justify-content:flex-start;margin:4px 0 0!important;padding:4px 2px 0;border-top:1px solid rgba(217,164,65,.12);height:auto!important}
-        .tl-admin-key-mini{width:29px;height:29px;min-width:29px;min-height:29px}
       }
     `;
     document.head.appendChild(style);
@@ -76,32 +72,7 @@
     <div class="tl-menu-group"><button class="tl-menu-toggle" type="button" aria-expanded="false"><span>Comunidade</span><b aria-hidden="true">⌄</b></button><div class="tl-submenu"><a href="forum.html"><span>Fórum</span></a><a href="buddy.html"><span>Buddy</span></a><a href="atualizacoes.html"><span>Atualizações</span></a><a href="regras.html"><span>Regras</span></a><a href="ajuda.html"><span>Ajuda</span></a><a href="contacto.html"><span>Contacto</span></a></div></div>
     <div class="tl-menu-group"><button class="tl-menu-toggle" type="button" aria-expanded="false"><span>Destaques</span><b aria-hidden="true">⌄</b></button><div class="tl-submenu"><a href="eventos.html"><span>Eventos</span></a><a href="conquistas.html"><span>Conquistas</span></a><a href="midia.html"><span>Mídia</span></a></div></div>
     <a class="tl-menu-link" href="participe.html"><span>Participe</span></a>
-    <a class="tl-menu-link" href="loja.html"><span>Loja</span></a>
-    <div class="tl-header-actions">
-      <a class="tl-admin-key-mini" href="admin.html" aria-label="Abrir painel Admin" title="Admin">
-        <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="7.5" cy="12" r="3.5"></circle><path d="M11 12h10M17 12v3M20 12v2"></path></svg>
-      </a>
-    </div>`;
-
-  const revealAdminKey = async () => {
-    const key = nav.querySelector('.tl-admin-key-mini');
-    if (!key) return;
-    let tries = 0;
-    const timer = setInterval(async () => {
-      tries += 1;
-      const sb = window.teamSupabase;
-      if (!sb) { if (tries > 50) clearInterval(timer); return; }
-      clearInterval(timer);
-      try {
-        const {data:{session}} = await sb.auth.getSession();
-        if (!session?.user?.id) return;
-        const {data} = await sb.from('profiles').select('role').eq('id', session.user.id).maybeSingle();
-        const role = String(data?.role || '').trim().toLowerCase();
-        if (['master','dev','developer','owner','boss','admin','administrador'].includes(role)) key.classList.add('is-visible');
-      } catch (_) {}
-    }, 120);
-  };
-  revealAdminKey();
+    <a class="tl-menu-link" href="loja.html"><span>Loja</span></a>`;
 
   const updatesLink = nav.querySelector('a[href="atualizacoes.html"]');
   if (updatesLink && localStorage.getItem('tl_seen_update_2026.08.16') !== '1') {
