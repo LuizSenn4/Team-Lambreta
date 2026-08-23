@@ -2,7 +2,7 @@
   'use strict';
   if (window.__TL_SITE_SHELL_V102__) return;
   window.__TL_SITE_SHELL_V102__ = true;
-  const VERSION = '102.4';
+  const VERSION = '102.5';
   const waitFor = (check, timeout = 8000) => new Promise((resolve, reject) => {
     if (check()) return resolve();
     const started = Date.now();
@@ -35,6 +35,7 @@
     if (!window.TeamAuth) await loadScript(`auth-manager.js?v=${VERSION}`, () => Boolean(window.TeamAuth));
     if (!window.TeamPresence) await loadScript(`presence-manager.js?v=${VERSION}`, () => Boolean(window.TeamPresence));
     if (!window.__TL_SHELL_V101__) await loadScript(`navigation-v101.js?v=${VERSION}`, () => Boolean(window.__TL_SHELL_V101__));
+    if (/git-v102-unified-site/i.test(location.hostname)) await loadScript(`preview-test-v102.js?v=${VERSION}`);
   }
   function refreshLinks() {
     document.querySelectorAll('a').forEach(link => {
