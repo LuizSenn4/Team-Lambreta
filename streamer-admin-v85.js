@@ -20,6 +20,13 @@
     ['Europe/Warsaw','Polónia'],['Europe/Paris','França'],['Europe/Berlin','Alemanha'],['Europe/Madrid','Espanha']
   ];
 
+  const LIVE_PLATFORMS = [
+    ['tiktok','TikTok','streamerTikTok'],
+    ['twitch','Twitch','streamerTwitch'],
+    ['youtube','YouTube','streamerYouTube'],
+    ['instagram','Instagram','streamerInstagram']
+  ];
+
   const fields = {
     display_name:'streamerDisplayName',
     game_nickname:'streamerGameNick',
@@ -49,6 +56,92 @@
   const esc = value => String(value ?? '').replace(/[&<>"']/g, ch => ({
     '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
   })[ch]);
+
+  function ensureActivePlatformStyles() {
+    if (document.getElementById('tl-active-platform-admin-style')) return;
+    const style = document.createElement('style');
+    style.id = 'tl-active-platform-admin-style';
+    style.textContent = `
+      .streamer-active-platforms{margin:18px 0;padding:16px;border:1px solid rgba(0,223,245,.24);border-radius:14px;background:rgba(0,223,245,.045)}
+      .streamer-active-platforms-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:7px}
+      .streamer-active-platforms-head strong{font-size:14px}.streamer-active-platforms-head span{font-size:11px;color:#64e6fa;font-weight:900;letter-spacing:.06em}
+      .streamer-active-platforms p{margin:0 0 12px;color:#8fa0ae;font-size:12px;line-height:1.5}
+      .streamer-active-platform-options{display:flex;gap:8px;flex-wrap:wrap}
+      .streamer-active-platform-option{position:relative;display:inline-flex;align-items:center;gap:8px;min-height:40px;padding:0 12px;border:1px solid #2b3b49;border-radius:11px;background:#0b1219;cursor:pointer;user-select:none;transition:.16s}
+      .streamer-active-platform-option:hover{border-color:#4d7287}.streamer-active-platform-option:has(input:checked){border-color:#00dff5;background:rgba(0,223,245,.10);box-shadow:0 0 0 1px rgba(0,223,245,.12) inset}
+      .streamer-active-platform-option input{accent-color:#00dff5}.streamer-active-platform-option.is-disabled{opacity:.42;cursor:not-allowed}
+      .streamer-active-platform-counter{margin-top:10px!important;color:#67e9fb!important;font-weight:800}
+    `;
+    document.head.appendChild(style);
+  }
+
+  function ensureActivePlatformPicker() {
+    ensureActivePlatformStyles();
+    if ($('streamerActivePlatforms')) return;
+    const primary = $('streamerLivePlatform');
+    const fieldset = primary?.closest('fieldset');
+    if (!fieldset) return;
+    const block = document.createElement('div');
+    block.id = 'streamerActivePlatforms';
+    block.className = 'streamer-active-platforms';
+    block.innerHTML = `
+      <div class="streamer-active-platforms-head"><strong>Plataformas ativas agora</strong><span>MÁXIMO 3</span></div>
+      <p>Selecione onde este streamer está a transmitir neste momento. Na Home aparecem apenas os ícones; os links vêm das Redes sociais.</p>
+      <div class="streamer-active-platform-options">
+        ${LIVE_PLATFORMS.map(([value,label])=>`<label class="streamer-active-platform-option"><input type="checkbox" value="${value}" data-active-live-platform><span>${label}</span></label>`).join('')}
+      </div>
+      <p id="streamerActivePlatformsCounter" class="streamer-active-platform-counter">0 de 3 selecionadas</p>`;
+    const checks = fieldset.querySelector('.streamer-checks');
+    if (checks) fieldset.insertBefore(block, checks); else fieldset.appendChild(block);
+
+    block.querySelectorAll('[data-active-live-platform]').forEach(input => {
+      input.addEventListener('change', event => {
+        const selected = getActiveLivePlatforms();
+        if (selected.length > 3) {
+          event.currentTarget.checked = false;
+          feedback('Pode selecionar no máximo 3 plataformas ativas.', true);
+        }
+        refreshActivePlatformPicker();
+      });
+    });
+    refreshActivePlatformPicker();
+  }
+
+  function getActiveLivePlatforms() {
+    return [...document.querySelectorAll('[data-active-live-platform]:checked')].map(input => input.value).slice(0,3);
+  }
+
+  function setActiveLivePlatforms(value=[], row={}) {
+    ensureActivePlatformPicker();
+    let selected = Array.isArray(value) ? value.filter(Boolean) : [];
+    if (!selected.length && row?.live_platform && LIVE_PLATFORMS.some(([key])=>key===String(row.live_platform).toLowerCase())) {
+      selected = [String(row.live_platform).toLowerCase()];
+    }
+    selected = [...new Set(selected.map(value=>String(value).toLowerCase()))].slice(0,3);
+    document.querySelectorAll('[data-active-live-platform]').forEach(input => { input.checked = selected.includes(input.value); });
+    refreshActivePlatformPicker();
+  }
+
+  function refreshActivePlatformPicker() {
+    const selected = getActiveLivePlatforms();
+    const atLimit = selected.length >= 3;
+    document.querySelectorAll('[data-active-live-platform]').forEach(input => {
+      const disabled = atLimit && !input.checked;
+      input.disabled = disabled;
+      input.closest('label')?.classList.toggle('is-disabled', disabled);
+    });
+    const counter = $('streamerActivePlatformsCounter');
+    if (counter) counter.textContent = `${selected.length} de 3 selecionadas`;
+  }
+
+  function validateActivePlatforms(row) {
+    const labels = Object.fromEntries(LIVE_PLATFORMS.map(([key,label])=>[key,label]));
+    const urlFields = {tiktok:'tiktok_url',twitch:'twitch_url',youtube:'youtube_url',instagram:'instagram_url'};
+    const missing = (row.active_live_platforms || []).find(platform => !row[urlFields[platform]]);
+    if (!missing) return true;
+    feedback(`Adicione o link de ${labels[missing] || missing} em Redes sociais antes de marcar esta plataforma como ativa.`, true);
+    return false;
+  }
 
   const timeOptions = () => {
     const values=[];
@@ -167,6 +260,7 @@
   }
 
   function resetForm() {
+    ensureActivePlatformPicker();
     $('streamerAdminForm')?.reset();
     $('streamerId').value = '';
     $('streamerOrder').value = '100';
@@ -175,12 +269,14 @@
     $('streamerPublished').checked = true;
     clearStreamerPhoto();
     setScheduleRows([]);
+    setActiveLivePlatforms([]);
     $('streamerEditorMode').textContent = 'NOVO STREAMER';
     $('streamerEditorTitle').textContent = 'Adicionar streamer';
     feedback('');
   }
 
   function openEditor(row=null) {
+    ensureActivePlatformPicker();
     $('streamerEditor').hidden = false;
     $('streamerAdminPreview').hidden = true;
     if (!row) {
@@ -197,6 +293,7 @@
       });
       setStreamerPhotoPreview(row.photo_url || '');
       setScheduleRows(row.schedule_json || []);
+      setActiveLivePlatforms(row.active_live_platforms || [], row);
       feedback('');
     }
     $('streamerEditor').scrollIntoView({behavior:'smooth',block:'start'});
@@ -235,7 +332,7 @@
   }
 
   function normalizeTikTokIdentity(row) {
-    const raw = String(row.tiktok_url || row.live_url || '').trim();
+    const raw = String(row.tiktok_url || '').trim();
     if (!raw) return row;
 
     let handle = '';
@@ -248,8 +345,8 @@
     if (!handle) return row;
 
     row.tiktok_url = `https://www.tiktok.com/@${handle}`;
-    row.live_url = `https://www.tiktok.com/@${handle}/live`;
-    row.live_platform = 'tiktok';
+    if (!row.live_url) row.live_url = `https://www.tiktok.com/@${handle}/live`;
+    if (!row.live_platform) row.live_platform = 'tiktok';
     return row;
   }
 
@@ -261,6 +358,7 @@
     });
     Object.entries(boolFields).forEach(([key,id]) => row[key]=Boolean($(id)?.checked));
     row.schedule_json = collectScheduleRows();
+    row.active_live_platforms = getActiveLivePlatforms();
     row.auto_live = false;
     return normalizeTikTokIdentity(row);
   }
@@ -280,6 +378,7 @@
 
     const row=collectForm();
     if(!row.display_name) return feedback('Preencha o nome de exibição.',true);
+    if(!validateActivePlatforms(row)) return;
 
     const file=$('streamerPhotoFile')?.files?.[0];
     try {
@@ -337,12 +436,13 @@
     }
     box.innerHTML=currentRows.map(row=>{
       const live=row.force_live||row.manual_live||row.auto_live;
+      const active=(row.active_live_platforms||[]).slice(0,3).map(value=>String(value).toUpperCase()).join(' · ');
       return `<article class="streamer-admin-row ${row.is_archived?'is-archived':''}">
         <div class="streamer-admin-identity">
           ${row.photo_url?`<img src="${esc(row.photo_url)}" alt="">`:'<span>🎥</span>'}
           <div>
             <strong>${esc(row.display_name)}</strong>
-            <small>${esc(row.main_game||row.title||'Streamer')}</small>
+            <small>${esc(row.main_game||row.title||'Streamer')}${active?` · ${esc(active)}`:''}</small>
           </div>
         </div>
         <div class="streamer-admin-flags">
@@ -436,6 +536,7 @@
   }
 
   async function bootAdminStreamers() {
+    ensureActivePlatformPicker();
     await loadStreamers();
     startAdminCloudSync();
   }
