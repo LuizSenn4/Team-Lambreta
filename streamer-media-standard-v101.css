@@ -1,0 +1,77 @@
+/*
+  STREAMER MEDIA v101 — PADRÃO OFICIAL
+  -------------------------------------
+  Arte recomendada para cards da HOME: 1536 × 1024 px (3:2).
+  Motivo: a box dos streamers da Home usa 3:2. Quando a arte nasce nesse formato,
+  ela entra inteira, centralizada, sem crop e sem faixas mortas.
+
+  IMPORTANTE:
+  - Não voltar a usar object-fit:cover no preview do Admin: isso corta logos/rostos/texto.
+  - O preview abaixo representa a proporção final da Home.
+  - Para imagens antigas de outra proporção, o site pode preservar a imagem inteira
+    e usar extensão visual/blur de fundo; a arte nova deve preferir 1536×1024.
+*/
+
+/* Aviso visível diretamente na área de upload dos streamers. */
+#streamerEditor .streamer-photo-controls::before{
+  content:"PADRÃO OFICIAL DA HOME · 1536 × 1024 px · proporção 3:2";
+  display:block;
+  margin:0 0 12px;
+  padding:11px 13px;
+  border:1px solid rgba(94,243,255,.34);
+  border-radius:10px;
+  background:rgba(94,243,255,.08);
+  color:#8af5ff;
+  font-size:12px;
+  font-weight:900;
+  letter-spacing:.055em;
+  line-height:1.45;
+}
+
+#streamerEditor .streamer-photo-controls::after{
+  content:"Mantenha rosto, logotipo e textos importantes na zona central. Usando 1536×1024, a Home exibe a arte inteira sem cortar e sem espaço morto.";
+  display:block;
+  margin-top:10px;
+  color:#a9b2bd;
+  font-size:11px;
+  line-height:1.5;
+}
+
+/* Preview no Admin = mesma proporção da box da Home. */
+#streamerEditor .streamer-photo-preview-shell{
+  width:min(100%,540px)!important;
+  aspect-ratio:3/2!important;
+  min-height:0!important;
+  height:auto!important;
+  margin-inline:auto;
+  overflow:hidden!important;
+  background:#080d12!important;
+}
+
+#streamerEditor .streamer-photo-preview-shell #streamerPhotoPreview{
+  width:100%!important;
+  height:100%!important;
+  min-width:0!important;
+  min-height:0!important;
+  max-width:none!important;
+  max-height:none!important;
+  display:block!important;
+  object-fit:contain!important;
+  object-position:center center!important;
+  background:transparent!important;
+}
+
+/* A caixa da Home fica verdadeiramente 3:2 em qualquer largura. */
+.home101-streamer-card{
+  grid-template-rows:auto auto!important;
+}
+.home101-streamer-card .smart-media{
+  width:100%!important;
+  height:auto!important;
+  aspect-ratio:3/2!important;
+}
+
+@media(max-width:700px){
+  .home101-streamer-card{grid-template-rows:auto auto!important}
+  .home101-streamer-card .smart-media{height:auto!important;aspect-ratio:3/2!important}
+}
