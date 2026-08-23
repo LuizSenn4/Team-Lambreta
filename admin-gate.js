@@ -2,92 +2,83 @@
   'use strict';
 
   /*
-    ADMIN GATE — AUTH ÚNICO
-    -----------------------
-    O painel administrativo deve usar EXATAMENTE a mesma sessão do novo
-    header/Home/Buddy. Não criar outro cliente Supabase aqui.
+    ADMIN GATE V101 — NÃO REINTRODUZIR GATE/CHAVE LEGADOS
+    -----------------------------------------------------
+    Entrada oficial: menu de conta do navigation-v101.js.
+    Usa somente o cliente partilhado window.teamSupabase.
+    O acesso completo é permitido apenas para master/admin.
 
-    Fluxo:
-    1. garantir supabase-client.js;
-    2. garantir auth-manager.js;
-    3. aguardar TeamAuth.ready;
-    4. obter a sessão autenticada;
-    5. consultar o cargo real em profiles;
-    6. liberar apenas master/DEV e admin.
-
-    Nunca liberar acesso por cache/localStorage visual.
+    IMPORTANTE:
+    - nunca autorizar por localStorage/cache visual;
+    - nunca criar cliente Supabase próprio aqui;
+    - STAFF/MODERADOR terão painel próprio no futuro;
+    - não usar ?admin=locked nem chaves antigas no header.
   */
 
-  const normalizeRole = role => ({
-    dev: 'master',
-    developer: 'master',
-    owner: 'master',
-    boss: 'master',
-    administrador: 'admin'
-  }[String(role || '').trim().toLowerCase()] || String(role || '').trim().toLowerCase());
+  const normalizeRole = value => ({
+    dev:'master', developer:'master', owner:'master', boss:'master',
+    administrador:'admin'
+  }[String(value || '').trim().toLowerCase()] || String(value || '').trim().toLowerCase());
+
+  const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
 
   function loadScript(src, marker) {
     return new Promise((resolve, reject) => {
-      const existing = document.querySelector(`script[data-${marker}]`);
-      if (existing) {
-        if (existing.dataset.loaded === '1') return resolve();
-        existing.addEventListener('load', () => resolve(), { once: true });
-        existing.addEventListener('error', () => reject(new Error(`Falha ao carregar ${src}`)), { once: true });
+      const bySrc = [...document.scripts].find(item => item.src && item.src.includes(src.split('?')[0]));
+      if (bySrc) {
+        if (src.includes('supabase-client') && window.teamSupabase) return resolve();
+        if (src.includes('auth-manager') && window.TeamAuth) return resolve();
+        bySrc.addEventListener('load', resolve, { once:true });
+        bySrc.addEventListener('error', () => reject(new Error(`Falha ao carregar ${src}`)), { once:true });
+        setTimeout(() => {
+          if ((src.includes('supabase-client') && window.teamSupabase) || (src.includes('auth-manager') && window.TeamAuth)) resolve();
+        }, 0);
         return;
       }
-
       const script = document.createElement('script');
       script.src = src;
-      script.dataset[marker.replace(/-([a-z])/g, (_, c) => c.toUpperCase())] = '1';
-      script.addEventListener('load', () => {
-        script.dataset.loaded = '1';
-        resolve();
-      }, { once: true });
-      script.addEventListener('error', () => reject(new Error(`Falha ao carregar ${src}`)), { once: true });
+      script.dataset[marker] = '1';
+      script.addEventListener('load', resolve, { once:true });
+      script.addEventListener('error', () => reject(new Error(`Falha ao carregar ${src}`)), { once:true });
       document.head.appendChild(script);
     });
   }
 
-  async function ensureSharedAuth() {
-    if (!window.teamSupabase) {
-      await loadScript('supabase-client.js?v=100.0', 'tl-admin-supabase-client');
-    }
-    if (!window.TeamAuth) {
-      await loadScript('auth-manager.js?v=100.0', 'tl-admin-auth-manager');
-    }
-    if (!window.teamSupabase || !window.TeamAuth) {
-      throw new Error('Auth partilhado indisponível');
-    }
-    await window.TeamAuth.ready;
-    return { sb: window.teamSupabase, auth: window.TeamAuth };
+  async function ensureOfficialClient() {
+    if (!window.teamSupabase) await loadScript('supabase-client.js?v=101.0', 'tlAdminSupabase');
+    if (!window.TeamAuth) await loadScript('auth-manager.js?v=101.0', 'tlAdminAuth');
+    if (!window.teamSupabase) throw new Error('cliente oficial indisponível');
+    if (window.TeamAuth?.ready) await window.TeamAuth.ready;
+    return window.teamSupabase;
   }
 
-  async function getSharedSession(auth) {
-    let session = await auth.getSession();
-    if (session?.user?.id) return session;
+  async function recoverSession(client) {
+    // Primeiro pergunta diretamente ao mesmo cliente que a Home usa.
+    for (let attempt = 0; attempt < 12; attempt += 1) {
+      const { data, error } = await client.auth.getSession();
+      if (error) console.warn('[ADMIN GATE] getSession:', error.message);
+      if (data?.session?.user?.id) return data.session;
 
-    // Pequena tolerância para restauração da sessão em navegação entre páginas.
-    for (let i = 0; i < 4; i += 1) {
-      await new Promise(resolve => setTimeout(resolve, 300));
-      session = await auth.getSession();
-      if (session?.user?.id) return session;
+      // TeamAuth pode terminar a restauração entre uma tentativa e outra.
+      const shared = await window.TeamAuth?.getSession?.();
+      if (shared?.user?.id) return shared;
+      await sleep(250);
     }
     return null;
   }
 
-  function fallbackPage() {
+  function returnPage() {
     try {
       const ref = document.referrer ? new URL(document.referrer) : null;
-      if (ref && ref.origin === location.origin && !ref.pathname.endsWith('/admin.html')) {
-        return ref.href;
-      }
-    } catch {}
+      if (ref && ref.origin === location.origin && !ref.pathname.endsWith('/admin.html')) return `${ref.pathname}${ref.search}${ref.hash}`;
+    } catch (_) {}
     return 'home.html';
   }
 
   function deny(reason) {
     console.warn('[ADMIN GATE] acesso negado:', reason || 'sem detalhe');
-    location.replace(fallbackPage());
+    sessionStorage.setItem('tl_admin_last_denial_v101', String(reason || 'sem detalhe'));
+    location.replace(returnPage());
   }
 
   function leaveAdmin() {
@@ -100,27 +91,27 @@
   }
 
   async function verifyAccess() {
-    const { sb, auth } = await ensureSharedAuth();
-    const session = await getSharedSession(auth);
+    const client = await ensureOfficialClient();
+    const session = await recoverSession(client);
     const userId = session?.user?.id;
-    if (!userId) return deny('sessão partilhada não encontrada');
+    if (!userId) return deny('sessão autenticada não restaurada');
 
-    const { data: profile, error } = await sb
+    const { data: profile, error } = await client
       .from('profiles')
       .select('role')
       .eq('id', userId)
       .maybeSingle();
 
-    if (error) return deny(`perfil: ${error.message || 'erro'}`);
+    if (error) return deny(`falha ao consultar cargo: ${error.message || 'erro'}`);
 
     const role = normalizeRole(profile?.role);
-    if (!['admin', 'master'].includes(role)) {
-      return deny(`cargo ${role || 'vazio'}`);
-    }
+    if (!['master','admin'].includes(role)) return deny(`cargo sem acesso ao painel completo: ${role || 'vazio'}`);
 
+    sessionStorage.removeItem('tl_admin_last_denial_v101');
     bindExitButtons();
     document.documentElement.classList.remove('admin-pending');
     document.documentElement.dataset.adminRole = role;
+    window.dispatchEvent(new CustomEvent('tl:admin-ready', { detail:{ role, userId } }));
     console.info('[ADMIN GATE] acesso autorizado:', role);
   }
 
