@@ -34,6 +34,9 @@
   if (/home\.html$/i.test(location.pathname) || location.pathname === '/' || location.pathname === '') {
     loadScript('script[data-tl-home-profile-editor]', 'home-profile-editor-v1.js?v=1.0', 'tlHomeProfileEditor');
   }
+  if (/forum\.html$/i.test(location.pathname)) {
+    loadScript('script[data-tl-forum-route-actions]', 'forum-route-actions-v101.js?v=101.0', 'tlForumRouteActions');
+  }
 
   localStorage.setItem('tl_theme', 'dark');
   document.documentElement.dataset.theme = 'dark';
