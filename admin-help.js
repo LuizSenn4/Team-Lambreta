@@ -1,6 +1,16 @@
 (() => {
   'use strict';
 
+  // Ferramenta de enquadramento 3:2 da HOME dos streamers.
+  // Carregada a partir daqui para evitar espalhar mais tags no admin.html legado.
+  if (!document.querySelector('script[data-tl-home-image-editor]')) {
+    const script = document.createElement('script');
+    script.src = 'streamer-home-image-editor-v1.js?v=1.0';
+    script.defer = true;
+    script.dataset.tlHomeImageEditor = '1';
+    document.body.appendChild(script);
+  }
+
   const search = document.getElementById('adminHelpSearch');
   const topics = [...document.querySelectorAll('[data-help-topic]')];
   const indexLinks = [...document.querySelectorAll('.admin-help-index a')];
