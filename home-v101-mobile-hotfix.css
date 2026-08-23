@@ -1,4 +1,4 @@
-/* Home v101 hero/mobile polish v101.2 */
+/* Home v101 hero/mobile polish v101.3 */
 .home101-hero-arrow{
   top:50%;
   width:46px;
@@ -31,6 +31,30 @@
 }
 .home101-hero-arrow:active{transform:translateY(-50%) scale(.96)}
 .home101-hero-arrow:focus-visible{outline:2px solid #59e8ff!important;outline-offset:3px;border-radius:10px}
+
+/* Nesta largura o bloco da direita quebra em mais linhas. O hero precisa crescer junto. */
+@media (min-width:1051px) and (max-width:1400px){
+  .home101-hero,.home101-hero-track{
+    min-height:500px!important;
+  }
+  .home101-hero-copy{
+    padding-top:34px!important;
+    padding-bottom:42px!important;
+  }
+  .home101-actions{
+    margin-top:20px;
+  }
+}
+
+@media (min-width:701px) and (max-width:1050px){
+  .home101-hero,.home101-hero-track{
+    min-height:540px!important;
+  }
+  .home101-hero-copy{
+    padding-top:34px!important;
+    padding-bottom:50px!important;
+  }
+}
 
 @media (max-width:700px){
   .home101-hero,.home101-hero-track{
