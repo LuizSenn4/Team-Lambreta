@@ -1,0 +1,52 @@
+/*
+  HOME v101 — STREAMERS / PLATAFORMAS ATIVAS
+  -------------------------------------------
+  Contrato visual:
+  - O card mostra no máximo 3 ícones de plataformas, sem nomes escritos.
+  - Clicar no card abre o modal de escolha; os ícones do modal abrem as plataformas externas.
+  - ASSISTA AQUI abre a sala Team Lambreta (player + chat).
+  - Não transformar os ícones do card em links aninhados: o card inteiro é o gatilho do modal.
+*/
+.home101-streamer-card{cursor:pointer}
+.home101-streamer-card:focus-visible{outline:2px solid #59e8ff;outline-offset:3px;border-color:#59e8ff}
+.home101-platform-icons{display:flex;align-items:center;gap:7px;min-height:30px;margin-top:-1px}
+.home101-platform-icon{width:28px;height:28px;display:grid;place-items:center;border:1px solid #263746;border-radius:9px;background:#0e1822;color:#b7c5d0;transition:.16s}
+.home101-platform-icon svg{width:16px;height:16px;display:block;fill:currentColor}
+.home101-platform-icon.is-tiktok{color:#e9fbff}
+.home101-platform-icon.is-twitch{color:#b996ff}
+.home101-platform-icon.is-youtube{color:#ff7180}
+.home101-platform-icon.is-instagram{color:#f4a1dd}
+.home101-streamer-card:hover .home101-platform-icon{border-color:#3e5d71;transform:translateY(-1px)}
+
+body.home101-modal-open{overflow:hidden}
+.home101-watch-modal[hidden]{display:none!important}
+.home101-watch-modal{position:fixed;inset:0;z-index:10050;display:grid;place-items:center;padding:20px}
+.home101-watch-backdrop{position:absolute;inset:0;background:rgba(1,5,9,.78);backdrop-filter:blur(9px)}
+.home101-watch-dialog{position:relative;z-index:1;width:min(470px,100%);padding:28px;border:1px solid rgba(79,220,255,.30);border-radius:22px;background:radial-gradient(circle at 100% 0,rgba(0,223,245,.10),transparent 35%),#0b131c;box-shadow:0 32px 90px rgba(0,0,0,.62),0 0 0 1px rgba(255,255,255,.025) inset;color:#eef5f8}
+.home101-watch-dialog>small{display:block;color:#5be9ff;font-size:10px;font-weight:900;letter-spacing:.16em;margin-right:42px}
+.home101-watch-dialog h2{margin:8px 42px 7px 0;font-size:30px;line-height:1.08}
+.home101-watch-dialog>p{margin:0;color:#8d9aa7;font-size:12px}
+.home101-watch-close{position:absolute;top:16px;right:16px;width:36px;height:36px;border:1px solid #293846;border-radius:11px;background:#101923;color:#dce8ee;font-size:24px;line-height:1;cursor:pointer}
+.home101-watch-close:hover{border-color:#58e7fb;color:#58e7fb}
+.home101-watch-platforms{display:flex;justify-content:center;align-items:center;gap:14px;min-height:88px;margin:24px 0 14px}
+.home101-watch-platform{width:68px;height:68px;display:grid;place-items:center;border:1px solid #2b3d4d;border-radius:18px;background:#101a24;color:#dfeaf0;text-decoration:none;transition:transform .17s ease,border-color .17s ease,box-shadow .17s ease}
+.home101-watch-platform svg{width:31px;height:31px;fill:currentColor}
+.home101-watch-platform:hover{transform:translateY(-4px) scale(1.04);border-color:#5ce8fc;box-shadow:0 10px 30px rgba(0,223,245,.12)}
+.home101-watch-platform.is-tiktok:hover{color:#fff}
+.home101-watch-platform.is-twitch{color:#b996ff}.home101-watch-platform.is-youtube{color:#ff697b}.home101-watch-platform.is-instagram{color:#f1a0d9}
+.home101-watch-none{color:#82909d;font-size:12px;text-align:center}
+.home101-watch-separator{display:flex;align-items:center;gap:10px;color:#53616e;font-size:9px;font-weight:900;letter-spacing:.18em;margin:4px 0 14px}
+.home101-watch-separator:before,.home101-watch-separator:after{content:"";height:1px;background:#22303c;flex:1}
+.home101-watch-here{min-height:50px;display:flex;align-items:center;justify-content:center;border:1px solid #00dff5;border-radius:13px;background:#00dff5;color:#021014;text-decoration:none;font-weight:950;font-size:13px;letter-spacing:.05em;box-shadow:0 0 26px rgba(0,223,245,.10)}
+.home101-watch-here:hover{filter:brightness(1.07)}
+.home101-watch-hint{display:block;margin-top:9px;color:#748391;text-align:center;font-size:10px;line-height:1.45}
+.sr-only{position:absolute!important;width:1px!important;height:1px!important;padding:0!important;margin:-1px!important;overflow:hidden!important;clip:rect(0,0,0,0)!important;white-space:nowrap!important;border:0!important}
+
+@media(max-width:700px){
+  .home101-platform-icon{width:30px;height:30px}
+  .home101-watch-modal{padding:14px}
+  .home101-watch-dialog{padding:24px 18px;border-radius:19px}
+  .home101-watch-dialog h2{font-size:25px}
+  .home101-watch-platforms{gap:10px}
+  .home101-watch-platform{width:62px;height:62px;border-radius:16px}
+}
