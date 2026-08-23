@@ -1,0 +1,23 @@
+/*
+  PERFIL V101 — organização oficial do editor
+  Jogos, plataformas e modos usam busca + lista vertical rolável.
+  Não voltar ao mural de dezenas de chips sem pesquisa.
+*/
+.forum-profile-form-v101 .forum-profile-list-picker{display:grid;gap:10px}
+.forum-profile-form-v101 .forum-profile-option-search,
+.forum-profile-form-v101 #forumGameSearch{width:100%;min-height:42px;box-sizing:border-box;border:1px solid rgba(125,154,179,.28);border-radius:10px;background:#0b131c;color:#eef6ff;padding:0 13px;outline:none}
+.forum-profile-form-v101 .forum-profile-option-search:focus,
+.forum-profile-form-v101 #forumGameSearch:focus{border-color:#55e7ff;box-shadow:0 0 0 2px rgba(85,231,255,.09)}
+.forum-profile-form-v101 #forumPlatformOptions,
+.forum-profile-form-v101 #forumModeOptions,
+.forum-profile-form-v101 #forumGameResults{display:grid;grid-template-columns:1fr;gap:6px;max-height:220px;overflow:auto;padding:6px;border:1px solid rgba(125,154,179,.16);border-radius:11px;background:rgba(5,11,17,.58)}
+.forum-profile-form-v101 #forumGameResults[hidden]{display:none!important}
+.forum-profile-form-v101 #forumPlatformOptions > *,
+.forum-profile-form-v101 #forumModeOptions > *,
+.forum-profile-form-v101 #forumGameResults > *{width:100%;box-sizing:border-box;margin:0!important}
+.forum-profile-form-v101 #forumPlatformOptions label,
+.forum-profile-form-v101 #forumModeOptions label{display:flex;align-items:center;gap:10px;min-height:38px;padding:8px 10px;border-radius:8px;background:rgba(255,255,255,.025)}
+.forum-profile-form-v101 #forumPlatformOptions label:hover,
+.forum-profile-form-v101 #forumModeOptions label:hover{background:rgba(85,231,255,.07)}
+.forum-profile-form-v101 #forumSelectedGames{display:flex;flex-wrap:wrap;gap:7px;min-height:0}
+@media(max-width:700px){.forum-profile-form-v101 #forumPlatformOptions,.forum-profile-form-v101 #forumModeOptions,.forum-profile-form-v101 #forumGameResults{max-height:190px}}
