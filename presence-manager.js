@@ -132,6 +132,7 @@
       return snapshot();
     }
     lastActivityAt = readLastActivity(userId);
+    writeLastActivity();
     initialStatus = normalize(initialStatus);
     if (valid(initialStatus) && initialStatus !== 'offline') {
       manualStatus = initialStatus === 'away' ? (localStorage.getItem('tl_presence_manual_v100') || 'online') : initialStatus;
