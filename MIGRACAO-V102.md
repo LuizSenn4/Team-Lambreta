@@ -4,6 +4,10 @@ Data da auditoria: 23-08-2026
 Branch local: `rebuild-v102`  
 Golden references: `home.html` e `buddy.html` (visual e comportamento; não redesenhar).
 
+## Escopo público final — navegação simplificada
+
+O menu público V102 contém exclusivamente `Home`, `Team`, `Fórum`, `Streamers` e `Eventos`. Buddy permanece como ferramenta global no ícone junto ao perfil. Loja, Mídia e Conquistas ficam preservadas fora do fluxo público desta fase. Ajuda e Contacto foram consolidados em `suporte.html`; as URLs antigas são adapters de compatibilidade. Regras, Privacidade e Atualizações são acessíveis pelo rodapé. O fluxo Participe passou para `team.html#juntar-team`, reutilizando o formulário e a tabela existentes.
+
 ## Estado geral confirmado
 
 O projeto ainda é híbrido. As páginas públicas combinam `style-v92.css` (9.802 linhas), `ui-core-v93.css`, scripts `v89/v92/v93`, o shell V100 e patches posteriores. Existem 18 módulos JavaScript com chamada ou fallback para `createClient`; vários reutilizam `window.teamSupabase`, mas outros ainda podem criar clientes próprios.
@@ -168,9 +172,11 @@ Nenhum candidato será apagado antes de uma busca de referências e testes de to
 | Streamers | Core V102 migrado | cards `streamer-public-v86.js` | HTTP 200, sintaxe, visual 1366 |
 | Fórum | Integração V102 migrada | mecânica integral `forum-board-v2.js` | HTTP 200, sintaxe, visual deslogado 1366 |
 | Eventos/Live | Core V102 migrado | conteúdo e live/chat existentes | HTTP 200 e sintaxe |
-| Regras/Ajuda/Contacto | Shell V102 migrada | conteúdo existente | HTTP 200 |
-| Mídia/Conquistas/Participe | Shell/Auth V102 migrados | módulos de negócio existentes | HTTP 200 e sintaxe |
-| Loja/Atualizações | Core V102 migrado | catálogo/updates existentes | HTTP 200 e sintaxe |
+| Suporte/Regras/Privacidade | Navegação final V102 | Ajuda + Contacto consolidados; regras preservadas | HTTP 200; visual 1366/390; sintaxe aprovada |
+| Mídia/Conquistas | Fora do fluxo público atual | dados e módulos preservados | Não migrar nesta fase |
+| Participe | Integrado em Team | `participation-v96.js` e dados reais preservados | HTTP 200; visual 1366/390; envio autenticado pendente |
+| Loja | Fora do fluxo público atual | catálogo e dados preservados | Não migrar nesta fase |
+| Atualizações | Acessível pelo rodapé/Suporte | módulo existente preservado | HTTP 200 e sintaxe |
 | Admin | Gate por PermissionService | módulos internos preservados | sintaxe; teste autenticado pendente |
 | Moderator | Skeleton separado criado | — | HTTP 200 e sintaxe |
 

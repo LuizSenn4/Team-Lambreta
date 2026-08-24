@@ -1,4 +1,4 @@
-@import url("https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Cinzel:wght@700;900&family=Inter:wght@400;600;800;900&family=Road+Rage&display=swap");
+/* Fontes carregadas uma única vez pelo design system V102. */
 
 :root {
   --black: #050403;
@@ -7539,7 +7539,7 @@ html, body { width:100%; max-width:100%; overflow-x:hidden; }
 }
 
 
-/* V92.26 — identidade tipográfica unificada */
+/* V102 — hierarquia tipográfica herdada pelo design system global */
 .streamers-showcase-hero h1,
 .team-esports-hero h1,
 .page-hero-center h1,
@@ -7556,8 +7556,8 @@ html, body { width:100%; max-width:100%; overflow-x:hidden; }
 .streamer-card-name,
 .team-inline-copy h2,
 .ink31-profile-copy h2{
-  font-family:"Road Rage",Impact,sans-serif!important;
-  font-weight:400!important;
+  font-family:var(--font-team-display,"Barlow Condensed",sans-serif)!important;
+  font-weight:800!important;
   letter-spacing:1px!important;
 }
 .streamers-showcase-tag,
@@ -7565,7 +7565,7 @@ html, body { width:100%; max-width:100%; overflow-x:hidden; }
 .forum-title-badge,
 .team-category-head .tag,
 .streamer-card-kicker{
-  font-family:"Road Rage",Impact,sans-serif!important;
+  font-family:var(--font-team-display,"Barlow Condensed",sans-serif)!important;
   letter-spacing:3px!important;
 }
 
@@ -8262,7 +8262,7 @@ html, body { width:100%; max-width:100%; overflow-x:hidden; }
 .team-esports-hero h1{
   margin:0!important;
   color:#efbd4c!important;
-  font-family:"Road Rage",Impact,sans-serif!important;
+  font-family:var(--font-team-display,"Barlow Condensed",sans-serif)!important;
   font-size:clamp(48px,5vw,82px)!important;
   font-weight:400!important;
   line-height:1!important;

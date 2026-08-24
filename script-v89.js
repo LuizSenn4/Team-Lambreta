@@ -1,3 +1,13 @@
+// Utilitário partilhado pelas rotinas de cargos, moderação e bloqueio deste módulo.
+function normalizeChatName(name){
+  return String(name || '')
+    .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+    .trim()
+    .toLowerCase()
+    .replace(/\s+/g, '_')
+    .replace(/[^a-z0-9_]/g, '');
+}
+
 function renderEmpty(container,text){
   container.innerHTML=`<article class="empty-card safe-card"><h3>${text}</h3><p>Conteúdo ainda não cadastrado no admin.</p></article>`;
 }

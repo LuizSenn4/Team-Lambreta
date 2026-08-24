@@ -8,7 +8,8 @@
     DE: ["alemanha", "germany"], FR: ["franca", "frança", "france"], IT: ["italia", "itália", "italy"],
     JP: ["japao", "japão", "japan"], KR: ["coreia do sul", "south korea"], CN: ["china"],
   };
-  const names = new Intl.DisplayNames(["pt-BR"], { type: "region" });
+  const names = new Intl.DisplayNames(["pt-PT"], { type: "region" });
+  const englishNames = new Intl.DisplayNames(["en"], { type: "region" });
   const normalize = (value) => String(value || "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().trim();
   const flag = (code) => /^[A-Z]{2}$/.test(code || "")
     ? String.fromCodePoint(...code.split("").map((letter) => 127397 + letter.charCodeAt(0)))
@@ -16,6 +17,7 @@
   const countries = CODES.map((code) => Object.freeze({
     code,
     name: names.of(code) || code,
+    englishName: englishNames.of(code) || code,
     flag: flag(code),
     aliases: Object.freeze(ALIASES[code] || []),
   })).sort((a, b) => a.name.localeCompare(b.name, "pt-BR"));
@@ -26,21 +28,22 @@
     if (direct) return direct;
     const needle = normalize(raw);
     return countries.find((country) =>
-      normalize(country.name) === needle || country.aliases.some((alias) => normalize(alias) === needle),
+      normalize(country.name) === needle || normalize(country.englishName) === needle || country.aliases.some((alias) => normalize(alias) === needle),
     ) || null;
   };
   const search = (query, limit = 12) => {
     const needle = normalize(query);
-    if (!needle) return [];
+    if (!needle) return countries.slice(0, limit);
     const score = (country) => {
       const code = normalize(country.code);
       const name = normalize(country.name);
+      const englishName = normalize(country.englishName);
       const aliases = country.aliases.map(normalize);
-      if (code === needle || name === needle || aliases.includes(needle)) return 0;
-      if (aliases.some((alias) => alias.startsWith(needle))) return 1;
-      if (name.startsWith(needle) || code.startsWith(needle)) return 2;
-      if (aliases.some((alias) => alias.includes(needle))) return 3;
-      if (name.includes(needle) || code.includes(needle)) return 4;
+      if (code === needle) return 0;
+      if (name === needle || englishName === needle || aliases.includes(needle)) return 1;
+      if (code.startsWith(needle) || aliases.some((alias) => alias.startsWith(needle))) return 2;
+      if (name.startsWith(needle) || englishName.startsWith(needle)) return 3;
+      if (name.includes(needle) || englishName.includes(needle) || aliases.some((alias) => alias.includes(needle))) return 4;
       return 99;
     };
     return countries.map((country) => ({ country, rank: score(country) }))

@@ -7,8 +7,10 @@
   <link rel="stylesheet" href="style-v92.css?v=98.0" />
   <link rel="stylesheet" href="ui-core-v93.css?v=93.0" />
   <link rel="stylesheet" href="team-mobile-v99.css?v=100.0" />
-  <link rel="stylesheet" href="tl-design-system-v100.css?v=100.0" />
+  <link rel="stylesheet" href="tl-design-system-v100.css?v=102.0" />
   <link rel="stylesheet" href="tl-polish-v100.css?v=100.0" />
+  <link rel="stylesheet" href="team-join-v102.css?v=102.1" />
+  <link rel="stylesheet" href="tl-presentation-hero-v102.css?v=102.0" />
 </head>
 <body data-cloud-team="1">
   <section id="siteContent" class="site-content team-page">
@@ -76,11 +78,12 @@
     <button type="button" data-team-tab="about" aria-selected="false">Sobre</button>
     <button type="button" data-team-tab="activity" aria-selected="false">Atividade</button>
   </nav>
-  <section class="team-esports-hero">
-    <div class="team-hero-eyebrow" aria-label="Team Lambreta"><span></span><strong>TL&nbsp;&nbsp; TEAM LAMBRETA</strong><span></span></div>
+  <button class="team-mobile-join-trigger" type="button" data-team-join-open>Juntar-me à Team</button>
+  <section class="team-esports-hero tl-presentation-hero-v102">
     <h1>TEAM LAMBRETA</h1>
     <div class="team-hero-divider"><span></span><b>TL</b><span></span></div>
     <p>Clica num membro para abrir o perfil completo.</p>
+    <button class="team-join-trigger" type="button" data-team-join-open>Juntar-me à Team</button>
   </section>
 
   <section class="team-mobile-panel is-active" data-team-panel="members">
@@ -101,6 +104,37 @@
     <h2>Perfis oficiais</h2>
     <p>As novidades e contribuições públicas dos membros serão apresentadas aqui.</p>
   </section>
+  <div id="teamJoinModal" class="team-join-modal" hidden><div class="team-join-backdrop" data-team-join-close></div><button class="team-join-close" type="button" data-team-join-close aria-label="Fechar inscrição">×</button><section id="juntar-team" class="participate-layout tl-team-join" role="dialog" aria-modal="true" aria-labelledby="teamJoinTitle">
+    <header class="team-join-hero"><div class="team-join-hero-icon" aria-hidden="true"><svg viewBox="0 0 64 48"><path d="M17 33h28M24 33c1-12 8-19 20-19h7l-4 7H35M23 33l-6-15h-6M47 21l5 12M15 39a6 6 0 1 0 0-12 6 6 0 0 0 0 12Zm37 0a6 6 0 1 0 0-12 6 6 0 0 0 0 12Z"/></svg></div><div><span>INSCRIÇÃO — TEAM LAMBRETA | FORTNITE</span><h2 id="teamJoinTitle">Queres entrar para a Team? <span aria-hidden="true">🎮🔥</span></h2><p>A Team Lambreta está à procura de jogadores que curtam competir, evoluir e jogar em equipa.</p><p>Não estamos à procura apenas do melhor rank. Queremos conhecer quem joga contigo por trás do nick: a tua experiência, a tua disponibilidade e o que procuras dentro da Team.</p><p>Preenche a inscrição com calma. Cada candidatura é analisada individualmente.</p></div><div id="participationCurrent" class="participation-current"></div></header>
+    <form id="participationForm" class="participation-form team-join-form">
+      <p class="team-join-required">* campos obrigatórios</p>
+      <section class="team-join-block"><header><span aria-hidden="true">👤</span><div><small>BLOCO 01</small><h3>Sobre ti</h3></div></header><div class="participation-fields">
+        <label>Nome *<small>O teu nome.</small><input name="full_name" required maxlength="100" autocomplete="name"></label>
+        <label>Nick no Fortnite *<small>Como a malta te conhece dentro do jogo.</small><input name="epic_nickname" required maxlength="60" autocomplete="off"></label>
+        <label>Idade *<input name="age" type="number" required min="13" max="99"></label>
+        <label>Região *<small>Ex.: Portugal, Brasil, Europa.</small><input name="country" required maxlength="60" autocomplete="country-name"></label>
+        <label>Plataforma *<select name="platform" required><option value="">Seleciona</option><option>PC</option><option>PlayStation</option><option>Xbox</option><option>Nintendo Switch</option></select></label>
+        <label>ID da Epic Games<small>Para podermos identificar-te/adicionar-te dentro do jogo.</small><input name="tracker_links" maxlength="500" autocomplete="off"></label>
+        <label>Discord *<small>Ex.: utilizador ou utilizador#0000</small><input name="discord" required maxlength="100" placeholder="utilizador ou utilizador#0000"></label>
+        <label>Servidor competitivo *<small>A região em que jogas habitualmente.</small><select name="region" required><option value="">Seleciona</option><option value="EU">Europa</option><option value="BR">Brasil</option><option value="NAE">NA East</option><option value="NAC">NA Central</option><option value="NAW">NA West</option><option value="ME">Middle East</option><option value="OCE">Oceania</option><option value="ASIA">Ásia</option></select></label>
+      </div></section>
+      <section class="team-join-block"><header><span aria-hidden="true">🏆</span><div><small>BLOCO 02</small><h3>A tua experiência</h3></div></header><div class="participation-fields">
+        <label>Há quanto tempo jogas Fortnite?<input name="notes" maxlength="1000" placeholder="Ex.: jogo desde o Capítulo 2"></label>
+        <label>Qual é o teu modo preferido? *<select name="build_preference" required><option value="build">Battle Royale</option><option value="zero_build">Zero Build</option><option value="ambos">Outro / ambos</option></select></label>
+        <label>Formato que jogas mais *<input name="main_mode" required maxlength="80" placeholder="Solo, Dupla, Trio..."></label>
+        <label>Como jogas? *<select name="input_method" required><option value="controle">Controle</option><option value="teclado_mouse">Teclado e mouse</option></select></label>
+        <label>Qual é o teu Power Ranking atual?<small>Se ainda não tens PR, podes deixar vazio.</small><input name="power_ranking" type="number" min="0" step="1"></label>
+        <label class="full">Já participaste em torneios ou competições? *<small>Conta-nos um pouco. Se nunca participaste, sem problema — diz-nos isso também.</small><textarea name="competitive_experience" required maxlength="1500" rows="6"></textarea></label>
+      </div></section>
+      <section class="team-join-block"><header><span aria-hidden="true">🔥</span><div><small>BLOCO 03</small><h3>Queremos conhecer o jogador</h3></div></header><div class="participation-fields">
+        <label class="full">Por que queres fazer parte da Team Lambreta? *<small>Conta-nos o que procuras numa Team e o que achas que podes trazer para a comunidade.</small><textarea name="motivation" required maxlength="1500" rows="6"></textarea></label>
+        <label class="full">Qual é a tua disponibilidade para treinos, jogos e eventos? *<small>Ex.: dias da semana, horários e frequência com que normalmente jogas.</small><textarea name="availability" required maxlength="1000" rows="5"></textarea></label>
+      </div></section>
+      <section class="team-join-block team-spirit"><header><span aria-hidden="true">🛵</span><div><small>BLOCO 04</small><h3>O espírito Lambreta</h3></div></header><p>Antes de enviares, confirma que isto combina contigo:</p><ul><li>Jogar em equipa e ajudar quem está ao teu lado.</li><li>Respeitar adversários, colegas e membros da comunidade.</li><li>Participar e não desaparecer depois de entrar.</li><li>Ter vontade de aprender, melhorar e também ensinar.</li><li>Competir a sério sem esquecer que estamos aqui para nos divertir.</li><li>Representar a Team Lambreta com respeito dentro e fora do jogo.</li></ul></section>
+      <section class="team-join-finish"><small>ÚLTIMA VOLTA</small><h3>🏁 Pronto para entrar na estrada?</h3><p>Não precisamos que sejas perfeito.</p><p>Precisamos que sejas presente, respeitador e tenhas vontade de evoluir com a Team.</p><p>Boa sorte! <span aria-hidden="true">🛵🔥</span></p><strong>A próxima Lambreta da equipa pode ser a tua.</strong></section>
+      <div class="participation-submit"><p id="participationFeedback" role="status"></p><button type="submit">Enviar inscrição</button></div>
+    </form>
+  </section></div>
 </main>
 
     <footer class="site-footer">
@@ -112,10 +146,12 @@
   <script src="supabase-client.js?v=102.0"></script>
   <script src="auth-manager.js?v=102.0"></script>
   <script src="presence-manager.js?v=102.0"></script>
-  <script src="services/profile-service.js?v=102.0"></script>
+  <script src="services/profile-service.js?v=102.5"></script>
   <script src="services/permission-service.js?v=102.0"></script>
-  <script src="tl-shell-v102.js?v=102.0"></script>
+  <script src="tl-shell-v102.js?v=102.6"></script>
   <script src="team-public-v92.js?v=99.0"></script>
+  <script src="participation-v96.js?v=102.0"></script>
+  <script src="team-participation-modal-v102.js?v=102.1"></script>
 <script src="community-progress-v938.js?v=93.8.6"></script>
 </body>
 </html>

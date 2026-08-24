@@ -39,6 +39,8 @@ O PresenceManager gere Online, Ocupado, Ausente e Offline, atividade, heartbeat 
 
 `tl-shell-v102.js` gere header, navegação, conta, status, dropdowns, menu mobile e Buddy. O cache `tl_profile_cache_v102` guarda apenas identidade visual confirmada, tem validade limitada e é revalidado em background. Nunca participa em autorização.
 
+O menu público oficial possui somente Home, Team, Fórum, Streamers e Eventos. Buddy é um atalho global junto ao perfil, nunca um item de navegação. O rodapé oficial expõe Suporte, Regras da Comunidade, Privacidade e Atualizações.
+
 ## Compatibilidade
 
 `legacy/profile-route-adapter.js` redireciona temporariamente `forum.html?profile=<UUID>` para o perfil global. Remover quando a auditoria não encontrar mais links externos antigos.

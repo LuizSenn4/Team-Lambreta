@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Admin - Team Lambreta</title>
-  <link rel="stylesheet" href="admin.css?v=98.0" />
+  <link rel="stylesheet" href="admin.css?v=102.3" />
   <link rel="stylesheet" href="theme-dark.css?v=1.1" data-tl-theme />
   <script>(()=>{const p=localStorage.getItem('tl_theme')||'system',r=p==='system'?(matchMedia('(prefers-color-scheme: light)').matches?'light':'dark'):p;document.documentElement.dataset.theme=r;document.documentElement.dataset.themePreference=p})()</script>
 </head>
@@ -248,8 +248,23 @@
             </div>
           </fieldset>
 
+          <fieldset class="streamer-home-image-fieldset">
+            <legend>Imagem da Home</legend>
+            <div class="streamer-home-image-guidance"><strong>IMAGEM DA HOME</strong><b>Usada nos cards de Próximas Lives</b><span>Recomendado: 1536 × 1024 px (3:2). Depois do upload pode ajustar zoom e posição da imagem.</span></div>
+            <div class="streamer-home-image-editor">
+              <div id="streamerHomePreview" class="streamer-home-preview"><img id="streamerHomePreviewImage" alt="Preview 3:2 da imagem Home" hidden><span id="streamerHomePreviewEmpty">Sem imagem Home</span></div>
+              <div class="streamer-photo-controls">
+                <label>Colar link da imagem Home<div class="streamer-photo-url-row"><input id="streamerHomeImageUrl" type="url" placeholder="https://..."><button id="cropStreamerHomeUrlBtn" type="button">Enquadrar</button><button id="clearStreamerHomeBtn" type="button">Limpar</button></div></label>
+                <label>Ou enviar do PC/telemóvel<input id="streamerHomeImageFile" type="file" accept="image/*"></label>
+                <button id="recropStreamerHomeBtn" type="button">Reabrir enquadramento da Home</button>
+                <small>A imagem Home é independente do poster/perfil. O upload só acontece ao guardar o streamer.</small>
+              </div>
+            </div>
+          </fieldset>
+
           <fieldset>
-            <legend>Foto</legend>
+            <legend>Poster vertical</legend>
+            <div class="streamer-poster-image-guidance"><strong>POSTER VERTICAL</strong><b>Usado em Streamers + Perfil do streamer</b><span>Recomendado: 1200 × 1800 px (2:3).</span></div>
             <div class="streamer-photo-box">
               <div class="streamer-photo-preview-shell">
                 <img id="streamerPhotoPreview" alt="Pré-visualização" hidden>
@@ -270,7 +285,7 @@
                 </label>
 
                 <button id="recropStreamerPhotoBtn" type="button">Reabrir enquadramento atual</button>
-                <small>A arte final é guardada em 4:5, exatamente como a moldura pública. O upload só acontece depois de guardar o streamer.</small>
+                <small>A arte final é guardada em 2:3, exatamente como as molduras públicas. O upload só acontece depois de guardar o streamer.</small>
               </div>
             </div>
           </fieldset>
@@ -572,7 +587,7 @@
 
   <div id="streamerCropModal" class="streamer-crop-modal" hidden>
     <section class="streamer-crop-dialog" role="dialog" aria-modal="true" aria-labelledby="streamerCropTitle">
-      <header><div><small>PREVIEW DO CARD · 4:5</small><h2 id="streamerCropTitle">Enquadrar arte do streamer</h2></div><button id="streamerCropClose" type="button" aria-label="Fechar enquadramento">×</button></header>
+      <header><div><small id="streamerCropRatioLabel">PREVIEW DO POSTER · 2:3</small><h2 id="streamerCropTitle">Enquadrar arte do streamer</h2></div><button id="streamerCropClose" type="button" aria-label="Fechar enquadramento">×</button></header>
       <div class="streamer-crop-layout">
         <div id="streamerCropFrame" class="streamer-crop-frame" aria-label="Moldura final da arte"><img id="streamerCropImage" alt="Arte a enquadrar" draggable="false"></div>
         <aside class="streamer-crop-controls">
@@ -594,7 +609,7 @@
   <script src="data.js"></script>
   <script src="admin.js"></script>
   <script src="forum-admin-v1.js?v=1.0"></script>
-  <script src="streamer-admin-v85.js"></script>
+  <script src="streamer-admin-v85.js?v=102.3"></script>
   <script src="team-admin-v92.js?v=98.0"></script>
   <script src="competition-admin-v96.js?v=98.1"></script>
   <script src="admin-help.js?v=1.0"></script>

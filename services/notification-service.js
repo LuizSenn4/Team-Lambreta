@@ -26,6 +26,28 @@
     document.body.append(toast); requestAnimationFrame(() => toast.classList.add('show'));
     setTimeout(() => { toast.classList.remove('show'); setTimeout(() => toast.remove(), 220); }, 5000);
   }
+  function show(message, options = {}) {
+    const toast = document.createElement('div');
+    const type = ['success', 'error', 'info'].includes(options.type) ? options.type : 'info';
+    toast.className = `tl-notification-toast tl-notification-toast-${type}`;
+    toast.setAttribute('role', type === 'error' ? 'alert' : 'status');
+    toast.setAttribute('aria-live', type === 'error' ? 'assertive' : 'polite');
+    const title = document.createElement('strong');
+    title.textContent = String(message || '');
+    toast.append(title);
+    if (options.code) {
+      const code = document.createElement('span');
+      code.textContent = `Código: ${options.code}`;
+      toast.append(code);
+    }
+    document.body.append(toast);
+    requestAnimationFrame(() => toast.classList.add('show'));
+    const timer = setTimeout(() => {
+      toast.classList.remove('show');
+      setTimeout(() => toast.remove(), 220);
+    }, Number(options.duration) || 4200);
+    return () => { clearTimeout(timer); toast.remove(); };
+  }
   async function connect(nextSession) {
     const current = ++generation; session = nextSession || null;
     if (channel) { await client.removeChannel(channel); channel = null; }
@@ -38,5 +60,5 @@
   }
   window.TeamAuth?.subscribe(connect);
   window.addEventListener('buddy:messages-read', refresh);
-  window.TeamNotifications = Object.freeze({ refresh, getUnread: () => unread, subscribe(listener) { listeners.add(listener); listener({ unread }); return () => listeners.delete(listener); } });
+  window.TeamNotifications = Object.freeze({ show, refresh, getUnread: () => unread, subscribe(listener) { listeners.add(listener); listener({ unread }); return () => listeners.delete(listener); } });
 })();

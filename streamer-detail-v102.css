@@ -1,0 +1,45 @@
+/* O detalhe reutiliza o mesmo poster vertical 2:3 da galeria, apenas em escala maior. */
+@media (min-width:901px){
+  .streamer-detail-shell{
+    grid-template-columns:minmax(0,min(38vw,calc(66.6667dvh - 126.667px),680px)) minmax(0,1fr);
+    align-items:start;
+  }
+
+  .streamer-detail-poster{
+    width:auto;
+    max-width:100%;
+    height:min(calc(100dvh - 190px),1020px);
+    max-height:calc(100dvh - 190px);
+    justify-self:start;
+  }
+}
+
+.streamer-detail-poster{
+  position:relative;
+  width:100%;
+  min-width:0;
+  min-height:0;
+  aspect-ratio:2/3;
+  align-self:start;
+  padding:0;
+  overflow:hidden;
+  background:#05090d;
+}
+
+.streamer-detail-poster>img{
+  position:absolute;
+  inset:0;
+  width:100%!important;
+  height:100%!important;
+  max-width:none!important;
+  max-height:none!important;
+  margin:0!important;
+  display:block;
+  object-fit:cover!important;
+  object-position:center center!important;
+}
+
+@media (max-width:900px){
+  .streamer-detail-shell{grid-template-columns:minmax(0,1fr)}
+  .streamer-detail-poster{width:100%;height:auto;max-height:none;aspect-ratio:2/3}
+}

@@ -11,9 +11,15 @@
   let pendingOriginalFile = null;
   let pendingPreviewUrl = '';
   let editingPhotoUrl = '';
-  const STREAMER_POSTER_RATIO = 4 / 5;
-  const STREAMER_OUTPUT = { width: 1200, height: 1500 };
-  const cropState = { naturalWidth:0,naturalHeight:0,frameWidth:0,frameHeight:0,minScale:1,zoom:1,x:0,y:0,dragging:false,startX:0,startY:0,originX:0,originY:0,sourceFile:null,sourceName:'streamer-original' };
+  let pendingHomeCroppedFile = null;
+  let pendingHomeOriginalFile = null;
+  let pendingHomePreviewUrl = '';
+  let editingHomeImageUrl = '';
+  const CROP_OUTPUTS = {
+    poster:{width:1200,height:1800,suffix:'2x3',label:'PREVIEW DO POSTER · 2:3'},
+    home:{width:1536,height:1024,suffix:'3x2',label:'PREVIEW DA HOME · 3:2'}
+  };
+  const cropState = { mode:'poster',naturalWidth:0,naturalHeight:0,frameWidth:0,frameHeight:0,minScale:1,zoom:1,x:0,y:0,dragging:false,startX:0,startY:0,originX:0,originY:0,sourceFile:null,sourceName:'streamer-original' };
 
   const WEEK_DAYS = [
     ['monday','Segunda-feira'],['tuesday','Terça-feira'],['wednesday','Quarta-feira'],
@@ -166,6 +172,22 @@
     setStreamerPhotoPreview('');
   }
 
+  function setStreamerHomePreview(src='') {
+    const img=$('streamerHomePreviewImage');
+    const empty=$('streamerHomePreviewEmpty');
+    const hasPhoto=Boolean(String(src||'').trim());
+    if(img){if(hasPhoto)img.src=src;else img.removeAttribute('src');img.hidden=!hasPhoto;}
+    if(empty)empty.hidden=hasPhoto;
+  }
+
+  function clearStreamerHome() {
+    if($('streamerHomeImageUrl'))$('streamerHomeImageUrl').value='';
+    if($('streamerHomeImageFile'))$('streamerHomeImageFile').value='';
+    pendingHomeCroppedFile=null;pendingHomeOriginalFile=null;
+    if(pendingHomePreviewUrl)URL.revokeObjectURL(pendingHomePreviewUrl);
+    pendingHomePreviewUrl='';setStreamerHomePreview('');
+  }
+
   function clampCropPosition() {
     const width=cropState.naturalWidth*cropState.minScale*cropState.zoom;
     const height=cropState.naturalHeight*cropState.minScale*cropState.zoom;
@@ -181,7 +203,8 @@
     image.style.height=`${cropState.naturalHeight*scale}px`;
     image.style.transform=`translate3d(${cropState.x}px,${cropState.y}px,0)`;
     const slider=$('streamerCropZoom'); if(slider) slider.value=String(cropState.zoom);
-    const info=$('streamerCropInfo'); if(info) info.textContent=`Saída: ${STREAMER_OUTPUT.width} × ${STREAMER_OUTPUT.height}px · zoom ${Math.round(cropState.zoom*100)}%`;
+    const output=CROP_OUTPUTS[cropState.mode];
+    const info=$('streamerCropInfo'); if(info) info.textContent=`Saída: ${output.width} × ${output.height}px · zoom ${Math.round(cropState.zoom*100)}%`;
   }
 
   function centerCrop() {
@@ -211,10 +234,15 @@
     return new File([blob],`${name}.${blob.type.split('/')[1]||'jpg'}`,{type:blob.type||'image/jpeg'});
   }
 
-  async function openCropper(source, name='streamer-original') {
+  async function openCropper(source, name='streamer-original', mode='poster') {
     const file=await sourceToFile(source,name);
     if(!file.type.startsWith('image/')) throw new Error('Selecione um ficheiro de imagem válido.');
     const modal=$('streamerCropModal'), frame=$('streamerCropFrame'), image=$('streamerCropImage');
+    cropState.mode=mode==='home'?'home':'poster';
+    modal.classList.toggle('is-home',cropState.mode==='home');
+    $('streamerCropRatioLabel').textContent=CROP_OUTPUTS[cropState.mode].label;
+    $('streamerCropTitle').textContent=cropState.mode==='home'?'Enquadrar imagem da Home':'Enquadrar arte do streamer';
+    $('streamerCropFit').textContent=cropState.mode==='home'?'Restaurar enquadramento':'Ajustar';
     modal.hidden=false;
     const objectUrl=URL.createObjectURL(file);
     cropState.sourceFile=file; cropState.sourceName=name;
@@ -229,24 +257,33 @@
   function closeCropper({discard=false}={}) {
     $('streamerCropModal').hidden=true;
     cropState.dragging=false;
-    if(discard&&cropState.sourceFile===$('streamerPhotoFile')?.files?.[0]) $('streamerPhotoFile').value='';
+    if(discard&&cropState.mode==='poster'&&cropState.sourceFile===$('streamerPhotoFile')?.files?.[0]) $('streamerPhotoFile').value='';
+    if(discard&&cropState.mode==='home'&&cropState.sourceFile===$('streamerHomeImageFile')?.files?.[0]) $('streamerHomeImageFile').value='';
     cropState.sourceFile=null;
   }
 
   async function saveCrop() {
     const image=$('streamerCropImage');
-    const canvas=document.createElement('canvas');canvas.width=STREAMER_OUTPUT.width;canvas.height=STREAMER_OUTPUT.height;
+    const output=CROP_OUTPUTS[cropState.mode];
+    const canvas=document.createElement('canvas');canvas.width=output.width;canvas.height=output.height;
     const ctx=canvas.getContext('2d',{alpha:false});ctx.fillStyle='#070b10';ctx.fillRect(0,0,canvas.width,canvas.height);
     const outputScale=canvas.width/cropState.frameWidth;
     const scale=cropState.minScale*cropState.zoom;
     ctx.drawImage(image,cropState.x*outputScale,cropState.y*outputScale,cropState.naturalWidth*scale*outputScale,cropState.naturalHeight*scale*outputScale);
     const blob=await new Promise(resolve=>canvas.toBlob(resolve,'image/webp',.88));
     if(!blob) throw new Error('Não foi possível gerar a imagem final.');
-    pendingOriginalFile=cropState.sourceFile;
-    pendingCroppedFile=new File([blob],`${cropState.sourceName.replace(/\.[^.]+$/,'')}-4x5.webp`,{type:'image/webp'});
-    if(pendingPreviewUrl) URL.revokeObjectURL(pendingPreviewUrl);
-    pendingPreviewUrl=URL.createObjectURL(pendingCroppedFile);
-    $('streamerPhotoUrl').value='';$('streamerPhotoFile').value='';setStreamerPhotoPreview(pendingPreviewUrl);
+    const croppedFile=new File([blob],`${cropState.sourceName.replace(/\.[^.]+$/,'')}-${output.suffix}.webp`,{type:'image/webp'});
+    if(cropState.mode==='home'){
+      pendingHomeOriginalFile=cropState.sourceFile;pendingHomeCroppedFile=croppedFile;
+      if(pendingHomePreviewUrl)URL.revokeObjectURL(pendingHomePreviewUrl);
+      pendingHomePreviewUrl=URL.createObjectURL(croppedFile);
+      $('streamerHomeImageUrl').value='';$('streamerHomeImageFile').value='';setStreamerHomePreview(pendingHomePreviewUrl);
+    }else{
+      pendingOriginalFile=cropState.sourceFile;pendingCroppedFile=croppedFile;
+      if(pendingPreviewUrl)URL.revokeObjectURL(pendingPreviewUrl);
+      pendingPreviewUrl=URL.createObjectURL(croppedFile);
+      $('streamerPhotoUrl').value='';$('streamerPhotoFile').value='';setStreamerPhotoPreview(pendingPreviewUrl);
+    }
     closeCropper();feedback('Enquadramento guardado. Guarde o streamer para enviar ao storage.');
   }
 
@@ -267,7 +304,9 @@
     $('streamerAllowChat').checked = true;
     $('streamerPublished').checked = true;
     clearStreamerPhoto();
+    clearStreamerHome();
     editingPhotoUrl='';
+    editingHomeImageUrl='';
     setScheduleRows([]);
     $('streamerEditorMode').textContent = 'NOVO STREAMER';
     $('streamerEditorTitle').textContent = 'Adicionar streamer';
@@ -278,12 +317,16 @@
     pendingCroppedFile=null;pendingOriginalFile=null;
     if(pendingPreviewUrl) URL.revokeObjectURL(pendingPreviewUrl);
     pendingPreviewUrl='';
+    pendingHomeCroppedFile=null;pendingHomeOriginalFile=null;
+    if(pendingHomePreviewUrl)URL.revokeObjectURL(pendingHomePreviewUrl);
+    pendingHomePreviewUrl='';
     $('streamerEditor').hidden = false;
     $('streamerAdminPreview').hidden = true;
     if (!row) {
       resetForm();
     } else {
       editingPhotoUrl=row.photo_url||'';
+      editingHomeImageUrl=row.home_card_photo_url||'';
       $('streamerEditorMode').textContent = 'EDITAR STREAMER';
       $('streamerEditorTitle').textContent = row.display_name || 'Streamer';
       $('streamerId').value = row.id;
@@ -294,6 +337,8 @@
         const el=$(id); if(el) el.checked = Boolean(row[key]);
       });
       setStreamerPhotoPreview(row.photo_url || '');
+      $('streamerHomeImageUrl').value=row.home_card_photo_url||'';
+      setStreamerHomePreview(row.home_card_photo_url||'');
       setScheduleRows(row.schedule_json || []);
       feedback('');
     }
@@ -360,18 +405,25 @@
     Object.entries(boolFields).forEach(([key,id]) => row[key]=Boolean($(id)?.checked));
     row.schedule_json = collectScheduleRows();
     row.auto_live = false;
+    const homeImageUrl=$('streamerHomeImageUrl')?.value?.trim()||null;
+    if(homeImageUrl||editingHomeImageUrl||pendingHomeCroppedFile){
+      row.home_card_photo_url=homeImageUrl;
+      row.home_image_position_x=50;
+      row.home_image_position_y=50;
+      row.home_image_scale=1;
+    }
     return normalizeTikTokIdentity(row);
   }
 
-  async function uploadPhoto(file, originalFile=null) {
+  async function uploadPhoto(file, originalFile=null, kind='poster') {
     if (!file) return null;
     const ext = file.name.split('.').pop()?.toLowerCase() || 'webp';
-    const path = `${currentSession.user.id}/${crypto.randomUUID()}.${ext}`;
+    const path = `${currentSession.user.id}/${kind}/${crypto.randomUUID()}.${ext}`;
     const { error } = await sb.storage.from('streamer-images').upload(path,file,{upsert:false});
     if(error) throw error;
     if(originalFile){
       const originalExt=originalFile.name.split('.').pop()?.toLowerCase()||'jpg';
-      const originalPath=`${currentSession.user.id}/originals/${crypto.randomUUID()}.${originalExt}`;
+      const originalPath=`${currentSession.user.id}/${kind}/originals/${crypto.randomUUID()}.${originalExt}`;
       const originalResult=await sb.storage.from('streamer-images').upload(originalPath,originalFile,{upsert:false});
       if(originalResult.error) console.warn('[Streamers] O original não foi preservado:',originalResult.error.message);
     }
@@ -384,11 +436,23 @@
 
     const row=collectForm();
     if(!row.display_name) return feedback('Preencha o nome de exibição.',true);
-    if(row.photo_url && row.photo_url!==editingPhotoUrl && !pendingCroppedFile) return feedback('Abra “Enquadrar” e salve o recorte 4:5 antes de guardar.',true);
+    if(row.photo_url && row.photo_url!==editingPhotoUrl && !pendingCroppedFile) return feedback('Abra “Enquadrar” e salve o poster 2:3 antes de guardar.',true);
 
     const file=pendingCroppedFile;
+    const homeFile=pendingHomeCroppedFile;
+    const imageChanged=Boolean(file||homeFile);
     try {
-      if(file) row.photo_url = await uploadPhoto(file,pendingOriginalFile);
+      if(homeFile||row.home_card_photo_url){
+        const schemaCheck=await sb.from('streamers').select('home_card_photo_url,home_image_position_x,home_image_position_y,home_image_scale').limit(1);
+        if(schemaCheck.error&&/home_image_/i.test(schemaCheck.error.message||'')){
+          return feedback('A imagem Home requer a migration V102 documentada antes do upload.',true);
+        }
+      }
+      if(file) row.photo_url = await uploadPhoto(file,pendingOriginalFile,'poster');
+      if(homeFile){
+        row.home_card_photo_url=await uploadPhoto(homeFile,pendingHomeOriginalFile,'home');
+        row.home_image_position_x=50;row.home_image_position_y=50;row.home_image_scale=1;
+      }
 
       const id=$('streamerId').value;
       let response;
@@ -403,14 +467,20 @@
       }
 
       if(response.error) throw response.error;
-      feedback('Streamer guardado com sucesso.');
+      if(file&&!response.data?.photo_url) throw new Error('O URL do poster não foi persistido.');
+      if(homeFile&&!response.data?.home_card_photo_url) throw new Error('O URL da imagem Home não foi persistido.');
+      feedback(imageChanged?'Imagem atualizada com sucesso ✓':'Streamer guardado com sucesso.');
       pendingCroppedFile=null;pendingOriginalFile=null;
+      pendingHomeCroppedFile=null;pendingHomeOriginalFile=null;
       if(pendingPreviewUrl) URL.revokeObjectURL(pendingPreviewUrl);
       pendingPreviewUrl='';
+      if(pendingHomePreviewUrl)URL.revokeObjectURL(pendingHomePreviewUrl);
+      pendingHomePreviewUrl='';
       await loadStreamers();
       window.setTimeout(closeEditor,700);
     } catch(error) {
-      feedback(error.message || 'Erro ao guardar streamer.',true);
+      const missingHomeColumn=/home_image_/i.test(error.message||'');
+      feedback(missingHomeColumn?'A imagem Home requer a migration V102 documentada antes de guardar.':(imageChanged?'Não foi possível guardar a imagem.':(error.message || 'Erro ao guardar streamer.')),true);
     }
   }
 
@@ -525,6 +595,38 @@
     openCropper(source,pendingCroppedFile?.name||'streamer-atual').catch(error=>feedback(error.message||'Não foi possível reabrir a imagem.',true));
   });
 
+  $('streamerHomeImageUrl')?.addEventListener('input',event=>{
+    const url=event.target.value.trim();
+    if(url)$('streamerHomeImageFile').value='';
+    pendingHomeCroppedFile=null;pendingHomeOriginalFile=null;
+    if(pendingHomePreviewUrl)URL.revokeObjectURL(pendingHomePreviewUrl);
+    pendingHomePreviewUrl='';setStreamerHomePreview(url);
+  });
+
+  $('streamerHomeImageFile')?.addEventListener('change',event=>{
+    const file=event.target.files?.[0];
+    if(!file)return;
+    $('streamerHomeImageUrl').value='';
+    openCropper(file,file.name,'home').catch(error=>{event.target.value='';feedback(error.message||'Não foi possível abrir o enquadramento Home.',true);});
+  });
+
+  $('cropStreamerHomeUrlBtn')?.addEventListener('click',()=>{
+    const url=$('streamerHomeImageUrl')?.value?.trim();
+    if(!url)return feedback('Cole primeiro o link da imagem Home.',true);
+    openCropper(url,'streamer-home-link','home').catch(error=>feedback(error.message||'A imagem remota não permite enquadramento.',true));
+  });
+
+  $('recropStreamerHomeBtn')?.addEventListener('click',()=>{
+    const source=pendingHomeCroppedFile||$('streamerHomeImageUrl')?.value?.trim()||$('streamerHomePreviewImage')?.src;
+    if(!source)return feedback('Não existe imagem Home para reenquadrar.',true);
+    openCropper(source,pendingHomeCroppedFile?.name||'streamer-home-atual','home').catch(error=>feedback(error.message||'Não foi possível reabrir a imagem Home.',true));
+  });
+
+  $('clearStreamerHomeBtn')?.addEventListener('click',()=>{
+    clearStreamerHome();
+    feedback('Imagem Home removida do formulário. Salve para aplicar.',false);
+  });
+
   $('streamerCropZoom')?.addEventListener('input',event=>setCropZoom(event.target.value));
   $('streamerCropZoomOut')?.addEventListener('click',()=>setCropZoom(cropState.zoom-.1));
   $('streamerCropZoomIn')?.addEventListener('click',()=>setCropZoom(cropState.zoom+.1));
@@ -579,7 +681,10 @@
     startAdminCloudSync();
   }
 
-  window.TeamStreamerCropper = Object.freeze({ aspectRatio:STREAMER_POSTER_RATIO, output:{...STREAMER_OUTPUT}, coverScale:(imageWidth,imageHeight,frameWidth,frameHeight)=>Math.max(frameWidth/imageWidth,frameHeight/imageHeight) });
+  window.TeamStreamerCropper = Object.freeze({
+    outputs:structuredClone(CROP_OUTPUTS),
+    coverScale:(imageWidth,imageHeight,frameWidth,frameHeight)=>Math.max(frameWidth/imageWidth,frameHeight/imageHeight)
+  });
 
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',bootAdminStreamers);
   else bootAdminStreamers();
