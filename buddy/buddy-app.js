@@ -16,7 +16,7 @@
   if (!root) return;
 
   function avatar(profile, extra = '') { const name = profileName(profile), initials = esc(name.slice(0,2).toUpperCase()), url=avatarUrl(profile); return url ? `<span class="buddy-avatar ${extra}" role="img" aria-label="Foto de perfil de ${esc(name)}"><b>${initials}</b><img src="${esc(url)}" alt="" loading="eager" decoding="async" onerror="this.hidden=true"></span>` : `<span class="buddy-avatar ${extra}" role="img" aria-label="Foto de perfil de ${esc(name)}"><b>${initials}</b></span>`; }
-  function presence(profile) { const live=window.TeamPresence?.getPeers?.()[profile?.id];if(live)return live;const raw = profile?.presence || 'offline'; const stamp = profile?.last_seen_at || profile?.last_seen; if (raw !== 'offline' && stamp && Date.now() - new Date(stamp).getTime() > 3 * 60 * 1000) return 'offline'; return raw; }
+  const presence = profile => window.TeamPresence?.resolve?.(profile) || 'offline';
   function toast(message, type = '', action) { const node = document.createElement('div'); node.className = `buddy-toast ${type}`; node.textContent = message; if (action) node.onclick = action; $('#buddyToasts').append(node); setTimeout(() => node.remove(), 4500); }
   function friendlyError(error, fallback) { console.error('[Buddy]', error); const text = error?.message || ''; if (/row-level security|permission|policy/i.test(text)) return 'Não tens permissão para realizar esta ação.'; if (/duplicate|unique/i.test(text)) return 'Este pedido já existe.'; if (/network|fetch/i.test(text)) return 'Não foi possível ligar ao Buddy. Tenta novamente.'; return fallback; }
   function friendState(id) { return friends.stateFor(id, state.relations, state.blocks); }

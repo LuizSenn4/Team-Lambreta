@@ -4,6 +4,7 @@
 
   const IDLE_MS = 5 * 60 * 1000;
   const HEARTBEAT_MS = 60 * 1000;
+  const HEARTBEAT_EXPIRE_MS = HEARTBEAT_MS * 3;
   const ACTIVITY_EVENTS = ['pointerdown', 'pointermove', 'keydown', 'touchstart', 'scroll', 'wheel'];
   const listeners = new Set();
   let client = null;
@@ -19,7 +20,20 @@
   let started = false;
   let lastActivityAt = Date.now();
 
-  const valid = value => ['online', 'busy', 'away', 'offline'].includes(value);
+  const STATUS_ALIASES = Object.freeze({ online:'online', busy:'busy', ocupado:'busy', away:'away', ausente:'away', offline:'offline' });
+  const statusKey = value => String(value || '').trim().toLowerCase();
+  const normalize = value => STATUS_ALIASES[statusKey(value)] || 'offline';
+  const valid = value => Object.prototype.hasOwnProperty.call(STATUS_ALIASES, statusKey(value));
+  function resolve(profile) {
+    const id = typeof profile === 'string' ? profile : profile?.id || profile?.user_id;
+    if (id && Object.prototype.hasOwnProperty.call(peerState, id)) return normalize(peerState[id]);
+    const raw = normalize(typeof profile === 'string' ? '' : profile?.presence);
+    if (raw === 'offline') return 'offline';
+    const stamp = typeof profile === 'string' ? '' : profile?.last_seen_at || profile?.last_seen;
+    const seenAt = stamp ? new Date(stamp).getTime() : 0;
+    if (seenAt && Number.isFinite(seenAt) && Date.now() - seenAt > HEARTBEAT_EXPIRE_MS) return 'offline';
+    return raw;
+  }
   const snapshot = () => ({ manualStatus, status: effectiveStatus, autoAway, lastActivityAt, connected: Boolean(userId) });
   const emit = () => {
     const detail = snapshot();
@@ -31,11 +45,8 @@
   async function sync(status) {
     if (!client || !userId || status === 'offline') return;
     const now = new Date().toISOString();
-    syncInFlight = client.from('profiles').update({ presence: status, last_seen_at: now, updated_at: now }).eq('id', userId);
-    let result = await syncInFlight;
-    if (result.error && /last_seen_at/i.test(result.error.message || '')) {
-      result = await client.from('profiles').update({ presence: status, last_seen: now, updated_at: now }).eq('id', userId);
-    }
+    syncInFlight = client.from('profiles').update({ presence: status, last_seen: now, updated_at: now }).eq('id', userId);
+    const result = await syncInFlight;
     syncInFlight = null;
     if (presenceChannel) presenceChannel.track({ user_id: userId, status, at: now }).catch(() => {});
     return result;
@@ -66,7 +77,9 @@
   }
 
   async function setManual(status) {
-    if (!valid(status) || status === 'offline') return snapshot();
+    if (!valid(status)) return snapshot();
+    status = normalize(status);
+    if (status === 'offline') return snapshot();
     manualStatus = status;
     autoAway = false;
     effectiveStatus = status;
@@ -101,6 +114,7 @@
       emit();
       return snapshot();
     }
+    initialStatus = normalize(initialStatus);
     if (valid(initialStatus) && initialStatus !== 'offline') {
       manualStatus = initialStatus === 'away' ? (localStorage.getItem('tl_presence_manual_v100') || 'online') : initialStatus;
     }
@@ -117,7 +131,7 @@
       .subscribe(async channelStatus => { if (channelStatus === 'SUBSCRIBED') await presenceChannel.track({ user_id: userId, status: effectiveStatus, at: new Date().toISOString() }); });
     await sync(effectiveStatus);
     scheduleIdle();
-    heartbeatTimer = setInterval(() => sync(effectiveStatus), HEARTBEAT_MS);
+    heartbeatTimer = setInterval(async () => { await sync(effectiveStatus); emitPeers(); }, HEARTBEAT_MS);
     emit();
     return snapshot();
   }
@@ -136,9 +150,9 @@
   }
 
   window.TeamPresence = {
-    connect, disconnect, setManual, recordActivity, getState: snapshot,
+    connect, disconnect, setManual, recordActivity, getState: snapshot, resolve,
     subscribe(fn) { listeners.add(fn); fn(snapshot()); return () => listeners.delete(fn); },
     getPeers() { return { ...peerState }; },
-    constants: { IDLE_MS, HEARTBEAT_MS }
+    constants: { IDLE_MS, HEARTBEAT_MS, HEARTBEAT_EXPIRE_MS }
   };
 })();

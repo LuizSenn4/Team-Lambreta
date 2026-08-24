@@ -6,6 +6,7 @@
   const platformLabels = { pc:'PC', 'playstation-5':'PlayStation 5', 'playstation-4':'PlayStation 4', 'xbox-series':'Xbox Series', 'xbox-one':'Xbox One', 'nintendo-switch':'Nintendo Switch', 'nintendo-switch-2':'Nintendo Switch 2', android:'Android', ios:'iOS', 'cloud-gaming':'Cloud Gaming' };
   const root = $('#profileRoot');
   if (!root) return;
+  let renderedPublicProfile = null;
 
   const avatarSource = profile => window.TeamProfiles?.getAvatarUrl(profile) || profile?.avatar_display_url || '';
   const avatar = profile => avatarSource(profile) ? `<img class="profile-avatar-v102" src="${esc(avatarSource(profile))}" alt="Avatar de ${esc(profile.display_name)}">` : `<span class="profile-avatar-v102 profile-avatar-fallback-v102">${esc(profile.avatar_fallback || 'TL')}</span>`;
@@ -13,8 +14,16 @@
   const roleDisplayLabel = role => role.key === 'developer' ? 'DEV' : role.label;
   const roleBadges = profile => visualRoles(profile).map((role, index) => `<span class="profile-role-badge-v102${index === 0 ? ' is-primary' : ''}" style="--role-color:${esc(role.color)}">${role.icon}<b>${esc(roleDisplayLabel(role))}</b></span>`).join('');
   const rolePresentation = profile => { const roles = visualRoles(profile); return { roles, primary:roles[0] || { color:'#f4f7fa' } }; };
-  const presenceState = profile => ['online','busy','away'].includes(String(profile?.presence || '').toLowerCase()) ? String(profile.presence).toLowerCase() : 'offline';
+  const presenceState = profile => window.TeamPresence?.resolve?.(profile) || 'offline';
   const presenceLabel = state => ({ online:'Online', busy:'Ocupado', away:'Ausente', offline:'Offline' }[state] || 'Offline');
+  const paintPublicPresence = () => {
+    const node = root.querySelector('.profile-presence-v102');
+    if (!node || !renderedPublicProfile) return;
+    const state = presenceState(renderedPublicProfile);
+    node.setAttribute('aria-label', `Status: ${presenceLabel(state)}`);
+    node.querySelector('i').className = `tl-presence-dot ${state}`;
+    node.querySelector('b').textContent = presenceLabel(state);
+  };
   const identityActions = (profile, userId) => { const state = presenceState(profile); return `<span class="profile-presence-v102" aria-label="Status: ${presenceLabel(state)}"><i class="tl-presence-dot ${state}"></i><b>${presenceLabel(state)}</b></span><a class="profile-buddy-v102" href="buddy.html?user=${encodeURIComponent(userId)}" aria-label="Abrir ${esc(profile.display_name)} no Buddy"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 11.5a8.5 8.5 0 0 1-9 8.5 9.8 9.8 0 0 1-4-.8L3 21l1.7-4.4A8.2 8.2 0 0 1 3 11.5a8.5 8.5 0 0 1 9-8.5 8.5 8.5 0 0 1 9 8.5Z"/><path d="M8 12h.01M12 12h.01M16 12h.01"/></svg></a>`; };
   const notify = (message, type = 'info', code = '') => window.TeamNotifications?.show?.(message, { type, code });
   const errorCode = error => /^PRF-\d{3}$/.test(error?.code || '') ? error.code : 'PRF-007';
@@ -62,6 +71,7 @@
       const country = window.TeamCountryCatalog?.resolve(profile.country);
       const own = session?.user?.id === userId;
       const presentation = rolePresentation(profile);
+      renderedPublicProfile = profile;
       root.innerHTML = `<section class="profile-hero-v102" style="--profile-cover:url('${esc(coverAssets[profile.cover_preset] || coverAssets.cover_lambretta_classic)}');--profile-role-color:${esc(presentation.primary.color)}"><div class="profile-identity-v102">${avatar(profile)}<div class="profile-identity-copy-v102"><div class="profile-identity-head-v102"><h1>${esc(profile.display_name)}</h1>${identityActions(profile, userId)}</div><div class="profile-role-list-v102">${roleBadges(profile)}</div></div></div></section>
         <div class="profile-grid-v102"><article class="tl-v102-card profile-about-v102"><h2>Sobre</h2><p class="profile-bio-v102">${esc(profile.bio || profile.public_bio || 'Este membro ainda não escreveu uma bio.')}</p><dl class="profile-facts-v102">${fact('País', country ? `${country.flag} ${esc(country.name)}` : '—','country','country')}${fact('Discord', esc(profile.discord || '—'),'discord')}${fact('Jogos', esc(list(profile.games, slug => games.get(slug) || slug)),'games')}${fact('Plataformas', esc(list(profile.platforms, slug => platformLabels[slug] || slug)),'platforms')}${fact('Modos', esc(list(profile.game_modes, mode => mode.split('::')[1] || mode)),'modes')}${fact('Membro desde', stats.memberSince ? new Date(stats.memberSince).toLocaleDateString('pt-PT') : '—','calendar')}</dl>${own ? `<p class="profile-about-action-v102"><a class="tl-v102-button primary" href="profile-edit.html">${profileIcons.edit}<span>Editar perfil</span></a></p>` : `<p class="profile-about-action-v102"><a class="tl-v102-button primary" href="buddy.html?user=${encodeURIComponent(userId)}">Abrir no Buddy</a></p>`}</article><aside class="tl-v102-card profile-stats-v102"><h2>Comunidade</h2><div class="profile-stat-grid-v102"><div class="is-topics"><span class="profile-stat-icon-v102">${profileIcons.topics}</span><strong>${stats.topics}</strong><span>Tópicos</span></div><div class="is-replies"><span class="profile-stat-icon-v102">${profileIcons.replies}</span><strong>${stats.replies}</strong><span>Respostas</span></div><div class="is-xp"><span class="profile-stat-icon-v102 is-xp-mark">XP</span><strong>${stats.xp}</strong><span>XP</span></div><div class="is-level"><span class="profile-stat-icon-v102">${profileIcons.star}</span><strong>${stats.level}</strong><span>Nível</span></div></div></aside></div>`;
     } catch (error) {
@@ -73,6 +83,7 @@
       const code = error?.code === 'PRF-009' ? 'PRF-009' : 'PRF-010'; root.innerHTML = `<div class="tl-v102-card tl-v102-empty"><h1>Perfil indisponível</h1><p>Não foi possível carregar o perfil.<br><small>Código: ${code}</small></p></div>`; console.error(`[PROFILE ${code}]`, { message:error?.message || String(error) });
     }
   }
+  window.addEventListener('tl:presence-peers', paintPublicPresence);
 
   async function renderEditor() {
     const session = await window.TeamAuth.getSession();
