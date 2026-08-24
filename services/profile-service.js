@@ -27,7 +27,10 @@
     }
   }
   const profileError = (code, error) => {
-    console.error(`[PROFILE ${code}]`, { message:error?.message || String(error || ERRORS[code]) });
+    console.error(`[PROFILE ${code}]`, {
+      code:error?.code || '', message:error?.message || String(error || ERRORS[code]),
+      details:error?.details || '', hint:error?.hint || '', status:error?.status || error?.statusCode || ''
+    });
     return error instanceof ProfileError ? error : new ProfileError(code, error);
   };
 
@@ -265,18 +268,21 @@
     const session = await window.TeamAuth?.getSession();
     if (!session?.user) throw profileError('PRF-008');
     const games = [...new Set(input.games || [])].slice(0, 3);
-    const { data, error } = await client.rpc('tl_forum_save_profile_v2', {
+    const country = window.TeamCountryCatalog?.resolve?.(input.country);
+    const countryCode = country?.code || String(input.country || '').trim().toUpperCase();
+    const payload = {
       p_nickname: String(input.nickname || '').trim(),
       p_avatar_path: input.avatarPath || null,
       p_avatar_external_url: input.avatarExternalUrl || null,
-      p_country: input.country || '',
+      p_country: countryCode,
       p_games: games,
       p_platforms: [...new Set(input.platforms || [])],
       p_game_modes: [...new Set(input.gameModes || [])].filter(mode => games.includes(String(mode).split('::')[0])),
       p_bio: input.bio || '',
       p_discord: input.discord || '',
       p_cover_preset: input.coverPreset || 'cover_green_black'
-    });
+    };
+    const { data, error } = await client.rpc('tl_forum_save_profile_v2', payload);
     if (error) throw profileError(error.code === '42501' ? 'PRF-012' : 'PRF-007', error);
     memory.delete(session.user.id);
     return getCurrentProfile({ fresh: true });
