@@ -1,0 +1,22 @@
+{
+  "headers": [
+    {
+      "source": "/(admin.html|admin-gate.js|auth-manager.js|supabase-client.js|presence-manager.js)",
+      "headers": [
+        { "key": "Cache-Control", "value": "no-store, max-age=0" }
+      ]
+    },
+    {
+      "source": "/(tl-shell-v102.js|tl-shell-v102.css|profile-v102.js|profile-v102.css)",
+      "headers": [
+        { "key": "Cache-Control", "value": "no-store, max-age=0" }
+      ]
+    },
+    {
+      "source": "/(home.html|home-v102.js|home-v102.css)",
+      "headers": [
+        { "key": "Cache-Control", "value": "no-store, max-age=0" }
+      ]
+    }
+  ]
+}
