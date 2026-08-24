@@ -1,87 +1,99 @@
-/* Cabeçalho de apresentação partilhado pelas páginas principais V102. */
-.tl-presentation-hero-v102 {
-  box-sizing: border-box !important;
-  display: flex !important;
-  flex-direction: column !important;
-  align-items: center !important;
-  justify-content: center !important;
-  width: 100% !important;
-  min-height: 250px !important;
-  padding: 30px clamp(24px, 4vw, 50px) !important;
-  margin: 0 0 var(--tl-space-md, 18px) !important;
-  overflow: hidden;
-  border: 1px solid var(--tl-border) !important;
-  border-radius: var(--tl-radius-lg, 22px) !important;
-  background:
-    radial-gradient(circle at 10% 20%, rgba(var(--tl-cyan-rgb), .1), transparent 35%),
-    linear-gradient(120deg, #0b131a, #0a0d12) !important;
-  box-shadow: none !important;
-  text-align: center !important;
-}
-
-.tl-presentation-hero-v102 h1 {
-  max-width: 100% !important;
-  margin: 0 !important;
-  color: #fff !important;
-  font-family: var(--tl-display) !important;
-  font-size: clamp(44px, 5vw, 68px) !important;
-  font-weight: 800 !important;
-  line-height: .98 !important;
-  letter-spacing: -.02em !important;
-  text-align: center !important;
-}
-
-.tl-presentation-hero-v102 > p,
-.tl-presentation-hero-v102 > .streamers-showcase-subtitle {
-  max-width: 720px !important;
-  margin: var(--tl-space-sm, 10px) auto 0 !important;
-  color: var(--tl-muted) !important;
-  font-family: var(--tl-font) !important;
-  font-size: clamp(15px, 1.35vw, 18px) !important;
-  font-weight: 500 !important;
-  line-height: 1.55 !important;
-  text-align: center !important;
-}
-
-.tl-presentation-hero-v102 .team-hero-divider {
-  margin: 9px auto 0 !important;
-}
-
-.tl-presentation-hero-v102 .team-join-trigger,
-.tl-presentation-hero-v102 .streamers-showcase-counter {
-  margin: 14px auto 0 !important;
-}
-
-.tl-presentation-hero-v102::before,
-.tl-presentation-hero-v102::after {
-  pointer-events: none;
-}
-
-/* O Team tinha um max-width histórico menor que os restantes shells V102. */
-.team-page .team-esports-page {
+/* Hero interno oficial das páginas principais V102 — referência: Eventos. */
+.tl-page-hero-shell-v102 {
   width: min(var(--tl-container), calc(100% - 2 * var(--tl-space))) !important;
   max-width: none !important;
+  margin-inline: auto !important;
+  padding: var(--tl-space-lg, 28px) 0 !important;
+}
+
+.tl-page-hero-v102 {
+  box-sizing: border-box;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  min-height: 234px;
+  height: 234px;
+  padding: clamp(30px, 4vw, 50px);
+  margin: 0 0 var(--tl-space-md, 18px);
+  overflow: hidden;
+  border: 1px solid var(--tl-border);
+  border-radius: var(--tl-radius-lg, 24px);
+  background:
+    radial-gradient(circle at 10% 20%, rgba(var(--tl-cyan-rgb), .1), transparent 35%),
+    linear-gradient(120deg, #0b131a, #0a0d12);
+  box-shadow: none;
+  text-align: center;
+}
+
+.tl-page-hero-v102 .tl-page-hero-v102__title {
+  max-width: 100%;
+  margin: 0 0 var(--tl-space-sm, 10px);
+  color: #fff;
+  font-family: var(--tl-display);
+  font-size: clamp(44px, 5vw, 68px);
+  font-weight: 800;
+  line-height: .98;
+  letter-spacing: -.02em !important;
+  text-align: center;
+}
+
+.tl-page-hero-v102 .tl-page-hero-v102__subtitle {
+  max-width: 720px;
+  margin: 0 auto;
+  color: var(--tl-muted);
+  font-family: var(--tl-font);
+  font-size: clamp(15px, 1.35vw, 18px);
+  font-weight: 500;
+  line-height: 1.55;
+  text-align: center;
+}
+
+.tl-page-hero-v102__actions {
+  position: absolute;
+  right: 18px;
+  bottom: 12px;
+  left: 18px;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: var(--tl-space-sm, 10px);
+  margin-top: 14px;
+}
+
+.tl-page-hero-v102__actions > * {
+  margin: 0 !important;
 }
 
 @media (max-width: 700px) {
-  .tl-presentation-hero-v102 {
-    min-height: 210px !important;
-    padding: 24px 18px !important;
-    border-radius: 16px !important;
-  }
-
-  .tl-presentation-hero-v102 h1 {
-    font-size: clamp(38px, 11vw, 48px) !important;
-  }
-
-  .tl-presentation-hero-v102 > p,
-  .tl-presentation-hero-v102 > .streamers-showcase-subtitle {
-    font-size: 15px !important;
-    line-height: 1.45 !important;
-  }
-
-  .team-page .team-esports-page {
+  .tl-page-hero-shell-v102 {
     width: calc(100% - 28px) !important;
+    padding-block: var(--tl-space-md, 18px) !important;
+  }
+
+  .tl-page-hero-v102 {
+    min-height: 220px;
+    height: 220px;
+    padding: 22px 18px;
+    border-radius: 16px;
+  }
+
+  .tl-page-hero-v102__actions {
+    right: 12px;
+    bottom: 10px;
+    left: 12px;
+  }
+
+  .tl-page-hero-v102 .tl-page-hero-v102__title {
+    font-size: clamp(38px, 11vw, 48px);
+  }
+
+  .tl-page-hero-v102 .tl-page-hero-v102__subtitle {
+    font-size: 15px;
+    line-height: 1.55;
   }
 
   .team-page .team-mobile-join-trigger {

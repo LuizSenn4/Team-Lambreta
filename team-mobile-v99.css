@@ -235,10 +235,8 @@ body[data-cloud-team="1"] .team-social-link.is-instagram::before{content:"IG"}bo
 
 @media(max-width:767px){
   .team-page{overflow-x:clip;background:radial-gradient(circle at 85% 4%,rgba(115,255,24,.075),transparent 30%),#050705}
-  .team-page>.site-header{display:none!important}
   .team-esports-page{width:100%!important;max-width:none!important;margin:0!important;padding:0 14px 34px!important}
-  .team-esports-hero{display:none!important}
-  .team-mobile-appbar{display:grid;grid-template-columns:44px minmax(0,1fr) 54px;align-items:center;gap:12px;min-height:80px;padding:10px 2px 8px}
+  .team-mobile-appbar{display:none!important}
   .team-mobile-appbar h1{margin:0;color:#f3ead5;font-size:clamp(21px,6.5vw,27px);font-weight:900;line-height:1.05;letter-spacing:-.8px}
   .team-mobile-appbar p{display:flex;align-items:center;gap:6px;margin:6px 0 0;color:#80f54c;font-size:10px;font-weight:900;letter-spacing:1.4px;text-transform:uppercase}
   .team-mobile-appbar p span{width:7px;height:7px;border-radius:50%;background:#73ff18;box-shadow:0 0 10px rgba(115,255,24,.8)}
