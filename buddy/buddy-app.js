@@ -5,7 +5,7 @@
   const roleLabel = role => ({master:'DEV',admin:'ADMIN',staff:'STAFF',moderator:'MODERADOR',streamer:'STREAMER',vip:'VIP',supporter:'APOIADOR',member:'MEMBRO'}[String(role || 'member').toLowerCase()] || 'MEMBRO');
   const statusLabel = value => ({online:'Online',busy:'Ocupado',away:'Ausente',offline:'Offline'}[value] || 'Offline');
   const profileName = profile => profile?.game_nickname || profile?.full_name || 'Membro Lambreta';
-  const avatarUrl = profile => profile?.avatar_display_url || profile?.avatar_external_url || profile?.custom_avatar_url || profile?.avatar_url || '';
+  const avatarUrl = profile => window.TeamProfiles?.getAvatarUrl?.(profile) || profile?.avatar_display_url || profile?.avatar_external_url || profile?.custom_avatar_url || profile?.avatar_url || '';
   const localDate = value => new Date(value).toLocaleTimeString('pt-PT', { hour: '2-digit', minute: '2-digit' });
   const dayKey = value => new Date(value).toISOString().slice(0, 10);
   const dayLabel = value => { const date = new Date(value); const today = new Date(); const yesterday = new Date(Date.now() - 86400000); if (date.toDateString() === today.toDateString()) return 'HOJE'; if (date.toDateString() === yesterday.toDateString()) return 'ONTEM'; return date.toLocaleDateString('pt-PT', { day: '2-digit', month: 'short' }).toUpperCase().replace('.', ''); };
@@ -15,7 +15,7 @@
   const root = $('#buddyRoot');
   if (!root) return;
 
-  function avatar(profile, extra = '') { const name = profileName(profile), initials = esc(name.slice(0,2).toUpperCase()); return avatarUrl(profile) ? `<span class="buddy-avatar ${extra}"><b>${initials}</b><img src="${esc(avatarUrl(profile))}" alt="Avatar de ${esc(name)}" loading="lazy" onerror="this.remove()"></span>` : `<span class="buddy-avatar ${extra}"><b>${initials}</b></span>`; }
+  function avatar(profile, extra = '') { const name = profileName(profile), initials = esc(name.slice(0,2).toUpperCase()), url=avatarUrl(profile); return url ? `<span class="buddy-avatar ${extra}" role="img" aria-label="Foto de perfil de ${esc(name)}"><b>${initials}</b><img src="${esc(url)}" alt="" loading="eager" decoding="async" onerror="this.hidden=true"></span>` : `<span class="buddy-avatar ${extra}" role="img" aria-label="Foto de perfil de ${esc(name)}"><b>${initials}</b></span>`; }
   function presence(profile) { const live=window.TeamPresence?.getPeers?.()[profile?.id];if(live)return live;const raw = profile?.presence || 'offline'; const stamp = profile?.last_seen_at || profile?.last_seen; if (raw !== 'offline' && stamp && Date.now() - new Date(stamp).getTime() > 3 * 60 * 1000) return 'offline'; return raw; }
   function toast(message, type = '', action) { const node = document.createElement('div'); node.className = `buddy-toast ${type}`; node.textContent = message; if (action) node.onclick = action; $('#buddyToasts').append(node); setTimeout(() => node.remove(), 4500); }
   function friendlyError(error, fallback) { console.error('[Buddy]', error); const text = error?.message || ''; if (/row-level security|permission|policy/i.test(text)) return 'Não tens permissão para realizar esta ação.'; if (/duplicate|unique/i.test(text)) return 'Este pedido já existe.'; if (/network|fetch/i.test(text)) return 'Não foi possível ligar ao Buddy. Tenta novamente.'; return fallback; }
@@ -40,16 +40,38 @@
     return `<a class="buddy-small-action ${extraClass}" href="profile.html?user=${encodeURIComponent(profile.id)}" aria-label="Ver perfil de ${esc(profileName(profile))}">👤 ${esc(label)}</a>`;
   }
 
+  function cachedBuddyProfile(profile) {
+    const cached = window.TeamProfiles?.readPublicVisualCache?.(profile?.id);
+    if (cached && avatarUrl(cached)) return { ...profile, ...cached };
+    return { ...profile, avatar_display_url:'', avatar_external_url:'', custom_avatar_url:'', avatar_url:'', avatar_inline_url:'' };
+  }
+  function preloadAvatar(profile) {
+    const url = avatarUrl(profile);
+    if (!url) return Promise.resolve(profile);
+    return new Promise(resolve => { const image=new Image();image.onload=()=>resolve(profile);image.onerror=()=>resolve({ ...profile, avatar_display_url:'', avatar_external_url:'', custom_avatar_url:'', avatar_url:'', avatar_inline_url:'' });image.src=url; });
+  }
+  async function applyOfficialProfile(profile, render = true) {
+    if (!profile?.id) return false;
+    const ready = await preloadAvatar(profile);
+    state.profiles.set(ready.id, ready);
+    if (state.current?.id === ready.id) state.current = ready;
+    if (render) renderSidebar();
+    if (state.current?.id === ready.id) { syncComposerForSelection(); renderChatHeader(); renderInfo(); }
+    return true;
+  }
+
   async function refreshData(render = true) {
     try {
-      const data = await friends.load(); state.relations = data.relations; state.blocks = data.blocks; data.profiles.forEach(p => state.profiles.set(p.id, p)); state.unread = await messages.unreadCounts(); updateUnread(); if (render) renderSidebar(); if (state.current) renderInfo();
+      const data = await friends.load(); state.relations = data.relations; state.blocks = data.blocks; data.profiles.forEach(p => state.profiles.set(p.id, cachedBuddyProfile(p))); state.unread = await messages.unreadCounts(); updateUnread(); if (render) renderSidebar(); if (state.current) renderInfo();
       // A listagem básica vem de profiles; a identidade oficial também pode
       // estar em forum_profiles (avatar_path). Hidrata-a em background.
       if (window.TeamProfiles?.getPublicProfile) {
         void Promise.allSettled(data.profiles.map(profile => window.TeamProfiles.getPublicProfile(profile.id, { fresh:true }))).then(results => {
           let changed = false;
-          results.forEach(result => { if (result.status === 'fulfilled' && result.value?.id) { state.profiles.set(result.value.id, result.value); if (state.current?.id === result.value.id) state.current = result.value; changed = true; } });
-          if (changed) { if (render) renderSidebar(); if (state.current) { syncComposerForSelection(); renderChatHeader(); renderInfo(); } }
+          return Promise.all(results.filter(result => result.status === 'fulfilled' && result.value?.id).map(result => applyOfficialProfile(result.value, false))).then(applied => {
+            changed = applied.some(Boolean);
+            if (changed) { if (render) renderSidebar(); if (state.current) { syncComposerForSelection(); renderChatHeader(); renderInfo(); } }
+          });
         });
       }
     } catch (error) { toast(friendlyError(error, 'Falha ao carregar os Buddies.'), 'error'); }
@@ -64,7 +86,7 @@
   function renderSidebar() { if ($('#buddySearch').value.trim().length >= 2) return renderSearch(); state.tab === 'requests' ? renderRequests() : renderContacts(); updateUnread(); }
 
   function enrichSelectedProfile(id, version) {
-    window.TeamProfiles?.getPublicProfile?.(id, { fresh:true }).then(profile => {
+    window.TeamProfiles?.getPublicProfile?.(id, { fresh:true }).then(preloadAvatar).then(profile => {
       if (!profile || version !== selectionVersion || state.current?.id !== id) return;
       state.profiles.set(id, profile); state.current = profile; renderSidebar(); renderChatHeader(); renderInfo();
     }).catch(error => console.warn('[Buddy] Não foi possível enriquecer o mini perfil.', error?.message || error));

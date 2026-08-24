@@ -4,6 +4,7 @@
 
   const client = window.teamSupabase;
   const CACHE_KEY = 'tl_profile_cache_v102';
+  const PUBLIC_VISUAL_CACHE_KEY = 'tl_public_profile_visual_cache_v102';
   const CACHE_TTL = 24 * 60 * 60 * 1000;
   const SIGNED_AVATAR_TTL_SECONDS = 48 * 60 * 60;
   const MAX_AVATAR_BYTES = 2 * 1024 * 1024;
@@ -157,6 +158,40 @@
     window.dispatchEvent(new CustomEvent('tl:profile', { detail: { profile } }));
   }
 
+  function readPublicVisualCache(userId) {
+    if (!userId) return null;
+    try {
+      const cache = JSON.parse(sessionStorage.getItem(PUBLIC_VISUAL_CACHE_KEY) || '{}');
+      const entry = cache[userId];
+      return entry && Date.now() - Number(entry.savedAt || 0) < CACHE_TTL ? visualProfile(entry.profile) : null;
+    } catch { return null; }
+  }
+
+  function writePublicVisualCache(profile) {
+    if (!profile?.id) return;
+    const visual = visualProfile(profile);
+    let cache = {};
+    try { cache = JSON.parse(sessionStorage.getItem(PUBLIC_VISUAL_CACHE_KEY) || '{}') || {}; } catch {}
+    const previous = cache[profile.id]?.profile;
+    if (avatarIdentity(previous) === avatarIdentity(profile)) visual.avatar_inline_url = previous?.avatar_inline_url || visual.avatar_inline_url || '';
+    cache[profile.id] = { savedAt:Date.now(), profile:visual };
+    const entries = Object.entries(cache).sort((a, b) => Number(b[1]?.savedAt || 0) - Number(a[1]?.savedAt || 0)).slice(0, 64);
+    try { sessionStorage.setItem(PUBLIC_VISUAL_CACHE_KEY, JSON.stringify(Object.fromEntries(entries))); } catch {}
+    if (!visual.avatar_inline_url && visual.avatar_display_url) {
+      const identity = avatarIdentity(visual);
+      createInlineAvatar(visual.avatar_display_url).then(inlineUrl => {
+        if (!inlineUrl) return;
+        try {
+          const current = JSON.parse(sessionStorage.getItem(PUBLIC_VISUAL_CACHE_KEY) || '{}');
+          const entry = current[profile.id];
+          if (!entry || avatarIdentity(entry.profile) !== identity) return;
+          entry.profile.avatar_inline_url = inlineUrl;
+          sessionStorage.setItem(PUBLIC_VISUAL_CACHE_KEY, JSON.stringify(current));
+        } catch {}
+      });
+    }
+  }
+
   async function signedAvatar(path) {
     if (!path || !client) return '';
     const { data, error } = await client.storage.from('forum-avatars').createSignedUrl(path, SIGNED_AVATAR_TTL_SECONDS);
@@ -207,7 +242,9 @@
   async function getPublicProfile(userId, options = {}) {
     // Perfis de terceiros podem mudar enquanto esta página continua aberta.
     // Valida-os no backend por padrão em vez de manter memória obsoleta.
-    return getProfile(userId, { ...options, fresh: options.fresh !== false });
+    const profile = await getProfile(userId, { ...options, fresh: options.fresh !== false });
+    writePublicVisualCache(profile);
+    return profile;
   }
 
   async function getCatalog() {
@@ -341,6 +378,7 @@
       const displayUrl = !expiresAt || expiresAt > Date.now() + 30_000 ? profile?.avatar_display_url : '';
       return profile?.avatar_inline_url || displayUrl || profile?.avatar_external_url || profile?.custom_avatar_url || profile?.avatar_url || '';
     },
-    getRole: profile => cleanRole(profile?.role), getProfileStats, displayName, readCurrentCache: userId => readCache(userId), readLastCache, clearCurrentCache
+    getRole: profile => cleanRole(profile?.role), getProfileStats, displayName, readCurrentCache: userId => readCache(userId), readLastCache,
+    readPublicVisualCache, writePublicVisualCache, clearCurrentCache
   });
 })();
