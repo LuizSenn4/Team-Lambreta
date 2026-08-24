@@ -33,3 +33,20 @@
   .buddy-page .tl-header-v102 .tl-user-wrap,.buddy-page .tl-header-v102 .tl-header-icon{display:block!important;visibility:visible!important}
   .buddy-page .tl-header-v102 .tl-header-icon{display:grid!important}
 }
+
+/* Buddy V103: ocupa somente a área útil do viewport. O histórico e o
+   conteúdo informativo são as únicas regiões roláveis. */
+.buddy-page{height:100dvh;overflow:hidden}
+.buddy-page .site-content{display:grid;grid-template-rows:var(--tl-header-h,76px) minmax(0,1fr);height:100dvh;min-height:0!important;overflow:hidden}
+.buddy-page .site-content>main{width:100%!important;min-width:0;min-height:0;padding:0!important;margin:0!important;overflow:hidden}
+.buddy-shell-v100{height:calc(100% - 32px);min-height:0;margin:16px auto}
+.buddy-sidebar-v100,.buddy-conversation-v100,.buddy-info-v100{height:100%;min-height:0}
+.buddy-chat-body{height:100%}
+.buddy-composer{flex-shrink:0;padding-bottom:max(15px,env(safe-area-inset-bottom))}
+.buddy-info-v100{overflow:hidden}
+.buddy-info-inner{height:100%;min-height:0;overflow:hidden}
+.buddy-info-identity,.buddy-info-profile-link{flex:0 0 auto}
+.buddy-info-content{flex:1 1 auto;min-height:0;overflow-y:auto;overscroll-behavior:contain}
+.buddy-info-profile-link{margin-top:0}
+@media(max-width:1100px){.buddy-info-v100{height:auto}}
+@media(max-width:760px){.buddy-shell-v100{height:100%;margin:0}.buddy-composer{padding-bottom:max(9px,env(safe-area-inset-bottom))}}
