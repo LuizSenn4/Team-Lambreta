@@ -1,14 +1,5 @@
 /* Poster vertical oficial 2:3, partilhado pela galeria e pelo perfil. */
-.streamers-page .streamers-showcase-page{padding-top:clamp(22px,2.2vw,34px)!important}
-.streamers-page .streamers-showcase-hero{display:grid;min-height:210px;align-content:center;justify-items:start;padding:26px clamp(26px,4vw,50px)!important;margin-bottom:var(--tl-space-md,18px)!important;text-align:left!important}
-.streamers-page .streamers-showcase-tag{margin:0 0 6px!important}
-.streamers-page .streamers-showcase-hero h1{margin:4px 0!important}
-.streamers-page .streamers-showcase-subtitle{max-width:680px;margin:10px 0 0!important}
-.streamers-page .streamers-showcase-counter{margin:12px 0 0!important}
 .streamers-page .streamers-showcase-list{gap:22px}
-.streamers-page .streamers-showcase-hero::before,.streamers-page .streamers-showcase-hero::after{top:auto;right:clamp(34px,7vw,110px);left:auto;width:min(22vw,280px)}
-.streamers-page .streamers-showcase-hero::before{bottom:46%}
-.streamers-page .streamers-showcase-hero::after{bottom:36%}
 .streamer-unified-grid{grid-template-columns:repeat(4,minmax(0,1fr))!important;align-items:stretch}
 .streamer-poster-card{display:flex!important;flex-direction:column!important;min-width:0;text-decoration:none;color:inherit;transition:transform .22s ease,border-color .22s ease,box-shadow .22s ease}
 .streamer-poster-card:hover,.streamer-poster-card:focus-visible{transform:translateY(-5px);border-color:var(--tl-cyan)!important;box-shadow:0 18px 42px rgba(0,0,0,.34),0 0 22px rgba(var(--tl-cyan-rgb),.09)!important;outline:none}
@@ -24,7 +15,7 @@
 @media(max-width:760px){.streamer-unified-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important}.streamer-poster-caption{padding:12px}.streamer-poster-caption h2{font-size:17px}}
 @media(hover:none){.streamer-platform-link:hover{transform:none;filter:none}.streamer-platform-link.is-tooltip-visible{transform:translateY(-2px) scale(1.06)}.streamer-platform-link.is-tooltip-visible::after{display:block}}
 @media(prefers-reduced-motion:reduce){.streamer-platform-link,.streamer-platform-link::after{transition:none}}
-@media(max-width:700px){.streamers-page .streamers-showcase-page{padding-top:18px!important}.streamers-page .streamers-showcase-hero{min-height:0;padding:21px 18px!important;margin-bottom:var(--tl-space-md,18px)!important}.streamers-page .streamers-showcase-subtitle{margin-top:7px!important;font-size:15px;line-height:1.45}.streamers-page .streamers-showcase-counter{margin-top:10px!important;padding:8px 13px}.streamers-page .streamers-showcase-hero::before,.streamers-page .streamers-showcase-hero::after{display:none}}
+@media(max-width:700px){.streamers-page .streamers-showcase-counter{padding:8px 13px}}
 @media(max-width:390px){.streamer-unified-grid{gap:10px!important}.streamer-poster-caption{display:flex;flex-direction:column;align-items:flex-start;gap:7px;padding:11px}.streamer-poster-caption p{font-size:11px}.streamer-card-platforms{width:100%}}
 @media(max-width:340px){.streamer-unified-grid{grid-template-columns:1fr!important}}
 
