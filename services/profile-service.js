@@ -204,8 +204,10 @@
     return profile;
   }
 
-  async function getPublicProfile(userId) {
-    return getProfile(userId);
+  async function getPublicProfile(userId, options = {}) {
+    // Perfis de terceiros podem mudar enquanto esta página continua aberta.
+    // Valida-os no backend por padrão em vez de manter memória obsoleta.
+    return getProfile(userId, { ...options, fresh: options.fresh !== false });
   }
 
   async function getCatalog() {
