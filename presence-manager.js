@@ -2,7 +2,10 @@
   'use strict';
   if (window.TeamPresence) return;
 
-  const IDLE_MS = 5 * 60 * 1000;
+  const PRODUCTION_IDLE_MS = 5 * 60 * 1000;
+  const requestedTestIdle = Number(window.__TL_PRESENCE_TEST_IDLE_MS__ || 0);
+  const localTestHost = ['127.0.0.1', 'localhost'].includes(location.hostname);
+  const IDLE_MS = localTestHost && Number.isFinite(requestedTestIdle) && requestedTestIdle >= 50 ? requestedTestIdle : PRODUCTION_IDLE_MS;
   const HEARTBEAT_MS = 60 * 1000;
   const HEARTBEAT_EXPIRE_MS = HEARTBEAT_MS * 3;
   const ACTIVITY_EVENTS = ['pointerdown', 'pointermove', 'keydown', 'touchstart', 'scroll', 'wheel'];
@@ -19,6 +22,15 @@
   let autoAway = false;
   let started = false;
   let lastActivityAt = Date.now();
+
+  const activityKey = id => `tl_presence_activity_v102:${id}`;
+  function readLastActivity(id) {
+    const stored = Number(sessionStorage.getItem(activityKey(id)) || 0);
+    return Number.isFinite(stored) && stored > 0 && stored <= Date.now() ? stored : Date.now();
+  }
+  function writeLastActivity() {
+    if (userId) sessionStorage.setItem(activityKey(userId), String(lastActivityAt));
+  }
 
   const STATUS_ALIASES = Object.freeze({ online:'online', busy:'busy', ocupado:'busy', away:'away', ausente:'away', offline:'offline' });
   const statusKey = value => String(value || '').trim().toLowerCase();
@@ -48,7 +60,8 @@
     syncInFlight = client.from('profiles').update({ presence: status, last_seen: now, updated_at: now }).eq('id', userId);
     const result = await syncInFlight;
     syncInFlight = null;
-    if (presenceChannel) presenceChannel.track({ user_id: userId, status, at: now }).catch(() => {});
+    const activeChannel = presenceChannel;
+    if (activeChannel) activeChannel.track({ user_id: userId, status, at: now }).catch(() => {});
     return result;
   }
 
@@ -67,6 +80,7 @@
 
   async function recordActivity() {
     lastActivityAt = Date.now();
+    writeLastActivity();
     if (autoAway && manualStatus === 'online') {
       autoAway = false;
       effectiveStatus = 'online';
@@ -85,6 +99,7 @@
     effectiveStatus = status;
     localStorage.setItem('tl_presence_manual_v100', status);
     lastActivityAt = Date.now();
+    writeLastActivity();
     scheduleIdle();
     emit();
     await sync(status);
@@ -95,12 +110,14 @@
     if (started) return;
     started = true;
     let queued = false;
-    const onActivity = () => {
+    const onFrequentActivity = () => {
       if (queued) return;
       queued = true;
       requestAnimationFrame(() => { queued = false; recordActivity(); });
     };
-    ACTIVITY_EVENTS.forEach(type => window.addEventListener(type, onActivity, { passive: true }));
+    const onImmediateActivity = () => { void recordActivity(); };
+    ACTIVITY_EVENTS.forEach(type => window.addEventListener(type, ['pointermove','scroll','wheel'].includes(type) ? onFrequentActivity : onImmediateActivity, { passive: true }));
+    window.addEventListener('focus', onImmediateActivity, { passive: true });
     document.addEventListener('visibilitychange', () => { if (!document.hidden) recordActivity(); });
   }
 
@@ -114,21 +131,23 @@
       emit();
       return snapshot();
     }
+    lastActivityAt = readLastActivity(userId);
     initialStatus = normalize(initialStatus);
     if (valid(initialStatus) && initialStatus !== 'offline') {
       manualStatus = initialStatus === 'away' ? (localStorage.getItem('tl_presence_manual_v100') || 'online') : initialStatus;
     }
-    effectiveStatus = manualStatus;
-    autoAway = false;
+    autoAway = manualStatus === 'online' && Date.now() - lastActivityAt >= IDLE_MS;
+    effectiveStatus = autoAway ? 'away' : manualStatus;
     startActivityListeners();
     if (presenceChannel) await client.removeChannel(presenceChannel);
-    presenceChannel = client.channel('tl-global-presence', { config: { presence: { key: userId } } })
+    const channel = client.channel('tl-global-presence', { config: { presence: { key: userId } } });
+    presenceChannel = channel
       .on('presence', { event: 'sync' }, () => {
-        const raw = presenceChannel.presenceState();
+        const raw = channel.presenceState();
         peerState = Object.fromEntries(Object.entries(raw).map(([id, entries]) => [id, entries.at(-1)?.status || 'online']));
         emitPeers();
       })
-      .subscribe(async channelStatus => { if (channelStatus === 'SUBSCRIBED') await presenceChannel.track({ user_id: userId, status: effectiveStatus, at: new Date().toISOString() }); });
+      .subscribe(async channelStatus => { if (channelStatus === 'SUBSCRIBED') await channel.track({ user_id: userId, status: effectiveStatus, at: new Date().toISOString() }); });
     await sync(effectiveStatus);
     scheduleIdle();
     heartbeatTimer = setInterval(async () => { await sync(effectiveStatus); emitPeers(); }, HEARTBEAT_MS);
@@ -153,6 +172,6 @@
     connect, disconnect, setManual, recordActivity, getState: snapshot, resolve,
     subscribe(fn) { listeners.add(fn); fn(snapshot()); return () => listeners.delete(fn); },
     getPeers() { return { ...peerState }; },
-    constants: { IDLE_MS, HEARTBEAT_MS, HEARTBEAT_EXPIRE_MS }
+    constants: { IDLE_MS, PRODUCTION_IDLE_MS, HEARTBEAT_MS, HEARTBEAT_EXPIRE_MS }
   };
 })();
