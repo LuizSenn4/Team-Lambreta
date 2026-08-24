@@ -8,6 +8,7 @@
   <link rel="stylesheet" href="ui-core-v93.css?v=93.0" />
   <link rel="stylesheet" href="tl-design-system-v100.css?v=102.0" />
   <link rel="stylesheet" href="tl-polish-v100.css?v=100.0" />
+  <link rel="stylesheet" href="home-streamers-v102.css?v=102.3" />
   <link rel="stylesheet" href="streamer-gallery-v101.css?v=101.3" />
   <link rel="stylesheet" href="tl-presentation-hero-v102.css?v=102.0" />
 </head>
@@ -82,6 +83,8 @@
       <p>© <span id="year"></span> Team Lambreta — Juntos somos mais fortes.</p>
     </footer>
   </section>
+
+  <div id="homeStreamerWatchModal" class="home-watch-modal" hidden><button class="home-watch-backdrop" type="button" data-watch-close aria-label="Fechar"></button><section class="home-watch-dialog" role="dialog" aria-modal="true" aria-labelledby="homeWatchTitle"><button class="home-watch-close" type="button" data-watch-close aria-label="Fechar">×</button><small>STREAMER TEAM LAMBRETA</small><h2 id="homeWatchTitle">Onde quer assistir?</h2><p id="streamerWatchMeta" class="streamer-watch-meta"></p><div id="homeWatchPlatforms" class="home-watch-platforms"></div><div class="home-watch-separator"><span></span><b>OU</b><span></span></div><a id="homeWatchInternal" class="home-watch-internal" href="live.html">Assista aqui</a><p>Abre a sala Team Lambreta com player + chat da live.</p></section></div>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="supabase-client.js?v=102.0"></script>

@@ -2,6 +2,29 @@
   'use strict';
   const clean = value => String(value ?? '').trim();
   const pair = (a, b) => [a, b].sort().join(':');
+  const PROFILE_FIELDS = 'id,game_nickname,full_name,avatar_url,custom_avatar_url,role,presence,last_seen,public_bio,main_game,profile_public';
+  const fold = value => clean(value).normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLocaleLowerCase('pt-PT');
+  const accentVariants = value => {
+    const families = { a: 'aáàâãä', e: 'eéèêë', i: 'iíìîï', o: 'oóòôõö', u: 'uúùûü', c: 'cç' };
+    return [...value].reduce((variants, letter) => {
+      const choices = families[letter] || letter;
+      return variants.flatMap(prefix => [...choices].map(choice => prefix + choice)).slice(0, 128);
+    }, ['']);
+  };
+  const matchRank = (nickname, needle) => {
+    const name = fold(nickname);
+    if (name === needle) return [0, 0, name.length, name];
+    if (name.startsWith(needle)) return [1, 0, name.length, name];
+    const wordIndex = name.split(/[^a-z0-9]+/).findIndex(word => word.startsWith(needle));
+    if (wordIndex >= 0) return [2, wordIndex, name.length, name];
+    return [3, Math.max(0, name.indexOf(needle)), name.length, name];
+  };
+  const compareRank = (left, right) => {
+    for (let index = 0; index < 3; index += 1) {
+      if (left[index] !== right[index]) return left[index] - right[index];
+    }
+    return left[3].localeCompare(right[3], 'pt-PT');
+  };
 
   class FriendsService {
     constructor(client, userId) { this.client = client; this.userId = userId; this.channels = []; }
@@ -15,21 +38,29 @@
       const ids = new Set();
       relations.data.forEach(row => ids.add(row.requester_id === this.userId ? row.addressee_id : row.requester_id));
       blocks.data.forEach(row => ids.add(row.blocker_id === this.userId ? row.blocked_id : row.blocker_id));
-      const profiles = ids.size ? await this.client.from('profiles').select('id,game_nickname,full_name,avatar_url,custom_avatar_url,role,presence,last_seen_at,public_bio,main_game,profile_public').in('id', [...ids]) : { data: [], error: null };
+      const profiles = ids.size ? await this.client.from('profiles').select(PROFILE_FIELDS).in('id', [...ids]) : { data: [], error: null };
       if (profiles.error) throw profiles.error;
       return { relations: relations.data, blocks: blocks.data, profiles: profiles.data || [] };
     }
     async search(query) {
       const term = clean(query).slice(0, 60);
       if (term.length < 2) return [];
+      const normalized = fold(term.replace(/[,%()]/g, ''));
+      if (normalized.length < 2) return [];
+      const filters = accentVariants(normalized).map(value => `game_nickname.ilike.%${value}%`).join(',');
       const result = await this.client.from('profiles')
-        .select('id,game_nickname,full_name,avatar_url,custom_avatar_url,role,presence,last_seen_at,public_bio,main_game,profile_public')
-        .neq('id', this.userId).or(`game_nickname.ilike.%${term.replace(/[,%()]/g, '')}%,full_name.ilike.%${term.replace(/[,%()]/g, '')}%`).limit(20);
+        .select(PROFILE_FIELDS)
+        .neq('id', this.userId)
+        .or(filters)
+        .limit(64);
       if (result.error) throw result.error;
-      return (result.data || []).filter(row => row.profile_public !== false);
+      return (result.data || [])
+        .filter(row => row.profile_public !== false && fold(row.game_nickname).includes(normalized))
+        .sort((a, b) => compareRank(matchRank(a.game_nickname, normalized), matchRank(b.game_nickname, normalized)))
+        .slice(0, 8);
     }
     async getPublicProfile(id) {
-      const result = await this.client.from('profiles').select('id,game_nickname,full_name,avatar_url,custom_avatar_url,role,presence,last_seen_at,public_bio,main_game,profile_public').eq('id', id).maybeSingle();
+      const result = await this.client.from('profiles').select(PROFILE_FIELDS).eq('id', id).maybeSingle();
       if (result.error) throw result.error;
       return result.data?.profile_public === false ? null : result.data;
     }
