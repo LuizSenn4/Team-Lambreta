@@ -13,7 +13,7 @@ Escopo: `home.html`, `team.html`, `forum.html`, `streamers.html`, `eventos.html`
 | Profile | `services/profile-service.js` → `window.TeamProfiles` | Nenhuma implementação concorrente ativa | OK. `profile-v102.js`, Buddy e shell consomem o serviço. |
 | Permissions | `services/permission-service.js` → `window.TeamPermissions` | Nenhuma implementação concorrente ativa | OK. Cache visual não concede permissões. |
 | Notifications | `services/notification-service.js` → `window.TeamNotifications` | Nenhuma nas páginas auditadas | OK. O shell carrega uma instância e o serviço encerra o canal anterior antes de reconectar. |
-| Header/menu | `tl-shell-v102.js` + `tl-shell-v102.css` | Markup HTML antigo existe como bootstrap em quatro documentos, mas é substituído no mesmo nó, não cria segundo shell | Mantido temporariamente por segurança de no-JS/estrutura. Não há `navigation-v93` ou `navigation-v100` ativo nestas páginas. |
+| Header/menu | `tl-shell-v102.js` + `tl-shell-v102.css` | Team, Fórum, Streamers e Eventos ainda continham markup v88 que podia ser pintado antes do shell | Removido. As oito páginas agora nascem apenas com `<header class="site-header"></header>`. Não há `navigation-v93` ou `navigation-v100` ativo. |
 | Avatar/cache visual | `TeamProfiles` + `TeamVisualImages`; bootstrap visual do shell para a conta atual | Nenhum cache concorrente com autoridade | OK. `tl_profile_cache_v102` guarda identidade visual; `tl_visual_collections_v103` guarda coleções visuais, ambos sem autoridade. |
 | Realtime | Serviço da funcionalidade proprietária | Nenhuma subscription duplicada comprovada | Buddy: um canal de relações, um de mensagens e um de typing. Team/Streamers: um canal público próprio. Fórum preservado. |
 | CSS global | Design system + shell V102 | `style-v92.css` e `ui-core-v93.css` ainda fornecem layouts reais de Team/Fórum/Streamers/Eventos/Buddy | **Legacy mas necessário.** Retirá-los agora quebraria cards, timeline e board; não foi criado override adicional. |
@@ -73,6 +73,8 @@ Legenda: **N** necessário, **LN** legacy mas necessário, **D** duplicado remov
 1. `style-v92.css` e `ui-core-v93.css`: permanecem em páginas cuja marcação funcional ainda usa os seus seletores. Remoção segura exige extrair os estilos efetivamente usados para módulos próprios e comparar visualmente; isso é migração CSS, não remoção de duplicidade global.
 2. Nomes como `team-public-v92.js`, `streamer-public-v86.js`, `community-progress-v938.js` e `forum-board-v2.js`: a versão no nome é histórica. Eles não recriam Auth/Supabase/Presence e continuam sendo os módulos de negócio ativos.
 3. `legacy/profile-route-adapter.js`: compatibilidade temporária para links antigos do Fórum; encaminha ao perfil oficial e não cria um segundo perfil.
+
+O markup do header v88 não é uma dependência preservada: foi removido das quatro páginas onde ainda existia. Os seletores de navegação presentes nos CSS históricos ficaram inertes, mas os ficheiros CSS permanecem porque também estilizam conteúdo funcional dessas páginas.
 
 ## Critério de saída
 
