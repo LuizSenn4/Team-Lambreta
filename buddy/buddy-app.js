@@ -14,8 +14,14 @@
   let friends = null, messages = null, searchTimer = 0, typingTimer = 0, typingStopTimer = 0, activeUserId = null, selectionVersion = 0;
   const root = $('#buddyRoot');
   if (!root) return;
+  const visualImages = window.TeamVisualImages;
 
-  function avatar(profile, extra = '') { const name = profileName(profile), initials = esc(name.slice(0,2).toUpperCase()), url=avatarUrl(profile); return url ? `<span class="buddy-avatar ${extra}" role="img" aria-label="Foto de perfil de ${esc(name)}"><b>${initials}</b><img src="${esc(url)}" alt="" loading="eager" decoding="async" onerror="this.hidden=true"></span>` : `<span class="buddy-avatar ${extra}" role="img" aria-label="Foto de perfil de ${esc(name)}"><b>${initials}</b></span>`; }
+  function avatar(profile, extra = '') {
+    const name = profileName(profile), initials = esc(name.slice(0,2).toUpperCase()), url = avatarUrl(profile);
+    if (url) return `<span class="buddy-avatar ${extra}" role="img" aria-label="Foto de perfil de ${esc(name)}"><span class="buddy-avatar-skeleton" aria-hidden="true"${visualImages?.isReady?.(url) ? ' hidden' : ''}></span><img src="${esc(url)}" alt="" loading="eager" decoding="async" onload="this.previousElementSibling.hidden=true" onerror="this.hidden=true"></span>`;
+    if (profile?.avatar_path) return `<span class="buddy-avatar ${extra}" role="img" aria-label="Foto de perfil de ${esc(name)}"><span class="buddy-avatar-skeleton" aria-hidden="true"></span></span>`;
+    return `<span class="buddy-avatar ${extra}" role="img" aria-label="Foto de perfil de ${esc(name)}"><b>${initials}</b></span>`;
+  }
   const presence = profile => window.TeamPresence?.resolve?.(profile) || 'offline';
   function toast(message, type = '', action) { const node = document.createElement('div'); node.className = `buddy-toast ${type}`; node.textContent = message; if (action) node.onclick = action; $('#buddyToasts').append(node); setTimeout(() => node.remove(), 4500); }
   function friendlyError(error, fallback) { console.error('[Buddy]', error); const text = error?.message || ''; if (/row-level security|permission|policy/i.test(text)) return 'Não tens permissão para realizar esta ação.'; if (/duplicate|unique/i.test(text)) return 'Este pedido já existe.'; if (/network|fetch/i.test(text)) return 'Não foi possível ligar ao Buddy. Tenta novamente.'; return fallback; }
@@ -68,12 +74,12 @@
   function cachedBuddyProfile(profile) {
     const cached = window.TeamProfiles?.readPublicVisualCache?.(profile?.id);
     if (cached && avatarUrl(cached)) return { ...profile, ...cached };
-    return { ...profile, avatar_display_url:'', avatar_external_url:'', custom_avatar_url:'', avatar_url:'', avatar_inline_url:'' };
+    return { ...profile };
   }
   function preloadAvatar(profile) {
     const url = avatarUrl(profile);
     if (!url) return Promise.resolve(profile);
-    return new Promise(resolve => { const image=new Image();image.onload=()=>resolve(profile);image.onerror=()=>resolve({ ...profile, avatar_display_url:'', avatar_external_url:'', custom_avatar_url:'', avatar_url:'', avatar_inline_url:'' });image.src=url; });
+    return (visualImages?.preload?.(url) || Promise.resolve(true)).then(() => profile);
   }
   async function applyOfficialProfile(profile, render = true) {
     if (!profile?.id) return false;
@@ -87,7 +93,10 @@
 
   async function refreshData(render = true) {
     try {
-      const data = await friends.load(); state.relations = data.relations; state.blocks = data.blocks; data.profiles.forEach(p => state.profiles.set(p.id, cachedBuddyProfile(p))); state.unread = await messages.unreadCounts(); updateUnread(); if (render) renderSidebar(); if (state.current) renderInfo();
+      const data = await friends.load(); state.relations = data.relations; state.blocks = data.blocks;
+      const visualProfiles = data.profiles.map(cachedBuddyProfile);
+      await visualImages?.preloadAll?.(visualProfiles.map(avatarUrl));
+      visualProfiles.forEach(p => state.profiles.set(p.id, p)); state.unread = await messages.unreadCounts(); updateUnread(); if (render) renderSidebar(); if (state.current) renderInfo();
       // A listagem básica vem de profiles; a identidade oficial também pode
       // estar em forum_profiles (avatar_path). Hidrata-a em background.
       if (window.TeamProfiles?.getPublicProfile) {

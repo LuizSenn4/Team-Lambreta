@@ -2,6 +2,7 @@
   // TEMPORÁRIO: UI aprovada dos cards; dados usam exclusivamente o cliente V102.
   const sb = window.teamSupabase;
   if (!sb) return;
+  const images = window.TeamVisualImages;
 
   const $ = (id) => document.getElementById(id);
   const PAGE_SIZE = 5;
@@ -232,8 +233,8 @@
     const gameMode = modeLabel(row);
     const platforms = platformLinks(row);
     const mainPhoto = row.photo_url
-      ? `<img src="${esc(row.photo_url)}" alt="${esc(row.display_name)}" loading="lazy" onerror="this.hidden=true;this.nextElementSibling.hidden=false"><div class="streamer-photo-placeholder" hidden>TL</div>`
-      : '<div class="streamer-photo-placeholder">🎥</div>';
+      ? `<img src="${esc(row.photo_url)}" alt="" loading="eager" decoding="async" onerror="this.hidden=true;this.nextElementSibling.hidden=false"><div class="streamer-photo-placeholder tl-image-skeleton" aria-hidden="true" hidden></div>`
+      : '<div class="streamer-photo-placeholder tl-image-skeleton" aria-hidden="true"></div>';
 
     return `
       <article class="streamer-unified-card streamer-poster-card ${tone} ${live ? 'is-live' : ''}" data-streamer-id="${esc(row.id)}" data-streamer-slug="${encodeURIComponent(slug)}" data-watch-streamer tabindex="0" role="button" aria-label="Opções para assistir ${esc(row.display_name || 'streamer')}">
@@ -428,6 +429,8 @@
     }
 
     allRows = data || [];
+    await images?.preloadAll?.([staticInk.photo_url, ...allRows.map(row => row.photo_url)]);
+    images?.writeCollection?.('streamers-public', allRows);
     const count = $('streamersCount');
     if (count) count.textContent = String(allRows.length + 1);
     renderPage();
@@ -456,6 +459,14 @@
 
   async function boot() {
     bindInteractions();
+    const cached = images?.readCollection?.('streamers-public');
+    if (cached?.length) {
+      allRows = cached;
+      await images.preloadAll([staticInk.photo_url, ...allRows.map(row => row.photo_url)]);
+      const count = $('streamersCount');
+      if (count) count.textContent = String(allRows.length + 1);
+      renderPage();
+    }
     await load();
     startCloudSync();
   }

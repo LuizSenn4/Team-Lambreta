@@ -3,6 +3,7 @@
   // TEMPORÁRIO: UI aprovada do Team; dados usam exclusivamente o cliente V102.
   const sb=window.teamSupabase;
   if(!sb) return;
+  const visualImages=window.TeamVisualImages;
   const grid=document.getElementById('teamRosterGrid');
   const pager=document.getElementById('teamRosterPager');
   const esc=value=>String(value??'').replace(/[&<>"']/g,char=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char]));
@@ -62,7 +63,7 @@
 
   function avatar(row){
     const label=row.nickname||row.name||'L';
-    return row.image_url?`<img src="${esc(row.image_url)}" alt="${esc(row.name||label)}" loading="lazy">`:`<span>${esc(label.charAt(0).toUpperCase())}</span>`;
+    return row.image_url?`<img src="${esc(row.image_url)}" alt="" loading="eager" decoding="async" onerror="this.hidden=true">`:`<span class="team-image-skeleton" aria-label="Sem fotografia de ${esc(label)}"></span>`;
   }
   function setPhotoBackdrop(frame){
     const image=frame?.querySelector('img');
@@ -113,6 +114,8 @@
     const joined=row.created_at?new Intl.DateTimeFormat('pt-PT',{month:'short',year:'numeric'}).format(new Date(row.created_at)):'Team';
     const metrics=[['Membro desde',joined],['Jogo',row.main_game||'—'],['Redes',String(links(row).length)]];
     content.innerHTML=`<div class="team-profile-mobile-hero"><div class="team-esports-profile-photo">${avatar(row)}</div><button type="button" class="team-esports-back-button" data-close-profile aria-label="Voltar à lista">‹</button><button type="button" class="team-esports-close" data-close-profile aria-label="Fechar">×</button></div><div class="team-esports-profile-copy"><div class="team-profile-mobile-heading"><p class="team-profile-status">ONLINE</p><h2 id="teamProfileName">${esc(nickname)}</h2><div class="team-profile-heading-meta">${rolesMarkup(row.role||'MEMBRO')}<span class="team-profile-country"><span aria-hidden="true">${flag}</span> ${esc(row.country||countryCode)}</span></div></div><p class="tag">PERFIL OFICIAL</p><h2 class="team-profile-desktop-name">${esc(nickname)}</h2><div class="team-profile-rich-role team-profile-desktop-role">${rolesMarkup(row.role||'MEMBRO')}</div><div class="team-profile-metrics">${metrics.map(([label,value])=>`<div><small>${esc(label)}</small><strong>${esc(value)}</strong></div>`).join('')}</div>${factMarkup?`<div class="team-esports-facts">${factMarkup}</div>`:''}<section class="team-profile-section"><small>Sobre</small><div class="team-esports-bio team-profile-rich-bio">${richText(row.bio||'Perfil oficial do Team Lambreta.')}</div></section><section class="team-profile-section"><small>Cargos</small><div class="team-profile-role-list">${rolesMarkup(row.role||'MEMBRO')}</div></section>${specialties.length?`<section class="team-profile-section"><small>Especialidades</small><div class="team-profile-specialties">${specialties.map(item=>`<span>${esc(item)}</span>`).join('')}</div></section>`:''}${linkMarkup?`<section class="team-profile-section"><small>Redes sociais</small><div class="team-esports-links">${linkMarkup}</div></section>`:''}</div>`;
+    // team_members não possui ligação UUID fiável com profiles; não apresentar presença inventada.
+    content.querySelector('.team-profile-status')?.remove();
     content.querySelectorAll('[data-close-profile]').forEach(el=>el.addEventListener('click',closeModal));
     setPhotoBackdrops(content);
     modal.hidden=false; document.body.classList.add('team-modal-open'); modal.querySelector('.team-esports-close')?.focus();
@@ -131,7 +134,7 @@
   }
   async function load(){
     if(!grid)return; const {data,error}=await sb.from('team_members').select('*').eq('is_published',true).eq('is_archived',false).order('is_featured',{ascending:false}).order('display_order').order('created_at');
-    if(error){grid.innerHTML=`<article class="team-esports-empty"><h2>Não foi possível carregar o Team</h2><p>${esc(error.message)}</p></article>`;return} members=data||[];document.getElementById('teamMemberCount')?.replaceChildren(String(members.length));render();
+    if(error){grid.innerHTML=`<article class="team-esports-empty"><h2>Não foi possível carregar o Team</h2><p>${esc(error.message)}</p></article>`;return} members=data||[];await visualImages?.preloadAll?.(members.map(row=>row.image_url));visualImages?.writeCollection?.('team-public',members);document.getElementById('teamMemberCount')?.replaceChildren(String(members.length));render();
   }
   function setupMobileTabs(){
     document.querySelectorAll('[data-team-tab]').forEach(button=>button.addEventListener('click',()=>{
@@ -141,8 +144,6 @@
     }));
   }
   let timer=null; const refresh=()=>{clearTimeout(timer);timer=setTimeout(load,120)};
-  async function boot(){setupMobileTabs();await load();sb.channel('team-public-v92').on('postgres_changes',{event:'*',schema:'public',table:'team_members'},refresh).subscribe();addEventListener('focus',load);document.addEventListener('visibilitychange',()=>{if(!document.hidden)load()})}
+  async function boot(){setupMobileTabs();const cached=visualImages?.readCollection?.('team-public');if(cached?.length){members=cached;await visualImages.preloadAll(members.map(row=>row.image_url));document.getElementById('teamMemberCount')?.replaceChildren(String(members.length));render()}await load();sb.channel('team-public-v92').on('postgres_changes',{event:'*',schema:'public',table:'team_members'},refresh).subscribe();addEventListener('focus',load);document.addEventListener('visibilitychange',()=>{if(!document.hidden)load()})}
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot);else boot();
 })();
-    // team_members não possui ligação UUID fiável com profiles; não apresentar presença inventada.
-    content.querySelector('.team-profile-status')?.remove();

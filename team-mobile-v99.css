@@ -55,6 +55,7 @@
   background:#10120f;
 }
 .team-page .team-roster-avatar::before{display:none}
+.team-page .team-image-skeleton{position:absolute;inset:0;display:block;background:linear-gradient(110deg,#10120f 20%,#1b241d 38%,#10120f 56%);background-size:220% 100%;animation:teamImageSkeleton 1.35s ease infinite}@keyframes teamImageSkeleton{to{background-position:-220% 0}}@media(prefers-reduced-motion:reduce){.team-page .team-image-skeleton{animation:none}}
 .team-page .team-roster-avatar img{
   position:absolute;
   inset:0!important;

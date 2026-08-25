@@ -21,5 +21,6 @@ html,body{overflow-x:clip}
 .home-live-platform.platform-youtube:hover,.home-live-card:focus-visible .platform-youtube{color:#ff3d4f;filter:drop-shadow(0 0 6px rgba(255,45,68,.7))}
 .home-live-platform.platform-instagram:hover,.home-live-card:focus-visible .platform-instagram{color:#ef54db;filter:drop-shadow(0 0 6px rgba(197,72,255,.68))}
 .home-live-platform.platform-twitch:hover,.home-live-card:focus-visible .platform-twitch{color:#a970ff;filter:drop-shadow(0 0 6px rgba(169,112,255,.7))}
+.home-live-placeholder.tl-image-skeleton{background:linear-gradient(110deg,#070d12 20%,#14222d 38%,#070d12 56%);background-size:220% 100%;animation:homeImageSkeleton 1.35s ease infinite;color:transparent}@keyframes homeImageSkeleton{to{background-position:-220% 0}}
 @media(hover:none){.home-live-platform{cursor:inherit}.home-live-platform::after{display:none}.home-live-platform:hover{transform:none;filter:none}}
-@media(prefers-reduced-motion:reduce){.home-live-platform,.home-live-platform::after{transition:none}}
+@media(prefers-reduced-motion:reduce){.home-live-platform,.home-live-platform::after{transition:none}.home-live-placeholder.tl-image-skeleton{animation:none}}

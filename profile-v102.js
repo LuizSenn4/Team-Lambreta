@@ -9,7 +9,7 @@
   let renderedPublicProfile = null;
 
   const avatarSource = profile => window.TeamProfiles?.getAvatarUrl(profile) || profile?.avatar_display_url || '';
-  const avatar = profile => avatarSource(profile) ? `<img class="profile-avatar-v102" src="${esc(avatarSource(profile))}" alt="Avatar de ${esc(profile.display_name)}">` : `<span class="profile-avatar-v102 profile-avatar-fallback-v102">${esc(profile.avatar_fallback || 'TL')}</span>`;
+  const avatar = profile => avatarSource(profile) ? `<img class="profile-avatar-v102" src="${esc(avatarSource(profile))}" alt="" decoding="async">` : `<span class="profile-avatar-v102 profile-avatar-fallback-v102">${esc(profile.avatar_fallback || 'TL')}</span>`;
   const visualRoles = profile => window.TeamPermissions?.getVisualRoles(profile) || [];
   const roleDisplayLabel = role => role.key === 'developer' ? 'DEV' : role.label;
   const roleBadges = profile => visualRoles(profile).map((role, index) => `<span class="profile-role-badge-v102${index === 0 ? ' is-primary' : ''}" style="--role-color:${esc(role.color)}">${role.icon}<b>${esc(roleDisplayLabel(role))}</b></span>`).join('');
@@ -67,6 +67,7 @@
         window.TeamProfiles.getCatalog().catch(() => ({ games:[], platforms:[] }))
       ]);
       if (!profile) throw Object.assign(new Error('Perfil não encontrado.'), { code:'PRF-009' });
+      await window.TeamVisualImages?.preload?.(avatarSource(profile));
       const games = new Map(catalog.games.map(game => [game.slug, game.name]));
       const country = window.TeamCountryCatalog?.resolve(profile.country);
       const own = session?.user?.id === userId;
@@ -93,6 +94,7 @@
     }
     let [profile, catalog] = await Promise.all([window.TeamProfiles.getCurrentProfile({ fresh: true }), window.TeamProfiles.getCatalog()]);
     if (!profile) throw Object.assign(new Error('Perfil não encontrado.'), { code:'PRF-009' });
+    await window.TeamVisualImages?.preload?.(avatarSource(profile));
     const selectedGames = new Set(profile?.games || []), selectedPlatforms = new Set(profile?.platforms || []), selectedModes = new Set(profile?.game_modes || []);
     const presentation = rolePresentation(profile);
     root.innerHTML = `<div class="tl-page-heading"><small>MINHA CONTA</small><h1>Editar perfil</h1><p>Esta identidade será utilizada no header, Buddy, Fórum e restantes áreas da Team Lambreta.</p></div><div class="profile-editor-v102"><form id="profileForm" class="tl-v102-card profile-form-v102">
