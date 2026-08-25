@@ -79,6 +79,53 @@
   const current = location.pathname.split('/').pop() || 'home.html';
   nav.querySelectorAll('a').forEach(link => link.classList.toggle('is-current', link.getAttribute('href') === current));
 
+  const primaryPages = Object.freeze(['home.html', 'team.html', 'forum.html', 'streamers.html', 'eventos.html']);
+  primaryPages.forEach(path => {
+    if (path === current || document.querySelector(`link[rel="prefetch"][href="${path}"]`)) return;
+    const prefetch = document.createElement('link');
+    prefetch.rel = 'prefetch';
+    prefetch.href = path;
+    prefetch.fetchPriority = 'low';
+    prefetch.dataset.tlNavigationPrefetch = 'true';
+    document.head.appendChild(prefetch);
+  });
+
+  let navigationPending = false;
+  nav.addEventListener('click', event => {
+    const link = event.target.closest('a[href]');
+    if (!link || event.defaultPrevented || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+    const destination = new URL(link.href, location.href);
+    const destinationPage = destination.pathname.split('/').pop() || 'home.html';
+    if (destination.origin !== location.origin || !primaryPages.includes(destinationPage) || destination.href === location.href || navigationPending) return;
+
+    event.preventDefault();
+    navigationPending = true;
+    setMobile(false);
+    closeMenus();
+
+    const content = document.querySelector('.site-content > main');
+    let navigationCommitted = false;
+    const navigate = () => {
+      if (navigationCommitted) return;
+      navigationCommitted = true;
+      location.assign(destination.href);
+    };
+    if (!content || matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      navigate();
+      return;
+    }
+
+    document.documentElement.classList.add('tl-document-is-leaving');
+    requestAnimationFrame(() => {
+      const opacityTransition = content.getAnimations().find(animation => animation.transitionProperty === 'opacity');
+      if (!opacityTransition) {
+        navigate();
+        return;
+      }
+      opacityTransition.finished.then(navigate, navigate);
+    });
+  });
+
   const footer = document.querySelector('.site-footer');
   if (footer) footer.innerHTML = `<nav class="tl-footer-nav" aria-label="Rodapé"><a href="suporte.html">Suporte</a><a href="regras.html">Regras da Comunidade</a><a href="privacidade.html">Privacidade</a><a href="atualizacoes.html">Atualizações</a></nav><p>© ${new Date().getFullYear()} Team Lambreta — Juntos somos mais fortes.</p>`;
 

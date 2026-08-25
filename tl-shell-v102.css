@@ -1,5 +1,9 @@
 @import url('tl-design-system-v100.css?v=102.0');
 html{overflow-x:clip}
+/* The outgoing document is neutral before a full-page navigation commits. */
+.site-content>main{opacity:1;transform:translateY(0);transition:opacity 90ms ease-out,transform 90ms ease-out}
+html.tl-document-is-leaving .site-content>main{opacity:0;transform:translateY(-2px);pointer-events:none}
+@media(prefers-reduced-motion:reduce){.site-content>main{transition:none}}
 :root{--tl-nav-font:var(--font-team-display,"Barlow Condensed",sans-serif);--tl-nav-size:clamp(13px,1vw,15px);--tl-nav-weight:700;--tl-nav-line-height:normal;--tl-nav-letter-spacing:.07em;--tl-nav-item-height:44px;--tl-nav-item-padding:0}
 .site-header.tl-header-v100.tl-header-v102 .tl-main-nav{display:flex!important;align-items:center!important;justify-content:center!important;gap:clamp(12px,1.35vw,25px)!important;padding:0!important;margin:0!important}
 .site-header.tl-header-v100.tl-header-v102 .tl-main-nav>a,
