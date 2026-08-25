@@ -144,3 +144,5 @@
   async function boot(){setupMobileTabs();await load();sb.channel('team-public-v92').on('postgres_changes',{event:'*',schema:'public',table:'team_members'},refresh).subscribe();addEventListener('focus',load);document.addEventListener('visibilitychange',()=>{if(!document.hidden)load()})}
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot);else boot();
 })();
+    // team_members não possui ligação UUID fiável com profiles; não apresentar presença inventada.
+    content.querySelector('.team-profile-status')?.remove();
