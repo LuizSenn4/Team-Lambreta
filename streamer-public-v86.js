@@ -25,7 +25,7 @@
     display_name: 'INK31',
     title: 'Boss • Streamer Oficial',
     description: 'Fundador e streamer do Team Lambreta. Conteúdo focado em Fortnite, comunidade e muita resenha.',
-    photo_url: 'img/streamers/ink31-profile.jpg',
+    photo_url: 'img/streamers/ink31-profile-720.webp',
     game_nickname: 'oklm_31_ink',
     main_game: 'Fortnite',
     live_platform: 'tiktok',
@@ -233,7 +233,7 @@
     const gameMode = modeLabel(row);
     const platforms = platformLinks(row);
     const mainPhoto = row.photo_url
-      ? `<img src="${esc(row.photo_url)}" alt="" loading="eager" decoding="async" onerror="this.hidden=true;this.nextElementSibling.hidden=false"><div class="streamer-photo-placeholder tl-image-skeleton" aria-hidden="true" hidden></div>`
+      ? `<img src="${esc(row.photo_url)}" alt="" loading="${globalIndex<4?'eager':'lazy'}" decoding="async" width="480" height="720" onerror="this.hidden=true;this.nextElementSibling.hidden=false"><div class="streamer-photo-placeholder tl-image-skeleton" aria-hidden="true" hidden></div>`
       : '<div class="streamer-photo-placeholder tl-image-skeleton" aria-hidden="true"></div>';
 
     return `
@@ -429,7 +429,6 @@
     }
 
     allRows = data || [];
-    await images?.preloadAll?.([staticInk.photo_url, ...allRows.map(row => row.photo_url)]);
     images?.writeCollection?.('streamers-public', allRows);
     const count = $('streamersCount');
     if (count) count.textContent = String(allRows.length + 1);
@@ -462,7 +461,6 @@
     const cached = images?.readCollection?.('streamers-public');
     if (cached?.length) {
       allRows = cached;
-      await images.preloadAll([staticInk.photo_url, ...allRows.map(row => row.photo_url)]);
       const count = $('streamersCount');
       if (count) count.textContent = String(allRows.length + 1);
       renderPage();

@@ -61,9 +61,9 @@
     return `<span class="team-role-badges${compact?' is-compact':''}">${roles.map(role=>`<span class="team-role-badge role-${TEAM_ROLE_CLASS[role]||'membro'}">${esc(role)}</span>`).join('')}</span>`;
   }
 
-  function avatar(row){
+  function avatar(row,eager=false){
     const label=row.nickname||row.name||'L';
-    return row.image_url?`<img src="${esc(row.image_url)}" alt="" loading="eager" decoding="async" onerror="this.hidden=true">`:`<span class="team-image-skeleton" aria-label="Sem fotografia de ${esc(label)}"></span>`;
+    return row.image_url?`<img src="${esc(row.image_url)}" alt="" loading="${eager?'eager':'lazy'}" decoding="async" width="480" height="540" onerror="this.hidden=true">`:`<span class="team-image-skeleton" aria-label="Sem fotografia de ${esc(label)}"></span>`;
   }
   function setPhotoBackdrop(frame){
     const image=frame?.querySelector('img');
@@ -89,7 +89,7 @@
     const nameClass=nickname.length>=18?'is-very-long':nickname.length>=13?'is-long':'';
     return `<button type="button" class="team-roster-card tone-${index%2===0?'green':'red'}" data-member-index="${index}" aria-label="Abrir perfil de ${esc(nickname)}">
       <span class="team-roster-accent"></span>
-      <span class="team-roster-avatar">${avatar(row)}</span>
+      <span class="team-roster-avatar">${avatar(row,index<4)}</span>
       <span class="team-roster-copy"><strong class="${nameClass}">${esc(nickname)}</strong>${rolesMarkup(row.role||'MEMBRO',true)}<em><span aria-hidden="true">${flag}</span> ${code}</em></span>
       <span class="team-roster-plus" aria-hidden="true">＋</span>
     </button>`;
@@ -124,7 +124,7 @@
   function renderPager(totalPages){
     if(!pager)return; if(totalPages<=1){pager.hidden=true;pager.innerHTML='';return} pager.hidden=false;
     pager.innerHTML=Array.from({length:totalPages},(_,i)=>i+1).map(page=>`<button type="button" class="${page===currentPage?'is-active':''}" data-page="${page}">${page}</button>`).join('');
-    pager.querySelectorAll('[data-page]').forEach(btn=>btn.onclick=()=>{currentPage=Number(btn.dataset.page)||1;render();document.querySelector('.team-esports-hero')?.scrollIntoView({behavior:'smooth',block:'start'})});
+    pager.querySelectorAll('[data-page]').forEach(btn=>btn.onclick=()=>{currentPage=Number(btn.dataset.page)||1;render();document.querySelector('.tl-page-hero-v102')?.scrollIntoView({behavior:'smooth',block:'start'})});
   }
   function render(){
     if(!grid)return; const totalPages=Math.max(1,Math.ceil(members.length/PAGE_SIZE)); if(currentPage>totalPages)currentPage=totalPages; const start=(currentPage-1)*PAGE_SIZE; const rows=members.slice(start,start+PAGE_SIZE);
@@ -134,7 +134,7 @@
   }
   async function load(){
     if(!grid)return; const {data,error}=await sb.from('team_members').select('*').eq('is_published',true).eq('is_archived',false).order('is_featured',{ascending:false}).order('display_order').order('created_at');
-    if(error){grid.innerHTML=`<article class="team-esports-empty"><h2>Não foi possível carregar o Team</h2><p>${esc(error.message)}</p></article>`;return} members=data||[];await visualImages?.preloadAll?.(members.map(row=>row.image_url));visualImages?.writeCollection?.('team-public',members);document.getElementById('teamMemberCount')?.replaceChildren(String(members.length));render();
+    if(error){grid.innerHTML=`<article class="team-esports-empty"><h2>Não foi possível carregar o Team</h2><p>${esc(error.message)}</p></article>`;return} members=data||[];visualImages?.writeCollection?.('team-public',members);document.getElementById('teamMemberCount')?.replaceChildren(String(members.length));render();
   }
   function setupMobileTabs(){
     document.querySelectorAll('[data-team-tab]').forEach(button=>button.addEventListener('click',()=>{
@@ -144,6 +144,6 @@
     }));
   }
   let timer=null; const refresh=()=>{clearTimeout(timer);timer=setTimeout(load,120)};
-  async function boot(){setupMobileTabs();const cached=visualImages?.readCollection?.('team-public');if(cached?.length){members=cached;await visualImages.preloadAll(members.map(row=>row.image_url));document.getElementById('teamMemberCount')?.replaceChildren(String(members.length));render()}await load();sb.channel('team-public-v92').on('postgres_changes',{event:'*',schema:'public',table:'team_members'},refresh).subscribe();addEventListener('focus',load);document.addEventListener('visibilitychange',()=>{if(!document.hidden)load()})}
+  async function boot(){setupMobileTabs();const cached=visualImages?.readCollection?.('team-public');if(cached?.length){members=cached;document.getElementById('teamMemberCount')?.replaceChildren(String(members.length));render()}await load();sb.channel('team-public-v92').on('postgres_changes',{event:'*',schema:'public',table:'team_members'},refresh).subscribe();addEventListener('focus',load);document.addEventListener('visibilitychange',()=>{if(!document.hidden)load()})}
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot);else boot();
 })();

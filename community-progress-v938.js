@@ -10,9 +10,7 @@
   let flushing=false;
   const AFK_AFTER=2*60*1000;
 
-  const touch=()=>{lastInteraction=Date.now()};
-  ['pointerdown','keydown','touchstart','scroll','wheel'].forEach(type=>window.addEventListener(type,touch,{passive:true,capture:true}));
-  document.addEventListener('visibilitychange',()=>{ if(!document.hidden) touch(); });
+  const touch=()=>{lastInteraction=Date.now();window.TeamPresence?.recordActivity?.()};
 
   async function getSession(){
     if(session) return session;
@@ -24,7 +22,6 @@
     const key=metadata?.dedupe_key||null;
     const clean={...(metadata||{})};delete clean.dedupe_key;
     const data=await record(type,1,key,clean);
-    if(data) console.info('[TL Progress] contabilizado',type,data);
     return data;
   }
 
@@ -38,7 +35,7 @@
       if(error) throw error;
       window.dispatchEvent(new CustomEvent('tl:progress',{detail:data}));
       return data;
-    }catch(err){ console.warn('[TL Progress]',type,err?.message||err); return null; }
+    }catch(err){ window.TeamDiagnostics?.warn('TL-SUPA-002','progress','Não foi possível registrar progresso',{type},err); return null; }
   }
 
   async function thank(targetUserId,topicKey){
@@ -49,11 +46,10 @@
         p_topic_key:String(topicKey||'')
       });
       if(error) throw error;
-      console.info('[TL Progress] like contabilizado',data);
       if(data) window.dispatchEvent(new CustomEvent('tl:progress',{detail:{type:'forum_thank',targetUserId}}));
       return !!data;
     }catch(err){
-      console.error('[TL Progress] RPC give_community_forum_thank_v2 falhou:',err?.message||err);
+      window.TeamDiagnostics?.error('TL-FORUM-001','progress','Agradecimento do Fórum não foi registrado',{targetUserId,topicKey},err);
       return false;
     }
   }
@@ -70,7 +66,8 @@
 
   setInterval(()=>{
     if(document.hidden) return;
-    const active=(Date.now()-lastInteraction)<AFK_AFTER;
+    const presenceInteraction=Number(window.TeamPresence?.getState?.().lastActivityAt||0);
+    const active=(Date.now()-Math.max(lastInteraction,presenceInteraction))<AFK_AFTER;
     if(active){ pendingActive+=30; if(livePlaying) pendingLive+=30; }
     else pendingAfk+=30;
     if(pendingActive+pendingAfk+pendingLive>=60) flush();

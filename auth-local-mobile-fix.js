@@ -26,11 +26,8 @@
   }
 
   function redirectUrl() {
-    // Preserva exatamente o dispositivo/origem atual:
-    // PC:       http://127.0.0.1:8767/buddy.html
-    // Telemóvel http://192.168.1.130:8767/buddy.html
-    // Produção: https://team-lambreta.vercel.app/buddy.html
-    return `${window.location.origin}${window.location.pathname}${window.location.search}`;
+    // Preserva o origin atual e regressa sempre à home após o OAuth.
+    return new URL('/home.html', window.location.origin).href;
   }
 
   async function loginGoogle() {
@@ -74,12 +71,9 @@
     if (!header || !clickable) return false;
 
     const text = normalizedText(clickable);
-    const href = String(clickable.getAttribute?.('href') || '').toLowerCase();
-
     // Captura apenas o login da conta. Não interfere em "Entrar no Lobby", etc.
     if (['entrar', 'login', 'entrar com google', 'login com google'].includes(text)) return true;
     if (text.includes('entrar') && text.includes('membro')) return true;
-    if (href.includes('team-lambreta.vercel.app') && text.includes('entrar')) return true;
 
     return false;
   }

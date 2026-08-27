@@ -2,8 +2,8 @@
   'use strict';
   if (window.TeamShell) return;
 
-  if (!document.querySelector('link[href*="tl-shell-v102.css"]')) {
-    const style = document.createElement('link'); style.rel = 'stylesheet'; style.href = 'tl-shell-v102.css?v=102.6'; style.dataset.tlShellV102 = 'true'; document.head.appendChild(style);
+  if (!document.querySelector('link[href*="tl-shell-v102.css"],link[href*="tl-shell-v104.css"]')) {
+    const style = document.createElement('link'); style.rel = 'stylesheet'; style.href = 'tl-shell-v104.css?v=104.0'; style.dataset.tlShellV102 = 'true'; document.head.appendChild(style);
   }
 
   const auth = window.TeamAuth;
@@ -47,7 +47,7 @@
   const header = document.querySelector('.site-header');
   if (!header) return;
   header.className = 'site-header tl-header-v100 tl-header-v102';
-  header.innerHTML = `
+  if (!header.childElementCount) header.innerHTML = `
     <a href="home.html" class="brand brand-logo-link" aria-label="Team Lambreta — página inicial"><img class="brand-logo-image" src="img/team-lambreta-header-logo.svg" alt="Team Lambreta"></a>
     <button class="tl-mobile-menu-button" type="button" aria-label="Abrir menu" aria-expanded="false"><span></span><span></span><span></span></button>
     <div class="tl-mobile-menu-backdrop" hidden></div>
@@ -88,42 +88,6 @@
     prefetch.fetchPriority = 'low';
     prefetch.dataset.tlNavigationPrefetch = 'true';
     document.head.appendChild(prefetch);
-  });
-
-  let navigationPending = false;
-  nav.addEventListener('click', event => {
-    const link = event.target.closest('a[href]');
-    if (!link || event.defaultPrevented || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
-    const destination = new URL(link.href, location.href);
-    const destinationPage = destination.pathname.split('/').pop() || 'home.html';
-    if (destination.origin !== location.origin || !primaryPages.includes(destinationPage) || destination.href === location.href || navigationPending) return;
-
-    event.preventDefault();
-    navigationPending = true;
-    setMobile(false);
-    closeMenus();
-
-    const content = document.querySelector('.site-content > main');
-    let navigationCommitted = false;
-    const navigate = () => {
-      if (navigationCommitted) return;
-      navigationCommitted = true;
-      location.assign(destination.href);
-    };
-    if (!content || matchMedia('(prefers-reduced-motion: reduce)').matches) {
-      navigate();
-      return;
-    }
-
-    document.documentElement.classList.add('tl-document-is-leaving');
-    requestAnimationFrame(() => {
-      const opacityTransition = content.getAnimations().find(animation => animation.transitionProperty === 'opacity');
-      if (!opacityTransition) {
-        navigate();
-        return;
-      }
-      opacityTransition.finished.then(navigate, navigate);
-    });
   });
 
   const footer = document.querySelector('.site-footer');
@@ -194,7 +158,7 @@
     await paintAvatar(options);
     if (!session) {
       accountMenu.innerHTML = '<button type="button" data-login>Entrar com Google</button>';
-      accountMenu.querySelector('[data-login]').addEventListener('click', () => auth.signInWithGoogle().catch(error => console.error('[AUTH] login', error.message)));
+      accountMenu.querySelector('[data-login]').addEventListener('click', () => auth.signInWithGoogle().catch(() => {}));
       return;
     }
     const admin = roleConfirmed ? await permissions.can('admin.full') : false;
@@ -215,7 +179,7 @@
     roleConfirmed=false; confirmedRole='';
     if (visual) { profile = visual; await paintAccount(); }
     else { profile=null; await paintAccount({clear:true}); }
-    try { profile = await profiles.getCurrentProfile({ fresh: true }); } catch (error) { console.error('[PROFILE] shell', error.message); }
+    try { profile = await profiles.getCurrentProfile({ fresh: true }); } catch (error) { window.TeamDiagnostics?.warn('TL-AUTH-001', 'shell-profile', 'Perfil da sessão não pôde ser atualizado', {}, error); }
     if (version !== bootVersion) return;
     await permissions.refresh();
     roleConfirmed=true;

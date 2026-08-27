@@ -17,12 +17,12 @@
 
   async function signInWithGoogle() {
     if (!client) throw new Error('Cliente Supabase indisponível.');
-    const redirectTo = `${window.location.origin}${window.location.pathname}`;
-    console.info('[AUTH] iniciando Google');
-    console.info('[AUTH] origin', window.location.origin);
-    console.info('[AUTH] redirectTo', redirectTo);
+    const redirectTo = new URL('/home.html', window.location.origin).href;
     const { data, error } = await client.auth.signInWithOAuth({ provider: 'google', options: { redirectTo } });
-    if (error) throw error;
+    if (error) {
+      window.TeamDiagnostics?.error('TL-AUTH-002', 'auth', 'Login Google não iniciou', { redirectTo }, error);
+      throw error;
+    }
     return data;
   }
 
@@ -38,19 +38,12 @@
   } else {
     client.auth.onAuthStateChange((event, nextSession) => {
       session = nextSession || null;
-      if (event === 'SIGNED_IN') console.info('[AUTH] retorno OAuth');
-      if (session) {
-        console.info('[AUTH] sessão encontrada');
-      }
       queueMicrotask(() => notify(event));
     });
     client.auth.getSession().then(({ data, error }) => {
-      if (error) console.error('[AUTH] falha ao recuperar sessão', error.message);
+      if (error) window.TeamDiagnostics?.error('TL-AUTH-001', 'auth', 'Sessão não pôde ser restaurada', {}, error);
       session = data?.session || null;
       initialized = true;
-      if (session) {
-        console.info('[AUTH] sessão encontrada');
-      }
       resolveReady(session);
       notify('INITIAL_SESSION');
     });

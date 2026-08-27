@@ -4,7 +4,7 @@
   const KEY = 'sb_publishable_qgwMhZPrB_3cFv3yCMcToA_9nDvHz-O';
   if (window.teamSupabase) return;
   if (!window.supabase?.createClient) {
-    console.error('[Team Lambreta] SDK Supabase indisponível.');
+    window.TeamDiagnostics?.error('TL-SUPA-001', 'supabase-client', 'SDK Supabase indisponível', { sdk: '@supabase/supabase-js' });
     return;
   }
   window.teamSupabase = window.supabase.createClient(URL, KEY, {

@@ -1,21 +1,34 @@
 <!DOCTYPE html>
 <html lang="pt-PT">
 <head>
+  <link rel="icon" href="/favicon.ico" sizes="any">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+  <link rel="manifest" href="/site.webmanifest">
+  <meta name="theme-color" content="#090c12">
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Team - Team Lambreta</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="preload" as="image" href="img/team-lambreta-header-logo.svg" />
+  <link rel="stylesheet" href="tl-shell-v104.css?v=104.0" />
   <link rel="stylesheet" href="style-v92.css?v=98.0" />
-  <link rel="stylesheet" href="ui-core-v93.css?v=93.0" />
   <link rel="stylesheet" href="team-mobile-v99.css?v=103.1" />
-  <link rel="stylesheet" href="tl-design-system-v100.css?v=102.0" />
+  <link rel="stylesheet" href="tl-design-system-v100.css?v=104.0" />
   <link rel="stylesheet" href="tl-polish-v100.css?v=103.0" />
   <link rel="stylesheet" href="team-join-v102.css?v=102.1" />
   <link rel="stylesheet" href="tl-presentation-hero-v102.css?v=103.0" />
-  <link rel="stylesheet" href="tl-shell-v102.css?v=103.0" />
 </head>
 <body data-cloud-team="1">
   <section id="siteContent" class="site-content team-page">
-    <header class="site-header"></header>
+    <header class="site-header tl-header-v100 tl-header-v102" data-tl-shell-static>
+      <a href="home.html" class="brand brand-logo-link" aria-label="Team Lambreta — página inicial"><img class="brand-logo-image" src="img/team-lambreta-header-logo.svg" alt="Team Lambreta"></a>
+      <button class="tl-mobile-menu-button" type="button" aria-label="Abrir menu" aria-expanded="false"><span></span><span></span><span></span></button><div class="tl-mobile-menu-backdrop" hidden></div>
+      <nav class="tl-main-nav" aria-label="Menu principal"><a href="home.html">Home</a><a href="team.html">Team</a><a href="forum.html">Fórum</a><a href="streamers.html">Streamers</a><a href="eventos.html">Eventos</a></nav>
+      <div class="tl-user-cluster"><div class="tl-status-wrap"><button class="tl-status-trigger" type="button" aria-haspopup="menu" aria-expanded="false"><i class="tl-presence-dot loading"></i><span>A ligar</span></button><div class="tl-dropdown tl-status-menu" role="menu" hidden><button data-presence="online"><i class="tl-presence-dot online"></i>Online</button><button data-presence="busy"><i class="tl-presence-dot busy"></i>Ocupado</button></div></div><div class="tl-user-wrap"><button class="tl-account-trigger" type="button" aria-haspopup="menu" aria-expanded="false"><span class="tl-user-avatar tl-avatar-skeleton" aria-hidden="true"></span><span class="tl-account-copy"><strong>Entrar</strong><small class="tl-role-slot" aria-live="polite"></small></span><span aria-hidden="true">⌄</span></button><div class="tl-dropdown tl-account-menu" role="menu" hidden></div></div><a class="tl-header-icon" href="buddy.html" aria-label="Abrir Buddy e mensagens"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" aria-hidden="true"><path d="M20.5 14.5a4 4 0 0 1-4 4H9l-5.5 3v-14a4 4 0 0 1 4-4h9a4 4 0 0 1 4 4z"/><path d="M8 9.5h8M8 13h5"/></svg><b id="tlHeaderUnread" hidden>0</b></a></div>
+    </header>
 
     <main class="team-esports-page tl-page-hero-shell-v102">
   <section class="tl-page-hero-v102">
@@ -91,17 +104,18 @@
     </footer>
   </section>
 
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="supabase-client.js?v=102.0"></script>
-  <script src="auth-manager.js?v=102.0"></script>
+  <script src="tl-diagnostics-v104.js?v=104.0"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.112.4"></script>
+  <script src="supabase-client.js?v=104.0"></script>
+  <script src="auth-manager.js?v=104.0"></script>
   <script src="presence-manager.js?v=103.0"></script>
   <script src="services/profile-service.js?v=102.5"></script>
   <script src="services/visual-image-service.js?v=103.0"></script>
   <script src="services/permission-service.js?v=102.0"></script>
-  <script src="tl-shell-v102.js?v=103.0"></script>
-  <script src="team-public-v92.js?v=103.0"></script>
+  <script src="tl-shell-v102.js?v=104.0"></script>
+  <script src="team-public-v92.js?v=104.0"></script>
   <script src="participation-v96.js?v=102.0"></script>
   <script src="team-participation-modal-v102.js?v=102.1"></script>
-<script src="community-progress-v938.js?v=93.8.6"></script>
+<script src="community-progress-v938.js?v=104.0"></script>
 </body>
 </html>

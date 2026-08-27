@@ -1,3 +1,5 @@
 screenshots-v102/
 test-artifacts/
 tests-v102/
+.vercel
+.env*

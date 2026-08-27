@@ -90,7 +90,7 @@
   setMode(parsedInitial.mode);
   setVariant(parsedInitial.variant);
 
-  const embedDomain = location.hostname || 'team-lambreta.vercel.app';
+  const embedDomain = location.hostname || 'teamlambreta.net';
   iframe.src = `https://www.tiktok.com/embed/live/@${encodeURIComponent(username)}?autoplay=1&muted=1&controls=1&embed_domain=${encodeURIComponent(embedDomain)}`;
 
   const setMenuOpen = (button, menu, open) => {

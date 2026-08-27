@@ -1,30 +1,24 @@
 <!DOCTYPE html>
 <html lang="pt-PT">
 <head>
+  <link rel="icon" href="/favicon.ico" sizes="any">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+  <link rel="manifest" href="/site.webmanifest">
+  <meta name="theme-color" content="#090c12">
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Assistir Live - Team Lambreta</title>
   <link rel="stylesheet" href="style-v92.css" />
   <link rel="stylesheet" href="ui-core-v93.css?v=93.0" />
   <link rel="stylesheet" href="tl-design-system-v100.css?v=102.0" />
+  <link rel="stylesheet" href="tl-shell-v104.css?v=104.0" />
   <link rel="stylesheet" href="tl-polish-v100.css?v=100.0" />
 </head>
 <body class="live-watch-body">
   <section id="siteContent" class="site-content live-watch-site">
-    <header class="site-header tl-header-v88">
-      <a href="home.html" class="brand brand-logo-link" aria-label="Team Lambreta — página inicial">
-        <img class="brand-logo-image" src="img/team-lambreta-header-logo.svg" alt="Team Lambreta — Lambreta é uma família">
-      </a>
-      <button id="tlMenuButton" class="tl-mobile-menu-button" type="button" aria-label="Abrir menu" aria-expanded="false" aria-controls="tlMainNav"><span></span><span></span><span></span></button>
-      <div id="tlMenuBackdrop" class="tl-mobile-menu-backdrop" hidden></div>
-      <nav id="tlMainNav" class="tl-main-nav" aria-label="Menu principal">
-        <a class="tl-menu-link" href="home.html"><span>Início</span></a>
-        <div class="tl-menu-group"><button class="tl-menu-toggle" type="button" aria-expanded="false"><span>Lambreta</span><b aria-hidden="true">⌄</b></button><div class="tl-submenu"><a href="team.html"><span>Team</span></a><a href="streamers.html"><span>Streamers</span></a></div></div>
-        <div class="tl-menu-group"><button class="tl-menu-toggle" type="button" aria-expanded="false"><span>Comunidade</span><b aria-hidden="true">⌄</b></button><div class="tl-submenu"><a href="forum.html"><span>Fórum</span></a><a href="buddy.html"><span>Buddy</span></a><a href="regras.html"><span>Regras</span></a><a href="ajuda.html"><span>Ajuda</span></a><a href="contacto.html"><span>Contacto</span></a></div></div>
-        <div class="tl-menu-group"><button class="tl-menu-toggle" type="button" aria-expanded="false"><span>Destaques</span><b aria-hidden="true">⌄</b></button><div class="tl-submenu"><a href="eventos.html"><span>Eventos</span></a><a href="conquistas.html"><span>Conquistas</span></a><a href="midia.html"><span>Mídia</span></a></div></div>
-        <a class="tl-menu-link" href="loja.html"><span>Loja</span></a>
-      </nav>
-    </header>
+    <header class="site-header"></header>
 
     <main class="live-watch-shell">
       <section class="live-watch-main">
@@ -72,7 +66,6 @@
       <aside class="online-chat live-watch-chat">
         <div class="chat-head">
           <div><p>CHAT ONLINE</p><h2>Chat da live</h2></div>
-          <div class="status-picker" data-status="online"><span id="onlineDot" class="online-dot online"></span><span id="chatUnreadBadge" class="chat-unread-badge" hidden>0</span><select id="userStatus" aria-label="Escolher status"><option value="online">Online</option><option value="busy">Ocupado</option><option value="away">Ausente</option></select></div>
         </div>
         <div id="chatMessages" class="chat-messages"></div>
         <button id="chatMentionBadge" class="tl-mention-badge" type="button" hidden aria-label="Ver menções"></button>
@@ -80,7 +73,6 @@
           <div class="tl-chat-compose-box"><textarea id="chatInput" maxlength="240" rows="1" placeholder="Escreve no chat da live..." autocomplete="off"></textarea><button class="tl-chat-send tl-chat-send-svg" type="submit" aria-label="Enviar mensagem" title="Enviar"><svg viewBox="0 0 48 48" aria-hidden="true"><path d="M5 6.8 43 24 5 41.2l5.6-14.1L30.5 24l-19.9-3.1L5 6.8Z"/></svg></button><div id="chatMentionSuggestions" class="tl-mention-suggestions" hidden></div></div>
           <label class="tl-enter-toggle"><input id="enterBreakToggle" type="checkbox"><span class="tl-toggle-track" aria-hidden="true"><i></i></span><span>Enter quebra linha</span></label>
         </form>
-        <div class="chat-auth-box chat-auth-compact chat-auth-footer" id="chatAuthBox"><button id="googleLoginBtn" class="google-login-btn" type="button">Entrar com Google</button></div>
         <p id="chatDelayInfo" class="chat-delay-info"></p><p id="chatModerationInfo" class="chat-moderation-info"></p>
         <div id="moderationPanel" class="moderation-panel"><strong id="moderationTarget">Usuário</strong><button type="button" data-mod-action="block-1">Bloquear 1 min</button><button type="button" data-mod-action="block-5">Bloquear 5 min</button><button type="button" data-mod-action="block-15">Bloquear 15 min</button><button type="button" data-mod-action="unblock">Remover silêncio</button><button type="button" data-mod-action="ban">Bloquear permanentemente</button><button type="button" data-mod-action="unban">Remover bloqueio permanente</button><div class="role-assign-box"><span>Atribuir cargo</span><button type="button" data-role-set="admin">Admin</button><button type="button" data-role-set="staff">Staff</button><button type="button" data-role-set="vip">VIP</button><button type="button" data-role-set="supporter">Apoiador</button><button type="button" data-role-set="moderator">Moderador</button><button type="button" data-badge-set="streamer" data-enabled="true">Dar STREAMER</button><button type="button" data-badge-set="streamer" data-enabled="false">Remover STREAMER</button><button type="button" data-role-set="user">Usuário</button></div><button type="button" data-mod-action="close">Fechar</button></div>
       </aside>
@@ -90,11 +82,10 @@
   </section>
 
   <script>window.TEAM_SUPABASE_MODE = true;</script>
-  <script src="data.js"></script>
-  <script src="script-v89.js?v=93.1.1"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="supabase-client.js?v=102.0"></script>
-  <script src="auth-manager.js?v=102.0"></script><script src="presence-manager.js?v=102.0"></script><script src="services/profile-service.js?v=102.0"></script><script src="services/permission-service.js?v=102.0"></script>
+  <script src="tl-diagnostics-v104.js?v=104.0"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.112.4"></script>
+  <script src="supabase-client.js?v=104.0"></script>
+  <script src="auth-manager.js?v=104.0"></script><script src="presence-manager.js?v=103.0"></script><script src="services/profile-service.js?v=102.5"></script><script src="services/permission-service.js?v=102.0"></script>
   <script src="community-safety-v9347.js?v=93.4.7"></script>
   <script>
     (() => {
@@ -142,7 +133,7 @@
       bootLiveChatRoom();
     })();
   </script>
-  <script src="tl-shell-v102.js?v=102.0"></script>
+  <script src="tl-shell-v102.js?v=104.0"></script>
   <script src="error-codes-v92.js"></script>
   <script src="chat-translate-v92.js"></script>
   <script src="community-progress-v938.js?v=93.8.6"></script>
