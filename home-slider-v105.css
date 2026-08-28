@@ -137,7 +137,15 @@
 }
 
 @media (max-width: 680px) {
-  .home-slider { border-radius: 18px; }
+  .home-slider {
+    aspect-ratio: 4 / 5;
+    border-radius: 18px;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .home-slider a,
+  .home-slider button {
+    -webkit-tap-highlight-color: transparent;
+  }
   .home-slider-arrow { width: 44px; height: 44px; }
   .home-slider-arrow.previous { left: 8px; }
   .home-slider-arrow.next { right: 8px; }
