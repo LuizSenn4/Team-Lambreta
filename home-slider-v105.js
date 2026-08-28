@@ -9,7 +9,6 @@
   const previous = root.querySelector('[data-slider-previous]');
   const next = root.querySelector('[data-slider-next]');
   const indicators = root.querySelector('[data-slider-indicators]');
-  const objectUrls = [];
   const hotspotBySlot = Object.freeze({
     1: {label:'Conhecer a Team', href:'team.html', left:71.5, top:84, width:27, height:15},
     2: {label:'Enviar presente', href:'', left:67.5, top:80.5, width:29, height:18},
@@ -70,28 +69,17 @@
     return hotspot;
   };
 
-  const loadSlide = async item => {
-    if (!item.active || !item.imageKey) return null;
-    try {
-      const blob = await storage.get(item.imageKey);
-      if (!blob || !String(blob.type || '').startsWith('image/')) return null;
-      const url = storage.createUrl(blob);
-      if (!url) return null;
-      objectUrls.push(url);
-      return {...item, url, bytes:blob.size};
-    } catch (error) {
-      window.TeamDiagnostics?.error?.('TL-BANNER-013', 'banners', 'Erro ao carregar banner da Home', {slot:item.slot, key:item.imageKey}, error);
-      return null;
-    }
-  };
-
   const mount = async () => {
-    const config = storage.readConfig();
-    const loaded = (await Promise.all(config.map(loadSlide))).filter(Boolean);
+    const config = await storage.readConfig();
+    const loaded = config
+      .filter(item => item.active)
+      .map(item => ({...item, url:storage.resolveUrl(item)}))
+      .filter(item => item.url);
 
     track.replaceChildren();
     indicators.replaceChildren();
     const images = [];
+
     slides = loaded.map((item, index) => {
       const slide = document.createElement('article');
       slide.className = 'home-slider-slide';
@@ -148,10 +136,7 @@
     const delta = (event.changedTouches[0]?.clientX || 0) - touchStartX;
     if (Math.abs(delta) > 45) navigate(delta < 0 ? 1 : -1);
   }, {passive:true});
-  window.addEventListener('pagehide', () => {
-    stopAuto();
-    objectUrls.splice(0).forEach(storage.revokeUrl);
-  }, {once:true});
+  window.addEventListener('pagehide', stopAuto, {once:true});
 
   mount().catch(error => {
     root.hidden = true;
