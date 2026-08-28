@@ -9,6 +9,17 @@
   const imageSource=value=>{const raw=String(value||'').trim();if(/^data:image\/webp;base64,/i.test(raw))return raw;return safeUrl(raw);};
   const fallbackStreamer={id:'ink31-static',display_name:'INK31',main_game:'Fortnite',description:'Fundador e streamer do Team Lambreta. Conteúdo focado em Fortnite, comunidade e muita resenha.',photo_url:'img/streamers/ink31-profile-720.webp',slug:'ink31',tiktok_url:'https://www.tiktok.com/@rv3113',twitch_url:'https://www.twitch.tv/oklm31rv',schedule_text:'Terça a Domingo · horários variáveis',force_live:false,manual_live:false,auto_live:false};
   const streamerRows=new Map();
+  const isLive=row=>Boolean(row?.force_live||row?.manual_live||row?.auto_live);
+  const displayOrder=row=>{const value=Number(row?.display_order);return Number.isFinite(value)?value:999999;};
+  const sortStreamerRows=(a,b)=>{
+    const liveDiff=Number(isLive(b))-Number(isLive(a));
+    if(liveDiff)return liveDiff;
+    const featuredDiff=Number(Boolean(b?.is_featured))-Number(Boolean(a?.is_featured));
+    if(featuredDiff)return featuredDiff;
+    const orderDiff=displayOrder(a)-displayOrder(b);
+    if(orderDiff)return orderDiff;
+    return String(a?.display_name||'').localeCompare(String(b?.display_name||''),'pt',{sensitivity:'base'});
+  };
   const slug=row=>String(row.slug||row.tiktok_username||row.display_name||row.id||'streamer').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');
   const platformIcon=name=>({
     TikTok:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 4c.4 2.3 1.8 3.7 4 4v3c-1.6 0-2.9-.4-4-1.2v5.7A5.5 5.5 0 1 1 10 10v3.1a2.5 2.5 0 1 0 2 2.4V4z"/></svg>',
@@ -30,11 +41,20 @@
   };
   const platformClass=name=>String(name||'').toLowerCase().replace(/[^a-z]/g,'');
   const platformButtons=row=>platforms(row).map(item=>`<span class="home-live-platform platform-${platformClass(item.name)}" data-platform-label="${esc(item.name)}" title="${esc(item.name)}">${platformIcon(item.name)}<span class="sr-only">${esc(item.name)}</span></span>`).join('');
+  const tiktokUsername=row=>{const raw=String(row.tiktok_url||'').trim();const match=/tiktok\.com\/@([\w.\-]+)/i.exec(raw);return match?match[1]:'';};
+  const livePreviewFrame=row=>{
+    const username=tiktokUsername(row);
+    if(!username)return '';
+    const domain=(typeof location!=='undefined'&&location.hostname)||'teamlambreta.net';
+    const src=`https://www.tiktok.com/embed/live/@${encodeURIComponent(username)}?autoplay=1&muted=1&controls=0&embed_domain=${encodeURIComponent(domain)}`;
+    return `<iframe class="home-live-preview" src="${esc(src)}" loading="lazy" tabindex="-1" aria-hidden="true" allow="autoplay" title="Pré-visualização ao vivo" onload="this.classList.add('is-ready')"></iframe>`;
+  };
   const liveCard=row=>{
     const live=Boolean(row.force_live||row.manual_live||row.auto_live);
     const homeImage=imageSource(row.home_card_photo_url)||imageSource(row.photo_url);
     const gameMode=modes(row);
-    return `<button class="home-live-card" type="button" data-watch-streamer="${esc(row.id)}"><span class="home-live-visual">${homeImage?`<img src="${esc(homeImage)}" alt="" loading="lazy" decoding="async" width="480" height="320">`:'<span class="home-live-placeholder tl-image-skeleton" aria-hidden="true"></span>'}<span class="home-live-status">${live?'● AO VIVO':'PRÓXIMA LIVE'}</span></span><span class="home-live-copy"><span class="home-live-heading"><strong>${esc(row.display_name||'Streamer')}</strong><time>${esc(schedule(row))}</time></span><span class="home-live-meta"><b>${esc(row.main_game||'Jogo em atualização')}</b>${gameMode?`<span>${esc(gameMode)}</span>`:''}</span><span class="home-live-platforms">${platformButtons(row)}</span><span class="home-live-description">${esc(row.description||'Streamer oficial da comunidade Team Lambreta.')}</span></span></button>`;
+    const preview=live?livePreviewFrame(row):'';
+    return `<button class="home-live-card" type="button" data-watch-streamer="${esc(row.id)}"><span class="home-live-visual">${homeImage?`<img src="${esc(homeImage)}" alt="" loading="lazy" decoding="async" width="480" height="320">`:'<span class="home-live-placeholder tl-image-skeleton" aria-hidden="true"></span>'}${preview}<span class="home-live-status">${live?'● AO VIVO':'PRÓXIMA LIVE'}</span></span><span class="home-live-copy"><span class="home-live-heading"><strong>${esc(row.display_name||'Streamer')}</strong><time>${esc(schedule(row))}</time></span><span class="home-live-meta"><b>${esc(row.main_game||'Jogo em atualização')}</b>${gameMode?`<span>${esc(gameMode)}</span>`:''}</span><span class="home-live-platforms">${platformButtons(row)}</span><span class="home-live-description">${esc(row.description||'Streamer oficial da comunidade Team Lambreta.')}</span></span></button>`;
   };
   const placeholderLive=position=>`<article class="home-live-card is-placeholder"><span class="home-live-visual"><span class="home-live-placeholder">${String(position).padStart(2,'0')}</span><span class="home-live-status">EM BREVE</span></span><span class="home-live-copy"><span class="home-live-heading"><strong>Próxima live</strong><time>Agenda</time></span><span class="home-live-meta"><b>Jogo em atualização</b></span><span class="home-live-description">A programação será publicada aqui.</span></span></article>`;
 
@@ -61,9 +81,11 @@
   }
   async function loadStreamers(){
     let rows=[];
-    if(sb){const result=await sb.from('streamers').select('*').eq('is_published',true).eq('is_archived',false).order('is_featured',{ascending:false}).order('display_order',{ascending:true}).limit(3);if(!result.error)rows=result.data||[];}
-    if(!rows.some(row=>String(row.display_name).toLowerCase()==='ink31'))rows.unshift(fallbackStreamer);
-    rows=rows.slice(0,3);visualImages?.writeCollection?.('home-streamers',rows);paintStreamers(rows);
+    if(sb){const result=await sb.from('streamers').select('*').eq('is_published',true).eq('is_archived',false);if(!result.error)rows=result.data||[];}
+    if(!rows.some(row=>String(row.display_name).toLowerCase()==='ink31'))rows.push(fallbackStreamer);
+    rows=rows.sort(sortStreamerRows).slice(0,3);
+    visualImages?.writeCollection?.('home-streamers',rows);
+    paintStreamers(rows);
   }
   async function loadForum(){if(!sb)return;const result=await sb.from('forum_topics').select('title,last_activity_at').order('last_activity_at',{ascending:false}).limit(1).maybeSingle();if(result.data?.title)document.getElementById('homeForumSummary').textContent=`Tópico em destaque: ${result.data.title}`;}
   async function loadUpdates(){if(!sb)return;const result=await sb.from('site_updates').select('title,summary').eq('is_published',true).order('published_at',{ascending:false}).limit(1).maybeSingle();if(result.data){document.getElementById('homeUpdateTitle').textContent=result.data.title||'Novidades Team Lambreta';document.getElementById('homeUpdateSummary').textContent=result.data.summary||'Acompanha as mudanças mais recentes do site.';}}
