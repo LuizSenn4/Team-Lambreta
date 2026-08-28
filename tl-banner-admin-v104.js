@@ -103,14 +103,26 @@
           return;
         }
 
-        let sx = 0; let sy = 0; let sw = image.width; let sh = image.height;
-        if (ratio < targetRatio) { sh = image.width / targetRatio; sy = (image.height - sh) / 2; }
-        else if (ratio > targetRatio) { sw = image.height * targetRatio; sx = (image.width - sw) / 2; }
-
         const canvas = document.createElement('canvas');
         canvas.width = preset.width;
         canvas.height = preset.height;
-        canvas.getContext('2d').drawImage(image, sx, sy, sw, sh, 0, 0, canvas.width, canvas.height);
+        const ctx = canvas.getContext('2d');
+
+        if (variant === 'mobile') {
+          ctx.fillStyle = '#080808';
+          ctx.fillRect(0, 0, canvas.width, canvas.height);
+          const scale = Math.min(canvas.width / image.width, canvas.height / image.height);
+          const drawWidth = image.width * scale;
+          const drawHeight = image.height * scale;
+          const dx = (canvas.width - drawWidth) / 2;
+          const dy = (canvas.height - drawHeight) / 2;
+          ctx.drawImage(image, 0, 0, image.width, image.height, dx, dy, drawWidth, drawHeight);
+        } else {
+          let sx = 0; let sy = 0; let sw = image.width; let sh = image.height;
+          if (ratio < targetRatio) { sh = image.width / targetRatio; sy = (image.height - sh) / 2; }
+          else if (ratio > targetRatio) { sw = image.height * targetRatio; sx = (image.width - sw) / 2; }
+          ctx.drawImage(image, sx, sy, sw, sh, 0, 0, canvas.width, canvas.height);
+        }
 
         let quality = .82;
         let optimized = canvas.toDataURL('image/webp', quality);
