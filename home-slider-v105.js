@@ -9,6 +9,7 @@
   const previous = root.querySelector('[data-slider-previous]');
   const next = root.querySelector('[data-slider-next]');
   const indicators = root.querySelector('[data-slider-indicators]');
+  const mobileQuery = window.matchMedia('(max-width: 680px)');
   const hotspotBySlot = Object.freeze({
     1: {label:'Conhecer a Team', href:'team.html', left:71.5, top:84, width:27, height:15},
     2: {label:'Enviar presente', href:'', left:67.5, top:80.5, width:29, height:18},
@@ -70,10 +71,12 @@
   };
 
   const mount = async () => {
+    const isMobile = mobileQuery.matches;
+    root.dataset.sliderVariant = isMobile ? 'mobile' : 'desktop';
     const config = await storage.readConfig();
     const loaded = config
       .filter(item => item.active)
-      .map(item => ({...item, url:storage.resolveUrl(item)}))
+      .map(item => ({...item, url:isMobile ? storage.resolveMobileUrl(item) : storage.resolveUrl(item)}))
       .filter(item => item.url);
 
     track.replaceChildren();
@@ -91,8 +94,8 @@
       const image = document.createElement('img');
       image.src = item.url;
       image.alt = `Banner ${item.slot} Team Lambreta`;
-      image.width = 1920;
-      image.height = 600;
+      image.width = isMobile ? 1080 : 1920;
+      image.height = isMobile ? 1350 : 600;
       image.decoding = 'async';
       image.loading = 'eager';
       if (index === 0) image.fetchPriority = 'high';
@@ -136,6 +139,8 @@
     const delta = (event.changedTouches[0]?.clientX || 0) - touchStartX;
     if (Math.abs(delta) > 45) navigate(delta < 0 ? 1 : -1);
   }, {passive:true});
+  mobileQuery.addEventListener?.('change', () => mount().catch(() => {}));
+  window.addEventListener('tl:banners-updated', () => mount().catch(() => {}));
   window.addEventListener('pagehide', stopAuto, {once:true});
 
   mount().catch(error => {
