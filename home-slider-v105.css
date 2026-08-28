@@ -150,7 +150,7 @@
     border-radius: 20px;
   }
   .home-slider-slide > img {
-    object-fit: contain;
+    object-fit: cover;
     object-position: center;
     background: #080808;
   }
