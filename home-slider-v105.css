@@ -23,6 +23,8 @@
   height: 100%;
   margin: 0;
   padding: 0;
+  overflow: hidden;
+  border-radius: inherit;
 }
 
 .home-slider-slide {
@@ -143,8 +145,12 @@
   .home-slider {
     aspect-ratio: 4 / 5;
     border-radius: 20px;
+    overflow: hidden;
+    clip-path: inset(0 round 20px);
+    -webkit-mask-image: -webkit-radial-gradient(white, black);
     -webkit-tap-highlight-color: transparent;
   }
+  .home-slider-track,
   .home-slider-slide,
   .home-slider-slide > img {
     border-radius: 20px;
