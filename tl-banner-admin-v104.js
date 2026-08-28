@@ -26,10 +26,14 @@
   const uploadMarkup = (item, index, variant) => {
     const preset = PRESETS[variant];
     const preview = variant === 'mobile' ? item.mobilePreview : item.preview;
+    const hasImage = variant === 'mobile'
+      ? Boolean(item.mobileImageKey || item.mobileUrl || item.mobilePreview)
+      : Boolean(item.imageKey || item.url || item.preview);
     return `<div class="admin-slider-variant" data-banner-variant="${variant}">
       <div class="admin-slider-variant-head"><strong>${preset.label}</strong><small>${preset.width}×${preset.height}px · ${variant === 'mobile' ? '4:5' : '16:5 aprox.'}</small></div>
       <label class="admin-slider-drop" data-dropzone="${index}" data-variant="${variant}" tabindex="0" aria-label="Enviar imagem ${preset.label} do Banner ${index + 1}">${preview ? `<img src="${esc(preview)}" alt="Pré-visualização ${preset.label} do Banner ${index + 1}">` : `<span><strong>↥</strong>Clique para enviar ou arraste<small>PNG, JPG, WEBP · Máx. 2 MB<br>${preset.width}×${preset.height}px recomendado</small></span>`}</label>
       <div class="admin-slider-file-button"><button type="button" data-select="${index}" data-variant="${variant}">Selecionar imagem ${preset.label}</button><input type="file" accept="image/png,image/jpeg,image/webp" data-file="${index}" data-variant="${variant}"></div>
+      <button type="button" class="admin-slider-remove" data-remove-variant="${index}" data-variant="${variant}" ${hasImage ? '' : 'disabled'}>♙ Remover ${preset.label}</button>
     </div>`;
   };
 
@@ -38,7 +42,7 @@
     ${uploadMarkup(item, index, 'desktop')}
     ${uploadMarkup(item, index, 'mobile')}
     <label class="admin-slider-link"><span>Link do banner (opcional)</span><input type="url" data-link="${index}" value="${esc(item.link)}" placeholder="https://exemplo.com"></label>
-    <div class="admin-slider-slot-foot"><label class="admin-slider-toggle"><input type="checkbox" data-active="${index}" ${item.active ? 'checked' : ''}> <span>${item.active ? 'Ativo' : 'Inativo'}</span></label><button type="button" class="admin-slider-remove" data-remove="${index}" ${item.imageKey || item.url || item.mobileImageKey || item.mobileUrl || item.preview || item.mobilePreview ? '' : 'disabled'}>♙ Remover</button></div>
+    <div class="admin-slider-slot-foot"><label class="admin-slider-toggle"><input type="checkbox" data-active="${index}" ${item.active ? 'checked' : ''}> <span>${item.active ? 'Ativo' : 'Inativo'}</span></label></div>
     <p class="admin-slider-slot-feedback" data-slot-feedback="${index}" role="status" aria-live="polite"></p>
   </article>`;
 
@@ -68,7 +72,7 @@
       committedBanners = clean.map(item => ({...item}));
       pendingKeys.clear();
       await Promise.all([...obsolete].filter(key => !usedKeys.has(key)).map(removeStorageKey));
-      banners = clean.map(item => ({...item, preview:storage.resolveUrl(item), mobilePreview:storage.resolveMobileUrl(item)}));
+      banners = clean.map(item => ({...item, preview:storage.resolveUrl(item), mobilePreview:item.mobileImageKey || item.mobileUrl ? storage.resolveMobileUrl(item) : ''}));
       render();
       setFeedback(message || 'Banners guardados na nuvem.');
       window.dispatchEvent(new CustomEvent('tl:banners-updated', {detail:clean}));
@@ -166,17 +170,23 @@
     root.querySelectorAll('[data-file]').forEach(input => input.addEventListener('change', () => processFile(input.files?.[0], Number(input.dataset.file), input.dataset.variant)));
     root.querySelectorAll('[data-link]').forEach(input => input.addEventListener('input', () => { banners[Number(input.dataset.link)].link = input.value.trim(); }));
     root.querySelectorAll('[data-active]').forEach(input => input.addEventListener('change', () => { banners[Number(input.dataset.active)].active = input.checked; render(); }));
-    root.querySelectorAll('[data-remove]').forEach(button => button.addEventListener('click', async () => {
-      const index = Number(button.dataset.remove);
-      for (const key of [banners[index].imageKey, banners[index].mobileImageKey]) {
-        if (key && pendingKeys.has(key)) {
-          pendingKeys.delete(key);
-          await removeStorageKey(key);
-        }
+    root.querySelectorAll('[data-remove-variant]').forEach(button => button.addEventListener('click', async () => {
+      const index = Number(button.dataset.removeVariant);
+      const variant = button.dataset.variant === 'mobile' ? 'mobile' : 'desktop';
+      const keyField = variant === 'mobile' ? 'mobileImageKey' : 'imageKey';
+      const urlField = variant === 'mobile' ? 'mobileUrl' : 'url';
+      const previewField = variant === 'mobile' ? 'mobilePreview' : 'preview';
+      const key = banners[index][keyField];
+      if (key && pendingKeys.has(key)) {
+        pendingKeys.delete(key);
+        await removeStorageKey(key);
       }
-      banners[index] = {slot:index + 1, imageKey:'', url:'', mobileImageKey:'', mobileUrl:'', link:'', active:false, preview:'', mobilePreview:''};
+      banners[index][keyField] = '';
+      banners[index][urlField] = '';
+      banners[index][previewField] = '';
+      banners[index].active = Boolean(banners[index].imageKey || banners[index].url || banners[index].mobileImageKey || banners[index].mobileUrl);
       render();
-      setFeedback(`Banner ${index + 1} removido. Clique em “Salvar banners” para publicar.`);
+      setFeedback(`Banner ${index + 1} ${PRESETS[variant].label} removido. Clique em “Salvar banners” para publicar.`);
     }));
     root.querySelectorAll('[data-dropzone]').forEach(zone => {
       const index = Number(zone.dataset.dropzone);
