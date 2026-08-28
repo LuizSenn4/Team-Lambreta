@@ -15,12 +15,16 @@
       const item = bySlot.get(slot) || (Array.isArray(value) ? value[index] : null) || {};
       const imageKey = String(item.imageKey || '').trim();
       const url = String(item.url || '').trim();
+      const mobileImageKey = String(item.mobileImageKey || '').trim();
+      const mobileUrl = String(item.mobileUrl || '').trim();
       return {
         slot,
         imageKey,
         url,
+        mobileImageKey,
+        mobileUrl,
         link:String(item.link || '').trim(),
-        active:Boolean(imageKey || url) && item.active !== false
+        active:Boolean(imageKey || url || mobileImageKey || mobileUrl) && item.active !== false
       };
     });
   };
@@ -86,6 +90,7 @@
   };
 
   const resolveUrl = item => String(item?.url || '').trim() || getPublicUrl(item?.imageKey);
+  const resolveMobileUrl = item => String(item?.mobileUrl || '').trim() || getPublicUrl(item?.mobileImageKey) || resolveUrl(item);
 
   const dataUrlToBlob = dataUrl => {
     const [meta, body] = String(dataUrl).split(',');
@@ -106,6 +111,7 @@
     remove,
     getPublicUrl,
     resolveUrl,
+    resolveMobileUrl,
     dataUrlToBlob
   });
 })();
