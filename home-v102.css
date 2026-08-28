@@ -9,10 +9,15 @@
 .home-live-card,.home-loading-card,.home-empty-card { min-width:0; border:1px solid var(--tl-border); border-radius:18px; background:var(--tl-card); overflow:hidden; }
 .home-live-visual { position:relative; aspect-ratio:3/2; overflow:hidden; background:radial-gradient(circle at 50% 40%,rgba(var(--tl-cyan-rgb),.12),transparent 60%),#070d12; }
 .home-live-visual img { width:100%; height:100%; object-fit:cover; }
-.home-live-preview { position:absolute; top:50%; left:50%; z-index:1; width:100%; height:100%; border:0; opacity:0; pointer-events:none; transition:opacity .3s ease; transform:translate(-50%,-50%) scale(2.7); transform-origin:center; }
+.home-live-visual:has(.home-live-preview) { background:#05080b; }
+.home-live-visual:has(.home-live-preview)::before,
+.home-live-visual:has(.home-live-preview)::after { content:""; position:absolute; top:0; bottom:0; z-index:1; width:31.25%; pointer-events:none; background-color:#07090c; background-image:radial-gradient(circle at 50% 48%,rgba(218,172,64,.20),transparent 52%),linear-gradient(180deg,rgba(7,11,14,.18),rgba(7,11,14,.88)),url("img/team-lambreta-header-logo.svg"); background-repeat:no-repeat; background-position:center,center,center; background-size:100% 100%,100% 100%,78% auto; }
+.home-live-visual:has(.home-live-preview)::before { left:0; border-right:1px solid rgba(218,172,64,.28); }
+.home-live-visual:has(.home-live-preview)::after { right:0; border-left:1px solid rgba(218,172,64,.28); }
+.home-live-preview { position:absolute; top:50%; left:50%; z-index:2; width:37.5%; height:100%; border:0; opacity:0; pointer-events:none; transition:opacity .3s ease; transform:translate(-50%,-50%); transform-origin:center; background:#000; box-shadow:0 0 0 1px rgba(218,172,64,.24),0 0 24px rgba(0,0,0,.72); }
 .home-live-preview.is-ready { opacity:1; }
 .home-live-placeholder { display:grid; place-items:center; width:100%; height:100%; color:rgba(255,255,255,.18); font:800 46px var(--tl-display); }
-.home-live-status { position:absolute; z-index:2; top:12px; left:12px; padding:7px 9px; border:1px solid rgba(var(--tl-cyan-rgb),.35); border-radius:8px; background:rgba(5,10,14,.84); color:var(--tl-cyan); font-size:9px; font-weight:850; letter-spacing:.12em; }
+.home-live-status { position:absolute; z-index:4; top:12px; left:12px; padding:7px 9px; border:1px solid rgba(var(--tl-cyan-rgb),.35); border-radius:8px; background:rgba(5,10,14,.84); color:var(--tl-cyan); font-size:9px; font-weight:850; letter-spacing:.12em; }
 .home-live-copy { padding:17px; }
 .home-live-copy h3 { margin:0 0 6px; font-size:21px; }
 .home-live-copy p { margin:0; color:var(--tl-muted); font-size:12px; }
@@ -45,4 +50,6 @@
   .home-community-main { grid-column:auto; }
   .home-section-head { align-items:start; }
   .home-section-head > a { padding-top:12px; white-space:nowrap; }
+  .home-live-visual:has(.home-live-preview)::before,
+  .home-live-visual:has(.home-live-preview)::after { background-size:100% 100%,100% 100%,72% auto; }
 }
