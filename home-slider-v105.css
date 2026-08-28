@@ -142,6 +142,11 @@
     border-radius: 18px;
     -webkit-tap-highlight-color: transparent;
   }
+  .home-slider-slide > img {
+    object-fit: contain;
+    object-position: center;
+    background: #080808;
+  }
   .home-slider a,
   .home-slider button {
     -webkit-tap-highlight-color: transparent;
