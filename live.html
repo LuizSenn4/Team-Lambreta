@@ -16,6 +16,7 @@
   <link rel="stylesheet" href="tl-shell-v104.css?v=104.0" />
   <link rel="stylesheet" href="tl-polish-v100.css?v=100.0" />
   <style>
+    .live-watch-player-card { position:relative; }
     .live-watch-player-card .team-live-player {
       display:block;
       width:100%;
@@ -27,6 +28,107 @@
     }
     .live-watch-player-card .team-live-player:not(.is-ready) { opacity:0; }
     .live-watch-player-card .team-live-player.is-ready { opacity:1; transition:opacity .25s ease; }
+
+    .tl-gift-overlay {
+      position:absolute;
+      top:24px;
+      left:50%;
+      z-index:30;
+      display:grid;
+      place-items:center;
+      min-width:min(520px,86%);
+      padding:18px 26px;
+      border:1px solid rgba(255,194,74,.5);
+      border-radius:20px;
+      background:linear-gradient(135deg,rgba(5,10,16,.96),rgba(28,17,6,.96));
+      box-shadow:0 18px 60px rgba(0,0,0,.48),0 0 42px rgba(255,181,45,.14);
+      text-align:center;
+      pointer-events:none;
+      opacity:0;
+      transform:translate(-50%,-18px) scale(.92);
+    }
+    .tl-gift-overlay.is-visible { animation:tlGiftPop 3.6s ease both; }
+    .tl-gift-overlay-emoji { font-size:56px; filter:drop-shadow(0 7px 16px rgba(0,0,0,.45)); }
+    .tl-gift-overlay strong { margin-top:5px; color:#fff; font-size:clamp(18px,2.3vw,27px); }
+    .tl-gift-overlay span { margin-top:4px; color:#ffc94f; font-size:12px; font-weight:800; letter-spacing:.09em; }
+    @keyframes tlGiftPop {
+      0% { opacity:0; transform:translate(-50%,-18px) scale(.92); }
+      10%,78% { opacity:1; transform:translate(-50%,0) scale(1); }
+      100% { opacity:0; transform:translate(-50%,-8px) scale(.98); }
+    }
+
+    .tl-live-gifts {
+      margin-top:12px;
+      border:1px solid rgba(255,255,255,.1);
+      border-radius:16px;
+      background:#0a121b;
+      overflow:hidden;
+    }
+    .tl-live-gifts-head {
+      display:flex;
+      align-items:center;
+      gap:12px;
+      padding:12px 14px;
+    }
+    .tl-live-gifts-brand { display:flex; align-items:center; gap:9px; min-width:0; }
+    .tl-live-gifts-brand b { color:#ffc94f; font-size:12px; letter-spacing:.08em; }
+    .tl-live-gifts-balance { margin-left:auto; color:#fff; font-size:13px; font-weight:900; white-space:nowrap; }
+    .tl-gift-toggle {
+      min-height:36px;
+      padding:0 14px;
+      border:1px solid rgba(0,229,255,.35);
+      border-radius:10px;
+      background:rgba(0,229,255,.08);
+      color:#62ebff;
+      font-weight:850;
+      cursor:pointer;
+    }
+    .tl-gift-panel { padding:0 14px 14px; border-top:1px solid rgba(255,255,255,.07); }
+    .tl-gift-qty-row { display:flex; align-items:center; gap:7px; padding:11px 0; }
+    .tl-gift-qty-row span { margin-right:5px; color:#8fa2b4; font-size:11px; font-weight:800; }
+    .tl-gift-qty-row button {
+      min-width:38px;
+      height:30px;
+      border:1px solid rgba(255,255,255,.12);
+      border-radius:8px;
+      background:#101b26;
+      color:#dbe8f2;
+      cursor:pointer;
+    }
+    .tl-gift-qty-row button.is-active { border-color:#ffc94f; color:#ffc94f; background:rgba(255,201,79,.08); }
+    .tl-gift-catalog { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:8px; }
+    .tl-gift-catalog.is-sending { opacity:.55; pointer-events:none; }
+    .tl-gift-card {
+      display:flex;
+      align-items:center;
+      gap:9px;
+      min-width:0;
+      padding:10px;
+      border:1px solid rgba(255,255,255,.1);
+      border-radius:12px;
+      background:#0e1822;
+      color:#fff;
+      text-align:left;
+      cursor:pointer;
+      transition:.18s ease;
+    }
+    .tl-gift-card:hover { transform:translateY(-2px); border-color:rgba(255,201,79,.38); background:#121f2b; }
+    .tl-gift-emoji { flex:0 0 auto; font-size:27px; }
+    .tl-gift-copy { display:grid; min-width:0; }
+    .tl-gift-copy strong { overflow:hidden; text-overflow:ellipsis; white-space:nowrap; font-size:12px; }
+    .tl-gift-copy small { margin-top:2px; color:#ffc94f; font-size:10px; }
+    .tl-gift-status { min-height:17px; margin:9px 0 0; color:#8fa2b4; font-size:11px; }
+    .tl-gift-status[data-kind="success"] { color:#63ff9d; }
+    .tl-gift-status[data-kind="error"] { color:#ff6f7d; }
+    .tl-gift-status[data-kind="info"] { color:#62ebff; }
+
+    @media (max-width:780px) {
+      .tl-gift-catalog { grid-template-columns:repeat(2,minmax(0,1fr)); }
+      .tl-live-gifts-head { flex-wrap:wrap; }
+      .tl-live-gifts-balance { margin-left:0; }
+      .tl-gift-toggle { margin-left:auto; }
+      .tl-gift-overlay { min-width:88%; padding:14px 18px; }
+    }
   </style>
 </head>
 <body class="live-watch-body">
@@ -72,7 +174,21 @@
             <img src="img/streamers/ink31-profile.jpg" alt="Team Lambreta Live">
             <div><span>TEAM LAMBRETA LIVE</span><strong id="liveFallbackTitle">Transmissão Team Lambreta aguardando</strong><p id="liveFallbackText">Quando o OBS do streamer conectar ao nosso servidor, a live aparece aqui automaticamente.</p></div>
           </div>
+          <div id="tlGiftOverlay" class="tl-gift-overlay" aria-live="polite"></div>
         </div>
+
+        <section class="tl-live-gifts" aria-label="TL Coins e presentes">
+          <div class="tl-live-gifts-head">
+            <span class="tl-live-gifts-brand"><span aria-hidden="true">🪙</span><b>TL COINS</b></span>
+            <strong id="tlCoinBalance" class="tl-live-gifts-balance">0 TL</strong>
+            <button id="tlGiftToggle" class="tl-gift-toggle" type="button" aria-expanded="false">🎁 Presentes</button>
+          </div>
+          <div id="tlGiftPanel" class="tl-gift-panel" hidden>
+            <div class="tl-gift-qty-row"><span>Quantidade</span><button type="button" class="is-active" data-gift-qty="1">x1</button><button type="button" data-gift-qty="5">x5</button><button type="button" data-gift-qty="10">x10</button></div>
+            <div id="tlGiftCatalog" class="tl-gift-catalog"></div>
+            <p id="tlGiftStatus" class="tl-gift-status"></p>
+          </div>
+        </section>
       </section>
 
       <aside class="online-chat live-watch-chat">
@@ -152,5 +268,6 @@
   <script src="chat-translate-v92.js"></script>
   <script src="community-progress-v938.js?v=93.8.6"></script>
   <script src="team-live-player-v1.js?v=1.0"></script>
+  <script src="team-live-gifts-v1.js?v=1.0"></script>
 </body>
 </html>
