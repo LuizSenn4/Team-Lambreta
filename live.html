@@ -15,6 +15,19 @@
   <link rel="stylesheet" href="tl-design-system-v100.css?v=102.0" />
   <link rel="stylesheet" href="tl-shell-v104.css?v=104.0" />
   <link rel="stylesheet" href="tl-polish-v100.css?v=100.0" />
+  <style>
+    .live-watch-player-card .team-live-player {
+      display:block;
+      width:100%;
+      height:100%;
+      min-height:clamp(320px,54vw,720px);
+      border:0;
+      background:#000;
+      object-fit:contain;
+    }
+    .live-watch-player-card .team-live-player:not(.is-ready) { opacity:0; }
+    .live-watch-player-card .team-live-player.is-ready { opacity:1; transition:opacity .25s ease; }
+  </style>
 </head>
 <body class="live-watch-body">
   <section id="siteContent" class="site-content live-watch-site">
@@ -26,7 +39,7 @@
           <div class="live-watch-heading-copy">
             <p class="live-watch-kicker"><span class="live-dot"></span> TRANSMISSÃO</p>
             <div class="live-watch-title-line">
-              <h1 id="liveWatchTitle">INK31 ao vivo</h1>
+              <h1 id="liveWatchTitle">Team Lambreta Live</h1>
               <div class="live-meta-inline" aria-label="Informações da transmissão">
                 <div class="live-meta-control-wrap live-meta-game-wrap">
                   <button id="liveGameSelectorBtn" class="live-meta-pill live-meta-pill--game" type="button" aria-haspopup="listbox" aria-expanded="false">
@@ -54,14 +67,13 @@
         </div>
 
         <div class="live-watch-player-card" id="livePlayerCard">
-          <iframe id="tiktokLivePlayer" class="live-watch-player" allow="autoplay; fullscreen" allowfullscreen loading="eager" title="TikTok LIVE"></iframe>
+          <video id="teamLivePlayer" class="live-watch-player team-live-player" controls autoplay muted playsinline preload="auto"></video>
           <div id="livePlayerFallback" class="live-watch-fallback">
-            <img src="img/streamers/ink31-profile.jpg" alt="INK31">
-            <div><span>TEAM LAMBRETA LIVE</span><strong id="liveFallbackTitle">A preparar a transmissão…</strong><p id="liveFallbackText">O player vai aparecer aqui assim que o TikTok autorizar a reprodução.</p></div>
+            <img src="img/streamers/ink31-profile.jpg" alt="Team Lambreta Live">
+            <div><span>TEAM LAMBRETA LIVE</span><strong id="liveFallbackTitle">Transmissão Team Lambreta aguardando</strong><p id="liveFallbackText">Quando o OBS do streamer conectar ao nosso servidor, a live aparece aqui automaticamente.</p></div>
           </div>
         </div>
       </section>
-
 
       <aside class="online-chat live-watch-chat">
         <div class="chat-head">
@@ -84,13 +96,15 @@
   <script>window.TEAM_SUPABASE_MODE = true;</script>
   <script src="tl-diagnostics-v104.js?v=104.0"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.112.4"></script>
+  <script src="https://cdn.jsdelivr.net/npm/hls.js@1/dist/hls.min.js"></script>
   <script src="supabase-client.js?v=104.0"></script>
   <script src="auth-manager.js?v=104.0"></script><script src="presence-manager.js?v=103.0"></script><script src="services/profile-service.js?v=102.5"></script><script src="services/permission-service.js?v=102.0"></script>
   <script src="community-safety-v9347.js?v=93.4.7"></script>
   <script>
     (() => {
-      const rawUser = (new URLSearchParams(location.search).get('user') || 'live').replace(/^@/, '').trim().toLowerCase();
-      const safeUser = rawUser.replace(/[^a-z0-9._-]/g, '').slice(0, 32) || 'live';
+      const liveParams = new URLSearchParams(location.search);
+      const rawUser = (liveParams.get('user') || liveParams.get('streamer') || 'live').replace(/^@/, '').trim().toLowerCase();
+      const safeUser = rawUser.replace(/[^a-z0-9._-]/g, '').slice(0, 64) || 'live';
 
       async function bootLiveChatRoom() {
         let room = `live:${safeUser}`;
@@ -137,6 +151,6 @@
   <script src="error-codes-v92.js"></script>
   <script src="chat-translate-v92.js"></script>
   <script src="community-progress-v938.js?v=93.8.6"></script>
-  <script src="live-page-v9366.js?v=93.8.8"></script>
+  <script src="team-live-player-v1.js?v=1.0"></script>
 </body>
 </html>
