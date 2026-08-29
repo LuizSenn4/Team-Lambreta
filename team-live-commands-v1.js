@@ -33,7 +33,7 @@
     .tl-command-panel[hidden]{display:none!important}
     .tl-command-panel-head{display:flex;align-items:center;gap:8px;margin-bottom:12px;color:#61eaff;font-size:10px;font-weight:950;letter-spacing:1.3px}
     .tl-command-panel-head button{margin-left:auto;width:30px;height:30px;border:1px solid rgba(255,255,255,.1);background:#0b141c;color:#9fb3c0;cursor:pointer}
-    .tl-command-row{display:grid;grid-template-columns:120px 1fr;gap:10px;padding:10px 0;border-top:1px solid rgba(255,255,255,.07)}
+    .tl-command-row{display:grid;grid-template-columns:140px 1fr;gap:10px;padding:10px 0;border-top:1px solid rgba(255,255,255,.07)}
     .tl-command-row code{color:#ffd34e;font-weight:950}.tl-command-row span{color:#9fb0bc;font-size:10px}
     @media(max-width:1050px){.tl-live-side>.tl-live-top{display:none!important}.tl-player-top-side{display:none}.tl-command-panel{inset:8% 5%}}
   `;
@@ -112,6 +112,7 @@
       rows.push(['/top 5','Mostra o TOP 5 desta sala.']);
       rows.push(['/top 0','Oculta o TOP desta sala.']);
     }
+    if(group==='admin') rows.push(['/cargo @nick cargo','Altera o cargo de um utilizador quando permitido.']);
     document.getElementById('tlCommandRows').innerHTML=rows.map(r=>`<div class="tl-command-row"><code>${r[0]}</code><span>${r[1]}</span></div>`).join('');
     panel.hidden=false;
     notify('Lista de comandos aberta com sucesso!');
@@ -176,6 +177,18 @@
     if(m){e.preventDefault();e.stopImmediatePropagation();input.value='';await runTop(Number(m[1]));return;}
     if(/^\/top\s*$/i.test(raw)){e.preventDefault();e.stopImmediatePropagation();input.value='';notify('Exemplo: /top 3, /top 5 ou /top 0.',true);}
   },true);
+
+  const moderationInfo=document.getElementById('chatModerationInfo');
+  if(moderationInfo){
+    let last='';
+    const mirror=()=>{
+      const text=String(moderationInfo.textContent||'').trim();
+      if(!text||text===last)return;
+      last=text;
+      notify(text,moderationInfo.classList.contains('error'));
+    };
+    new MutationObserver(mirror).observe(moderationInfo,{childList:true,subtree:true,characterData:true,attributes:true});
+  }
 
   watchRanking();
   loadProfile();
