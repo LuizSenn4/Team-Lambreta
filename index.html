@@ -11,6 +11,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Team Lambreta</title>
   <link rel="stylesheet" href="intro.css" />
+  <style>
+    .intro-legal-links{position:fixed;left:50%;bottom:14px;z-index:30;transform:translateX(-50%);display:flex;align-items:center;justify-content:center;gap:16px;padding:7px 12px;border:1px solid rgba(255,255,255,.12);border-radius:999px;background:rgba(5,8,13,.7);backdrop-filter:blur(8px);font:600 12px/1 system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;white-space:nowrap}
+    .intro-legal-links a{color:rgba(236,247,255,.78);text-decoration:none}.intro-legal-links a:hover,.intro-legal-links a:focus-visible{color:#35e7ff;text-decoration:underline}
+    @media(max-width:520px){.intro-legal-links{bottom:8px;gap:12px;font-size:11px;padding:7px 10px}}
+  </style>
 </head>
 <body>
   <section id="introScreen" class="intro-screen">
@@ -69,6 +74,11 @@
         <p id="loadingText" class="loading-message">VERIFICANDO EQUIPE...</p>
       </div>
     </main>
+
+    <nav class="intro-legal-links" aria-label="Informação legal">
+      <a href="/terms/">Termos de Serviço</a>
+      <a href="/privacy/">Política de Privacidade</a>
+    </nav>
   </section>
 
   <script src="intro.js"></script>
