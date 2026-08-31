@@ -16,9 +16,12 @@
   const badge = nav.querySelector('[data-bottom-unread]');
 
   function setAvatar(url) {
-    if (!avatar || !avatarImg || !url) return false;
-    avatarImg.src = url;
-    avatar.classList.add('has-photo');
+    const clean = String(url || '').trim();
+    if (!avatar || !avatarImg || !clean) return false;
+    if (avatarImg.getAttribute('src') !== clean) avatarImg.src = clean;
+    avatarImg.onload = () => avatar.classList.add('has-photo');
+    avatarImg.onerror = () => avatar.classList.remove('has-photo');
+    if (avatarImg.complete && avatarImg.naturalWidth > 0) avatar.classList.add('has-photo');
     return true;
   }
 
@@ -33,7 +36,10 @@
       document.querySelector('.tl-user-avatar img'),
       document.querySelector('.tl-account-trigger img')
     ].filter(Boolean);
-    for (const img of candidates) if (img.currentSrc || img.src) return setAvatar(img.currentSrc || img.src);
+    for (const img of candidates) {
+      const src = img.currentSrc || img.src;
+      if (src && setAvatar(src)) return true;
+    }
 
     const shellAvatar = document.querySelector('.tl-user-avatar');
     if (shellAvatar) {
@@ -65,16 +71,17 @@
     syncUnread();
   });
 
-  const observer = new MutationObserver(() => {
-    if (!readAvatarFromDom()) readAvatarFromShell();
-    syncUnread();
-  });
-  observer.observe(document.body, {subtree:true,childList:true,attributes:true,attributeFilter:['src','style','class','hidden']});
+  /* Observe somente conteúdo do perfil. Nunca observe classes do body/nav: evita loop de mutações. */
+  const profileRoot = document.getElementById('profileRoot');
+  if (profileRoot) {
+    const profileObserver = new MutationObserver(() => readAvatarFromDom());
+    profileObserver.observe(profileRoot, {subtree:true, childList:true});
+  }
 
   readAvatarFromShell();
   readAvatarFromDom();
   syncUnread();
-  [250,700,1500,3000].forEach(delay => setTimeout(() => {
+  [300,900,1800].forEach(delay => setTimeout(() => {
     if (!readAvatarFromDom()) readAvatarFromShell();
     syncUnread();
   }, delay));
