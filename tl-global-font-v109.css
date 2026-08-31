@@ -1,0 +1,72 @@
+@import url('https://fonts.googleapis.com/css2?family=Michroma&display=swap');
+
+:root{
+  --font-team-primary:"Michroma",system-ui,sans-serif;
+  --font-team-display:"Michroma",system-ui,sans-serif;
+  --tl-font:"Michroma",system-ui,sans-serif;
+  --tl-display:"Michroma",system-ui,sans-serif;
+  --tl-text:#ffffff;
+  --tl-muted:#b8c3cf;
+}
+
+html body,
+html body p,
+html body span,
+html body strong,
+html body small,
+html body label,
+html body a,
+html body button,
+html body input,
+html body select,
+html body textarea,
+html body option,
+html body legend,
+html body li,
+html body td,
+html body th,
+html body time,
+html body h1,
+html body h2,
+html body h3,
+html body h4,
+html body h5,
+html body h6{
+  font-family:"Michroma",system-ui,sans-serif!important;
+  font-synthesis:none;
+}
+
+/* Preserva apenas a marca dourada, que tem tipografia própria. */
+html body .tl-logo-team-v108,
+html body .tl-logo-motto-v108{font-family:"Cinzel",serif!important}
+html body .tl-logo-word-v108{font-family:"Pirata One",Georgia,serif!important}
+
+/* Mais brilho sem estourar a leitura. */
+html body{color:#fff!important}
+html body :is(h1,h2,h3,h4,h5,h6,.page-title,.section-title,.card-title,.modal-title,.tl-profile-title-v106,.tl-profile-section-title-v106){
+  color:#fff!important;
+  text-shadow:0 0 7px rgba(255,255,255,.10),0 0 12px rgba(5,217,255,.08);
+}
+html body :is(p,small,.muted,[class*=muted]){color:#b8c3cf}
+html body :is(a,button,.tl-profile-action-v106,.tl-profile-tab-v106){text-rendering:geometricPrecision}
+
+/* Cards de jogos: nome sempre aparece dentro do card e ganha destaque. */
+html body :is(.tl-profile-game-card-v106,.game-card,.tl-game-card,.streamer-game-card){
+  position:relative;
+  overflow:hidden;
+  border:1px solid #1d3548;
+  background:linear-gradient(145deg,#0a1622,#07101a 68%);
+  box-shadow:inset 0 0 22px rgba(255,255,255,.018),0 0 0 1px rgba(5,217,255,.015);
+}
+html body :is(.tl-profile-game-card-v106,.game-card,.tl-game-card,.streamer-game-card) :is(.game-name,.game-title,[data-game-name]){
+  display:block!important;
+  width:100%;
+  margin-top:8px;
+  color:#fff!important;
+  font-family:"Michroma",system-ui,sans-serif!important;
+  font-size:clamp(10px,1.5vw,13px)!important;
+  line-height:1.35;
+  text-align:center;
+  text-shadow:0 0 8px rgba(255,255,255,.10);
+}
+html body .tl-profile-game-card-v106:hover{border-color:rgba(5,217,255,.52);box-shadow:0 0 18px rgba(5,217,255,.08)}
