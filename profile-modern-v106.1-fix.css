@@ -22,8 +22,68 @@
   overflow-wrap:anywhere;
 }
 
+/* 106.2 — identidade visual e tabs do perfil */
+.tl-profile-topbar-v106{
+  position:relative;
+}
+
+.tl-profile-topbar-v106 > .tl-profile-icon-button-v106,
+.tl-profile-top-actions-v106{
+  position:relative;
+  z-index:2;
+}
+
+.tl-profile-brand-v106{
+  position:absolute;
+  left:50%;
+  top:50%;
+  transform:translate(-50%,-50%);
+  width:min(360px,46vw);
+  max-width:calc(100% - 220px);
+  z-index:1;
+}
+
+.tl-profile-brand-v106 img{
+  width:100%;
+  max-width:none;
+  height:auto;
+  filter:drop-shadow(0 5px 14px rgba(244,168,28,.16));
+}
+
+/* A nova marca já contém o lema; evita duplicação no header. */
+.tl-profile-brand-v106 > span{
+  display:none;
+}
+
+/* Mantém os quatro blocos exatamente com a mesma largura e composição. */
+.tl-profile-tabs-v106{
+  grid-template-columns:repeat(4,minmax(0,1fr));
+}
+
+.tl-profile-tab-v106{
+  min-width:0;
+}
+
+.tl-profile-tab-copy-v106{
+  min-width:0;
+}
+
+/* Em REDES fica somente o título; o espaço é preservado para manter simetria. */
+.tl-profile-tab-v106:nth-child(3) .tl-profile-tab-copy-v106 small{
+  visibility:hidden;
+}
+
+.tl-profile-social-v106[data-href]{
+  cursor:pointer;
+}
+
 @media(max-width:640px){
   .tl-profile-main-v106{padding:10px 9px 0}
+
+  .tl-profile-brand-v106{
+    width:min(210px,48vw);
+    max-width:none;
+  }
 
   .tl-profile-hero-v106{
     min-height:0;
@@ -140,7 +200,8 @@
 
   .tl-profile-tabs-v106{min-height:78px}
   .tl-profile-tab-v106{gap:4px;padding:9px 3px}
-  .tl-profile-tab-v106 svg{width:25px;height:25px}
+  .tl-profile-tab-v106 svg{width:25px;height:25px;flex:0 0 25px}
+  .tl-profile-tab-copy-v106{align-items:center;text-align:center}
   .tl-profile-tab-copy-v106 strong{font-size:10.5px}
   .tl-profile-tab-copy-v106 small{font-size:8.5px;line-height:1.15;text-align:center}
 
@@ -162,6 +223,10 @@
 }
 
 @media(max-width:420px){
+  .tl-profile-brand-v106{
+    width:min(184px,48vw);
+  }
+
   .tl-profile-hero-content-v106{
     grid-template-columns:112px minmax(0,1fr);
     gap:11px;
