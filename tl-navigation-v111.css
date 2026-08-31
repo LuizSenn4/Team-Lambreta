@@ -2,19 +2,19 @@
 
 :root{--tl-nav-bg:#02070d;--tl-nav-cyan:#05d9ff;--tl-nav-line:rgba(65,112,143,.30);--tl-nav-text:#aeb8c4}
 
-/* Topo oficial: o mesmo desenho-base do Profile em todo o site. */
-.tl-unified-topbar-v111{position:relative!important;display:grid!important;grid-template-columns:56px 1fr 56px!important;align-items:center!important;min-height:176px!important;padding:12px 18px!important;border-bottom:1px solid rgba(44,94,124,.26)!important;background:#02070d!important;z-index:40!important}
+/* Topo oficial: medidas copiadas do Profile. */
+.tl-unified-topbar-v111{position:relative!important;display:grid!important;grid-template-columns:56px 1fr 56px!important;align-items:center!important;min-height:176px!important;padding:12px 18px!important;border-bottom:1px solid rgba(44,94,124,.26)!important;background:#02070d!important;z-index:40!important;overflow:hidden!important}
 .tl-unified-topbar-v111 .tl-mobile-menu-button,.tl-unified-topbar-v111 .tl-profile-icon-button-v106{position:relative!important;z-index:4!important;grid-column:1!important;grid-row:1!important;display:grid!important;place-items:center!important;width:48px!important;height:48px!important;margin:0!important;padding:0!important;border:0!important;background:transparent!important;box-shadow:none!important}
 .tl-unified-topbar-v111 .tl-mobile-menu-button{gap:6px!important}
 .tl-unified-topbar-v111 .tl-mobile-menu-button span{display:block!important;width:32px!important;height:2px!important;margin:0!important;border:0!important;border-radius:2px!important;background:#f7f7f7!important}
 .tl-unified-topbar-v111 .tl-profile-icon-button-v106 svg{width:35px;height:35px;fill:none;stroke:#f7f7f7;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
-.tl-unified-brand-v111{position:absolute!important;left:50%!important;top:50%!important;transform:translate(-50%,-50%)!important;width:min(78vw,620px)!important;max-width:calc(100% - 110px)!important;text-align:center!important;text-decoration:none!important;line-height:1!important;z-index:2!important}
-.tl-unified-brand-v111 .tl-logo-team-v111{display:flex;align-items:center;justify-content:center;gap:15px;margin-bottom:-4px;font-family:'Cinzel',serif!important;font-size:clamp(18px,3.5vw,30px)!important;font-weight:700;letter-spacing:.32em;color:#f8dfa1;text-shadow:0 1px 1px #2e1700}
-.tl-unified-brand-v111 .tl-logo-team-v111:before,.tl-unified-brand-v111 .tl-logo-team-v111:after{content:'';height:2px;flex:1;background:linear-gradient(90deg,transparent,#f0a912 35%,#ffd25f 70%,#8b4804);box-shadow:0 0 5px rgba(255,183,37,.35)}
-.tl-unified-brand-v111 .tl-logo-team-v111:after{transform:scaleX(-1)}
-.tl-unified-brand-v111 .tl-logo-word-v111{display:block;font-family:'Pirata One',Georgia,serif!important;font-size:clamp(62px,12vw,108px)!important;font-weight:400;letter-spacing:-.025em;white-space:nowrap;background:linear-gradient(180deg,#fff1a7 0%,#ffd144 12%,#efa817 36%,#c37208 65%,#6c3200 100%);-webkit-background-clip:text;background-clip:text;color:transparent;-webkit-text-stroke:1px #f0a923;text-shadow:0 3px 0 #4a2100,0 7px 0 #1b0c00,0 9px 15px rgba(0,0,0,.7)}
-.tl-unified-brand-v111 .tl-logo-motto-v111{display:flex;align-items:center;justify-content:center;gap:9px;margin-top:1px;font-family:'Cinzel',serif!important;font-size:clamp(9px,1.7vw,14px)!important;font-weight:700;letter-spacing:.12em;color:#f1f0e9;white-space:nowrap}
-.tl-unified-brand-v111 .tl-logo-motto-v111 b{font-family:inherit!important;color:#eaa516}
+.tl-unified-brand-v111{position:absolute!important;display:block!important;left:50%!important;top:50%!important;transform:translate(-50%,-50%)!important;width:min(78vw,620px)!important;max-width:calc(100% - 100px)!important;margin:0!important;padding:0!important;text-align:center!important;text-decoration:none!important;line-height:1!important;z-index:2!important;overflow:visible!important}
+.tl-unified-brand-v111 .tl-logo-team-v111{position:relative!important;display:flex!important;align-items:center!important;justify-content:center!important;gap:15px!important;margin:0 0 -4px!important;font-family:'Cinzel',serif!important;font-size:clamp(18px,3.5vw,30px)!important;font-weight:700!important;letter-spacing:.32em!important;color:#f8dfa1!important;text-shadow:0 1px 1px #2e1700!important;white-space:nowrap!important}
+.tl-unified-brand-v111 .tl-logo-team-v111:before,.tl-unified-brand-v111 .tl-logo-team-v111:after{content:''!important;height:2px!important;flex:1!important;background:linear-gradient(90deg,transparent,#f0a912 35%,#ffd25f 70%,#8b4804)!important;box-shadow:0 0 5px rgba(255,183,37,.35)!important}
+.tl-unified-brand-v111 .tl-logo-team-v111:after{transform:scaleX(-1)!important}
+.tl-unified-brand-v111 .tl-logo-word-v111{display:block!important;margin:0!important;padding:0!important;font-family:'Pirata One',Georgia,serif!important;font-size:clamp(62px,12vw,108px)!important;font-weight:400!important;line-height:1!important;letter-spacing:-.025em!important;white-space:nowrap!important;background:linear-gradient(180deg,#fff1a7 0%,#ffd144 12%,#efa817 36%,#c37208 65%,#6c3200 100%)!important;-webkit-background-clip:text!important;background-clip:text!important;color:transparent!important;-webkit-text-stroke:1px #f0a923!important;text-shadow:0 3px 0 #4a2100,0 7px 0 #1b0c00,0 9px 15px rgba(0,0,0,.7)!important}
+.tl-unified-brand-v111 .tl-logo-motto-v111{display:flex!important;align-items:center!important;justify-content:center!important;gap:9px!important;margin-top:1px!important;font-family:'Cinzel',serif!important;font-size:clamp(9px,1.7vw,14px)!important;font-weight:700!important;letter-spacing:.12em!important;color:#f1f0e9!important;white-space:nowrap!important}
+.tl-unified-brand-v111 .tl-logo-motto-v111 b{font-family:inherit!important;color:#eaa516!important;font-size:.8em!important}
 .tl-unified-topbar-v111 .tl-user-cluster{display:none!important}
 
 /* Barra inferior oficial. */
@@ -22,7 +22,7 @@ body.tl-nav-v111-enabled{padding-bottom:calc(78px + env(safe-area-inset-bottom))
 .tl-bottom-nav-v111{position:fixed;left:50%;bottom:0;transform:translateX(-50%);z-index:9999;display:grid;grid-template-columns:repeat(5,minmax(0,1fr));width:min(100%,1040px);min-height:72px;padding:5px 8px calc(5px + env(safe-area-inset-bottom));border-top:1px solid var(--tl-nav-line);background:rgba(2,7,13,.96);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);box-shadow:0 -12px 32px rgba(0,0,0,.34)}
 .tl-bottom-nav-v111>a{position:relative;display:flex;min-width:0;flex-direction:column;align-items:center;justify-content:center;gap:5px;padding:5px 2px;border-radius:12px;color:var(--tl-nav-text)!important;text-decoration:none!important;font-family:'Michroma',system-ui,sans-serif!important;-webkit-tap-highlight-color:transparent}
 .tl-bottom-nav-v111>a svg{width:26px;height:26px;fill:none;stroke:currentColor;stroke-width:1.75;stroke-linecap:round;stroke-linejoin:round}
-.tl-bottom-nav-v111>a>span:last-child{font-family:'Michroma',system-ui,sans-serif!important;font-size:clamp(7px,2vw,10px)!important;line-height:1;white-space:nowrap;letter-spacing:0!important}
+.tl-bottom-nav-v111>a>span:last-child{font-family:'Michroma',system-ui,sans-serif!important;font-size:clamp(7px,2vw,10px)!important;line-height:1;white-space:nowrap;letter-spacing:0!important;text-transform:none!important}
 .tl-bottom-nav-v111>a.is-active{color:var(--tl-nav-cyan)!important;background:linear-gradient(180deg,rgba(5,217,255,.07),transparent)}
 .tl-bottom-nav-v111>a.is-active:before{content:'';position:absolute;top:-5px;left:23%;right:23%;height:2px;border-radius:3px;background:var(--tl-nav-cyan);box-shadow:0 0 10px rgba(5,217,255,.75)}
 .tl-bottom-avatar-v111{position:relative;display:grid;place-items:center;width:31px;height:31px;overflow:hidden;border:1px solid #5b6874;border-radius:50%;background:#0b141d;color:currentColor}
@@ -34,11 +34,8 @@ body.tl-nav-v111-enabled{padding-bottom:calc(78px + env(safe-area-inset-bottom))
 .tl-bottom-nav-badge-v111[hidden]{display:none!important}
 
 @media(max-width:680px){
-  .tl-unified-topbar-v111{min-height:174px!important;padding:10px 13px!important}
-  .tl-unified-brand-v111{width:min(76vw,430px)!important;max-width:calc(100% - 88px)!important}
-  .tl-unified-brand-v111 .tl-logo-team-v111{font-size:clamp(15px,4.1vw,22px)!important;gap:8px;letter-spacing:.24em}
-  .tl-unified-brand-v111 .tl-logo-word-v111{font-size:clamp(60px,17vw,88px)!important}
-  .tl-unified-brand-v111 .tl-logo-motto-v111{font-size:clamp(7px,2.15vw,10px)!important;gap:5px;letter-spacing:.07em}
+  .tl-unified-topbar-v111{min-height:176px!important;padding:12px 18px!important}
+  .tl-unified-brand-v111{width:min(78vw,620px)!important;max-width:calc(100% - 100px)!important}
   .tl-bottom-nav-v111{min-height:70px;padding-left:3px;padding-right:3px}
   .tl-bottom-nav-v111>a{gap:4px;padding-left:0;padding-right:0}
   .tl-bottom-nav-v111>a svg{width:25px;height:25px}
