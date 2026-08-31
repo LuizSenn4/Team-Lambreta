@@ -18,6 +18,8 @@
     MEMBRO: 'member'
   });
 
+  const OFFICIAL_VERIFIED_ROLES = new Set(['developer', 'administrator', 'moderator']);
+
   const normalize = value => String(value || '')
     .normalize('NFD')
     .replace(/[\u0300-\u036f]/g, '')
@@ -42,8 +44,22 @@
     host.setAttribute('aria-hidden', 'true');
   }
 
+  function enforceOfficialVerifiedBadge() {
+    const roleKeys = Array.from(document.querySelectorAll('.tl-profile-role-v106'))
+      .map(role => ROLE_KEYS[normalize(role.querySelector('b')?.textContent)])
+      .filter(Boolean);
+    const isOfficial = roleKeys.some(key => OFFICIAL_VERIFIED_ROLES.has(key));
+    const badge = document.querySelector('.tl-profile-verified-v106');
+    if (badge && !isOfficial) badge.remove();
+    if (badge && isOfficial) {
+      badge.setAttribute('title', 'Conta oficial Team Lambreta');
+      badge.setAttribute('aria-label', 'Conta oficial Team Lambreta');
+    }
+  }
+
   function repairAll() {
     document.querySelectorAll('.tl-profile-role-v106').forEach(repairRoleIcon);
+    enforceOfficialVerifiedBadge();
   }
 
   const profileRoot = document.getElementById('profileRoot');
