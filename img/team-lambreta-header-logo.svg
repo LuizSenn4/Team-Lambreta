@@ -1,51 +1,12 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 210" role="img" aria-labelledby="title desc">
-  <title id="title">Team Lambreta</title>
-  <desc id="desc">Team Lambreta — União, Disciplina, Respeito</desc>
-  <defs>
-    <linearGradient id="goldMain" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0" stop-color="#fff4b0"/>
-      <stop offset="0.18" stop-color="#ffd75a"/>
-      <stop offset="0.48" stop-color="#e99a12"/>
-      <stop offset="0.74" stop-color="#b86408"/>
-      <stop offset="1" stop-color="#6e3204"/>
-    </linearGradient>
-    <linearGradient id="goldEdge" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0" stop-color="#fff1a0"/>
-      <stop offset="0.45" stop-color="#f5b51f"/>
-      <stop offset="1" stop-color="#8b4707"/>
-    </linearGradient>
-    <linearGradient id="silverGold" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0" stop-color="#fffdf1"/>
-      <stop offset="0.5" stop-color="#eee1bd"/>
-      <stop offset="1" stop-color="#ad8a4d"/>
-    </linearGradient>
-    <filter id="depth" x="-20%" y="-30%" width="140%" height="170%">
-      <feGaussianBlur in="SourceAlpha" stdDeviation="3" result="blur"/>
-      <feOffset dy="7" result="off"/>
-      <feColorMatrix in="off" type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 .8 0" result="shadow"/>
-      <feMerge><feMergeNode in="shadow"/><feMergeNode in="SourceGraphic"/></feMerge>
-    </filter>
-    <filter id="softGlow" x="-30%" y="-30%" width="160%" height="160%">
-      <feGaussianBlur stdDeviation="2.2" result="g"/>
-      <feMerge><feMergeNode in="g"/><feMergeNode in="SourceGraphic"/></feMerge>
-    </filter>
-  </defs>
-
-  <g fill="none" stroke="url(#goldEdge)" stroke-width="2.5" stroke-linecap="round" opacity=".95">
-    <path d="M42 47H252"/>
-    <path d="M468 47H678"/>
-  </g>
-  <text x="360" y="58" text-anchor="middle" fill="url(#silverGold)" stroke="#3c2204" stroke-width="1.2" paint-order="stroke fill" font-family="Inter,Arial,sans-serif" font-size="34" font-weight="800" letter-spacing="18">TEAM</text>
-
-  <g filter="url(#depth)">
-    <text x="360" y="145" text-anchor="middle" fill="#311600" stroke="#160900" stroke-width="10" paint-order="stroke fill" font-family="Georgia,'Times New Roman',serif" font-size="104" font-style="italic" font-weight="900" letter-spacing="-4">Lambreta</text>
-    <text x="360" y="139" text-anchor="middle" fill="url(#goldMain)" stroke="url(#goldEdge)" stroke-width="3.4" paint-order="stroke fill" font-family="Georgia,'Times New Roman',serif" font-size="104" font-style="italic" font-weight="900" letter-spacing="-4">Lambreta</text>
-    <text x="360" y="132" text-anchor="middle" fill="none" stroke="#fff1a0" stroke-width="1.2" opacity=".72" font-family="Georgia,'Times New Roman',serif" font-size="104" font-style="italic" font-weight="900" letter-spacing="-4">Lambreta</text>
-  </g>
-
-  <g filter="url(#softGlow)">
-    <path d="M88 176H206" stroke="url(#goldEdge)" stroke-width="2"/>
-    <path d="M514 176H632" stroke="url(#goldEdge)" stroke-width="2"/>
-    <text x="360" y="185" text-anchor="middle" fill="url(#silverGold)" stroke="#2b1b08" stroke-width=".8" paint-order="stroke fill" font-family="Inter,Arial,sans-serif" font-size="20" font-weight="800" letter-spacing="5.3">UNIÃO <tspan fill="#e9a31d">•</tspan> DISCIPLINA <tspan fill="#e9a31d">•</tspan> RESPEITO</text>
-  </g>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 240" role="img" aria-labelledby="title desc">
+<title id="title">Team Lambreta</title><desc id="desc">Team Lambreta — União, Disciplina, Respeito</desc>
+<defs>
+<linearGradient id="gold" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff1a7"/><stop offset=".12" stop-color="#ffd144"/><stop offset=".36" stop-color="#efa817"/><stop offset=".65" stop-color="#c37208"/><stop offset="1" stop-color="#6c3200"/></linearGradient>
+<linearGradient id="edge"><stop stop-color="#ffd25f"/><stop offset=".55" stop-color="#f0a912"/><stop offset="1" stop-color="#8b4804"/></linearGradient>
+<filter id="depth" x="-20%" y="-30%" width="140%" height="180%"><feGaussianBlur in="SourceAlpha" stdDeviation="2.5" result="b"/><feOffset in="b" dy="8" result="o"/><feColorMatrix in="o" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 .9 0" result="s"/><feMerge><feMergeNode in="s"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+</defs>
+<g fill="none" stroke="url(#edge)" stroke-width="3" stroke-linecap="round"><path d="M48 49H270"/><path d="M490 49H712"/></g>
+<text x="380" y="63" text-anchor="middle" fill="#f8dfa1" stroke="#2e1700" stroke-width="1" paint-order="stroke fill" font-family="Cinzel,Georgia,serif" font-size="37" font-weight="700" letter-spacing="15">TEAM</text>
+<g filter="url(#depth)"><text x="380" y="166" text-anchor="middle" fill="url(#gold)" stroke="#f0a923" stroke-width="2.8" paint-order="stroke fill" font-family="Pirata One,Georgia,serif" font-size="132" letter-spacing="-3">Lambreta</text></g>
+<text x="380" y="215" text-anchor="middle" fill="#f1f0e9" font-family="Cinzel,Georgia,serif" font-size="21" font-weight="700" letter-spacing="3.8">UNIÃO <tspan fill="#eaa516">•</tspan> DISCIPLINA <tspan fill="#eaa516">•</tspan> RESPEITO</text>
 </svg>
