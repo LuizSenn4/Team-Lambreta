@@ -5,13 +5,8 @@
 .tl113-header{position:relative;display:grid;grid-template-columns:64px 1fr 64px;align-items:center;width:100%;min-height:196px;padding:18px 16px;border-bottom:1px solid rgba(44,94,124,.26);background:var(--tl113-bg);overflow:visible;z-index:40}
 .tl113-menu-button{grid-column:1;display:grid;place-items:center;width:52px;height:52px;padding:0;border:1px solid rgba(77,112,137,.35);border-radius:14px;background:#07101a;color:#fff;cursor:pointer;z-index:3}
 .tl113-menu-button svg{width:34px;height:34px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round}
-.tl113-brand{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);display:block;width:min(76vw,600px);max-width:calc(100% - 118px);padding:10px 0;text-align:center;text-decoration:none;line-height:1;z-index:2}
-.tl113-brand-team{display:flex;align-items:center;justify-content:center;gap:14px;margin:0 0 -3px;color:#f8dfa1;font-family:'Cinzel',serif;font-size:clamp(17px,3.4vw,28px);font-weight:700;letter-spacing:.30em;white-space:nowrap;text-shadow:0 1px 1px #2e1700}
-.tl113-brand-team::before,.tl113-brand-team::after{content:'';display:block;flex:1;height:2px;background:linear-gradient(90deg,transparent,#f0a912 35%,#ffd25f 70%,#8b4804);box-shadow:0 0 5px rgba(255,183,37,.35)}
-.tl113-brand-team::after{transform:scaleX(-1)}
-.tl113-brand-word{display:block;margin:0;color:transparent;font-family:'Pirata One',Georgia,serif;font-size:clamp(58px,11.6vw,102px);font-weight:400;line-height:1;letter-spacing:-.025em;white-space:nowrap;background:linear-gradient(180deg,#fff1a7 0%,#ffd144 12%,#efa817 36%,#c37208 65%,#6c3200 100%);-webkit-background-clip:text;background-clip:text;-webkit-text-stroke:1px #f0a923;text-shadow:0 3px 0 #4a2100,0 7px 0 #1b0c00,0 9px 15px rgba(0,0,0,.7)}
-.tl113-brand-motto{display:flex;align-items:center;justify-content:center;gap:8px;margin-top:2px;color:#f1f0e9;font-family:'Cinzel',serif;font-size:clamp(8px,1.65vw,13px);font-weight:700;letter-spacing:.11em;white-space:nowrap}
-.tl113-brand-motto b{color:#eaa516;font-family:inherit;font-size:.8em}
+.tl113-brand{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);display:block;width:min(86vw,680px);max-width:calc(100% - 42px);height:164px;padding:0;text-align:center;text-decoration:none;line-height:1;z-index:2;background:url('img/team-lambreta-header-logo.svg') center/contain no-repeat}
+.tl113-brand-team,.tl113-brand-word,.tl113-brand-motto{display:none!important}
 .tl113-drawer{position:absolute;top:160px;left:16px;width:230px;padding:9px;border:1px solid #1b3346;border-radius:14px;background:#06111b;box-shadow:0 18px 45px rgba(0,0,0,.48);z-index:50}
 .tl113-drawer[hidden]{display:none}
 .tl113-drawer a{display:block;padding:12px 13px;border-radius:9px;color:#dce4eb;font-family:'Michroma',system-ui,sans-serif;font-size:12px;text-decoration:none}
@@ -31,4 +26,4 @@ body.tl113-has-bottom-nav{padding-bottom:calc(78px + env(safe-area-inset-bottom)
 .tl113-bottom-nav>a.is-active .tl113-avatar{border-color:var(--tl113-cyan);box-shadow:0 0 0 2px rgba(5,217,255,.12),0 0 12px rgba(5,217,255,.18)}
 .tl113-badge{position:absolute;top:3px;left:calc(50% + 7px);display:grid;place-items:center;min-width:17px;height:17px;padding:0 4px;border:2px solid var(--tl113-bg);border-radius:999px;background:#ff405e;color:#fff;font:700 9px/1 system-ui,sans-serif}.tl113-badge[hidden]{display:none}
 
-@media(max-width:680px){.tl113-header{min-height:196px;padding:18px 14px}.tl113-brand{width:min(76vw,520px);max-width:calc(100% - 112px);padding:14px 0}.tl113-brand-team{font-size:clamp(15px,4vw,21px);gap:8px;letter-spacing:.24em}.tl113-brand-word{font-size:clamp(56px,15.2vw,82px)}.tl113-brand-motto{font-size:clamp(7px,2vw,9px);gap:5px;letter-spacing:.07em}.tl113-drawer{top:158px}.tl113-bottom-nav{min-height:70px}.tl113-bottom-label{font-size:9px}}
+@media(max-width:680px){.tl113-header{min-height:196px;padding:18px 14px}.tl113-brand{width:94vw;max-width:none;height:176px;padding:0}.tl113-drawer{top:158px}.tl113-bottom-nav{min-height:70px}.tl113-bottom-label{font-size:9px}}
