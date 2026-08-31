@@ -1,8 +1,8 @@
 (() => {
   'use strict';
 
-  if (window.__TL_PROFILE_1061_ROLE_FIX__) return;
-  window.__TL_PROFILE_1061_ROLE_FIX__ = true;
+  if (window.__TL_PROFILE_107_FIX__) return;
+  window.__TL_PROFILE_107_FIX__ = true;
 
   const ROLE_KEYS = Object.freeze({
     BOSS: 'boss',
@@ -38,8 +38,6 @@
     const svg = trustedIcon.trim();
     if (!/^<svg\b[\s\S]*<\/svg>$/.test(svg)) return;
 
-    // O SVG vem exclusivamente do catálogo interno congelado de cargos.
-    // Nunca usamos conteúdo de perfil/usuário como HTML.
     host.innerHTML = svg;
     host.setAttribute('aria-hidden', 'true');
   }
