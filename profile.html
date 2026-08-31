@@ -1,53 +1,27 @@
 <!doctype html>
 <html lang="pt-PT">
 <head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#02070d">
+  <title>Perfil — Team Lambreta</title>
+  <meta name="description" content="Perfil público de membro da comunidade Team Lambreta.">
   <link rel="icon" href="/favicon.ico" sizes="any">
   <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
   <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
   <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
   <link rel="manifest" href="/site.webmanifest">
-  <meta name="theme-color" content="#02070d">
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-  <title>Perfil — Team Lambreta</title>
-  <meta name="description" content="Perfil público de membro da comunidade Team Lambreta.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="profile-modern-v108.css?v=108.0">
-  <link rel="stylesheet" href="tl-site-chrome-v113.css?v=113.0">
+  <link rel="stylesheet" href="tl-shell-v114.css?v=114.1">
 </head>
 <body class="tl-profile-page-v106">
   <div class="tl-profile-app-v106">
-    <header class="tl113-header" aria-label="Cabeçalho Team Lambreta">
-      <button class="tl113-menu-button" type="button" data-tl113-menu aria-label="Abrir menu" aria-expanded="false">
-        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
-      </button>
-      <a class="tl113-brand" href="home.html" aria-label="Team Lambreta — início">
-        <span class="tl113-brand-team">TEAM</span>
-        <span class="tl113-brand-word">Lambreta</span>
-        <span class="tl113-brand-motto">UNIÃO <b>•</b> DISCIPLINA <b>•</b> RESPEITO</span>
-      </a>
-      <nav class="tl113-drawer" data-tl113-drawer hidden>
-        <a href="home.html">Home</a>
-        <a href="forum.html">Fórum</a>
-        <a href="streamers.html">Streamers</a>
-        <a href="buddy.html">Chat</a>
-        <a href="profile.html">Perfil</a>
-      </nav>
-    </header>
-
     <main id="profileRoot" class="tl-profile-main-v106">
       <section class="tl-profile-loading-v106" aria-live="polite"><span></span><span></span><span></span><p>A carregar perfil…</p></section>
     </main>
   </div>
-
-  <nav class="tl113-bottom-nav" data-tl113-bottom-nav aria-label="Navegação principal">
-    <a href="home.html" data-nav-key="home"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m3 11 9-8 9 8v9h-6v-6H9v6H3Z"/></svg><span class="tl113-bottom-label">Home</span></a>
-    <a href="forum.html" data-nav-key="forum"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 5h14v11H9l-4 3V5Z"/><path d="M8 9h8M8 12h6"/></svg><span class="tl113-bottom-label">Fórum</span></a>
-    <a href="streamers.html" data-nav-key="streamers"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="2"/><path d="M7.8 7.8a6 6 0 0 0 0 8.4M16.2 7.8a6 6 0 0 1 0 8.4M4.5 4.5a10.6 10.6 0 0 0 0 15M19.5 4.5a10.6 10.6 0 0 1 0 15"/></svg><span class="tl113-bottom-label">Streamers</span></a>
-    <a href="buddy.html" data-nav-key="chat"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14a4 4 0 0 1-4 4H9l-5 3V7a4 4 0 0 1 4-4h8a4 4 0 0 1 4 4Z"/><path d="M8 9h8M8 13h5"/></svg><span class="tl113-bottom-label">Chat</span><b class="tl113-badge" data-tl113-unread hidden>0</b></a>
-    <a href="profile.html" data-nav-key="profile"><span class="tl113-avatar" data-tl113-avatar><img alt="" decoding="async"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg></span><span class="tl113-bottom-label">Perfil</span></a>
-  </nav>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.112.4"></script>
   <script src="supabase-client.js?v=104.0"></script>
@@ -55,8 +29,9 @@
   <script src="presence-manager.js?v=103.0"></script>
   <script src="services/profile-service.js?v=102.1"></script>
   <script src="services/permission-service.js?v=102.2"></script>
+  <script src="services/notification-service.js?v=102.0"></script>
   <script src="country-catalog-v1.js?v=1.1"></script>
   <script src="profile-modern-v113.js?v=113.0"></script>
-  <script src="tl-site-chrome-v113.js?v=113.0"></script>
+  <script src="tl-shell-v114.js?v=114.1"></script>
 </body>
 </html>
