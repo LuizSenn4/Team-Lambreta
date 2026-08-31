@@ -82,3 +82,35 @@
   .tl-profile-hero-actions-v106{width:calc(100% - 18px);margin:0 9px 10px;gap:7px}
   .tl-profile-action-v106{min-height:49px;padding:0 7px;font-size:12px}
 }
+
+/* v107.1 — topo mobile fiel à referência aprovada: logo protagonista e sem ação de chat duplicada. */
+@media(max-width:640px){
+  .tl-profile-topbar-v106{
+    min-height:142px;
+    grid-template-columns:52px 1fr 52px;
+    padding:10px 14px 8px;
+  }
+  .tl-profile-top-actions-v106{
+    visibility:hidden;
+    pointer-events:none;
+  }
+  .tl-profile-brand-v106{
+    width:min(76vw,330px);
+    max-width:calc(100% - 92px);
+  }
+  .tl-profile-brand-v106 img{
+    width:100%;
+    max-height:122px;
+    object-fit:contain;
+    filter:drop-shadow(0 5px 18px rgba(244,168,28,.12));
+  }
+  .tl-profile-icon-button-v106{
+    width:46px;
+    height:46px;
+  }
+}
+@media(max-width:420px){
+  .tl-profile-topbar-v106{min-height:136px;padding:8px 10px 6px}
+  .tl-profile-brand-v106{width:min(78vw,300px);max-width:calc(100% - 76px)}
+  .tl-profile-brand-v106 img{max-height:118px}
+}
