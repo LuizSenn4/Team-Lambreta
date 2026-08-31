@@ -22,6 +22,11 @@
     return true;
   }
 
+  function profileAvatar(profile) {
+    const url = window.TeamProfiles?.getAvatarUrl?.(profile) || profile?.avatar_display_url || profile?.avatar_external_url || profile?.custom_avatar_url || profile?.avatar_url || '';
+    return url ? setAvatar(url) : false;
+  }
+
   function readAvatarFromDom() {
     const candidates = [
       document.querySelector('.tl-profile-avatar-inner-v106 img'),
@@ -39,9 +44,12 @@
     return false;
   }
 
-  function profileAvatar(profile) {
-    const url = window.TeamProfiles?.getAvatarUrl?.(profile) || profile?.avatar_display_url || profile?.avatar_external_url || profile?.custom_avatar_url || profile?.avatar_url || '';
-    if (url) setAvatar(url);
+  function readAvatarFromShell() {
+    try {
+      const profile = window.TeamShell?.getProfile?.();
+      if (profile) return profileAvatar(profile);
+    } catch (_) {}
+    return false;
   }
 
   function syncUnread() {
@@ -58,13 +66,16 @@
   });
 
   const observer = new MutationObserver(() => {
-    readAvatarFromDom();
+    if (!readAvatarFromDom()) readAvatarFromShell();
     syncUnread();
   });
   observer.observe(document.body, {subtree:true,childList:true,attributes:true,attributeFilter:['src','style','class','hidden']});
 
+  readAvatarFromShell();
   readAvatarFromDom();
   syncUnread();
-  setTimeout(readAvatarFromDom, 500);
-  setTimeout(readAvatarFromDom, 1500);
+  [250,700,1500,3000].forEach(delay => setTimeout(() => {
+    if (!readAvatarFromDom()) readAvatarFromShell();
+    syncUnread();
+  }, delay));
 })();
