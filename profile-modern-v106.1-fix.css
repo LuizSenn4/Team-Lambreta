@@ -1,0 +1,187 @@
+/* Team Lambreta profile 106.1 — correções visuais sem alterar dados nem serviços. */
+.tl-profile-role-v106 .role-icon svg{
+  width:21px;
+  height:21px;
+  fill:none;
+  stroke:currentColor;
+  stroke-width:1.8;
+  stroke-linecap:round;
+  stroke-linejoin:round;
+}
+
+.tl-profile-identity-v106,
+.tl-profile-title-row-v106,
+.tl-profile-role-list-v106,
+.tl-profile-quote-v106{
+  min-width:0;
+  max-width:100%;
+}
+
+.tl-profile-title-v106,
+.tl-profile-quote-v106{
+  overflow-wrap:anywhere;
+}
+
+@media(max-width:640px){
+  .tl-profile-main-v106{padding:10px 9px 0}
+
+  .tl-profile-hero-v106{
+    min-height:0;
+    border-radius:18px;
+    background-position:center;
+  }
+
+  .tl-profile-hero-content-v106{
+    grid-template-columns:128px minmax(0,1fr);
+    gap:13px;
+    min-height:0;
+    padding:28px 16px 18px;
+    align-items:center;
+  }
+
+  .tl-profile-avatar-wrap-v106{
+    width:124px;
+    height:124px;
+    padding:6px;
+  }
+
+  .tl-profile-avatar-inner-v106{border-width:2px}
+  .tl-profile-avatar-fallback-v106{font-size:38px}
+
+  .tl-profile-presence-dot-v106{
+    right:1px;
+    bottom:10px;
+    width:25px;
+    height:25px;
+    border-width:3px;
+  }
+
+  .tl-profile-title-row-v106{
+    gap:7px;
+    align-items:center;
+  }
+
+  .tl-profile-title-v106{
+    font-size:clamp(24px,6.2vw,31px);
+    line-height:1.05;
+  }
+
+  .tl-profile-verified-v106{
+    width:23px;
+    height:23px;
+    flex:0 0 23px;
+  }
+
+  .tl-profile-verified-v106 svg{width:14px;height:14px}
+
+  .tl-profile-presence-label-v106{
+    margin-top:7px;
+    gap:7px;
+    font-size:12px;
+  }
+
+  .tl-profile-role-list-v106{
+    margin-top:10px;
+    gap:5px;
+  }
+
+  .tl-profile-role-v106{
+    min-height:31px;
+    padding:4px 9px 4px 5px;
+    gap:6px;
+    border-radius:7px;
+    font-size:11px;
+  }
+
+  .tl-profile-role-v106 .role-icon{
+    width:24px;
+    height:23px;
+    font-size:0;
+  }
+
+  .tl-profile-role-v106 .role-icon svg{width:16px;height:16px}
+
+  .tl-profile-quote-v106{
+    gap:5px;
+    margin-top:11px;
+    font-size:12px;
+    line-height:1.35;
+  }
+
+  .tl-profile-quote-v106::before{font-size:22px}
+  .tl-profile-quote-v106::after{font-size:17px}
+
+  .tl-profile-crest-v106{
+    position:absolute;
+    right:14px;
+    bottom:12px;
+    width:74px;
+    max-height:88px;
+    opacity:.34;
+    pointer-events:none;
+  }
+
+  .tl-profile-hero-actions-v106{
+    width:calc(100% - 24px);
+    margin:0 12px 12px;
+    gap:9px;
+  }
+
+  .tl-profile-action-v106{
+    min-width:0;
+    min-height:52px;
+    padding:0 9px;
+    gap:8px;
+    border-radius:10px;
+    font-size:13px;
+  }
+
+  .tl-profile-action-v106 svg{width:23px;height:23px;flex:0 0 23px}
+
+  .tl-profile-tabs-v106{min-height:78px}
+  .tl-profile-tab-v106{gap:4px;padding:9px 3px}
+  .tl-profile-tab-v106 svg{width:25px;height:25px}
+  .tl-profile-tab-copy-v106 strong{font-size:10.5px}
+  .tl-profile-tab-copy-v106 small{font-size:8.5px;line-height:1.15;text-align:center}
+
+  .tl-profile-sections-v106{padding:19px 12px 8px}
+  .tl-profile-games-v106{gap:8px}
+
+  .tl-profile-game-card-v106{
+    min-width:0;
+    min-height:112px;
+    padding:8px 4px;
+  }
+
+  .tl-profile-game-card-v106 .game-mark{min-height:47px;font-size:39px}
+  .tl-profile-game-card-v106 .game-name{font-size:10px}
+
+  .tl-profile-social-v106,
+  .tl-profile-info-v106,
+  .tl-profile-friend-v106{min-width:0}
+}
+
+@media(max-width:420px){
+  .tl-profile-hero-content-v106{
+    grid-template-columns:112px minmax(0,1fr);
+    gap:11px;
+    padding:24px 13px 16px;
+  }
+
+  .tl-profile-avatar-wrap-v106{width:108px;height:108px}
+  .tl-profile-title-v106{font-size:clamp(21px,6.5vw,27px)}
+  .tl-profile-quote-v106{font-size:11px}
+  .tl-profile-crest-v106{width:62px;opacity:.26}
+
+  .tl-profile-hero-actions-v106{
+    width:calc(100% - 18px);
+    margin:0 9px 10px;
+    gap:7px;
+  }
+
+  .tl-profile-action-v106{
+    min-height:49px;
+    padding:0 7px;
+    font-size:12px;
+  }
+}
