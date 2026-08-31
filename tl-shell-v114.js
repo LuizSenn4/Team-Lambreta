@@ -12,6 +12,9 @@
     : (currentFile.startsWith('stream') || currentFile.startsWith('live')) ? 'streamers'
     : (currentFile.startsWith('buddy') || currentFile.startsWith('chat')) ? 'chat'
     : 'home';
+  let shellSession = null;
+  let shellProfile = null;
+  let presenceBound = false;
 
   const icons = {
     menu:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>',
@@ -35,7 +38,7 @@
     if (q('link[href*="tl-shell-v114.css"]')) return;
     const link = document.createElement('link');
     link.rel = 'stylesheet';
-    link.href = 'tl-shell-v114.css?v=114.0';
+    link.href = 'tl-shell-v114.css?v=114.1';
     document.head.appendChild(link);
   }
 
@@ -49,14 +52,14 @@
       <a class="tl114-logo" href="home.html" aria-label="Team Lambreta — início"></a>
       <button class="tl114-account-button" type="button" aria-label="Abrir conta" aria-expanded="false">${icons.user}</button>
       <nav class="tl114-drawer" hidden aria-label="Menu principal">
-        <a href="home.html" data-page="home">Home</a>
-        <a href="team.html" data-page="team">Team</a>
-        <a href="forum.html" data-page="forum">Fórum</a>
-        <a href="streamers.html" data-page="streamers">Streamers</a>
-        <a href="eventos.html" data-page="eventos">Eventos</a>
-        <a href="profile.html#profileSocial" data-page="redes">Redes</a>
-        <a href="profile.html" data-page="profile">Perfil</a>
-        <a href="buddy.html" data-page="chat">Mensagens</a>
+        <a href="home.html">Home</a>
+        <a href="team.html">Team</a>
+        <a href="forum.html">Fórum</a>
+        <a href="streamers.html">Streamers</a>
+        <a href="eventos.html">Eventos</a>
+        <a href="profile.html#profileSocial">Redes</a>
+        <a href="profile.html">Perfil</a>
+        <a href="buddy.html">Mensagens</a>
       </nav>
       <div class="tl114-account-menu" hidden></div>`;
 
@@ -101,8 +104,7 @@
     document.addEventListener('click', closeAll);
     document.addEventListener('keydown', event => { if (event.key === 'Escape') closeAll(); });
     qa('a', drawer).forEach(link => link.addEventListener('click', closeAll));
-
-    return {header,accountButton,accountMenu};
+    return {accountButton,accountMenu};
   }
 
   function buildBottomNav(){
@@ -124,7 +126,10 @@
 
   function paintAvatar(profile, accountButton, nav){
     const src = String(avatarUrl(profile) || '').trim();
-    if (!src) return;
+    if (!src) {
+      accountButton.innerHTML = icons.user;
+      return;
+    }
     accountButton.innerHTML = `<img src="${esc(src)}" alt="Avatar">`;
     const avatar = q('[data-tl114-avatar]', nav);
     const image = avatar?.querySelector('img');
@@ -147,19 +152,31 @@
     window.TeamNotifications?.subscribe?.(({unread}) => apply(unread));
   }
 
-  async function hydrateAccount(accountButton, accountMenu, nav){
-    let session = null;
-    let profile = null;
-    try { session = await window.TeamAuth?.getSession?.(); } catch {}
-    if (session?.user) {
-      try { profile = await window.TeamProfiles?.getPublicProfile?.(session.user.id,{fresh:false}); } catch {}
-      paintAvatar(profile, accountButton, nav);
+  async function hydrateAccount(accountButton, accountMenu, nav, suppliedSession){
+    let session = suppliedSession;
+    if (session === undefined) {
+      try { session = await window.TeamAuth?.getSession?.(); } catch { session = null; }
+    }
+    shellSession = session || null;
+    shellProfile = null;
+
+    if (shellSession?.user) {
+      try {
+        shellProfile = await window.TeamProfiles?.getCurrentProfile?.({fresh:false})
+          || await window.TeamProfiles?.getPublicProfile?.(shellSession.user.id,{fresh:false})
+          || null;
+      } catch {}
+      paintAvatar(shellProfile, accountButton, nav);
+      try { await window.TeamPresence?.connect?.(window.teamSupabase, shellSession.user.id, shellProfile?.presence); } catch {}
+    } else {
+      paintAvatar(null, accountButton, nav);
+      try { window.TeamPresence?.disconnect?.(); } catch {}
     }
 
-    const name = profile?.display_name || session?.user?.email || 'Visitante';
-    const status = String(window.TeamPresence?.getState?.()?.status || profile?.presence || 'offline').toLowerCase();
+    const name = shellProfile?.display_name || shellSession?.user?.email || 'Visitante';
+    const status = String(window.TeamPresence?.getState?.()?.status || shellProfile?.presence || 'offline').toLowerCase();
     accountMenu.innerHTML = `<div class="tl114-account-summary"><strong>${esc(name)}</strong><small><i class="tl114-presence ${esc(status)}"></i>${esc(status === 'online' ? 'Online' : status === 'busy' ? 'Ocupado' : status === 'away' ? 'Ausente' : 'Offline')}</small></div>`;
-    if (session?.user) {
+    if (shellSession?.user) {
       accountMenu.insertAdjacentHTML('beforeend','<a href="profile.html">Ver perfil</a><a href="profile-edit.html">Editar perfil</a><button type="button" data-tl114-logout>Sair</button>');
       q('[data-tl114-logout]', accountMenu)?.addEventListener('click', async () => {
         try { await window.TeamAuth?.signOut?.(); location.href='home.html'; } catch {}
@@ -168,6 +185,8 @@
       accountMenu.insertAdjacentHTML('beforeend','<button type="button" data-tl114-login>Entrar com Google</button>');
       q('[data-tl114-login]', accountMenu)?.addEventListener('click', () => window.TeamAuth?.signInWithGoogle?.());
     }
+
+    window.dispatchEvent(new CustomEvent('tl:shell-ready',{detail:{version:'114.1',session:shellSession,profile:shellProfile}}));
   }
 
   function removeLegacyShellArtifacts(){
@@ -182,11 +201,18 @@
   const {accountButton,accountMenu} = buildHeader();
   const nav = buildBottomNav();
   paintUnread(nav);
-  hydrateAccount(accountButton,accountMenu,nav);
 
   window.TeamShell = Object.freeze({
-    version:'114.0',
+    version:'114.1',
+    getSession:() => shellSession,
+    getProfile:() => shellProfile,
     refresh:() => hydrateAccount(accountButton,accountMenu,nav)
   });
-  window.dispatchEvent(new CustomEvent('tl:shell-ready',{detail:{version:'114.0'}}));
+
+  if (!presenceBound && window.TeamPresence?.subscribe) {
+    presenceBound = true;
+    window.TeamPresence.subscribe(() => hydrateAccount(accountButton,accountMenu,nav,shellSession));
+  }
+  window.TeamAuth?.subscribe?.(session => hydrateAccount(accountButton,accountMenu,nav,session));
+  hydrateAccount(accountButton,accountMenu,nav);
 })();
