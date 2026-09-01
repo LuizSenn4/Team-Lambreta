@@ -1,4 +1,10 @@
 {
+  "rewrites": [
+    { "source": "/terms", "destination": "/terms.html" },
+    { "source": "/privacy", "destination": "/privacy.html" },
+    { "source": "/auth/tiktok/start", "destination": "/api/auth/tiktok/start" },
+    { "source": "/auth/tiktok/callback", "destination": "/api/auth/tiktok/callback" }
+  ],
   "headers": [
     {
       "source": "/(.*\\.html)",

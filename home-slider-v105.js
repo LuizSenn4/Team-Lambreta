@@ -91,7 +91,14 @@
       slide.setAttribute('aria-label', `Banner ${item.slot}`);
       slide.setAttribute('aria-roledescription', 'slide');
 
+      const backdrop = document.createElement('img');
+      backdrop.className = 'home-slider-slide-backdrop';
+      backdrop.src = item.url;
+      backdrop.alt = '';
+      backdrop.setAttribute('aria-hidden', 'true');
+      backdrop.decoding = 'async';
       const image = document.createElement('img');
+      image.className = 'home-slider-slide-img';
       image.src = item.url;
       image.alt = `Banner ${item.slot} Team Lambreta`;
       image.width = isMobile ? 1080 : 1920;
@@ -99,8 +106,8 @@
       image.decoding = 'async';
       image.loading = 'eager';
       if (index === 0) image.fetchPriority = 'high';
-      images.push(image);
-      slide.append(image);
+      images.push(image, backdrop);
+      slide.append(backdrop, image);
 
       const hotspot = makeHotspot(item);
       if (hotspot) slide.append(hotspot);

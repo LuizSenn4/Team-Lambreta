@@ -90,7 +90,16 @@
   };
 
   const resolveUrl = item => String(item?.url || '').trim() || getPublicUrl(item?.imageKey);
-  const resolveMobileUrl = item => String(item?.mobileUrl || '').trim() || getPublicUrl(item?.mobileImageKey) || resolveUrl(item);
+  const resolveMobileUrl = item => {
+    const explicit = String(item?.mobileUrl || '').trim() || getPublicUrl(item?.mobileImageKey);
+    if (explicit) return explicit;
+    const desktop = resolveUrl(item);
+    const slot = Number(item?.slot);
+    if ([1,2,3].includes(slot) && new RegExp(`banner-assets-1920x600/team-lambreta-banner-${slot}-1920x600\\.webp(?:$|[?#])`).test(desktop)) {
+      return `banner-assets-1080x1350-mobile/team-lambreta-banner-${slot}-1080x1350-mobile.webp`;
+    }
+    return desktop;
+  };
 
   const dataUrlToBlob = dataUrl => {
     const [meta, body] = String(dataUrl).split(',');

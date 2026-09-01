@@ -303,13 +303,19 @@
 
   async function loadProfile() {
     profile = null;
-    if (!session?.user) return;
-    if (window.TeamProfiles) {
-      profile = await window.TeamProfiles.getCurrentProfile({ fresh: true });
+    if (!session?.user) {
+      document.body.dataset.userRole = 'member';
+      document.body.dataset.isStreamer = 'false';
       return;
     }
-    const { data, error } = await sb.from('profiles').select('*').eq('id', session.user.id).single();
-    if (!error) profile = data;
+    if (window.TeamProfiles) {
+      profile = await window.TeamProfiles.getCurrentProfile({ fresh: true });
+    } else {
+      const { data, error } = await sb.from('profiles').select('*').eq('id', session.user.id).single();
+      if (!error) profile = data;
+    }
+    document.body.dataset.userRole = normalizeRole(profile?.role);
+    document.body.dataset.isStreamer = isStreamer(profile) ? 'true' : 'false';
     if (currentMentionRows.length) updateMentionBadge(currentMentionRows);
   }
 
