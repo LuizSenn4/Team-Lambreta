@@ -17,8 +17,12 @@
   async function senderProfile(userId) {
     try { return await window.TeamProfiles?.getPublicProfile(userId); } catch { return null; }
   }
+  function isBuddyRoute() {
+    const path = location.pathname.replace(/\/+$/, '').toLowerCase();
+    return document.body.classList.contains('buddy-page') || /(^|\/)buddy(?:\.html)?(?:\/|$)/.test(path);
+  }
   async function notifyMessage(message) {
-    if (location.pathname.endsWith('/buddy.html') && window.TeamBuddy?.isConversationOpenWith?.(message.sender_id)) return;
+    if (isBuddyRoute()) return;
     const profile = await senderProfile(message.sender_id);
     const toast = document.createElement('a');
     toast.className = 'tl-notification-toast'; toast.href = `buddy.html?chat=${encodeURIComponent(message.sender_id)}`;

@@ -46,6 +46,7 @@
 
   const header = document.querySelector('.site-header');
   if (!header) return;
+  const TEAM_LOGO_SRC = 'img/team-lambreta-header-logo.svg';
   header.className = 'site-header tl-header-v100 tl-header-v102';
   if (!header.childElementCount) header.innerHTML = `
     <a href="home.html" class="brand brand-logo-link" aria-label="Team Lambreta — página inicial"><img class="brand-logo-image" src="img/team-lambreta-header-logo.svg" alt="Team Lambreta"></a>
@@ -59,6 +60,7 @@
       <div class="tl-user-wrap"><button class="tl-account-trigger" type="button" aria-haspopup="menu" aria-expanded="false">${cachedAvatarUrl?`<img class="tl-user-avatar" src="${esc(cachedAvatarUrl)}" data-avatar-key="${esc(cachedAvatarKey)}" alt="">`:'<span class="tl-user-avatar tl-avatar-skeleton" aria-hidden="true"></span>'}<span class="tl-account-copy"><strong>${esc(profile?.display_name || 'Entrar')}</strong><small class="tl-role-slot" aria-live="polite"></small></span><span aria-hidden="true">⌄</span></button><div class="tl-dropdown tl-account-menu" role="menu" hidden></div></div>
       <a class="tl-header-icon" href="buddy.html" aria-label="Abrir Buddy e mensagens"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" aria-hidden="true"><path d="M20.5 14.5a4 4 0 0 1-4 4H9l-5.5 3v-14a4 4 0 0 1 4-4h9a4 4 0 0 1 4 4z"/><path d="M8 9.5h8M8 13h5"/></svg><b id="tlHeaderUnread" hidden>0</b></a>
     </div>`;
+  header.querySelector('.brand-logo-image')?.setAttribute('src', TEAM_LOGO_SRC);
 
   const initialAvatar=header.querySelector('img.tl-user-avatar');
   if(initialAvatar){
@@ -91,7 +93,7 @@
   });
 
   const footer = document.querySelector('.site-footer');
-  if (footer) footer.innerHTML = `<nav class="tl-footer-nav" aria-label="Rodapé"><a href="suporte.html">Suporte</a><a href="regras.html">Regras da Comunidade</a><a href="privacidade.html">Privacidade</a><a href="atualizacoes.html">Atualizações</a></nav><p>© ${new Date().getFullYear()} Team Lambreta — Juntos somos mais fortes.</p>`;
+  if (footer) footer.innerHTML = `<nav class="tl-footer-nav" aria-label="Rodapé"><a href="suporte.html">Suporte</a><a href="regras.html">Regras da Comunidade</a><a href="/terms">Termos</a><a href="/privacy">Privacidade</a><a href="atualizacoes.html">Atualizações</a></nav><p>© ${new Date().getFullYear()} Team Lambreta — Juntos somos mais fortes.</p>`;
 
   const setOpen = (button, menu, open) => { button.setAttribute('aria-expanded', String(open)); menu.hidden = !open; };
   const closeMenus = except => {
@@ -157,8 +159,9 @@
     roleSlot.classList.toggle('is-confirmed', roleConfirmed || !session);
     await paintAvatar(options);
     if (!session) {
-      accountMenu.innerHTML = '<button type="button" data-login>Entrar com Google</button>';
+      accountMenu.innerHTML = '<button type="button" data-login>Entrar com Google</button><button type="button" data-tiktok-login>Entrar com TikTok</button>';
       accountMenu.querySelector('[data-login]').addEventListener('click', () => auth.signInWithGoogle().catch(() => {}));
+      accountMenu.querySelector('[data-tiktok-login]').addEventListener('click', () => { window.location.href = '/auth/tiktok/start'; });
       return;
     }
     const admin = roleConfirmed ? await permissions.can('admin.full') : false;

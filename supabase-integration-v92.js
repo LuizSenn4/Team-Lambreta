@@ -303,13 +303,19 @@
 
   async function loadProfile() {
     profile = null;
-    if (!session?.user) return;
-    if (window.TeamProfiles) {
-      profile = await window.TeamProfiles.getCurrentProfile({ fresh: true });
+    if (!session?.user) {
+      document.body.dataset.userRole = 'member';
+      document.body.dataset.isStreamer = 'false';
       return;
     }
-    const { data, error } = await sb.from('profiles').select('*').eq('id', session.user.id).single();
-    if (!error) profile = data;
+    if (window.TeamProfiles) {
+      profile = await window.TeamProfiles.getCurrentProfile({ fresh: true });
+    } else {
+      const { data, error } = await sb.from('profiles').select('*').eq('id', session.user.id).single();
+      if (!error) profile = data;
+    }
+    document.body.dataset.userRole = normalizeRole(profile?.role);
+    document.body.dataset.isStreamer = isStreamer(profile) ? 'true' : 'false';
     if (currentMentionRows.length) updateMentionBadge(currentMentionRows);
   }
 
@@ -980,6 +986,26 @@
       if (!(await ensureNickname())) return;
       const message=input?.value.trim();
       const nowMs=Date.now(); recentSendTimes=recentSendTimes.filter(t=>nowMs-t<10000); if(recentSendTimes.length>=5){ $('chatDelayInfo').textContent='Calma 😅 aguarda 30 segundos antes de continuar.'; setTimeout(()=>{ if($('chatDelayInfo')) $('chatDelayInfo').textContent=''; },30000); return; } if (!message) return; if (message.length > 240) { alert('A mensagem pode ter no máximo 240 caracteres.'); return; }
+      if (/^\/(?:top|mix)\b/i.test(message) || /^\/comandos\s*$/i.test(message)) {
+        let commandResult = {handled:false};
+        if (/^\/mix\b/i.test(message) && window.TeamLiveMix) {
+          commandResult = await window.TeamLiveMix.executeCommand(message);
+        } else if (/^\/top\b/i.test(message) && window.TeamLiveTop) {
+          commandResult = await window.TeamLiveTop.executeCommand(message);
+        } else if (/^\/comandos\s*$/i.test(message)) {
+          const [topResult,mixResult] = await Promise.all([
+            window.TeamLiveTop?.executeCommand(message),
+            window.TeamLiveMix?.executeCommand(message)
+          ]);
+          commandResult = {handled:true,ok:true,message:[topResult?.message,mixResult?.message].filter(Boolean).join(' ')};
+        }
+        if (commandResult.handled) {
+          const info = $('chatModerationInfo');
+          if (info) { info.textContent = commandResult.message; info.classList.toggle('error', !commandResult.ok); }
+          if (commandResult.ok) { input.value=''; resizeComposer(); }
+          return;
+        }
+      }
       if (message.startsWith('/cargo')) {
         const commandResult = await executeRoleCommand(message);
         if (commandResult.handled) {

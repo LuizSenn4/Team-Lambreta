@@ -23,8 +23,7 @@
     return Array.from({length:SLOT_COUNT}, (_, index) => {
       const slot = index + 1;
       const item = bySlot.get(slot) || (Array.isArray(value) ? value[index] : null) || {};
-      const imageKey = String(item.imageKey || '');
-      return {slot, imageKey, link:String(item.link || '').trim(), active:Boolean(imageKey) && item.active !== false};
+      return {slot, imageKey:String(item.imageKey || ''), imageKeyMobile:String(item.imageKeyMobile || ''), link:String(item.link || '').trim(), active:item.active !== false};
     });
   };
   const readConfig = () => {

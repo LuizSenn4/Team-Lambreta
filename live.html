@@ -54,7 +54,22 @@
         </div>
 
         <div class="live-watch-player-card" id="livePlayerCard">
+          <video id="hlsLivePlayer" class="live-watch-player" playsinline muted autoplay hidden></video>
           <iframe id="tiktokLivePlayer" class="live-watch-player" allow="autoplay; fullscreen" allowfullscreen loading="eager" title="TikTok LIVE"></iframe>
+          <section id="liveTopWidget" class="live-top-widget" hidden aria-label="TOP da sala">
+            <button id="liveTopHandle" class="live-top-handle" type="button" aria-label="Arrastar TOP da sala" title="Arrastar para reposicionar"><span aria-hidden="true">⠿</span><b>TOP DA SALA</b></button>
+            <div class="live-top-title">TOP DA SALA</div>
+            <ol id="liveTopList" class="live-top-list"></ol>
+          </section>
+          <div id="liveTopToast" class="live-top-toast" role="status" aria-live="polite">Posição do TOP guardada com sucesso!</div>
+          <div class="live-player-controls" aria-label="Controlos de visualização">
+            <button id="liveTheaterButton" class="live-player-control" type="button" title="Modo cinema" aria-label="Modo cinema" aria-pressed="false">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2.5" y="5.5" width="19" height="13" rx="1.8"/><path d="M6 9h12v6H6z"/></svg>
+            </button>
+            <button id="liveFullscreenButton" class="live-player-control" type="button" title="Ecrã inteiro" aria-label="Ecrã inteiro" aria-pressed="false">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path class="live-fullscreen-enter" d="M8 3H3v5M16 3h5v5M8 21H3v-5M16 21h5v-5"/><path class="live-fullscreen-exit" d="M8 8H3V3M16 8h5V3M8 16H3v5M16 16h5v5"/></svg>
+            </button>
+          </div>
           <div id="livePlayerFallback" class="live-watch-fallback">
             <img src="img/streamers/ink31-profile.jpg" alt="INK31">
             <div><span>TEAM LAMBRETA LIVE</span><strong id="liveFallbackTitle">A preparar a transmissão…</strong><p id="liveFallbackText">O player vai aparecer aqui assim que o TikTok autorizar a reprodução.</p></div>
@@ -63,9 +78,10 @@
       </section>
 
 
+
       <aside class="online-chat live-watch-chat">
         <div class="chat-head">
-          <div><p>CHAT ONLINE</p><h2>Chat da live</h2></div>
+          <div><h2 class="live-chat-game-title" aria-label="Chat da live"><span aria-hidden="true">C</span><span aria-hidden="true">h</span><span aria-hidden="true">a</span><span aria-hidden="true">t</span><i aria-hidden="true"></i><span aria-hidden="true">d</span><span aria-hidden="true">a</span><i aria-hidden="true"></i><span aria-hidden="true">l</span><span aria-hidden="true">i</span><span aria-hidden="true">v</span><span aria-hidden="true">e</span></h2></div>
         </div>
         <div id="chatMessages" class="chat-messages"></div>
         <button id="chatMentionBadge" class="tl-mention-badge" type="button" hidden aria-label="Ver menções"></button>
@@ -84,6 +100,7 @@
   <script>window.TEAM_SUPABASE_MODE = true;</script>
   <script src="tl-diagnostics-v104.js?v=104.0"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.112.4"></script>
+  <script src="https://cdn.jsdelivr.net/npm/hls.js@1"></script>
   <script src="supabase-client.js?v=104.0"></script>
   <script src="auth-manager.js?v=104.0"></script><script src="presence-manager.js?v=103.0"></script><script src="services/profile-service.js?v=102.5"></script><script src="services/permission-service.js?v=102.0"></script>
   <script src="community-safety-v9347.js?v=93.4.7"></script>
@@ -125,7 +142,7 @@
         };
 
         const script = document.createElement('script');
-        script.src = 'supabase-integration-v92.js?v=93.7.1';
+        script.src = 'supabase-integration-v92.js?v=93.10.0';
         script.defer = true;
         document.body.appendChild(script);
       }
@@ -137,6 +154,7 @@
   <script src="error-codes-v92.js"></script>
   <script src="chat-translate-v92.js"></script>
   <script src="community-progress-v938.js?v=93.8.6"></script>
-  <script src="live-page-v9366.js?v=93.8.8"></script>
+  <script src="live-page-v9366.js?v=93.10.0"></script>
+  <script src="team-live-mix-v1.js?v=1.0.0"></script>
 </body>
 </html>

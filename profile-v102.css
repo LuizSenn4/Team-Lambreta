@@ -66,9 +66,9 @@
   .profile-preview-v102 h3{font-size:clamp(31px,8vw,42px)}
 }
 @media(max-width:560px){
-  .profile-hero-v102{min-height:480px}
-  .profile-identity-v102{display:grid;grid-template-columns:112px minmax(0,1fr);align-content:end;min-height:480px;padding:150px 18px 24px}
-  .profile-identity-v102>.profile-avatar-v102{width:112px;height:142px;border-radius:23px}
+  .profile-hero-v102{min-height:clamp(392px,108vw,430px);border-radius:20px}
+  .profile-identity-v102{display:grid;grid-template-columns:104px minmax(0,1fr);align-content:end;min-height:clamp(392px,108vw,430px);padding:124px 16px 22px;gap:14px}
+  .profile-identity-v102>.profile-avatar-v102{width:104px;height:132px;border-radius:21px}
   .profile-identity-v102 h1{font-size:clamp(27px,7.2vw,32px)}
   .profile-identity-v102 .profile-role-badge-v102,.profile-preview-v102 .profile-role-badge-v102{min-width:0;min-height:34px;padding:5px 11px}
   .profile-identity-v102 .profile-role-badge-v102.is-primary,.profile-preview-v102 .profile-role-badge-v102.is-primary{min-height:36px}
@@ -76,6 +76,15 @@
   .profile-preview-frame{width:100px;height:128px;padding:6px}
   .profile-preview-v102 .profile-avatar-v102,.profile-preview-v102 .profile-upload-preview{width:86px;height:112px}
   .profile-preview-v102 h3{font-size:clamp(28px,8.5vw,36px)}
+}
+
+/* Mobile: manter a faixa de identidade fiel à referência sem criar overflow. */
+@media(max-width:430px){
+  .profile-identity-v102{grid-template-columns:96px minmax(0,1fr);padding-inline:14px}
+  .profile-identity-v102>.profile-avatar-v102{width:96px;height:122px}
+  .profile-identity-head-v102{gap:7px}
+  .profile-buddy-v102{width:36px;height:36px}
+  .profile-identity-v102 .profile-role-badge-v102{max-width:100%;overflow:hidden;text-overflow:ellipsis}
 }
 
 /* País: combobox V102 pesquisável e acessível. */

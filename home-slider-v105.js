@@ -5,15 +5,17 @@
   const storage = window.TeamBannerStorage;
   if (!root || !storage) return;
 
+  const mobileMedia = window.matchMedia('(max-width: 680px)');
+
   const track = root.querySelector('[data-slider-track]');
   const previous = root.querySelector('[data-slider-previous]');
   const next = root.querySelector('[data-slider-next]');
   const indicators = root.querySelector('[data-slider-indicators]');
   const objectUrls = [];
   const hotspotBySlot = Object.freeze({
-    1: {label:'Conhecer a Team', href:'team.html', left:71.5, top:84, width:27, height:15},
-    2: {label:'Enviar presente', href:'', left:67.5, top:80.5, width:29, height:18},
-    3: {label:'Ver torneios', href:'eventos.html', left:67.5, top:82.5, width:28, height:16}
+    1: {label:'Conhecer a Team', href:'team.html', left:70, top:81, width:25, height:13},
+    2: {label:'Enviar presente', href:'', left:65, top:78, width:30, height:15},
+    3: {label:'Ver torneios', href:'eventos.html', left:68, top:78, width:27, height:15}
   });
   let slides = [];
   let current = 0;
@@ -71,21 +73,26 @@
   };
 
   const loadSlide = async item => {
-    if (!item.active || !item.imageKey) return null;
+    if (!item.active) return null;
+    const useMobile = mobileMedia.matches && Boolean(item.imageKeyMobile);
+    const key = useMobile ? item.imageKeyMobile : item.imageKey;
+    if (!key) return null;
     try {
-      const blob = await storage.get(item.imageKey);
+      const blob = await storage.get(key);
       if (!blob || !String(blob.type || '').startsWith('image/')) return null;
       const url = storage.createUrl(blob);
       if (!url) return null;
       objectUrls.push(url);
-      return {...item, url, bytes:blob.size};
+      return {...item, url, bytes:blob.size, isMobileVariant:useMobile};
     } catch (error) {
-      window.TeamDiagnostics?.error?.('TL-BANNER-013', 'banners', 'Erro ao carregar banner da Home', {slot:item.slot, key:item.imageKey}, error);
+      window.TeamDiagnostics?.error?.('TL-BANNER-013', 'banners', 'Erro ao carregar banner da Home', {slot:item.slot, key}, error);
       return null;
     }
   };
 
   const mount = async () => {
+    stopAuto();
+    objectUrls.splice(0).forEach(storage.revokeUrl);
     const config = storage.readConfig();
     const loaded = (await Promise.all(config.map(loadSlide))).filter(Boolean);
 
@@ -100,16 +107,25 @@
       slide.setAttribute('aria-label', `Banner ${item.slot}`);
       slide.setAttribute('aria-roledescription', 'slide');
 
+      const backdrop = document.createElement('img');
+      backdrop.className = 'home-slider-slide-backdrop';
+      backdrop.src = item.url;
+      backdrop.alt = '';
+      backdrop.setAttribute('aria-hidden', 'true');
+      backdrop.decoding = 'async';
+      backdrop.loading = 'eager';
+
       const image = document.createElement('img');
+      image.className = 'home-slider-slide-img';
       image.src = item.url;
       image.alt = `Banner ${item.slot} Team Lambreta`;
-      image.width = 1920;
-      image.height = 600;
+      image.width = item.isMobileVariant ? 1080 : 1920;
+      image.height = item.isMobileVariant ? 1350 : 600;
       image.decoding = 'async';
       image.loading = 'eager';
       if (index === 0) image.fetchPriority = 'high';
       images.push(image);
-      slide.append(image);
+      slide.append(backdrop, image);
 
       const hotspot = makeHotspot(item);
       if (hotspot) slide.append(hotspot);
@@ -152,6 +168,10 @@
     stopAuto();
     objectUrls.splice(0).forEach(storage.revokeUrl);
   }, {once:true});
+
+  const remount = () => { mount().catch(error => { window.TeamDiagnostics?.error?.('TL-BANNER-016', 'banners', 'Falha ao remontar o slider da Home após mudança de ecrã', {}, error); }); };
+  if (mobileMedia.addEventListener) mobileMedia.addEventListener('change', remount);
+  else mobileMedia.addListener?.(remount);
 
   mount().catch(error => {
     root.hidden = true;

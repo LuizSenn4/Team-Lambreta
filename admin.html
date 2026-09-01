@@ -10,7 +10,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Admin - Team Lambreta</title>
-  <link rel="stylesheet" href="admin.css?v=105.2" />
+  <link rel="stylesheet" href="admin.css?v=102.3" />
   <link rel="stylesheet" href="theme-dark.css?v=1.1" data-tl-theme />
   <script src="tl-diagnostics-v104.js?v=104.0"></script>
   <script>(()=>{const p=localStorage.getItem('tl_theme')||'system',r=p==='system'?(matchMedia('(prefers-color-scheme: light)').matches?'light':'dark'):p;document.documentElement.dataset.theme=r;document.documentElement.dataset.themePreference=p})()</script>
@@ -71,7 +71,7 @@
         <div class="admin-slider-manager-head">
           <div>
             <h3 id="sliderManagerTitle">Banners do Slider</h3>
-            <p class="hint">Gere os banners exibidos no topo do site. Recomendado: 1920×600px · PNG, JPG ou WebP até 2 MB.</p>
+            <p class="hint">Gere os banners exibidos no topo do site. Desktop: 1920×600px (horizontal). Mobile (opcional): 1080×1530px (vertical) — se não enviar, o site usa a imagem desktop também no telemóvel. PNG, JPG ou WebP até 2 MB.</p>
           </div>
           <button id="saveBannersBtn" type="button" class="admin-slider-save">Salvar banners</button>
         </div>
@@ -343,7 +343,9 @@
                 </select>
               </label>
               <label class="full">Link da live / canal<input id="streamerLiveUrl" type="url" placeholder="https://..."></label>
+              <label class="full">Link do stream próprio (HLS · .m3u8) — opcional<input id="streamerHlsUrl" type="url" placeholder="https://.../stream.m3u8"></label>
             </div>
+            <p class="hint">Preenchendo o link HLS acima (obtido via multistream, ex: Restream.io), a página da live passa a usar o player próprio — horizontal, sem faixas mortas. Deixe vazio para continuar a usar o embed do TikTok.</p>
             <div class="streamer-checks">
               <label><input id="streamerManualLive" type="checkbox"> Está ao vivo agora</label>
               <label><input id="streamerForceLive" type="checkbox"> Forçar AO VIVO</label>
@@ -631,10 +633,10 @@
   <script src="admin-gate.js"></script>
   <script src="data.js"></script>
   <script src="admin.js"></script>
-  <script src="tl-banner-storage-v104.js?v=105.2"></script>
+  <script src="tl-banner-storage-v104.js?v=105.1"></script>
   <script src="tl-banner-admin-v104.js?v=105.2"></script>
   <script src="forum-admin-v1.js?v=1.0"></script>
-  <script src="streamer-admin-v85.js?v=102.3"></script>
+  <script src="streamer-admin-v85.js?v=102.4"></script>
   <script src="team-admin-v92.js?v=98.0"></script>
   <script src="competition-admin-v96.js?v=98.1"></script>
   <script src="admin-help.js?v=1.0"></script>

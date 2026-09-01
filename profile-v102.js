@@ -8,6 +8,11 @@
   if (!root) return;
   let renderedPublicProfile = null;
 
+  const isLocalPreview = () => {
+    const host = String(location.hostname || '').toLowerCase();
+    const localHost = host === 'localhost' || host === '127.0.0.1' || /^192\.168\.(?:\d{1,3})\.(?:\d{1,3})$/.test(host);
+    return localHost && new URLSearchParams(location.search).get('preview') === '1';
+  };
   const avatarSource = profile => window.TeamProfiles?.getAvatarUrl(profile) || profile?.avatar_display_url || '';
   const avatar = profile => avatarSource(profile) ? `<img class="profile-avatar-v102" src="${esc(avatarSource(profile))}" alt="" decoding="async">` : `<span class="profile-avatar-v102 profile-avatar-fallback-v102">${esc(profile.avatar_fallback || 'TL')}</span>`;
   const visualRoles = profile => window.TeamPermissions?.getVisualRoles(profile) || [];
@@ -64,33 +69,39 @@
   }
 
   async function renderPublic() {
+    const preview = isLocalPreview();
     const session = await window.TeamAuth.getSession();
-    const userId = new URLSearchParams(location.search).get('user') || session?.user?.id;
-    if (!userId) {
+    const cachedProfile = preview ? window.TeamProfiles?.readLastCache?.() : null;
+    const userId = new URLSearchParams(location.search).get('user') || session?.user?.id || cachedProfile?.id || '';
+    if (!preview && !userId) {
       root.innerHTML = '<section class="tl-v102-card profile-login-v102"><h1>Perfil Team Lambreta</h1><p>Inicia sessão para veres o teu perfil.</p><button class="tl-v102-button primary" data-profile-login>Entrar com Google</button></section>';
       $('[data-profile-login]').onclick = () => window.TeamAuth.signInWithGoogle(); return;
     }
-    if (!session?.user) {
+    if (!preview && !session?.user) {
       root.innerHTML = '<section class="tl-v102-card profile-login-v102"><h1>Perfil Team Lambreta</h1><p>Inicia sessão para veres este perfil.</p><button class="tl-v102-button primary" data-profile-login>Entrar com Google</button></section>';
       $('[data-profile-login]').onclick = () => window.TeamAuth.signInWithGoogle(); return;
     }
     try {
+      if (preview && !userId) {
+        root.innerHTML = '<section class="tl-v102-card profile-login-v102"><h1>Preview local do perfil</h1><p>Indica o ID do teu perfil em <code>?user=...</code> ou inicia uma sessão local uma vez para o preview usar o cache.</p></section>';
+        return;
+      }
       const [profile, stats, catalog] = await Promise.all([
-        window.TeamProfiles.getPublicProfile(userId),
-        window.TeamProfiles.getProfileStats(userId),
-        window.TeamProfiles.getCatalog().catch(() => ({ games:[], platforms:[] }))
-      ]);
+          window.TeamProfiles.getPublicProfile(userId),
+          window.TeamProfiles.getProfileStats(userId),
+          window.TeamProfiles.getCatalog().catch(() => ({ games:[], platforms:[] }))
+        ]);
       if (!profile) throw Object.assign(new Error('Perfil não encontrado.'), { code:'PRF-009' });
       await window.TeamVisualImages?.preload?.(avatarSource(profile));
       const games = new Map(catalog.games.map(game => [game.slug, game.name]));
       const country = window.TeamCountryCatalog?.resolve(profile.country);
-      const own = session?.user?.id === userId;
+      const own = !preview && session?.user?.id === userId;
       const presentation = rolePresentation(profile);
       renderedPublicProfile = profile;
       root.innerHTML = `<section class="profile-hero-v102" style="--profile-cover:url('${esc(coverAssets[profile.cover_preset] || coverAssets.cover_lambretta_classic)}');--profile-role-color:${esc(presentation.primary.color)}"><div class="profile-identity-v102">${avatar(profile)}<div class="profile-identity-copy-v102"><div class="profile-identity-head-v102"><h1>${esc(profile.display_name)}</h1>${identityActions(profile, userId)}</div><div class="profile-role-list-v102">${roleBadges(profile)}</div></div></div></section>
         <div class="profile-grid-v102"><article class="tl-v102-card profile-about-v102"><h2>Sobre</h2><p class="profile-bio-v102">${esc(profile.bio || profile.public_bio || 'Este membro ainda não escreveu uma bio.')}</p><dl class="profile-facts-v102">${fact('País', country ? `${country.flag} ${esc(country.name)}` : '—','country','country')}${fact('Discord', esc(profile.discord || '—'),'discord')}${fact('Jogos', esc(list(profile.games, slug => games.get(slug) || slug)),'games')}${fact('Plataformas', esc(list(profile.platforms, slug => platformLabels[slug] || slug)),'platforms')}${modesFact(profile, games)}${fact('Membro desde', stats.memberSince ? new Date(stats.memberSince).toLocaleDateString('pt-PT') : '—','calendar')}</dl>${own ? `<p class="profile-about-action-v102"><a class="tl-v102-button primary" href="profile-edit.html">${profileIcons.edit}<span>Editar perfil</span></a></p>` : `<p class="profile-about-action-v102"><a class="tl-v102-button primary" href="buddy.html?user=${encodeURIComponent(userId)}">Abrir no Buddy</a></p>`}</article><aside class="tl-v102-card profile-stats-v102"><h2>Comunidade</h2><div class="profile-stat-grid-v102"><div class="is-topics"><span class="profile-stat-icon-v102">${profileIcons.topics}</span><strong>${stats.topics}</strong><span>Tópicos</span></div><div class="is-replies"><span class="profile-stat-icon-v102">${profileIcons.replies}</span><strong>${stats.replies}</strong><span>Respostas</span></div><div class="is-xp"><span class="profile-stat-icon-v102 is-xp-mark">XP</span><strong>${stats.xp}</strong><span>XP</span></div><div class="is-level"><span class="profile-stat-icon-v102">${profileIcons.star}</span><strong>${stats.level}</strong><span>Nível</span></div></div></aside></div>`;
     } catch (error) {
-      if (!session?.user && (error?.code === '42501' || /permission denied/i.test(error?.message || ''))) {
+      if (!preview && !session?.user && (error?.code === '42501' || /permission denied/i.test(error?.message || ''))) {
         root.innerHTML = '<section class="tl-v102-card profile-login-v102"><h1>Perfil Team Lambreta</h1><p>Inicia sessão para veres este perfil.</p><button class="tl-v102-button primary" data-profile-login>Entrar com Google</button></section>';
         $('[data-profile-login]').onclick = () => window.TeamAuth.signInWithGoogle();
         return;

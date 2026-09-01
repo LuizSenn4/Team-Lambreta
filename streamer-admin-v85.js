@@ -45,6 +45,7 @@
     live_platform:'streamerLivePlatform',
     live_mode:'streamerLiveMode',
     live_url:'streamerLiveUrl',
+    hls_url:'streamerHlsUrl',
     display_order:'streamerOrder'
   };
 

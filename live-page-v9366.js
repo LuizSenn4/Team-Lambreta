@@ -5,6 +5,14 @@
   const queryGame = params.get('game') || 'Fortnite';
   const queryModeRaw = params.get('mode') || 'Battle Royale [Zero Build]';
   const iframe = document.getElementById('tiktokLivePlayer');
+  const hlsVideo = document.getElementById('hlsLivePlayer');
+  const playerCard = document.getElementById('livePlayerCard');
+  const topWidget = document.getElementById('liveTopWidget');
+  const topHandle = document.getElementById('liveTopHandle');
+  const topList = document.getElementById('liveTopList');
+  const topToast = document.getElementById('liveTopToast');
+  const theaterButton = document.getElementById('liveTheaterButton');
+  const fullscreenButton = document.getElementById('liveFullscreenButton');
   const fallback = document.getElementById('livePlayerFallback');
   const fallbackTitle = document.getElementById('liveFallbackTitle');
   const fallbackText = document.getElementById('liveFallbackText');
@@ -62,10 +70,42 @@
   let liveSessionHeartbeat = null;
   let liveSessionCloseTimer = null;
   let streamerChannel = null;
+  let topEnabled = false;
+  let topLimit = 3;
+  let topPosX = 8;
+  let topPosY = 12;
+  let topToastTimer = null;
+  let theaterMode = localStorage.getItem('tl_live_theater_mode') === '1';
+
+  const applyTheaterMode = () => {
+    document.body.classList.toggle('tl-theater-mode', theaterMode);
+    theaterButton?.setAttribute('aria-pressed', theaterMode ? 'true' : 'false');
+    requestAnimationFrame(() => syncLiveChatHeight());
+  };
+  applyTheaterMode();
+  theaterButton?.addEventListener('click', () => {
+    theaterMode = !theaterMode;
+    localStorage.setItem('tl_live_theater_mode', theaterMode ? '1' : '0');
+    applyTheaterMode();
+  });
+  fullscreenButton?.addEventListener('click', async () => {
+    try {
+      if (document.fullscreenElement === playerCard) await document.exitFullscreen();
+      else await playerCard?.requestFullscreen();
+    } catch (error) {
+      console.warn('[Team Lambreta] Ecrã inteiro indisponível:', error);
+    }
+  });
+  document.addEventListener('fullscreenchange', () => {
+    const active = document.fullscreenElement === playerCard;
+    fullscreenButton?.setAttribute('aria-pressed', active ? 'true' : 'false');
+    playerCard?.classList.toggle('is-fullscreen', active);
+  });
 
   const escUsername = username.toLowerCase().replace(/[^a-z0-9._-]/g, '');
   const role = () => String(document.body.dataset.userRole || '').toLowerCase();
   const canEditLive = () => ['master', 'dev', 'admin', 'moderator'].includes(role());
+  const canMoveTop = () => canEditLive() || document.body.dataset.isStreamer === 'true';
   const canRegisterCatalog = () => ['master', 'dev', 'admin'].includes(role());
   const modesFor = game => unique(modeCatalog[game] || FALLBACK_MODES[game] || ['Padrão']);
   const variantsFor = (game, mode) => unique(variantCatalog[`${game}::${mode}`] || FALLBACK_VARIANTS[`${game}::${mode}`] || ['Padrão']);
@@ -92,6 +132,46 @@
 
   const embedDomain = location.hostname || 'teamlambreta.net';
   iframe.src = `https://www.tiktok.com/embed/live/@${encodeURIComponent(username)}?autoplay=1&muted=1&controls=1&embed_domain=${encodeURIComponent(embedDomain)}`;
+
+  let hlsInstance = null;
+  let nativeActive = false;
+
+  function useTikTokFallback() {
+    if (hlsInstance) { try { hlsInstance.destroy(); } catch (_) {} hlsInstance = null; }
+    nativeActive = false;
+    if (hlsVideo) { hlsVideo.hidden = true; hlsVideo.removeAttribute('src'); hlsVideo.classList.remove('is-ready'); }
+    iframe.hidden = false;
+    playerCard?.classList.remove('is-native');
+  }
+
+  function setupHlsPlayer(url) {
+    const cleanUrl = String(url || '').trim();
+    if (!cleanUrl || !hlsVideo) { useTikTokFallback(); return; }
+
+    nativeActive = true;
+    iframe.hidden = true;
+    hlsVideo.hidden = false;
+    playerCard?.classList.add('is-native');
+
+    const onReady = () => {
+      hlsVideo.classList.add('is-ready');
+      showPlayer();
+      hlsVideo.play().catch(() => {});
+    };
+    hlsVideo.addEventListener('playing', onReady, { once: true });
+    hlsVideo.addEventListener('error', () => useTikTokFallback());
+
+    if (window.Hls?.isSupported?.()) {
+      hlsInstance = new window.Hls();
+      hlsInstance.loadSource(cleanUrl);
+      hlsInstance.attachMedia(hlsVideo);
+      hlsInstance.on(window.Hls.Events.ERROR, (_event, data) => { if (data?.fatal) useTikTokFallback(); });
+    } else if (hlsVideo.canPlayType('application/vnd.apple.mpegurl')) {
+      hlsVideo.src = cleanUrl;
+    } else {
+      useTikTokFallback();
+    }
+  }
 
   const setMenuOpen = (button, menu, open) => {
     if (!button || !menu) return;
@@ -169,12 +249,13 @@
   const refreshPermissions = () => {
     const editable = canEditLive();
     [gameSelectorBtn, modeSelectorBtn, variantSelectorBtn].forEach(btn => btn?.classList.toggle('is-editable', editable));
+    topWidget?.classList.toggle('is-editable', canMoveTop());
     renderGameMenu();
     renderModeMenu();
     renderVariantMenu();
   };
   refreshPermissions();
-  new MutationObserver(refreshPermissions).observe(document.body, { attributes: true, attributeFilter: ['data-user-role'] });
+  new MutationObserver(refreshPermissions).observe(document.body, { attributes: true, attributeFilter: ['data-user-role','data-is-streamer'] });
 
   const loadCatalog = async () => {
     if (!liveSb) return;
@@ -217,7 +298,7 @@
     if (!liveSb || !escUsername) return;
     const { data, error } = await liveSb
       .from('streamers')
-      .select('id,display_name,main_game,live_game_mode,tiktok_url,live_url,is_published,is_archived')
+      .select('id,display_name,main_game,live_game_mode,tiktok_url,live_url,hls_url,is_published,is_archived,top_enabled,top_limit,top_pos_x,top_pos_y')
       .eq('is_archived', false)
       .eq('is_published', true);
     if (error) {
@@ -225,7 +306,11 @@
       return;
     }
     streamerRow = (data || []).find(row => `${row.tiktok_url || ''} ${row.live_url || ''}`.toLowerCase().includes(`/@${escUsername}`)) || null;
-    if (streamerRow) applyStreamerValues(streamerRow.main_game, streamerRow.live_game_mode);
+    if (streamerRow) {
+      applyStreamerValues(streamerRow.main_game, streamerRow.live_game_mode);
+      applyTopConfig(streamerRow);
+    }
+    setupHlsPlayer(streamerRow?.hls_url || '');
     renderGameMenu();
     renderModeMenu();
     renderVariantMenu();
@@ -235,6 +320,7 @@
         .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'streamers', filter: `id=eq.${streamerRow.id}` }, payload => {
           streamerRow = { ...streamerRow, ...payload.new };
           applyStreamerValues(payload.new?.main_game, payload.new?.live_game_mode);
+          applyTopConfig(streamerRow);
           renderGameMenu();
           renderModeMenu();
           renderVariantMenu();
@@ -243,6 +329,95 @@
     }
   };
   Promise.all([loadCatalog(), loadStreamer()]);
+
+  const clamp = (value, min, max) => Math.min(max, Math.max(min, value));
+  function applyTopPosition() {
+    if (!topWidget) return;
+    topWidget.style.left = `${clamp(Number(topPosX) || 0, 0, 92)}%`;
+    topWidget.style.top = `${clamp(Number(topPosY) || 0, 0, 88)}%`;
+    requestAnimationFrame(keepTopInBounds);
+  }
+  function keepTopInBounds() {
+    if (!topWidget || !playerCard || topWidget.hidden) return;
+    const parent = playerCard.getBoundingClientRect();
+    const widget = topWidget.getBoundingClientRect();
+    const safe = 8;
+    const left = clamp(widget.left - parent.left, safe, Math.max(safe, parent.width - widget.width - safe));
+    const top = clamp(widget.top - parent.top, safe, Math.max(safe, parent.height - widget.height - safe));
+    topPosX = parent.width ? left / parent.width * 100 : 8;
+    topPosY = parent.height ? top / parent.height * 100 : 12;
+    topWidget.style.left = `${topPosX}%`;
+    topWidget.style.top = `${topPosY}%`;
+  }
+  function applyTopConfig(row = {}) {
+    topEnabled = row.top_enabled === true;
+    topLimit = [3,5,10].includes(Number(row.top_limit)) ? Number(row.top_limit) : 3;
+    topPosX = Number.isFinite(Number(row.top_pos_x)) ? Number(row.top_pos_x) : 8;
+    topPosY = Number.isFinite(Number(row.top_pos_y)) ? Number(row.top_pos_y) : 12;
+    if (topWidget) topWidget.hidden = !topEnabled;
+    applyTopPosition();
+    if (topEnabled) loadTopRanking();
+  }
+  async function loadTopRanking() {
+    if (!liveSb || !topList || !topEnabled) return;
+    const { data, error } = await liveSb.rpc('tl_live_top_ranking', { p_streamer:escUsername, p_limit:topLimit });
+    if (error) { console.warn('[Team Lambreta] TOP indisponível:', error.message); return; }
+    const rows = Array.isArray(data) ? data : [];
+    topList.innerHTML = rows.length ? rows.map((_, index) => `<li><span class="live-top-rank">${index + 1}</span><span class="live-top-name"></span><span class="live-top-tl"></span></li>`).join('') : '<li class="live-top-empty">Sem TL nesta sala</li>';
+    rows.forEach((item, index) => {
+      const row = topList.children[index];
+      row?.querySelector('.live-top-name')?.append(document.createTextNode(String(item.name || 'Membro')));
+      row?.querySelector('.live-top-tl')?.append(document.createTextNode(`${Number(item.tl || 0).toLocaleString('pt-PT')} TL`));
+    });
+    keepTopInBounds();
+  }
+  async function saveTopConfig(values) {
+    if (!liveSb || !canMoveTop()) return { ok:false, message:'Sem permissão para alterar o TOP.' };
+    const { data, error } = await liveSb.rpc('tl_set_live_top_config', { p_streamer:escUsername, p_enabled:values.enabled, p_limit:values.limit, p_pos_x:values.x, p_pos_y:values.y });
+    if (error) return { ok:false, message:error.message || 'Não foi possível guardar o TOP.' };
+    applyTopConfig(data || values);
+    return { ok:true };
+  }
+  function showTopSaved() {
+    if (!topToast) return;
+    clearTimeout(topToastTimer);
+    topToast.classList.add('is-visible');
+    topToastTimer = setTimeout(() => topToast.classList.remove('is-visible'), 2600);
+  }
+  async function executeTopCommand(message) {
+    if (/^\/comandos\s*$/i.test(message)) return { handled:true, ok:true, message:canMoveTop() ? 'TOP: /top 3 · /top 5 · /top 10 · /top 0 · arrastar para reposicionar.' : '' };
+    const match = String(message || '').match(/^\/top\s+(0|3|5|10)\s*$/i);
+    if (!match) return /^\/top\b/i.test(message) ? {handled:true,ok:false,message:'Use /top 3, /top 5, /top 10 ou /top 0.'} : {handled:false};
+    const limit = Number(match[1]);
+    const result = await saveTopConfig({enabled:limit !== 0,limit:limit || topLimit,x:topPosX,y:topPosY});
+    return {...result,handled:true,message:result.ok ? (limit ? `TOP ${limit} ativado.` : 'TOP desativado.') : result.message};
+  }
+  window.TeamLiveTop = { executeCommand:executeTopCommand };
+  topHandle?.addEventListener('pointerdown', event => {
+    if (!canMoveTop() || !topWidget || !playerCard) return;
+    event.preventDefault();
+    topHandle.setPointerCapture(event.pointerId);
+    topWidget.classList.add('is-dragging');
+    const parent = playerCard.getBoundingClientRect();
+    const widget = topWidget.getBoundingClientRect();
+    const offsetX = event.clientX - widget.left;
+    const offsetY = event.clientY - widget.top;
+    const move = ev => {
+      const safe = 8;
+      const left = clamp(ev.clientX-parent.left-offsetX,safe,Math.max(safe,parent.width-widget.width-safe));
+      const top = clamp(ev.clientY-parent.top-offsetY,safe,Math.max(safe,parent.height-widget.height-safe));
+      topPosX = left/parent.width*100; topPosY = top/parent.height*100;
+      topWidget.style.left = `${topPosX}%`; topWidget.style.top = `${topPosY}%`;
+    };
+    const end = async () => {
+      topWidget.classList.remove('is-dragging');
+      topHandle.removeEventListener('pointermove',move); topHandle.removeEventListener('pointerup',end); topHandle.removeEventListener('pointercancel',end);
+      const result = await saveTopConfig({enabled:topEnabled,limit:topLimit,x:topPosX,y:topPosY});
+      if (result.ok) showTopSaved();
+    };
+    topHandle.addEventListener('pointermove',move); topHandle.addEventListener('pointerup',end); topHandle.addEventListener('pointercancel',end);
+  });
+  window.addEventListener('resize', keepTopInBounds, { passive:true });
 
   async function saveLiveInfo(nextGame, nextMode, nextVariant) {
     if (!liveSb || !canEditLive()) return false;
@@ -341,11 +516,11 @@
     }
     startLiveSessionHeartbeat();
     window.TeamProgress?.setLiveActive?.(true);
-    iframe.classList.add('is-ready');
+    if (!nativeActive) iframe.classList.add('is-ready');
     if (fallback) fallback.hidden = true;
   };
   const showFallback = (titleText, bodyText) => {
-    if (playerConfirmed) return;
+    if (playerConfirmed || nativeActive) return;
     iframe.classList.remove('is-ready');
     if (fallback) fallback.hidden = false;
     if (fallbackTitle) fallbackTitle.textContent = titleText;
@@ -353,7 +528,7 @@
   };
 
   window.addEventListener('message', event => {
-    if (event.source !== iframe.contentWindow) return;
+    if (nativeActive || event.source !== iframe.contentWindow) return;
     const message = event.data;
     if (!message || message['x-tiktok-player'] !== true) return;
     if (message.type === 'onPlayerReady') {
@@ -389,15 +564,15 @@
       chat.style.removeProperty('--live-panel-height');
       return;
     }
-    const height = Math.round(main.getBoundingClientRect().height);
+    const playerHeight = Math.round(playerCard?.getBoundingClientRect().height || 0);
+    const height = playerHeight;
     if (height > 0) chat.style.setProperty('--live-panel-height', `${height}px`);
   };
 
   syncLiveChatHeight();
   window.addEventListener('resize', syncLiveChatHeight, { passive: true });
   if ('ResizeObserver' in window) {
-    const main = document.querySelector('.live-watch-main');
-    if (main) new ResizeObserver(syncLiveChatHeight).observe(main);
+    if (playerCard) new ResizeObserver(syncLiveChatHeight).observe(playerCard);
   }
 
   window.addEventListener('beforeunload', () => {
