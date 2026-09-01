@@ -12,7 +12,7 @@
 }
 
 .tl114-header{position:relative;z-index:80;display:grid;grid-template-columns:58px minmax(0,1fr) 58px;align-items:center;width:100%;min-height:190px;padding:14px 16px;border-bottom:1px solid var(--tl114-line);background:var(--tl114-bg)}
-.tl114-logo{grid-column:2;justify-self:center;display:block;width:100%;max-width:720px;min-width:0;height:158px;background:url('img/team-lambreta-header-logo.svg') center/contain no-repeat;text-decoration:none}
+.tl114-logo{grid-column:2;justify-self:center;display:block;width:100%;max-width:720px;min-width:0;height:158px;background:url('img/team-lambreta-header-logo.svg?v=2') center/contain no-repeat;text-decoration:none}
 .tl114-menu-button,.tl114-account-button{display:grid;place-items:center;width:50px;height:50px;padding:0;border:1px solid rgba(84,126,153,.4);border-radius:14px;background:#07111a;color:var(--tl114-text);cursor:pointer}
 .tl114-menu-button{grid-column:1}.tl114-account-button{grid-column:3;justify-self:end;overflow:hidden}
 .tl114-menu-button svg,.tl114-account-button svg{width:28px;height:28px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}

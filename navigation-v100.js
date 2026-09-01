@@ -26,7 +26,7 @@
   if (!header) return;
   header.className = 'site-header tl-header-v100';
   header.innerHTML = `
-    <a href="home.html" class="brand brand-logo-link" aria-label="Team Lambreta — página inicial"><img class="brand-logo-image" src="img/team-lambreta-header-logo.svg" alt="Team Lambreta"></a>
+    <a href="home.html" class="brand brand-logo-link" aria-label="Team Lambreta — página inicial"><img class="brand-logo-image" src="img/team-lambreta-header-logo.svg?v=2" alt="Team Lambreta"></a>
     <button id="tlMenuButton" class="tl-mobile-menu-button" type="button" aria-label="Abrir menu" aria-expanded="false"><span></span><span></span><span></span></button>
     <div id="tlMenuBackdrop" class="tl-mobile-menu-backdrop" hidden></div>
     <nav id="tlMainNav" class="tl-main-nav" aria-label="Menu principal">

@@ -11,7 +11,7 @@
 .home-live-visual img { width:100%; height:100%; object-fit:cover; }
 .home-live-visual:has(.home-live-preview) { background:#05080b; }
 .home-live-visual:has(.home-live-preview)::before,
-.home-live-visual:has(.home-live-preview)::after { content:""; position:absolute; top:0; bottom:0; z-index:1; width:31.25%; pointer-events:none; background-color:#07090c; background-image:radial-gradient(circle at 50% 48%,rgba(218,172,64,.20),transparent 52%),linear-gradient(180deg,rgba(7,11,14,.18),rgba(7,11,14,.88)),url("img/team-lambreta-header-logo.svg"); background-repeat:no-repeat; background-position:center,center,center; background-size:100% 100%,100% 100%,78% auto; }
+.home-live-visual:has(.home-live-preview)::after { content:""; position:absolute; top:0; bottom:0; z-index:1; width:31.25%; pointer-events:none; background-color:#07090c; background-image:radial-gradient(circle at 50% 48%,rgba(218,172,64,.20),transparent 52%),linear-gradient(180deg,rgba(7,11,14,.18),rgba(7,11,14,.88)),url("img/team-lambreta-header-logo.svg?v=2"); background-repeat:no-repeat; background-position:center,center,center; background-size:100% 100%,100% 100%,78% auto; }
 .home-live-visual:has(.home-live-preview)::before { left:0; border-right:1px solid rgba(218,172,64,.28); }
 .home-live-visual:has(.home-live-preview)::after { right:0; border-left:1px solid rgba(218,172,64,.28); }
 .home-live-preview { position:absolute; top:50%; left:50%; z-index:2; width:37.5%; height:100%; border:0; opacity:0; pointer-events:none; transition:opacity .3s ease; transform:translate(-50%,-50%); transform-origin:center; background:#000; box-shadow:0 0 0 1px rgba(218,172,64,.24),0 0 24px rgba(0,0,0,.72); }
