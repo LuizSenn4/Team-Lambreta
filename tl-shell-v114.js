@@ -5,7 +5,7 @@
 
   const q=(s,r=document)=>r.querySelector(s);
   const qa=(s,r=document)=>[...r.querySelectorAll(s)];
-  const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot',"'":'&#39;'}[c]));
+  const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
   const file=(location.pathname.split('/').pop()||'home.html').toLowerCase();
   const key=file.startsWith('profile')?'profile':file.startsWith('forum')?'forum':(file.startsWith('stream')||file.startsWith('live'))?'streamers':(file.startsWith('buddy')||file.startsWith('chat'))?'chat':'home';
   let session=null,profile=null;
@@ -52,7 +52,7 @@
     qa('[data-tl114-admin-link],[data-tl114-drawer-account]',drawer).forEach(node=>node.remove());
     if(session?.user){
       let canAdmin=false;try{canAdmin=await window.TeamPermissions?.can?.('admin.full')||false}catch{}
-      if(canAdmin) drawer.insertAdjacentHTML('beforeend','<a href="admin.html" data-tl114-admin-link>Admin</a>');
+      if(canAdmin){drawer.insertAdjacentHTML('beforeend','<a href="admin.html" data-tl114-admin-link>Admin</a>');q('[data-tl114-admin-link]',drawer)?.addEventListener('click',close)}
       drawer.insertAdjacentHTML('beforeend','<button type="button" data-tl114-drawer-account data-tl114-drawer-logout>Sair</button>');
       accountMenu.insertAdjacentHTML('beforeend','<a href="profile.html">Ver perfil</a><a href="profile-edit.html">Editar perfil</a><button type="button" data-tl114-logout>Sair</button>');
       const logout=async()=>{try{await window.TeamAuth?.signOut?.();location.href='home.html'}catch{}};
@@ -63,7 +63,6 @@
       const google=()=>window.TeamAuth?.signInWithGoogle?.();const tiktok=()=>{location.href='/auth/tiktok/start'};
       q('[data-tl114-login]',accountMenu)?.addEventListener('click',google);q('[data-tl114-tiktok]',accountMenu)?.addEventListener('click',tiktok);q('[data-tl114-drawer-login]',drawer)?.addEventListener('click',()=>{close();google()});q('[data-tl114-drawer-tiktok]',drawer)?.addEventListener('click',()=>{close();tiktok()});
     }
-    qa('.tl114-drawer a',drawer).forEach(a=>a.addEventListener('click',close));
     window.dispatchEvent(new CustomEvent('tl:shell-ready',{detail:{version:'114.3',session,profile}}));
   }
 
