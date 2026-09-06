@@ -2,7 +2,7 @@
   'use strict';
   if (window.TeamPermissions) return;
 
-  const ROLE_ALIASES = Object.freeze({ dev:'master', moderador:'moderator', administrador:'admin', apoiador:'supporter', membro:'member', user:'member' });
+  const ROLE_ALIASES = Object.freeze({ dev:'master', developer:'master', moderador:'moderator', administrador:'admin', apoiador:'supporter', membro:'member', user:'member' });
   const ROLE_LABELS = Object.freeze({ master: 'DEV', admin: 'ADMIN', staff: 'STAFF', moderator: 'MODERADOR', streamer: 'STREAMER', vip: 'VIP', supporter: 'APOIADOR', member: 'MEMBRO' });
   // Metadados exclusivamente visuais. MATRIX/can() continuam a ser a única
   // fonte de autoridade e nunca consultam esta lista.
