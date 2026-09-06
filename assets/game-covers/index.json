@@ -1,0 +1,532 @@
+{
+  "league-of-legends": {
+    "file": "assets/game-covers/league-of-legends.webp",
+    "source": "steam",
+    "source_url": "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/1276800/header.jpg"
+  },
+  "grand-theft-auto-v": {
+    "file": "assets/game-covers/grand-theft-auto-v.webp",
+    "source": "steam",
+    "source_url": "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/3240220/header.jpg"
+  },
+  "valorant": {
+    "file": "assets/game-covers/valorant.webp",
+    "source": "wikipedia",
+    "source_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/fc/Valorant_logo_-_pink_color_version.svg/960px-Valorant_logo_-_pink_color_version.svg.png?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail"
+  },
+  "counter-strike-2": {
+    "file": "assets/game-covers/counter-strike-2.webp",
+    "source": "steam",
+    "source_url": "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/730/header.jpg"
+  },
+  "dota-2": {
+    "file": "assets/game-covers/dota-2.webp",
+    "source": "steam",
+    "source_url": "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/570/header.jpg"
+  },
+  "minecraft": {
+    "file": "assets/game-covers/minecraft.webp",
+    "source": "wikipedia",
+    "source_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/9f/The_Undergarden_%28Minecraft_mod%29.png/960px-The_Undergarden_%28Minecraft_mod%29.png?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail"
+  },
+  "overwatch": {
+    "file": "assets/game-covers/overwatch.webp",
+    "source": "steam",
+    "source_url": "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/2357570/header.jpg"
+  },
+  "fortnite": {
+    "file": "assets/game-covers/fortnite.webp",
+    "source": "wikipedia",
+    "source_url": "https://upload.wikimedia.org/wikipedia/commons/7/7c/Fortnite_F_lettermark_logo.png?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled"
+  },
+  "dead-by-daylight": {
+    "file": "assets/game-covers/dead-by-daylight.webp",
+    "source": "steam",
+    "source_url": "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/381210/header.jpg"
+  },
+  "marvel-rivals": {
+    "file": "assets/game-covers/marvel-rivals.webp",
+    "source": "steam",
+    "source_url": "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/2767030/header.jpg"
+  },
+  "apex-legends": {
+    "file": "assets/game-covers/apex-legends.webp",
+    "source": "steam",
+    "source_url": "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/1172470/header.jpg"
+  },
+  "world-of-warcraft": {
+    "file": "assets/game-covers/world-of-warcraft.webp",
+    "source": "fallback",
+    "source_url": ""
+  },
+  "call-of-duty": {
+    "file": "assets/game-covers/call-of-duty.webp",
+    "source": "steam",
+    "source_url": "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/1938090/header.jpg"
+  },
+  "call-of-duty-warzone": {
+    "file": "assets/game-covers/call-of-duty-warzone.webp",
+    "source": "steam",
+    "source_url": "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/1962663/header.jpg"
+  },
+  "path-of-exile-2": {
+    "file": "assets/game-covers/path-of-exile-2.webp",
+    "source": "steam",
+    "source_url": "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/2694490/header.jpg"
+  },
+  "hearthstone": {
+    "file": "assets/game-covers/hearthstone.webp",
+    "source": "fallback",
+    "source_url": ""
+  },
+  "escape-from-tarkov": {
+    "file": "assets/game-covers/escape-from-tarkov.webp",
+    "source": "wikipedia",
+    "source_url": "https://upload.wikimedia.org/wikipedia/en/3/31/TheBurntPeanut.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled"
+  },
+  "palworld": {
+    "file": "assets/game-covers/palworld.webp",
+    "source": "steam",
+    "source_url": "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/1623730/header.jpg"
+  },
+  "rust": {
+    "file": "assets/game-covers/rust.webp",
+    "source": "steam",
+    "source_url": "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/252490/header.jpg"
+  },
+  "rocket-league": {
+    "file": "assets/game-covers/rocket-league.webp",
+    "source": "wikipedia",
+    "source_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e0/Rocket_League_coverart.jpg/960px-Rocket_League_coverart.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail"
+  },
+  "rainbow-six-siege": {
+    "file": "assets/game-covers/rainbow-six-siege.webp",
+    "source": "steam",
+    "source_url": "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/359550/header.jpg"
+  },
+  "pubg-battlegrounds": {
+    "file": "assets/game-covers/pubg-battlegrounds.webp",
+    "source": "steam",
+    "source_url": "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/578080/header.jpg"
+  },
+  "ea-sports-fc": {
+    "file": "assets/game-covers/ea-sports-fc.webp",
+    "source": "wikipedia",
+    "source_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/31/EA_Sports_FC_logo.svg/960px-EA_Sports_FC_logo.svg.png?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail"
+  },
+  "the-finals": {
+    "file": "assets/game-covers/the-finals.webp",
+    "source": "steam",
+    "source_url": "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/2073850/header.jpg"
+  },
+  "destiny-2": {
+    "file": "assets/game-covers/destiny-2.webp",
+    "source": "steam",
+    "source_url": "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/1085660/header.jpg"
+  },
+  "warframe": {
+    "file": "assets/game-covers/warframe.webp",
+    "source": "steam",
+    "source_url": "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/230410/header.jpg"
+  },
+  "diablo-iv": {
+    "file": "assets/game-covers/diablo-iv.webp",
+    "source": "steam",
+    "source_url": "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/2344520/header.jpg"
+  },
+  "diablo-ii-resurrected": {
+    "file": "assets/game-covers/diablo-ii-resurrected.webp",
+    "source": "fallback",
+    "source_url": ""
+  },
+  "final-fantasy-xiv": {
+    "file": "assets/game-covers/final-fantasy-xiv.webp",
+    "source": "steam",
+    "source_url": "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/39210/header.jpg"
+  },
+  "lost-ark": {
+    "file": "assets/game-covers/lost-ark.webp",
+    "source": "steam",
+    "source_url": "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/1599340/header.jpg"
+  },
+  "new-world": {
+    "file": "assets/game-covers/new-world.webp",
+    "source": "fallback",
+    "source_url": ""
+  },
+  "black-desert-online": {
+    "file": "assets/game-covers/black-desert-online.webp",
+    "source": "fallback",
+    "source_url": ""
+  },
+  "guild-wars-2": {
+    "file": "assets/game-covers/guild-wars-2.webp",
+    "source": "steam",
+    "source_url": "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/1284210/header.jpg"
+  },
+  "elden-ring": {
+    "file": "assets/game-covers/elden-ring.webp",
+    "source": "steam",
+    "source_url": "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/1245620/header.jpg"
+  },
+  "dark-souls-iii": {
+    "file": "assets/game-covers/dark-souls-iii.webp",
+    "source": "steam",
+    "source_url": "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/374320/header.jpg"
+  },
+  "monster-hunter-wilds": {
+    "file": "assets/game-covers/monster-hunter-wilds.webp",
+    "source": "steam",
+    "source_url": "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/2246340/header.jpg"
+  },
+  "monster-hunter-world": {
+    "file": "assets/game-covers/monster-hunter-world.webp",
+    "source": "steam",
+    "source_url": "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/582010/header.jpg"
+  },
+  "cyberpunk-2077": {
+    "file": "assets/game-covers/cyberpunk-2077.webp",
+    "source": "steam",
+    "source_url": "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/1091500/header.jpg"
+  },
+  "red-dead-redemption-2": {
+    "file": "assets/game-covers/red-dead-redemption-2.webp",
+    "source": "steam",
+    "source_url": "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/1174180/header.jpg"
+  },
+  "genshin-impact": {
+    "file": "assets/game-covers/genshin-impact.webp",
+    "source": "wikipedia",
+    "source_url": "https://upload.wikimedia.org/wikipedia/en/thumb/5/5d/Genshin_Impact_logo.svg/960px-Genshin_Impact_logo.svg.png?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail"
+  },
+  "honkai-star-rail": {
+    "file": "assets/game-covers/honkai-star-rail.webp",
+    "source": "fallback",
+    "source_url": ""
+  },
+  "zenless-zone-zero": {
+    "file": "assets/game-covers/zenless-zone-zero.webp",
+    "source": "wikipedia",
+    "source_url": "https://upload.wikimedia.org/wikipedia/en/thumb/d/d2/Zenless_Zone_Zero_curved_box_logo.svg/960px-Zenless_Zone_Zero_curved_box_logo.svg.png?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail"
+  },
+  "roblox": {
+    "file": "assets/game-covers/roblox.webp",
+    "source": "wikipedia",
+    "source_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a8/2850_S._Delaware_Street.jpg/960px-2850_S._Delaware_Street.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail"
+  },
+  "brawl-stars": {
+    "file": "assets/game-covers/brawl-stars.webp",
+    "source": "wikipedia",
+    "source_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5a/Supercell-logo.svg/960px-Supercell-logo.svg.png?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail"
+  },
+  "clash-royale": {
+    "file": "assets/game-covers/clash-royale.webp",
+    "source": "fallback",
+    "source_url": ""
+  },
+  "clash-of-clans": {
+    "file": "assets/game-covers/clash-of-clans.webp",
+    "source": "wikipedia",
+    "source_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5a/Supercell-logo.svg/960px-Supercell-logo.svg.png?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail"
+  },
+  "mobile-legends": {
+    "file": "assets/game-covers/mobile-legends.webp",
+    "source": "wikipedia",
+    "source_url": "https://upload.wikimedia.org/wikipedia/commons/1/12/Alexey_Pajitnov_January_2008_cropped.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled"
+  },
+  "free-fire": {
+    "file": "assets/game-covers/free-fire.webp",
+    "source": "wikipedia",
+    "source_url": "https://upload.wikimedia.org/wikipedia/commons/9/9e/Fretsonfire4.png?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled"
+  },
+  "pokemon": {
+    "file": "assets/game-covers/pokemon.webp",
+    "source": "wikipedia",
+    "source_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/98/International_Pok%C3%A9mon_logo.svg/960px-International_Pok%C3%A9mon_logo.svg.png?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail"
+  },
+  "street-fighter-6": {
+    "file": "assets/game-covers/street-fighter-6.webp",
+    "source": "steam",
+    "source_url": "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/1364780/header.jpg"
+  },
+  "tekken-8": {
+    "file": "assets/game-covers/tekken-8.webp",
+    "source": "steam",
+    "source_url": "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/1778820/header.jpg"
+  },
+  "mortal-kombat-1": {
+    "file": "assets/game-covers/mortal-kombat-1.webp",
+    "source": "steam",
+    "source_url": "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/1971870/header.jpg"
+  },
+  "super-smash-bros-ultimate": {
+    "file": "assets/game-covers/super-smash-bros-ultimate.webp",
+    "source": "fallback",
+    "source_url": ""
+  },
+  "teamfight-tactics": {
+    "file": "assets/game-covers/teamfight-tactics.webp",
+    "source": "fallback",
+    "source_url": ""
+  },
+  "legends-of-runeterra": {
+    "file": "assets/game-covers/legends-of-runeterra.webp",
+    "source": "wikipedia",
+    "source_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d8/League_of_Legends_2019_vector.svg/960px-League_of_Legends_2019_vector.svg.png?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail"
+  },
+  "starcraft-ii": {
+    "file": "assets/game-covers/starcraft-ii.webp",
+    "source": "fallback",
+    "source_url": ""
+  },
+  "age-of-empires-iv": {
+    "file": "assets/game-covers/age-of-empires-iv.webp",
+    "source": "steam",
+    "source_url": "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/1466860/header.jpg"
+  },
+  "civilization-vii": {
+    "file": "assets/game-covers/civilization-vii.webp",
+    "source": "steam",
+    "source_url": "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/1295660/header.jpg"
+  },
+  "football-manager": {
+    "file": "assets/game-covers/football-manager.webp",
+    "source": "fallback",
+    "source_url": ""
+  },
+  "nba-2k": {
+    "file": "assets/game-covers/nba-2k.webp",
+    "source": "fallback",
+    "source_url": ""
+  },
+  "madden-nfl": {
+    "file": "assets/game-covers/madden-nfl.webp",
+    "source": "fallback",
+    "source_url": ""
+  },
+  "f1": {
+    "file": "assets/game-covers/f1.webp",
+    "source": "fallback",
+    "source_url": ""
+  },
+  "forza-horizon": {
+    "file": "assets/game-covers/forza-horizon.webp",
+    "source": "fallback",
+    "source_url": ""
+  },
+  "gran-turismo": {
+    "file": "assets/game-covers/gran-turismo.webp",
+    "source": "steam",
+    "source_url": "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/2232490/header.jpg"
+  },
+  "assetto-corsa": {
+    "file": "assets/game-covers/assetto-corsa.webp",
+    "source": "steam",
+    "source_url": "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/244210/header.jpg"
+  },
+  "iracing": {
+    "file": "assets/game-covers/iracing.webp",
+    "source": "steam",
+    "source_url": "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/266410/header.jpg"
+  },
+  "dayz": {
+    "file": "assets/game-covers/dayz.webp",
+    "source": "steam",
+    "source_url": "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/221100/header.jpg"
+  },
+  "ark-survival-ascended": {
+    "file": "assets/game-covers/ark-survival-ascended.webp",
+    "source": "steam",
+    "source_url": "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/2399830/header.jpg"
+  },
+  "project-zomboid": {
+    "file": "assets/game-covers/project-zomboid.webp",
+    "source": "steam",
+    "source_url": "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/108600/header.jpg"
+  },
+  "terraria": {
+    "file": "assets/game-covers/terraria.webp",
+    "source": "steam",
+    "source_url": "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/105600/header.jpg"
+  },
+  "stardew-valley": {
+    "file": "assets/game-covers/stardew-valley.webp",
+    "source": "steam",
+    "source_url": "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/413150/header.jpg"
+  },
+  "the-sims-4": {
+    "file": "assets/game-covers/the-sims-4.webp",
+    "source": "steam",
+    "source_url": "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/1222670/header.jpg"
+  },
+  "no-mans-sky": {
+    "file": "assets/game-covers/no-mans-sky.webp",
+    "source": "steam",
+    "source_url": "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/275850/header.jpg"
+  },
+  "sea-of-thieves": {
+    "file": "assets/game-covers/sea-of-thieves.webp",
+    "source": "steam",
+    "source_url": "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/1172620/header.jpg"
+  },
+  "helldivers-2": {
+    "file": "assets/game-covers/helldivers-2.webp",
+    "source": "steam",
+    "source_url": "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/553850/header.jpg"
+  },
+  "war-thunder": {
+    "file": "assets/game-covers/war-thunder.webp",
+    "source": "steam",
+    "source_url": "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/236390/header.jpg"
+  },
+  "world-of-tanks": {
+    "file": "assets/game-covers/world-of-tanks.webp",
+    "source": "steam",
+    "source_url": "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/1407200/header.jpg"
+  },
+  "world-of-warships": {
+    "file": "assets/game-covers/world-of-warships.webp",
+    "source": "steam",
+    "source_url": "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/552990/header.jpg"
+  },
+  "fall-guys": {
+    "file": "assets/game-covers/fall-guys.webp",
+    "source": "fallback",
+    "source_url": ""
+  },
+  "among-us": {
+    "file": "assets/game-covers/among-us.webp",
+    "source": "steam",
+    "source_url": "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/945360/header.jpg"
+  },
+  "phasmophobia": {
+    "file": "assets/game-covers/phasmophobia.webp",
+    "source": "steam",
+    "source_url": "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/739630/header.jpg"
+  },
+  "lethal-company": {
+    "file": "assets/game-covers/lethal-company.webp",
+    "source": "steam",
+    "source_url": "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/1966720/header.jpg"
+  },
+  "content-warning": {
+    "file": "assets/game-covers/content-warning.webp",
+    "source": "steam",
+    "source_url": "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/2881650/header.jpg"
+  },
+  "fivem": {
+    "file": "assets/game-covers/fivem.webp",
+    "source": "fallback",
+    "source_url": ""
+  },
+  "garrys-mod": {
+    "file": "assets/game-covers/garrys-mod.webp",
+    "source": "steam",
+    "source_url": "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/4000/header.jpg"
+  },
+  "osu": {
+    "file": "assets/game-covers/osu.webp",
+    "source": "steam",
+    "source_url": "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/608180/header.jpg"
+  },
+  "geometry-dash": {
+    "file": "assets/game-covers/geometry-dash.webp",
+    "source": "steam",
+    "source_url": "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/322170/header.jpg"
+  },
+  "old-school-runescape": {
+    "file": "assets/game-covers/old-school-runescape.webp",
+    "source": "steam",
+    "source_url": "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/1343370/header.jpg"
+  },
+  "runescape": {
+    "file": "assets/game-covers/runescape.webp",
+    "source": "steam",
+    "source_url": "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/1343400/header.jpg"
+  },
+  "maplestory": {
+    "file": "assets/game-covers/maplestory.webp",
+    "source": "steam",
+    "source_url": "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/216150/header.jpg"
+  },
+  "albion-online": {
+    "file": "assets/game-covers/albion-online.webp",
+    "source": "steam",
+    "source_url": "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/761890/header.jpg"
+  },
+  "eve-online": {
+    "file": "assets/game-covers/eve-online.webp",
+    "source": "steam",
+    "source_url": "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/8500/header.jpg"
+  },
+  "smite": {
+    "file": "assets/game-covers/smite.webp",
+    "source": "steam",
+    "source_url": "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/386360/header.jpg"
+  },
+  "smite-2": {
+    "file": "assets/game-covers/smite-2.webp",
+    "source": "steam",
+    "source_url": "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/2437170/header.jpg"
+  },
+  "heroes-of-the-storm": {
+    "file": "assets/game-covers/heroes-of-the-storm.webp",
+    "source": "fallback",
+    "source_url": ""
+  },
+  "pokemon-unite": {
+    "file": "assets/game-covers/pokemon-unite.webp",
+    "source": "wikipedia",
+    "source_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/98/International_Pok%C3%A9mon_logo.svg/960px-International_Pok%C3%A9mon_logo.svg.png?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail"
+  },
+  "arena-breakout": {
+    "file": "assets/game-covers/arena-breakout.webp",
+    "source": "steam",
+    "source_url": "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/2073620/header.jpg"
+  },
+  "delta-force": {
+    "file": "assets/game-covers/delta-force.webp",
+    "source": "steam",
+    "source_url": "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/2507950/header.jpg"
+  },
+  "escape-from-tarkov-arena": {
+    "file": "assets/game-covers/escape-from-tarkov-arena.webp",
+    "source": "fallback",
+    "source_url": ""
+  },
+  "trackmania": {
+    "file": "assets/game-covers/trackmania.webp",
+    "source": "steam",
+    "source_url": "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/2225070/header.jpg"
+  },
+  "deadlock": {
+    "file": "assets/game-covers/deadlock.webp",
+    "source": "steam",
+    "source_url": "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/1422450/header.jpg"
+  },
+  "path-of-exile": {
+    "file": "assets/game-covers/path-of-exile.webp",
+    "source": "steam",
+    "source_url": "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/238960/header.jpg"
+  },
+  "balatro": {
+    "file": "assets/game-covers/balatro.webp",
+    "source": "steam",
+    "source_url": "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/2379780/header.jpg"
+  },
+  "warcraft-iii": {
+    "file": "assets/game-covers/warcraft-iii.webp",
+    "source": "fallback",
+    "source_url": ""
+  },
+  "battlefield": {
+    "file": "assets/game-covers/battlefield.webp",
+    "source": "steam",
+    "source_url": "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/2807960/header.jpg"
+  },
+  "halo-infinite": {
+    "file": "assets/game-covers/halo-infinite.webp",
+    "source": "steam",
+    "source_url": "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/1240440/header.jpg"
+  }
+}
