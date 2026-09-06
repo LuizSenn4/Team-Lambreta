@@ -1,0 +1,35 @@
+name: Migrate shell v115
+
+on:
+  push:
+    paths:
+      - '.github/workflows/migrate-shell-v115.yml'
+      - 'scripts/migrate-shell-v115.mjs'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  migrate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Apply migration
+        run: node scripts/migrate-shell-v115.mjs
+      - name: Commit migration
+        run: |
+          if git diff --quiet; then
+            echo "No changes required"
+            exit 0
+          fi
+          git config user.name "Senn4_Axor"
+          git config user.email "132702416+LuizSenn4@users.noreply.github.com"
+          git add -A
+          git commit -m "refactor: migrate site to shell v115"
+          git push
