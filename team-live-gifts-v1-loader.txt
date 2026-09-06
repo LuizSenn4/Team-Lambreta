@@ -1,1 +1,0 @@
-team-live-gifts-v1.js -> team-live-gifts-core-v2.js + team-live-commands-v1.js
