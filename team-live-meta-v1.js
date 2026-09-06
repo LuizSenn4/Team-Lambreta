@@ -98,9 +98,8 @@
     return button;
   }
   function streamerHandle() {
-    const direct = String(streamer?.tiktok_username || '').replace(/^@/, '').trim();
-    if (direct) return direct;
-    const match = String(streamer?.tiktok_url || streamer?.live_url || '').match(/tiktok\.com\/@([^/?#]+)/i);
+    const source = String(streamer?.tiktok_url || streamer?.live_url || '');
+    const match = source.match(/tiktok\.com\/@([^/?#]+)/i);
     return match?.[1] ? decodeURIComponent(match[1]).replace(/^@/, '') : needle;
   }
 
@@ -215,7 +214,7 @@
   }
 
   async function loadStreamer() {
-    const columns = 'id,display_name,main_game,live_game_mode,tiktok_username,tiktok_url,live_url,is_published,is_archived';
+    const columns = 'id,display_name,main_game,live_game_mode,tiktok_url,live_url,is_published,is_archived';
     let result;
     if (/^[0-9a-f-]{36}$/i.test(ref)) {
       result = await sb.from('streamers').select(columns).eq('id', ref).eq('is_published', true).eq('is_archived', false).maybeSingle();
@@ -223,7 +222,7 @@
       const all = await sb.from('streamers').select(columns).eq('is_published', true).eq('is_archived', false);
       result = {
         error: all.error,
-        data: (all.data || []).find(row => `${row.tiktok_username || ''} ${row.tiktok_url || ''} ${row.live_url || ''} ${row.display_name || ''}`.toLowerCase().includes(needle)) || null
+        data: (all.data || []).find(row => `${row.tiktok_url || ''} ${row.live_url || ''} ${row.display_name || ''}`.toLowerCase().includes(needle)) || null
       };
     }
     if (result.error || !result.data) return;
