@@ -21,23 +21,31 @@
   };
 
   function avatarUrl(p){return window.TeamProfiles?.getAvatarUrl?.(p)||p?.avatar_display_url||p?.avatar_external_url||p?.custom_avatar_url||p?.avatar_url||''}
-  function ensureStyle(){if(q('link[href*="tl-shell-v114.css"]'))return;const l=document.createElement('link');l.rel='stylesheet';l.href='tl-shell-v114.css?v=114.4';document.head.appendChild(l)}
+  function ensureStyle(){if(q('link[href*="tl-shell-v114.css"]'))return;const l=document.createElement('link');l.rel='stylesheet';l.href='tl-shell-v114.css?v=114.5';document.head.appendChild(l)}
   function removeLegacy(){qa('.tl113-bottom-nav,.tl114-bottom-nav').forEach(n=>n.remove());document.body.classList.remove('tl113-has-bottom-nav','tl-mobile-menu-open')}
 
   function buildHeader(){
     const old=q('.tl114-header,.tl113-header,.site-header');
     const h=document.createElement('header');h.className='tl114-header';h.setAttribute('aria-label','Cabeçalho Team Lambreta');
-    h.innerHTML=`<button class="tl114-menu-button" type="button" aria-label="Abrir menu" aria-expanded="false">${icons.menu}</button><a class="tl114-logo" href="home.html" aria-label="Team Lambreta — início"></a><button class="tl114-account-button" type="button" aria-label="Abrir conta" aria-expanded="false">${icons.user}</button><nav class="tl114-drawer" hidden aria-label="Menu principal"><a href="home.html">Home</a><a href="team.html">Team</a><a href="forum.html">Fórum</a><a href="streamers.html">Streamers</a><a href="eventos.html">Eventos</a><a href="profile.html#profileSocial">Redes</a><a href="profile.html">Perfil</a><a href="buddy.html">Mensagens</a></nav><div class="tl114-account-menu" hidden></div>`;
+    h.innerHTML=`<button class="tl114-menu-button" type="button" aria-label="Abrir menu" aria-expanded="false">${icons.menu}</button><a class="tl114-logo" href="home.html" aria-label="Team Lambreta — ir para Home"></a><button class="tl114-account-button" type="button" aria-label="Abrir conta" aria-expanded="false">${icons.user}</button><nav class="tl114-drawer" hidden aria-label="Menu principal"><a href="home.html">Home</a><a href="team.html">Team</a><a href="forum.html">Fórum</a><a href="streamers.html">Streamers</a><a href="eventos.html">Eventos</a><a href="profile.html#profileSocial">Redes</a><a href="profile.html">Perfil</a><a href="buddy.html">Mensagens</a></nav><div class="tl114-account-menu" hidden></div>`;
     if(old) old.replaceWith(h); else (q('.site-content')||q('.tl-profile-app-v106')||document.body).prepend(h);
     const menu=q('.tl114-menu-button',h),drawer=q('.tl114-drawer',h),account=q('.tl114-account-button',h),accountMenu=q('.tl114-account-menu',h);
     qa('.tl114-drawer a',h).forEach(a=>{const f=(a.getAttribute('href')||'').split('#')[0].toLowerCase();a.classList.toggle('is-current',f===file||(key==='streamers'&&f==='streamers.html')||(key==='profile'&&f==='profile.html'))});
-    const set=(b,p,o)=>{b.setAttribute('aria-expanded',String(o));p.hidden=!o};const close=()=>{set(menu,drawer,false);set(account,accountMenu,false)};
-    menu.addEventListener('click',e=>{e.stopPropagation();const o=drawer.hidden;close();set(menu,drawer,o)});account.addEventListener('click',e=>{e.stopPropagation();const o=accountMenu.hidden;close();set(account,accountMenu,o)});h.addEventListener('click',e=>e.stopPropagation());document.addEventListener('click',close);document.addEventListener('keydown',e=>{if(e.key==='Escape')close()});qa('a',drawer).forEach(a=>a.addEventListener('click',close));
-    return {account,accountMenu,drawer,close};
+    const set=(b,p,o)=>{b.setAttribute('aria-expanded',String(o));p.hidden=!o};
+    const close=()=>{set(menu,drawer,false);set(account,accountMenu,false);q('[data-tl114-bottom-menu]')?.setAttribute('aria-expanded','false')};
+    const toggleMenu=()=>{const o=drawer.hidden;close();set(menu,drawer,o);q('[data-tl114-bottom-menu]')?.setAttribute('aria-expanded',String(o))};
+    menu.addEventListener('click',e=>{e.stopPropagation();toggleMenu()});
+    account.addEventListener('click',e=>{e.stopPropagation();const o=accountMenu.hidden;close();set(account,accountMenu,o)});
+    h.addEventListener('click',e=>e.stopPropagation());document.addEventListener('click',close);document.addEventListener('keydown',e=>{if(e.key==='Escape')close()});qa('a',drawer).forEach(a=>a.addEventListener('click',close));
+    return {account,accountMenu,drawer,close,toggleMenu};
   }
 
-  function buildBottom(){
-    const n=document.createElement('nav');n.className='tl114-bottom-nav';n.setAttribute('aria-label','Navegação principal');n.innerHTML=`<a href="home.html" data-key="home">${icons.home}<span>Home</span></a><a href="forum.html" data-key="forum">${icons.forum}<span>Fórum</span></a><a href="streamers.html" data-key="streamers">${icons.streamers}<span>Streamers</span></a><a href="buddy.html" data-key="chat">${icons.chat}<span>Chat</span><b class="tl114-badge" data-tl114-unread hidden>0</b></a><a href="profile.html" data-key="profile"><span class="tl114-nav-avatar" data-tl114-avatar><img alt="" decoding="async">${icons.user}</span><span>Perfil</span></a>`;document.body.appendChild(n);document.body.classList.add('tl114-has-bottom-nav');qa('[data-key]',n).forEach(a=>a.classList.toggle('is-active',a.dataset.key===key));return n
+  function buildBottom(toggleMenu){
+    const n=document.createElement('nav');n.className='tl114-bottom-nav';n.setAttribute('aria-label','Navegação principal');
+    n.innerHTML=`<button type="button" data-tl114-bottom-menu aria-label="Abrir menu" aria-expanded="false">${icons.menu}<span>Menu</span></button><a href="forum.html" data-key="forum">${icons.forum}<span>Fórum</span></a><a href="streamers.html" data-key="streamers">${icons.streamers}<span>Streamers</span></a><a href="buddy.html" data-key="chat">${icons.chat}<span>Chat</span><b class="tl114-badge" data-tl114-unread hidden>0</b></a><a href="profile.html" data-key="profile"><span class="tl114-nav-avatar" data-tl114-avatar><img alt="" decoding="async">${icons.user}</span><span>Perfil</span></a>`;
+    document.body.appendChild(n);document.body.classList.add('tl114-has-bottom-nav');qa('[data-key]',n).forEach(a=>a.classList.toggle('is-active',a.dataset.key===key));
+    q('[data-tl114-bottom-menu]',n)?.addEventListener('click',e=>{e.stopPropagation();toggleMenu()});
+    return n
   }
 
   function paintAvatar(p,account,nav){const src=String(avatarUrl(p)||'').trim();account.innerHTML=src?`<img src="${esc(src)}" alt="Avatar">`:icons.user;const wrap=q('[data-tl114-avatar]',nav),img=wrap?.querySelector('img');if(!wrap||!img)return;if(!src){wrap.classList.remove('has-photo');img.removeAttribute('src');return;}img.onload=()=>wrap.classList.add('has-photo');img.onerror=()=>wrap.classList.remove('has-photo');img.src=src}
@@ -64,11 +72,11 @@
       const google=()=>window.TeamAuth?.signInWithGoogle?.();const tiktok=()=>{location.href='/auth/tiktok/start'};
       q('[data-tl114-login]',accountMenu)?.addEventListener('click',google);q('[data-tl114-tiktok]',accountMenu)?.addEventListener('click',tiktok);q('[data-tl114-drawer-login]',drawer)?.addEventListener('click',()=>{close();google()});q('[data-tl114-drawer-tiktok]',drawer)?.addEventListener('click',()=>{close();tiktok()});
     }
-    window.dispatchEvent(new CustomEvent('tl:shell-ready',{detail:{version:'114.4',session,profile}}));
+    window.dispatchEvent(new CustomEvent('tl:shell-ready',{detail:{version:'114.5',session,profile}}));
   }
 
-  ensureStyle();removeLegacy();const {account,accountMenu,drawer,close}=buildHeader();const nav=buildBottom();paintUnread(nav);
-  window.TeamShell=Object.freeze({version:'114.4',getSession:()=>session,getProfile:()=>profile,refresh:()=>hydrate(account,accountMenu,drawer,close)});
+  ensureStyle();removeLegacy();const {account,accountMenu,drawer,close,toggleMenu}=buildHeader();const nav=buildBottom(toggleMenu);paintUnread(nav);
+  window.TeamShell=Object.freeze({version:'114.5',getSession:()=>session,getProfile:()=>profile,refresh:()=>hydrate(account,accountMenu,drawer,close)});
   const subscribed=window.TeamAuth?.subscribe?.(s=>hydrate(account,accountMenu,drawer,close,s));
   if(!subscribed) hydrate(account,accountMenu,drawer,close);
 })();
