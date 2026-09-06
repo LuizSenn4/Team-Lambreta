@@ -112,7 +112,7 @@
       try { return new URL(link.href,location.href).searchParams.get('user') || ''; } catch { return ''; }
     }).filter(Boolean))];
     if (!ids.length) return;
-    const {data,error} = await sb.from('profiles').select('id,presence,last_seen,last_seen_at').in('id',ids);
+    const {data,error} = await sb.from('profiles').select('id,presence,last_seen').in('id',ids);
     if (error) { console.error('[Profile V116 presence]',error); return; }
     const byId = new Map((data || []).map(row => [row.id,row]));
     links.forEach(link => {
