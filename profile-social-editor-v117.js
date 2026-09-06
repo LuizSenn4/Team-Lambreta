@@ -9,7 +9,15 @@
   async function install(){
     const form=await waitForm();const profile=await window.TeamProfiles?.getCurrentProfile?.({fresh:true}).catch(()=>null);const current=normalize(profile);const discord=form.elements.discord?.closest('.tl-profile-edit-v117__field');
     const block=document.createElement('div');block.className='tl-profile-edit-v117__field';block.innerHTML=`<span>Redes de stream</span><small>TikTok, YouTube e Twitch.</small>${TYPES.map(([type,label,placeholder])=>`<label style="display:grid;gap:6px"><b>${label}</b><input type="url" name="social_${type}" inputmode="url" autocomplete="url" placeholder="${esc(placeholder)}" value="${esc(current.get(type)||'')}"></label>`).join('')}`;(discord||form.firstElementChild).insertAdjacentElement('afterend',block);
-    form.addEventListener('submit',async()=>{setTimeout(async()=>{const session=await window.TeamAuth?.getSession?.();if(!session?.user?.id)return;const links=TYPES.map(([type,label])=>{const url=allowed(form.elements[`social_${type}`]?.value);return url?{type,label,url}:null}).filter(Boolean);const {error}=await window.teamSupabase.from('profiles').update({social_links:links}).eq('id',session.user.id);if(error)console.error('[Profile social V117]',error)},0)},{capture:true});
+    const original=window.TeamProfiles?.updateProfile;if(typeof original!=='function'||original.__tlSocialV117)return;
+    const wrapped=async input=>{
+      const saved=await original.call(window.TeamProfiles,input);
+      const session=await window.TeamAuth?.getSession?.();if(!session?.user?.id)return saved;
+      const links=TYPES.map(([type,label])=>{const url=allowed(form.elements[`social_${type}`]?.value);return url?{type,label,url}:null}).filter(Boolean);
+      const {error}=await window.teamSupabase.from('profiles').update({social_links:links}).eq('id',session.user.id);if(error)throw error;
+      return window.TeamProfiles.getCurrentProfile({fresh:true}).catch(()=>saved);
+    };
+    wrapped.__tlSocialV117=true;window.TeamProfiles.updateProfile=wrapped;
   }
   Promise.resolve(window.TeamAuth?.ready).then(install).catch(error=>console.error('[Profile social V117]',error));
 })();
