@@ -3,9 +3,9 @@
   const rankingEl=document.getElementById('hallRankingList');
   const grid=document.getElementById('hallAchievementGrid');
   const modal=document.getElementById('hallModal');
-  let me=null, progress=[], profiles=[],progressChannel=null;
+  let me=null, progress=[], profiles=[],progressChannel=null,refreshTimer=null;
 
-  const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot',"'":'&#39;'}[c]));
   const name=p=>p?.game_nickname||p?.full_name||'Membro';
   const roleClass=r=>String(r||'member').toLowerCase().replace(/[^a-z0-9_-]/g,'');
   const pct=(v,max)=>Math.max(0,Math.min(100,Math.round((Number(v||0)/max)*100)));
@@ -88,16 +88,18 @@
 
   async function load(){
     if(!sb){renderChampion();renderRanking();renderAchievements();renderMetrics();return;}
-    const sess=await sb.auth.getSession();
+    const sess=await window.TeamAuth?.getSession?.();
     const ranking=await sb.rpc('tl_hall_ranking');
     if(ranking.error){console.error('[TL Hall] Não foi possível carregar o ranking:',ranking.error.message);progress=[];profiles=[];}
     else{
       progress=(ranking.data||[]).map(({display_name,role,avatar_url,...row})=>row);
       profiles=(ranking.data||[]).map(row=>({id:row.user_id,game_nickname:row.display_name,role:row.role,avatar_url:row.avatar_url}));
     }
-    me=profiles.find(p=>p.id===sess.data.session?.user?.id)||null;
+    me=profiles.find(p=>p.id===sess?.user?.id)||null;
     renderChampion();renderRanking();renderAchievements();renderMetrics();
   }
+
+  const scheduleLoad=()=>{clearTimeout(refreshTimer);refreshTimer=setTimeout(load,120);};
 
   document.getElementById('hallFilters')?.addEventListener('click',e=>{const b=e.target.closest('[data-filter]');if(!b)return;document.querySelectorAll('#hallFilters [data-filter]').forEach(x=>x.classList.toggle('is-active',x===b));renderAchievements(b.dataset.filter);});
   grid?.addEventListener('click',e=>{const c=e.target.closest('.hall-achievement-card');if(c)openModal({title:c.dataset.title,text:c.dataset.description,icon:c.dataset.icon,category:c.dataset.category});});
@@ -106,10 +108,9 @@
   document.addEventListener('keydown',e=>{if(e.key==='Escape'&&modal&&!modal.hidden)closeModal();});
   document.getElementById('year')&&(document.getElementById('year').textContent=new Date().getFullYear());
   load();
-  if(sb){progressChannel=sb.channel('hall-progress-v96').on('postgres_changes',{event:'*',schema:'public',table:'community_progress'},()=>load()).subscribe();}
-  window.addEventListener('tl:progress',()=>load());
-  window.addEventListener('focus',load);
-  document.addEventListener('visibilitychange',()=>{ if(!document.hidden) load(); });
-  setInterval(()=>{ if(!document.hidden) load(); },15000);
-  window.addEventListener('pagehide',()=>{if(progressChannel)sb.removeChannel(progressChannel)});
+  if(sb){progressChannel=sb.channel('hall-progress-v96').on('postgres_changes',{event:'*',schema:'public',table:'community_progress'},scheduleLoad).subscribe();}
+  window.addEventListener('tl:progress',scheduleLoad);
+  window.addEventListener('focus',scheduleLoad);
+  document.addEventListener('visibilitychange',()=>{ if(!document.hidden) scheduleLoad(); });
+  window.addEventListener('pagehide',()=>{clearTimeout(refreshTimer);if(progressChannel)sb.removeChannel(progressChannel)});
 })();
