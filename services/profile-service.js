@@ -267,7 +267,7 @@
   async function updateProfile(input) {
     const session = await window.TeamAuth?.getSession();
     if (!session?.user) throw profileError('PRF-008');
-    const games = [...new Set(input.games || [])].slice(0, 3);
+    const games = [...new Set(input.games || [])].slice(0, 4);
     const country = window.TeamCountryCatalog?.resolve?.(input.country);
     const countryCode = country?.code || String(input.country || '').trim().toUpperCase();
     const payload = {

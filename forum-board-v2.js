@@ -697,7 +697,7 @@
   };
 
   function renderProfilePickers() {
-    $("forumGamesCount").textContent = `${selectedGames.size}/3`;
+    $("forumGamesCount").textContent = `${selectedGames.size}/4`;
     $("forumSelectedGames").innerHTML = [...selectedGames]
       .map((slug) => gameBySlug(slug))
       .filter(Boolean)
@@ -707,9 +707,9 @@
       )
       .join("");
     $("forumGamesHint").textContent =
-      selectedGames.size >= 3
-        ? "Você pode selecionar até 3 jogos."
-        : "Selecione até 3 jogos.";
+      selectedGames.size >= 4
+        ? "Você pode selecionar até 4 jogos."
+        : "Selecione até 4 jogos.";
     $("forumPlatformOptions").innerHTML = PLATFORM_OPTIONS.map(
       ([slug, label]) =>
         `<label class="forum-choice-chip"><input type="checkbox" value="${slug}" ${selectedPlatforms.has(slug) ? "checked" : ""}><span>${esc(label)}</span></label>`,
@@ -776,7 +776,7 @@
       ? matches
           .map(
             (game) =>
-              `<label><input type="checkbox" value="${esc(game.slug)}" ${selectedGames.has(game.slug) ? "checked" : ""} ${selectedGames.size >= 3 && !selectedGames.has(game.slug) ? "disabled" : ""}><span><strong>${esc(game.name)}</strong>${game.short_name !== game.name ? `<small>${esc(game.short_name)}</small>` : ""}</span></label>`,
+              `<label><input type="checkbox" value="${esc(game.slug)}" ${selectedGames.has(game.slug) ? "checked" : ""} ${selectedGames.size >= 4 && !selectedGames.has(game.slug) ? "disabled" : ""}><span><strong>${esc(game.name)}</strong>${game.short_name !== game.name ? `<small>${esc(game.short_name)}</small>` : ""}</span></label>`,
           )
           .join("")
       : '<p class="forum-picker-empty">Nenhum jogo encontrado.</p>';
@@ -1985,9 +1985,9 @@
   $("forumGameResults")?.addEventListener("change", (event) => {
     const input = event.target.closest('input[type="checkbox"]');
     if (!input) return;
-    if (input.checked && selectedGames.size >= 3) {
+    if (input.checked && selectedGames.size >= 4) {
       input.checked = false;
-      $("forumGamesHint").textContent = "Você pode selecionar até 3 jogos.";
+      $("forumGamesHint").textContent = "Você pode selecionar até 4 jogos.";
       return;
     }
     input.checked
