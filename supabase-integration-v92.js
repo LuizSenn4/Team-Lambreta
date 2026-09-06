@@ -18,7 +18,6 @@
   let session = null;
   let profile = null;
   let chatChannel = null;
-  let chatRefreshTimer = null;
   let chatChannelStatus = 'CLOSED';
   let inboxChannel = null;
   let selectedTargetId = null;
@@ -1242,7 +1241,6 @@
 
   function subscribe() {
     chatChannel?.unsubscribe(); inboxChannel?.unsubscribe();
-    clearInterval(chatRefreshTimer); chatRefreshTimer=null;
     if ($('chatMessages')) chatChannel=sb.channel(`team-chat-${CHAT_ROOM}-${Date.now()}`)
       .on('postgres_changes',{event:'INSERT',schema:'public',table:'chat_messages',filter:`room=eq.${CHAT_ROOM}`},async payload=>{
         const row=payload.new;
@@ -1257,7 +1255,6 @@
       })
       .on('postgres_changes',{event:'UPDATE',schema:'public',table:'chat_messages',filter:`room=eq.${CHAT_ROOM}`},renderChat)
       .on('postgres_changes',{event:'UPDATE',schema:'public',table:'profiles'},renderChat).subscribe(status=>{chatChannelStatus=status;if(status==='SUBSCRIBED')renderChat();});
-    if ($('chatMessages')) chatRefreshTimer=setInterval(()=>{if(!document.hidden)renderChat();},1800);
     if ($('supabasePrivateInbox')||$('supabaseInboxBadge')) inboxChannel=sb.channel('team-inbox-ui').on('postgres_changes',{event:'*',schema:'public',table:'contact_messages'},renderInbox).subscribe();
   }
 
