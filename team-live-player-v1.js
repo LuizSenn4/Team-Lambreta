@@ -153,6 +153,11 @@
 
   loadStreamer();
 
+  const metaScript = document.createElement('script');
+  metaScript.src = 'team-live-meta-v1.js?v=1.0';
+  metaScript.async = false;
+  document.body.appendChild(metaScript);
+
   window.addEventListener('beforeunload', () => {
     stopPlayer();
     if (channel && sb) sb.removeChannel(channel);
