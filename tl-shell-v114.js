@@ -2,8 +2,6 @@
   'use strict';
   if (window.__TL_SHELL_V114__) return;
   window.__TL_SHELL_V114__ = true;
-  // Compatibility signal for old feature modules: V114 is the active global core.
-  // Legacy modules use this flag to suppress duplicate chrome, admin keys and fallback presence logic.
   window.TL_CORE_V102 = true;
 
   const q=(s,r=document)=>r.querySelector(s);
@@ -23,7 +21,7 @@
   };
 
   function avatarUrl(p){return window.TeamProfiles?.getAvatarUrl?.(p)||p?.avatar_display_url||p?.avatar_external_url||p?.custom_avatar_url||p?.avatar_url||''}
-  function ensureStyle(){if(q('link[href*="tl-shell-v114.css"]'))return;const l=document.createElement('link');l.rel='stylesheet';l.href='tl-shell-v114.css?v=114.3';document.head.appendChild(l)}
+  function ensureStyle(){if(q('link[href*="tl-shell-v114.css"]'))return;const l=document.createElement('link');l.rel='stylesheet';l.href='tl-shell-v114.css?v=114.4';document.head.appendChild(l)}
   function removeLegacy(){qa('.tl113-bottom-nav,.tl114-bottom-nav').forEach(n=>n.remove());document.body.classList.remove('tl113-has-bottom-nav','tl-mobile-menu-open')}
 
   function buildHeader(){
@@ -42,7 +40,7 @@
     const n=document.createElement('nav');n.className='tl114-bottom-nav';n.setAttribute('aria-label','Navegação principal');n.innerHTML=`<a href="home.html" data-key="home">${icons.home}<span>Home</span></a><a href="forum.html" data-key="forum">${icons.forum}<span>Fórum</span></a><a href="streamers.html" data-key="streamers">${icons.streamers}<span>Streamers</span></a><a href="buddy.html" data-key="chat">${icons.chat}<span>Chat</span><b class="tl114-badge" data-tl114-unread hidden>0</b></a><a href="profile.html" data-key="profile"><span class="tl114-nav-avatar" data-tl114-avatar><img alt="" decoding="async">${icons.user}</span><span>Perfil</span></a>`;document.body.appendChild(n);document.body.classList.add('tl114-has-bottom-nav');qa('[data-key]',n).forEach(a=>a.classList.toggle('is-active',a.dataset.key===key));return n
   }
 
-  function paintAvatar(p,account,nav){const src=String(avatarUrl(p)||'').trim();account.innerHTML=src?`<img src="${esc(src)}" alt="Avatar">`:icons.user;const wrap=q('[data-tl114-avatar]',nav),img=wrap?.querySelector('img');if(!wrap||!img)return;if(!src){wrap.classList.remove('has-photo');img.removeAttribute('src');return}img.onload=()=>wrap.classList.add('has-photo');img.onerror=()=>wrap.classList.remove('has-photo');img.src=src}
+  function paintAvatar(p,account,nav){const src=String(avatarUrl(p)||'').trim();account.innerHTML=src?`<img src="${esc(src)}" alt="Avatar">`:icons.user;const wrap=q('[data-tl114-avatar]',nav),img=wrap?.querySelector('img');if(!wrap||!img)return;if(!src){wrap.classList.remove('has-photo');img.removeAttribute('src');return;}img.onload=()=>wrap.classList.add('has-photo');img.onerror=()=>wrap.classList.remove('has-photo');img.src=src}
   function paintUnread(nav){const b=q('[data-tl114-unread]',nav);if(!b)return;const set=v=>{const c=Math.max(0,Number(v||0));b.hidden=c<=0;b.textContent=c>99?'99+':String(c)};try{set(localStorage.getItem('tl_buddy_unread_count'))}catch{set(0)}window.TeamNotifications?.subscribe?.(({unread})=>set(unread))}
   function statusLabel(s){return s==='online'?'Online':s==='busy'?'Ocupado':s==='away'?'Ausente':'Offline'}
 
@@ -66,11 +64,11 @@
       const google=()=>window.TeamAuth?.signInWithGoogle?.();const tiktok=()=>{location.href='/auth/tiktok/start'};
       q('[data-tl114-login]',accountMenu)?.addEventListener('click',google);q('[data-tl114-tiktok]',accountMenu)?.addEventListener('click',tiktok);q('[data-tl114-drawer-login]',drawer)?.addEventListener('click',()=>{close();google()});q('[data-tl114-drawer-tiktok]',drawer)?.addEventListener('click',()=>{close();tiktok()});
     }
-    window.dispatchEvent(new CustomEvent('tl:shell-ready',{detail:{version:'114.3',session,profile}}));
+    window.dispatchEvent(new CustomEvent('tl:shell-ready',{detail:{version:'114.4',session,profile}}));
   }
 
   ensureStyle();removeLegacy();const {account,accountMenu,drawer,close}=buildHeader();const nav=buildBottom();paintUnread(nav);
-  window.TeamShell=Object.freeze({version:'114.3',getSession:()=>session,getProfile:()=>profile,refresh:()=>hydrate(account,accountMenu,drawer,close)});
+  window.TeamShell=Object.freeze({version:'114.4',getSession:()=>session,getProfile:()=>profile,refresh:()=>hydrate(account,accountMenu,drawer,close)});
   const subscribed=window.TeamAuth?.subscribe?.(s=>hydrate(account,accountMenu,drawer,close,s));
   if(!subscribed) hydrate(account,accountMenu,drawer,close);
 })();
