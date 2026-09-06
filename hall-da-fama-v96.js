@@ -5,7 +5,7 @@
   const modal=document.getElementById('hallModal');
   let me=null, progress=[], profiles=[],progressChannel=null,refreshTimer=null;
 
-  const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot',"'":'&#39;'}[c]));
+  const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
   const name=p=>p?.game_nickname||p?.full_name||'Membro';
   const roleClass=r=>String(r||'member').toLowerCase().replace(/[^a-z0-9_-]/g,'');
   const pct=(v,max)=>Math.max(0,Math.min(100,Math.round((Number(v||0)/max)*100)));
