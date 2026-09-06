@@ -3,7 +3,7 @@
   if (window.TeamProfileV121Hotfix) return;
   window.TeamProfileV121Hotfix = true;
 
-  const MAX_STATUS = 50;
+  const MAX_STATUS = 26;
   const MAX_NICK = 16;
 
   const polish = () => {
@@ -12,7 +12,7 @@
 
     const nick = root.querySelector('.p120-identity h1');
     if (nick && !nick.dataset.v121Done) {
-      const full = (nick.textContent || '').trim();
+      const full = (nick.textContent || '').replace(/\s+/g, ' ').trim();
       nick.title = full;
       if (full.length > MAX_NICK) nick.textContent = full.slice(0, MAX_NICK);
       nick.dataset.v121Done = '1';
@@ -30,6 +30,8 @@
     root.querySelectorAll('.p120-role').forEach(role => {
       const label = role.querySelector('b');
       if (!label) return;
+      role.style.whiteSpace = 'nowrap';
+      role.style.flexWrap = 'nowrap';
       if ((label.textContent || '').trim().toUpperCase() === 'DESENVOLVEDOR') {
         label.textContent = 'DEV';
         role.classList.add('is-developer');
