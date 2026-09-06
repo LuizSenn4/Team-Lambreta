@@ -13,7 +13,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link rel="preload" as="image" href="img/team-lambreta-header-logo.svg?v=2" />
-    <link rel="stylesheet" href="tl-shell-v104.css?v=104.0" />
+    <link rel="stylesheet" href="tl-shell-v114.css?v=114.3" />
     <link rel="stylesheet" href="forum-board-v2.css?v=3.1" />
     <link rel="stylesheet" href="forum-profile-picker-v1.css?v=1.0" />
     <link rel="stylesheet" href="tl-design-system-v100.css?v=104.0" />
@@ -22,9 +22,7 @@
 </head>
   <body>
     <section id="siteContent" class="site-content forum-page">
-      <header class="site-header tl-header-v100 tl-header-v102" data-tl-shell-static>
-        <a href="home.html" class="brand brand-logo-link" aria-label="Team Lambreta — página inicial"><img class="brand-logo-image" src="img/team-lambreta-header-logo.svg?v=2" alt="Team Lambreta"></a><button class="tl-mobile-menu-button" type="button" aria-label="Abrir menu" aria-expanded="false"><span></span><span></span><span></span></button><div class="tl-mobile-menu-backdrop" hidden></div><nav class="tl-main-nav" aria-label="Menu principal"><a href="home.html">Home</a><a href="team.html">Team</a><a href="forum.html">Fórum</a><a href="streamers.html">Streamers</a><a href="eventos.html">Eventos</a></nav><div class="tl-user-cluster"><div class="tl-status-wrap"><button class="tl-status-trigger" type="button" aria-haspopup="menu" aria-expanded="false"><i class="tl-presence-dot loading"></i><span>A ligar</span></button><div class="tl-dropdown tl-status-menu" role="menu" hidden><button data-presence="online"><i class="tl-presence-dot online"></i>Online</button><button data-presence="busy"><i class="tl-presence-dot busy"></i>Ocupado</button></div></div><div class="tl-user-wrap"><button class="tl-account-trigger" type="button" aria-haspopup="menu" aria-expanded="false"><span class="tl-user-avatar tl-avatar-skeleton" aria-hidden="true"></span><span class="tl-account-copy"><strong>Entrar</strong><small class="tl-role-slot" aria-live="polite"></small></span><span aria-hidden="true">⌄</span></button><div class="tl-dropdown tl-account-menu" role="menu" hidden></div></div><a class="tl-header-icon" href="buddy.html" aria-label="Abrir Buddy e mensagens"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" aria-hidden="true"><path d="M20.5 14.5a4 4 0 0 1-4 4H9l-5.5 3v-14a4 4 0 0 1 4-4h9a4 4 0 0 1 4 4z"/><path d="M8 9.5h8M8 13h5"/></svg><b id="tlHeaderUnread" hidden>0</b></a></div>
-      </header>
+      <header class="site-header"></header>
 
       <main class="forum-page-shell forum-classic-shell tl-page-hero-shell-v102">
         <section class="tl-page-hero-v102">
@@ -56,21 +54,11 @@
 
       <dialog id="forumCreateDialog" class="forum-board-dialog">
         <form id="forumCreateForm" method="dialog">
-          <header>
-            <div>
-              <small>NOVO TÓPICO</small>
-              <h2>Enviar para aprovação</h2>
-            </div>
-            <button type="button" data-dialog-close aria-label="Fechar">×</button>
-          </header>
+          <header><div><small>NOVO TÓPICO</small><h2>Enviar para aprovação</h2></div><button type="button" data-dialog-close aria-label="Fechar">×</button></header>
           <label>Pasta<select id="forumTopicSection" required></select></label>
           <label>Título<input id="forumTopicTitle" type="text" maxlength="120" required /></label>
           <label>Conteúdo</label>
-          <div class="forum-editor" data-editor="topic">
-            <div class="forum-editor-toolbar" role="toolbar" aria-label="Formatação do tópico"></div>
-            <textarea id="forumTopicBody" maxlength="5000" rows="10" required aria-label="Conteúdo do tópico"></textarea>
-            <div class="forum-editor-preview" hidden></div>
-          </div>
+          <div class="forum-editor" data-editor="topic"><div class="forum-editor-toolbar" role="toolbar" aria-label="Formatação do tópico"></div><textarea id="forumTopicBody" maxlength="5000" rows="10" required aria-label="Conteúdo do tópico"></textarea><div class="forum-editor-preview" hidden></div></div>
           <p>O tópico fica pendente até aprovação da administração.</p>
           <footer><button type="button" class="forum-secondary-button" data-dialog-close>Cancelar</button><button class="forum-primary-button" type="submit">Enviar para aprovação</button></footer>
         </form>
@@ -78,40 +66,19 @@
 
       <dialog id="forumReplyDialog" class="forum-board-dialog">
         <form id="forumReplyForm" method="dialog">
-          <header>
-            <div>
-              <small>RESPOSTA</small>
-              <h2>Responder ao tópico</h2>
-            </div>
-            <button type="button" data-dialog-close aria-label="Fechar">×</button>
-          </header>
+          <header><div><small>RESPOSTA</small><h2>Responder ao tópico</h2></div><button type="button" data-dialog-close aria-label="Fechar">×</button></header>
           <div id="forumReplyQuoteContext" class="forum-editor-quote-context" hidden></div>
           <label>Resposta</label>
-          <div class="forum-editor" data-editor="reply">
-            <div class="forum-editor-toolbar" role="toolbar" aria-label="Formatação da resposta"></div>
-            <textarea id="forumReplyBody" maxlength="5000" rows="10" required aria-label="Texto da resposta"></textarea>
-            <div class="forum-editor-preview" hidden></div>
-          </div>
+          <div class="forum-editor" data-editor="reply"><div class="forum-editor-toolbar" role="toolbar" aria-label="Formatação da resposta"></div><textarea id="forumReplyBody" maxlength="5000" rows="10" required aria-label="Texto da resposta"></textarea><div class="forum-editor-preview" hidden></div></div>
           <footer><button type="button" class="forum-secondary-button" data-dialog-close>Cancelar</button><button class="forum-primary-button" type="submit">Publicar resposta</button></footer>
         </form>
       </dialog>
 
       <dialog id="forumProfileDialog" class="forum-board-dialog forum-profile-dialog">
         <form id="forumProfileForm" method="dialog">
-          <header>
-            <div>
-              <small>PERFIL DO FÓRUM</small>
-              <h2 id="forumProfileDialogTitle">Complete seu perfil do Fórum</h2>
-            </div>
-            <button type="button" data-dialog-close aria-label="Fechar">×</button>
-          </header>
-          <div class="forum-profile-avatar-editor">
-            <div id="forumProfileAvatarPreview" class="forum-avatar-fallback" aria-label="Preview do avatar">TL</div>
-            <div><label>Upload de avatar<input id="forumProfileAvatar" type="file" accept="image/jpeg,image/png,image/webp,image/gif" /><small>Recomendado: 512 × 512 px · máximo 2 MB.</small></label><label>Ou URL externa HTTPS<input id="forumProfileAvatarUrl" type="url" maxlength="1000" inputmode="url" placeholder="https://.../avatar.jpg" /></label></div>
-          </div>
-          <div class="forum-profile-form-grid">
-            <label>Nick do game *<input id="forumProfileNickname" type="text" minlength="3" maxlength="32" pattern="[A-Za-zÀ-ÖØ-öø-ÿ0-9_. -]+" required /></label><fieldset id="forumCountryPicker" class="forum-country-picker"><legend>País</legend><input id="forumProfileCountry" type="search" placeholder="Pesquisar país..." autocomplete="off" aria-label="Pesquisar país" aria-controls="forumCountryResults" aria-expanded="false" /><div id="forumSelectedCountry" class="forum-selected-country" hidden></div><div id="forumCountryResults" class="forum-country-results" hidden></div></fieldset><label>Discord opcional<input id="forumProfileDiscord" type="text" maxlength="64" /></label>
-          </div>
+          <header><div><small>PERFIL DO FÓRUM</small><h2 id="forumProfileDialogTitle">Complete seu perfil do Fórum</h2></div><button type="button" data-dialog-close aria-label="Fechar">×</button></header>
+          <div class="forum-profile-avatar-editor"><div id="forumProfileAvatarPreview" class="forum-avatar-fallback" aria-label="Preview do avatar">TL</div><div><label>Upload de avatar<input id="forumProfileAvatar" type="file" accept="image/jpeg,image/png,image/webp,image/gif" /><small>Recomendado: 512 × 512 px · máximo 2 MB.</small></label><label>Ou URL externa HTTPS<input id="forumProfileAvatarUrl" type="url" maxlength="1000" inputmode="url" placeholder="https://.../avatar.jpg" /></label></div></div>
+          <div class="forum-profile-form-grid"><label>Nick do game *<input id="forumProfileNickname" type="text" minlength="3" maxlength="32" pattern="[A-Za-zÀ-ÖØ-öø-ÿ0-9_. -]+" required /></label><fieldset id="forumCountryPicker" class="forum-country-picker"><legend>País</legend><input id="forumProfileCountry" type="search" placeholder="Pesquisar país..." autocomplete="off" aria-label="Pesquisar país" aria-controls="forumCountryResults" aria-expanded="false" /><div id="forumSelectedCountry" class="forum-selected-country" hidden></div><div id="forumCountryResults" class="forum-country-results" hidden></div></fieldset><label>Discord opcional<input id="forumProfileDiscord" type="text" maxlength="64" /></label></div>
           <fieldset id="forumGamesPicker" class="forum-profile-picker"><legend>Jogos <span id="forumGamesCount">0/3</span></legend><input id="forumGameSearch" type="search" placeholder="Pesquisar jogo..." autocomplete="off" aria-label="Pesquisar jogo" aria-controls="forumGameResults" aria-expanded="false" /><div id="forumSelectedGames" class="forum-profile-chips"></div><div id="forumGameResults" class="forum-game-results" hidden></div><small id="forumGamesHint">Selecione até 3 jogos.</small></fieldset>
           <fieldset id="forumCoverPresetPicker" class="forum-profile-picker forum-cover-preset-picker"><legend>Capas prontas</legend><p class="forum-cover-preset-hint">Escolhe um estilo visual para a capa do teu perfil.</p><div id="forumCoverPresetOptions" class="forum-cover-preset-options"></div></fieldset>
           <fieldset class="forum-profile-picker"><legend>Plataformas</legend><div id="forumPlatformOptions" class="forum-profile-chips"></div></fieldset>
@@ -124,40 +91,22 @@
 
       <dialog id="forumEditPostDialog" class="forum-board-dialog">
         <form id="forumEditPostForm" method="dialog">
-          <header>
-            <div>
-              <small>EDIÇÃO</small>
-              <h2>Editar post</h2>
-            </div>
-            <button type="button" data-dialog-close aria-label="Fechar">×</button>
-          </header>
+          <header><div><small>EDIÇÃO</small><h2>Editar post</h2></div><button type="button" data-dialog-close aria-label="Fechar">×</button></header>
           <label>Conteúdo</label>
-          <div class="forum-editor" data-editor="edit">
-            <div class="forum-editor-toolbar" role="toolbar" aria-label="Formatação da edição"></div>
-            <textarea id="forumEditPostBody" maxlength="5000" rows="10" required aria-label="Conteúdo do post"></textarea>
-            <div class="forum-editor-preview" hidden></div>
-          </div>
+          <div class="forum-editor" data-editor="edit"><div class="forum-editor-toolbar" role="toolbar" aria-label="Formatação da edição"></div><textarea id="forumEditPostBody" maxlength="5000" rows="10" required aria-label="Conteúdo do post"></textarea><div class="forum-editor-preview" hidden></div></div>
           <footer><button type="button" class="forum-secondary-button" data-dialog-close>Cancelar</button><button class="forum-primary-button" type="submit">Salvar edição</button></footer>
         </form>
       </dialog>
 
       <dialog id="forumDeletePostDialog" class="forum-board-dialog forum-delete-dialog">
         <form id="forumDeletePostForm" method="dialog">
-          <header>
-            <div>
-              <small>CONFIRMAÇÃO</small>
-              <h2 id="forumDeletePostTitle">Apagar resposta?</h2>
-            </div>
-            <button type="button" data-dialog-close aria-label="Fechar">×</button>
-          </header>
+          <header><div><small>CONFIRMAÇÃO</small><h2 id="forumDeletePostTitle">Apagar resposta?</h2></div><button type="button" data-dialog-close aria-label="Fechar">×</button></header>
           <p id="forumDeletePostText">O conteúdo desta resposta será removido.</p>
           <footer><button type="button" class="forum-secondary-button" data-dialog-close>Cancelar</button><button id="forumDeletePostSubmit" class="forum-danger-button" type="submit">Apagar resposta</button></footer>
         </form>
       </dialog>
 
-      <footer class="site-footer">
-        <p>© <span id="year"></span> Team Lambreta — Juntos somos mais fortes.</p>
-      </footer>
+      <footer class="site-footer"><p>© <span id="year"></span> Team Lambreta — Juntos somos mais fortes.</p></footer>
     </section>
 
     <script src="tl-diagnostics-v104.js?v=104.0"></script>
@@ -166,8 +115,8 @@
     <script src="auth-manager.js?v=104.0"></script>
     <script src="presence-manager.js?v=103.0"></script>
     <script src="services/profile-service.js?v=102.5"></script>
-    <script src="services/permission-service.js?v=102.0"></script>
-    <script src="tl-shell-v102.js?v=104.0"></script>
+    <script src="services/permission-service.js?v=102.3"></script>
+    <script src="tl-shell-v114.js?v=114.3"></script>
     <script src="country-catalog-v1.js?v=1.0"></script>
     <script src="legacy/profile-route-adapter.js?v=102.0"></script>
     <script src="forum-board-v2.js?v=3.6"></script>
