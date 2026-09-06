@@ -40,5 +40,4 @@
   window.TeamAuth?.subscribe(()=>setTimeout(load,0));
   const year=document.getElementById('year');
   if(year)year.textContent=new Date().getFullYear();
-  load();
 })();
