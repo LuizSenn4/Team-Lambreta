@@ -34,7 +34,7 @@ jobs:
         run: node scripts/sync-game-covers.mjs
       - name: Commit generated covers
         run: |
-          if git diff --quiet -- assets/game-covers; then
+          if [ -z "$(git status --porcelain -- assets/game-covers)" ]; then
             echo 'No cover changes.'
             exit 0
           fi
