@@ -71,6 +71,6 @@
 
   ensureStyle();removeLegacy();const {account,accountMenu,drawer,close}=buildHeader();const nav=buildBottom();paintUnread(nav);
   window.TeamShell=Object.freeze({version:'114.3',getSession:()=>session,getProfile:()=>profile,refresh:()=>hydrate(account,accountMenu,drawer,close)});
-  window.TeamAuth?.subscribe?.(s=>hydrate(account,accountMenu,drawer,close,s));
-  hydrate(account,accountMenu,drawer,close);
+  const subscribed=window.TeamAuth?.subscribe?.(s=>hydrate(account,accountMenu,drawer,close,s));
+  if(!subscribed) hydrate(account,accountMenu,drawer,close);
 })();
