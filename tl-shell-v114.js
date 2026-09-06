@@ -5,7 +5,7 @@
 
   const q=(s,r=document)=>r.querySelector(s);
   const qa=(s,r=document)=>[...r.querySelectorAll(s)];
-  const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot',"'":'&#39;'}[c]));
   const file=(location.pathname.split('/').pop()||'home.html').toLowerCase();
   const key=file.startsWith('profile')?'profile':file.startsWith('forum')?'forum':(file.startsWith('stream')||file.startsWith('live'))?'streamers':(file.startsWith('buddy')||file.startsWith('chat'))?'chat':'home';
   let session=null,profile=null;
@@ -20,7 +20,7 @@
   };
 
   function avatarUrl(p){return window.TeamProfiles?.getAvatarUrl?.(p)||p?.avatar_display_url||p?.avatar_external_url||p?.custom_avatar_url||p?.avatar_url||''}
-  function ensureStyle(){if(q('link[href*="tl-shell-v114.css"]'))return;const l=document.createElement('link');l.rel='stylesheet';l.href='tl-shell-v114.css?v=114.2';document.head.appendChild(l)}
+  function ensureStyle(){if(q('link[href*="tl-shell-v114.css"]'))return;const l=document.createElement('link');l.rel='stylesheet';l.href='tl-shell-v114.css?v=114.3';document.head.appendChild(l)}
   function removeLegacy(){qa('.tl113-bottom-nav,.tl114-bottom-nav').forEach(n=>n.remove());document.body.classList.remove('tl113-has-bottom-nav','tl-mobile-menu-open')}
 
   function buildHeader(){
@@ -32,7 +32,7 @@
     qa('.tl114-drawer a',h).forEach(a=>{const f=(a.getAttribute('href')||'').split('#')[0].toLowerCase();a.classList.toggle('is-current',f===file||(key==='streamers'&&f==='streamers.html')||(key==='profile'&&f==='profile.html'))});
     const set=(b,p,o)=>{b.setAttribute('aria-expanded',String(o));p.hidden=!o};const close=()=>{set(menu,drawer,false);set(account,accountMenu,false)};
     menu.addEventListener('click',e=>{e.stopPropagation();const o=drawer.hidden;close();set(menu,drawer,o)});account.addEventListener('click',e=>{e.stopPropagation();const o=accountMenu.hidden;close();set(account,accountMenu,o)});h.addEventListener('click',e=>e.stopPropagation());document.addEventListener('click',close);document.addEventListener('keydown',e=>{if(e.key==='Escape')close()});qa('a',drawer).forEach(a=>a.addEventListener('click',close));
-    return {account,accountMenu};
+    return {account,accountMenu,drawer,close};
   }
 
   function buildBottom(){
@@ -43,18 +43,32 @@
   function paintUnread(nav){const b=q('[data-tl114-unread]',nav);if(!b)return;const set=v=>{const c=Math.max(0,Number(v||0));b.hidden=c<=0;b.textContent=c>99?'99+':String(c)};try{set(localStorage.getItem('tl_buddy_unread_count'))}catch{set(0)}window.TeamNotifications?.subscribe?.(({unread})=>set(unread))}
   function statusLabel(s){return s==='online'?'Online':s==='busy'?'Ocupado':s==='away'?'Ausente':'Offline'}
 
-  async function hydrate(account,accountMenu,nav,nextSession){
+  async function hydrate(account,accountMenu,drawer,close,nextSession){
     if(nextSession===undefined){try{session=await window.TeamAuth?.getSession?.()||null}catch{session=null}}else session=nextSession||null;
     profile=null;
     if(session?.user){try{profile=await window.TeamProfiles?.getCurrentProfile?.({fresh:false})||await window.TeamProfiles?.getPublicProfile?.(session.user.id,{fresh:false})||null}catch{};paintAvatar(profile,account,nav);try{await window.TeamPresence?.connect?.(window.teamSupabase,session.user.id,profile?.presence)}catch{}}
     else{paintAvatar(null,account,nav);try{window.TeamPresence?.disconnect?.()}catch{}}
     const name=profile?.display_name||session?.user?.email||'Visitante';const st=String(window.TeamPresence?.getState?.()?.status||profile?.presence||'offline').toLowerCase();accountMenu.innerHTML=`<div class="tl114-account-summary"><strong>${esc(name)}</strong><small><i class="tl114-presence ${esc(st)}"></i>${esc(statusLabel(st))}</small></div>`;
-    if(session?.user){accountMenu.insertAdjacentHTML('beforeend','<a href="profile.html">Ver perfil</a><a href="profile-edit.html">Editar perfil</a><button type="button" data-tl114-logout>Sair</button>');q('[data-tl114-logout]',accountMenu)?.addEventListener('click',async()=>{try{await window.TeamAuth?.signOut?.();location.href='home.html'}catch{}})}else{accountMenu.insertAdjacentHTML('beforeend','<button type="button" data-tl114-login>Entrar com Google</button><button type="button" data-tl114-tiktok>Entrar com TikTok</button>');q('[data-tl114-login]',accountMenu)?.addEventListener('click',()=>window.TeamAuth?.signInWithGoogle?.());q('[data-tl114-tiktok]',accountMenu)?.addEventListener('click',()=>{location.href='/auth/tiktok/start'})}
-    window.dispatchEvent(new CustomEvent('tl:shell-ready',{detail:{version:'114.2',session,profile}}));
+    qa('[data-tl114-admin-link],[data-tl114-drawer-account]',drawer).forEach(node=>node.remove());
+    if(session?.user){
+      let canAdmin=false;try{canAdmin=await window.TeamPermissions?.can?.('admin.full')||false}catch{}
+      if(canAdmin) drawer.insertAdjacentHTML('beforeend','<a href="admin.html" data-tl114-admin-link>Admin</a>');
+      drawer.insertAdjacentHTML('beforeend','<button type="button" data-tl114-drawer-account data-tl114-drawer-logout>Sair</button>');
+      accountMenu.insertAdjacentHTML('beforeend','<a href="profile.html">Ver perfil</a><a href="profile-edit.html">Editar perfil</a><button type="button" data-tl114-logout>Sair</button>');
+      const logout=async()=>{try{await window.TeamAuth?.signOut?.();location.href='home.html'}catch{}};
+      q('[data-tl114-logout]',accountMenu)?.addEventListener('click',logout);q('[data-tl114-drawer-logout]',drawer)?.addEventListener('click',()=>{close();logout()});
+    }else{
+      drawer.insertAdjacentHTML('beforeend','<button type="button" data-tl114-drawer-account data-tl114-drawer-login>Entrar com Google</button><button type="button" data-tl114-drawer-account data-tl114-drawer-tiktok>Entrar com TikTok</button>');
+      accountMenu.insertAdjacentHTML('beforeend','<button type="button" data-tl114-login>Entrar com Google</button><button type="button" data-tl114-tiktok>Entrar com TikTok</button>');
+      const google=()=>window.TeamAuth?.signInWithGoogle?.();const tiktok=()=>{location.href='/auth/tiktok/start'};
+      q('[data-tl114-login]',accountMenu)?.addEventListener('click',google);q('[data-tl114-tiktok]',accountMenu)?.addEventListener('click',tiktok);q('[data-tl114-drawer-login]',drawer)?.addEventListener('click',()=>{close();google()});q('[data-tl114-drawer-tiktok]',drawer)?.addEventListener('click',()=>{close();tiktok()});
+    }
+    qa('.tl114-drawer a',drawer).forEach(a=>a.addEventListener('click',close));
+    window.dispatchEvent(new CustomEvent('tl:shell-ready',{detail:{version:'114.3',session,profile}}));
   }
 
-  ensureStyle();removeLegacy();const {account,accountMenu}=buildHeader();const nav=buildBottom();paintUnread(nav);
-  window.TeamShell=Object.freeze({version:'114.2',getSession:()=>session,getProfile:()=>profile,refresh:()=>hydrate(account,accountMenu,nav)});
-  window.TeamAuth?.subscribe?.(s=>hydrate(account,accountMenu,nav,s));
-  hydrate(account,accountMenu,nav);
+  ensureStyle();removeLegacy();const {account,accountMenu,drawer,close}=buildHeader();const nav=buildBottom();paintUnread(nav);
+  window.TeamShell=Object.freeze({version:'114.3',getSession:()=>session,getProfile:()=>profile,refresh:()=>hydrate(account,accountMenu,drawer,close)});
+  window.TeamAuth?.subscribe?.(s=>hydrate(account,accountMenu,drawer,close,s));
+  hydrate(account,accountMenu,drawer,close);
 })();
