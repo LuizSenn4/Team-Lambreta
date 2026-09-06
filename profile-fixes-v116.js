@@ -9,58 +9,25 @@
   const esc = value => String(value ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 
   const steamAppIds = Object.freeze({
-    'counter-strike-2':'730',
-    'grand-theft-auto-v':'271590',
-    'dota-2':'570',
-    'apex-legends':'1172470',
-    'dead-by-daylight':'381210',
-    'marvel-rivals':'2767030',
-    'path-of-exile-2':'2694490',
-    'rust':'252490',
-    'rocket-league':'252950',
-    'pubg-battlegrounds':'578080',
-    'the-finals':'2073850',
-    'destiny-2':'1085660',
-    'warframe':'230410',
-    'elden-ring':'1245620',
-    'cyberpunk-2077':'1091500',
-    'red-dead-redemption-2':'1174180',
-    'brawlhalla':'291550',
-    'street-fighter-6':'1364780',
-    'tekken-8':'1778820',
-    'teamfight-tactics':'',
-    'starcraft-ii':'',
-    'dayz':'221100',
-    'terraria':'105600',
-    'stardew-valley':'413150',
-    'the-sims-4':'1222670',
-    'no-mans-sky':'275850',
-    'sea-of-thieves':'1172620',
-    'helldivers-2':'553850',
-    'war-thunder':'236390',
-    'fall-guys':'1097150',
-    'among-us':'945360',
-    'phasmophobia':'739630',
-    'lethal-company':'1966720',
-    'content-warning':'2881650',
-    'garrys-mod':'4000',
-    'geometry-dash':'322170',
-    'old-school-runescape':'1343370',
-    'albion-online':'761890',
-    'smite-2':'2437170',
-    'delta-force':'2507950',
-    'trackmania':'2225070',
-    'path-of-exile':'238960',
-    'balatro':'2379780',
-    'halo-infinite':'1240440'
+    'counter-strike-2':'730', 'grand-theft-auto-v':'271590', 'dota-2':'570', 'apex-legends':'1172470',
+    'dead-by-daylight':'381210', 'marvel-rivals':'2767030', 'path-of-exile-2':'2694490', 'rust':'252490',
+    'rocket-league':'252950', 'pubg-battlegrounds':'578080', 'the-finals':'2073850', 'destiny-2':'1085660',
+    'warframe':'230410', 'elden-ring':'1245620', 'cyberpunk-2077':'1091500', 'red-dead-redemption-2':'1174180',
+    'street-fighter-6':'1364780', 'tekken-8':'1778820', 'dayz':'221100', 'terraria':'105600',
+    'stardew-valley':'413150', 'the-sims-4':'1222670', 'no-mans-sky':'275850', 'sea-of-thieves':'1172620',
+    'helldivers-2':'553850', 'war-thunder':'236390', 'fall-guys':'1097150', 'among-us':'945360',
+    'phasmophobia':'739630', 'lethal-company':'1966720', 'content-warning':'2881650', 'garrys-mod':'4000',
+    'geometry-dash':'322170', 'old-school-runescape':'1343370', 'albion-online':'761890', 'smite-2':'2437170',
+    'delta-force':'2507950', 'trackmania':'2225070', 'path-of-exile':'238960', 'balatro':'2379780', 'halo-infinite':'1240440'
   });
 
   const officialCovers = Object.freeze({
-    'minecraft':'https://www.minecraft.net/content/dam/minecraftnet/games/minecraft/key-art/Minecraft_KeyArt_2024.jpg',
-    'fortnite':'https://cdn2.unrealengine.com/fortnite-og-image-1920x1080-5e359e3cc6f7.jpg'
+    minecraft:'https://www.minecraft.net/content/dam/minecraftnet/games/minecraft/key-art/Minecraft_KeyArt_2024.jpg',
+    fortnite:'https://cdn2.unrealengine.com/fortnite-og-image-1920x1080-5e359e3cc6f7.jpg'
   });
 
-  function coverFor(slug) {
+  const localCoverFor = slug => `assets/game-covers/${encodeURIComponent(slug)}.webp`;
+  function remoteCoverFor(slug) {
     if (officialCovers[slug]) return officialCovers[slug];
     const appId = steamAppIds[slug];
     return appId ? `https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/${appId}/header.jpg` : '';
@@ -76,10 +43,21 @@
   function cleanDuplicateProfileActions(own) {
     root.querySelectorAll('.tl-profile-hero-actions-v106 a[href^="buddy.html"]').forEach(node => node.remove());
     if (!own) return;
-    const friendsTab = root.querySelector('.tl-profile-tab-v106[data-target="#profileFriends"]');
-    const friendsSection = root.querySelector('#profileFriends');
-    friendsTab?.remove();
-    friendsSection?.remove();
+    root.querySelector('.tl-profile-tab-v106[data-target="#profileFriends"]')?.remove();
+    root.querySelector('#profileFriends')?.remove();
+  }
+
+  function bindCoverFallbacks(host) {
+    host.querySelectorAll('img[data-game-cover]').forEach(image => image.addEventListener('error', () => {
+      const fallback = image.dataset.fallbackCover || '';
+      if (fallback && image.src !== fallback) {
+        image.dataset.fallbackCover = '';
+        image.src = fallback;
+        return;
+      }
+      image.remove();
+      image.closest('.tl-profile-game-cover-v116')?.classList.add('is-cover-fallback');
+    }, { once:false }));
   }
 
   async function renderGames(userId) {
@@ -95,12 +73,13 @@
       const chosen = (Array.isArray(profile.games) && profile.games.length ? profile.games : [profile.main_game].filter(Boolean)).slice(0,4);
       const cards = chosen.map(slug => {
         const item = map.get(slug) || {slug,name:String(slug || 'Jogo').replace(/[-_]/g,' ').replace(/\b\w/g,c=>c.toUpperCase())};
-        const cover = coverFor(slug);
-        const fallback = String(item.short_name || item.name || slug || '?').trim().slice(0,12);
-        return `<article class="tl-profile-game-card-v106 tl-profile-game-cover-v116">${cover ? `<img class="tl-profile-game-cover-image-v116" src="${esc(cover)}" alt="Capa de ${esc(item.name)}" loading="lazy" decoding="async" onerror="this.remove();this.parentElement.classList.add('is-cover-fallback')">` : ''}<span class="tl-profile-game-cover-fallback-v116">${esc(fallback)}</span><span class="game-name">${esc(item.name || slug)}</span></article>`;
+        const fallback = String(item.short_name || item.name || slug || '?').trim().slice(0,18);
+        const remote = remoteCoverFor(slug);
+        return `<article class="tl-profile-game-card-v106 tl-profile-game-cover-v116"><img data-game-cover class="tl-profile-game-cover-image-v116" src="${esc(localCoverFor(slug))}" data-fallback-cover="${esc(remote)}" alt="Capa de ${esc(item.name)}" loading="lazy" decoding="async" fetchpriority="low"><span class="tl-profile-game-cover-fallback-v116">${esc(fallback)}</span><span class="game-name">${esc(item.name || slug)}</span></article>`;
       });
       while (cards.length < 4) cards.push('<article class="tl-profile-game-card-v106 tl-profile-game-cover-v116 is-empty"><span class="tl-profile-game-cover-fallback-v116">—</span><span class="game-name">Sem jogo</span></article>');
       host.innerHTML = cards.join('');
+      bindCoverFallbacks(host);
     } catch (error) {
       console.error('[Profile V116 games]',error);
     }
