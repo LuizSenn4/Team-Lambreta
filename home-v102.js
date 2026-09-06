@@ -92,8 +92,8 @@
   function loadEvents(){let rows=[];try{rows=JSON.parse(localStorage.getItem('team_lambreta_data_v1')||'{}').events||[];}catch{}if(!rows.length)return;document.getElementById('homeEventsGrid').innerHTML=rows.slice(0,3).map(row=>`<article class="home-event-card"><time>${esc(row.date||'DATA A DEFINIR')}</time><h3>${esc(row.title||'Evento Team Lambreta')}</h3><p>${esc(row.description||'Mais informações em breve.')}</p></article>`).join('');}
   async function loadSessionContent(){
     if(!sb)return;
-    const {data}=await sb.auth.getSession();
-    if(data.session)await Promise.allSettled([loadForum(),loadUpdates()]);
+    const session=await window.TeamAuth?.getSession?.();
+    if(session)await Promise.allSettled([loadForum(),loadUpdates()]);
   }
   const cachedStreamers=visualImages?.readCollection?.('home-streamers');
   if(cachedStreamers?.length)paintStreamers(cachedStreamers);
