@@ -1,0 +1,64 @@
+/* V121 profile polish: compact mobile hero, single-line nickname, status box and DEV badge */
+.p120-identity h1{
+  max-width:100%;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  overflow-wrap:normal;
+}
+
+.p120-identity>p{
+  display:block;
+  width:fit-content;
+  max-width:min(100%,560px);
+  margin:12px 0 0;
+  padding:9px 13px;
+  border:1px solid rgba(33,221,255,.30);
+  border-radius:13px;
+  background:linear-gradient(135deg,rgba(8,24,34,.92),rgba(4,14,22,.82));
+  color:#c9f7ff;
+  box-shadow:inset 0 0 16px rgba(33,221,255,.035),0 0 14px rgba(33,221,255,.055);
+  font:500 11px/1.45 'Michroma',sans-serif;
+  letter-spacing:.025em;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+}
+
+.p120-role[data-role="developer"],
+.p120-role.is-developer{
+  border-color:rgba(0,230,255,.62);
+  box-shadow:0 0 14px rgba(0,230,255,.12),inset 0 0 12px rgba(0,230,255,.055);
+}
+
+@media(max-width:560px){
+  .tl-profile-app-v120{padding-top:5px}
+  .tl-profile-main-v120{gap:12px}
+  .p120-hero{
+    grid-template-columns:108px minmax(0,1fr);
+    min-height:0;
+    padding:11px 12px;
+    gap:11px;
+  }
+  .p120-avatar{width:102px;height:102px}
+  .p120-identity h1{
+    font-size:clamp(19px,5.7vw,27px);
+    line-height:1.08;
+  }
+  .p120-presence{margin-top:7px;font-size:9px}
+  .p120-roles{margin-top:9px;gap:6px}
+  .p120-role{min-height:32px}
+  .p120-role b{font-size:7.5px}
+  .p120-identity>p{
+    max-width:100%;
+    margin-top:8px;
+    padding:7px 9px;
+    border-radius:11px;
+    font-size:8.5px;
+    line-height:1.35;
+    -webkit-line-clamp:unset;
+  }
+  .p120-facts article{padding:11px 12px}
+  .p120-tabs button{min-height:82px}
+  .p120-panels{padding-top:13px}
+}
