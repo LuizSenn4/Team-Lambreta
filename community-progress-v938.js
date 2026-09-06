@@ -1,5 +1,6 @@
 (() => {
   'use strict';
+  if(window.TeamProgress) return;
   const sb=window.teamSupabase;
   if(!sb) return;
 
