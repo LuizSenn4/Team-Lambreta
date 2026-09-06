@@ -2,6 +2,9 @@
   'use strict';
   if (window.__TL_SHELL_V114__) return;
   window.__TL_SHELL_V114__ = true;
+  // Compatibility signal for old feature modules: V114 is the active global core.
+  // Legacy modules use this flag to suppress duplicate chrome, admin keys and fallback presence logic.
+  window.TL_CORE_V102 = true;
 
   const q=(s,r=document)=>r.querySelector(s);
   const qa=(s,r=document)=>[...r.querySelectorAll(s)];
