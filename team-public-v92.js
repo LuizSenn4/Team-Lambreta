@@ -144,6 +144,6 @@
     }));
   }
   let timer=null; const refresh=()=>{clearTimeout(timer);timer=setTimeout(load,120)};
-  async function boot(){setupMobileTabs();const cached=visualImages?.readCollection?.('team-public');if(cached?.length){members=cached;document.getElementById('teamMemberCount')?.replaceChildren(String(members.length));render()}await load();sb.channel('team-public-v92').on('postgres_changes',{event:'*',schema:'public',table:'team_members'},refresh).subscribe();addEventListener('focus',load);document.addEventListener('visibilitychange',()=>{if(!document.hidden)load()})}
+  async function boot(){setupMobileTabs();const cached=visualImages?.readCollection?.('team-public');if(cached?.length){members=cached;document.getElementById('teamMemberCount')?.replaceChildren(String(members.length));render()}await load();sb.channel('team-public-v92').on('postgres_changes',{event:'*',schema:'public',table:'team_members'},refresh).subscribe();addEventListener('focus',refresh);document.addEventListener('visibilitychange',()=>{if(!document.hidden)refresh()})}
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot);else boot();
 })();
