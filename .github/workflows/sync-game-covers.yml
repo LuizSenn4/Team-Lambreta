@@ -1,0 +1,45 @@
+name: Sync game covers
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'scripts/game-cover-catalog.json'
+      - 'scripts/sync-game-covers.mjs'
+      - '.github/workflows/sync-game-covers.yml'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: sync-game-covers
+  cancel-in-progress: true
+
+jobs:
+  covers:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install image converter
+        run: npm install --no-save --no-package-lock sharp@0.34.3
+      - name: Sync covers
+        run: node scripts/sync-game-covers.mjs
+      - name: Commit generated covers
+        run: |
+          if git diff --quiet -- assets/game-covers; then
+            echo 'No cover changes.'
+            exit 0
+          fi
+          git config user.name 'team-lambreta-bot'
+          git config user.email 'actions@users.noreply.github.com'
+          git add assets/game-covers
+          git commit -m 'assets: sync game covers'
+          git push
