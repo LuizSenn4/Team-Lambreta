@@ -29,12 +29,19 @@
     force_live:false, manual_live:false, auto_live:false
   };
 
+  const platformIcon = name => ({
+    TikTok:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 4c.4 2.3 1.8 3.7 4 4v3c-1.6 0-2.9-.4-4-1.2v5.7A5.5 5.5 0 1 1 10 10v3.1a2.5 2.5 0 1 0 2 2.4V4z"/></svg>',
+    YouTube:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12s0-4-1-5-3-1-8-1-7 0-8 1-1 5 0 10c1 1 8 1 8 1s7 0 8-1c1-1 1-5 1-5z"/><path d="m10 9 5 3-5 3z"/></svg>',
+    Twitch:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 3h16v11l-5 5h-4l-3 3v-3H4V6zM8 6v9h3v2l2-2h4l2-2V6z"/><path d="M12 8v4M16 8v4"/></svg>'
+  }[name] || '');
+
   function socialLinks(row) {
     const sources = [
-      ['TikTok', row.tiktok_url], ['Twitch', row.twitch_url], ['YouTube', row.youtube_url],
-      ['Instagram', row.instagram_url], ['Facebook', row.facebook_url]
+      ['TikTok', row.tiktok_url],
+      ['YouTube', row.youtube_url],
+      ['Twitch', row.twitch_url]
     ].filter(([,url]) => safeUrl(url));
-    return sources.map(([name,url]) => `<a class="streamer-platform-link platform-${name.toLowerCase()}" href="${esc(safeUrl(url))}" target="_blank" rel="noopener noreferrer">${esc(name)}</a>`).join('');
+    return sources.map(([name,url]) => `<a class="streamer-platform-link platform-${name.toLowerCase()}" href="${esc(safeUrl(url))}" target="_blank" rel="noopener noreferrer" title="${esc(name)}" aria-label="Abrir ${esc(name)} de ${esc(row.display_name || 'streamer')}">${platformIcon(name)}<span class="sr-only">${esc(name)}</span></a>`).join('');
   }
 
   function nextScheduledStart(row, now = new Date()) {
