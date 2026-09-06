@@ -445,15 +445,11 @@
       .on('postgres_changes', { event: '*', schema: 'public', table: 'streamers' }, scheduleLoad)
       .subscribe();
 
-    setInterval(() => {
-      if (!document.hidden) load();
-    }, 15000);
-
     document.addEventListener('visibilitychange', () => {
-      if (!document.hidden) load();
+      if (!document.hidden) scheduleLoad();
     });
 
-    window.addEventListener('focus', load);
+    window.addEventListener('focus', scheduleLoad);
   }
 
   async function boot() {
