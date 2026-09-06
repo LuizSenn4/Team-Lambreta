@@ -20,6 +20,12 @@
   <link rel="stylesheet" href="home-streamers-v102.css?v=103.0" />
   <link rel="stylesheet" href="streamer-gallery-v101.css?v=103.2" />
   <link rel="stylesheet" href="tl-presentation-hero-v102.css?v=103.0" />
+  <style>
+    .streamers-live-summary{display:flex;flex-wrap:wrap;gap:10px;margin-top:14px}
+    .streamers-live-summary>div{display:grid;min-width:118px;padding:10px 14px;border:1px solid rgba(255,255,255,.08);border-radius:12px;background:rgba(255,255,255,.025)}
+    .streamers-live-summary strong{font-size:22px;line-height:1;color:#fff}.streamers-live-summary span{margin-top:4px;color:#8fa2b4;font-size:10px;font-weight:800;letter-spacing:.08em}
+    .streamer-poster-card.status-soon .streamer-poster-status{color:#ffd45d}.streamer-poster-card.status-scheduled .streamer-poster-status{color:#62ebff}.streamer-poster-card.status-offline .streamer-poster-status{color:#8fa2b4}
+  </style>
 </head>
 <body data-cloud-streamers="1">
   <section id="siteContent" class="site-content streamers-page">
@@ -28,13 +34,16 @@
     <main class="streamers-showcase-page tl-page-hero-shell-v102">
       <section class="tl-page-hero-v102">
         <h1 class="tl-page-hero-v102__title">Team Lambreta</h1>
-        <p class="tl-page-hero-v102__subtitle">Conheça nossos streamers e acompanhe as lives diárias.</p>
-        <div class="tl-page-hero-v102__actions"><div class="streamers-showcase-counter"><strong id="streamersCount">0</strong><span>perfis ativos</span></div></div>
+        <p class="tl-page-hero-v102__subtitle">Veja quem está ao vivo agora e os próximos horários da nossa equipa.</p>
+        <div class="streamers-live-summary" aria-label="Estado das lives">
+          <div><strong id="streamersLiveCount">0</strong><span>AO VIVO</span></div>
+          <div><strong id="streamersSoonCount">0</strong><span>EM BREVE</span></div>
+          <div><strong id="streamersCount">0</strong><span>STREAMERS</span></div>
+        </div>
       </section>
 
       <section class="streamers-showcase-list">
         <div id="streamersPublicGrid" class="streamer-unified-grid"></div>
-        <nav id="streamersPublicPager" class="team-roster-pager" aria-label="Paginação dos streamers" hidden></nav>
       </section>
     </main>
 
@@ -42,8 +51,6 @@
       <p>© <span id="year"></span> Team Lambreta — Juntos somos mais fortes.</p>
     </footer>
   </section>
-
-  <div id="homeStreamerWatchModal" class="home-watch-modal" hidden><button class="home-watch-backdrop" type="button" data-watch-close aria-label="Fechar"></button><section class="home-watch-dialog" role="dialog" aria-modal="true" aria-labelledby="homeWatchTitle"><button class="home-watch-close" type="button" data-watch-close aria-label="Fechar">×</button><small>STREAMER TEAM LAMBRETA</small><h2 id="homeWatchTitle">Onde quer assistir?</h2><p id="streamerWatchMeta" class="streamer-watch-meta"></p><div id="homeWatchPlatforms" class="home-watch-platforms"></div><div class="home-watch-separator"><span></span><b>OU</b><span></span></div><a id="homeWatchInternal" class="home-watch-internal" href="live.html">Assista aqui</a><p>Abre a sala Team Lambreta com player + chat da live.</p></section></div>
 
   <script src="tl-diagnostics-v104.js?v=104.0"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.112.4"></script>
@@ -54,7 +61,7 @@
   <script src="services/visual-image-service.js?v=103.0"></script>
   <script src="services/permission-service.js?v=102.3"></script>
   <script src="tl-shell-v114.js?v=114.3"></script>
-  <script src="streamer-public-v86.js?v=104.0"></script>
+  <script src="streamer-public-v115.js"></script>
   <script src="community-progress-v938.js?v=104.0"></script>
 </body>
 </html>
