@@ -15,6 +15,7 @@
   let channel = null;
   let hls = null;
   let activeUrl = '';
+  let hasPlayed = false;
 
   if (!video) return;
 
@@ -33,10 +34,19 @@
   };
 
   const showPlayer = () => {
+    hasPlayed = true;
     video.classList.add('is-ready');
     if (fallback) fallback.hidden = true;
     window.TeamProgress?.setLiveActive?.(true);
     window.TeamLiveChatSession?.touch?.();
+  };
+
+  const handlePlaybackFailure = () => {
+    showFallback('Transmissão temporariamente indisponível', 'O servidor de vídeo ainda não está acessível ou o OBS parou de transmitir.');
+    if (hasPlayed) {
+      hasPlayed = false;
+      window.TeamLiveChatSession?.close?.();
+    }
   };
 
   const stopPlayer = () => {
@@ -83,7 +93,7 @@
       hls.attachMedia(video);
       hls.on(window.Hls.Events.MANIFEST_PARSED, attemptPlay);
       hls.on(window.Hls.Events.ERROR, (_event, data) => {
-        if (data?.fatal) showFallback('Transmissão temporariamente indisponível', 'O servidor de vídeo ainda não está acessível ou o OBS parou de transmitir.');
+        if (data?.fatal) handlePlaybackFailure();
       });
       return;
     }
@@ -139,7 +149,7 @@
 
   video.addEventListener('playing', showPlayer);
   video.addEventListener('canplay', showPlayer);
-  video.addEventListener('error', () => showFallback('Transmissão temporariamente indisponível', 'O servidor de vídeo ainda não está acessível ou o OBS parou de transmitir.'));
+  video.addEventListener('error', handlePlaybackFailure);
 
   loadStreamer();
 
