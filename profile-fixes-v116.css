@@ -1,0 +1,11 @@
+.tl-profile-games-v106{grid-template-columns:repeat(4,minmax(0,1fr))!important}
+.tl-profile-game-cover-v116{position:relative;overflow:hidden;min-height:140px;padding:0!important;isolation:isolate;background:#0c131d}
+.tl-profile-game-cover-image-v116{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:0;transition:transform .22s ease,filter .22s ease}
+.tl-profile-game-cover-v116::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,transparent 28%,rgba(0,0,0,.18) 52%,rgba(0,0,0,.88) 100%);z-index:1;pointer-events:none}
+.tl-profile-game-cover-v116 .game-name{position:absolute;left:10px;right:10px;bottom:9px;z-index:2;color:#fff;text-shadow:0 2px 8px #000;font-weight:800;line-height:1.05}
+.tl-profile-game-cover-fallback-v116{display:none;position:absolute;inset:0;place-items:center;z-index:0;font-size:1rem;font-weight:900;letter-spacing:.04em;text-align:center;padding:12px;background:radial-gradient(circle at 50% 30%,rgba(61,231,255,.18),transparent 48%),linear-gradient(145deg,#101b29,#060a10)}
+.tl-profile-game-cover-v116.is-cover-fallback .tl-profile-game-cover-fallback-v116,.tl-profile-game-cover-v116.is-empty .tl-profile-game-cover-fallback-v116{display:grid}
+.tl-profile-game-cover-v116:hover .tl-profile-game-cover-image-v116{transform:scale(1.04)}
+.tl-profile-game-cover-v116.is-empty{opacity:.62}
+@media(max-width:720px){.tl-profile-games-v106{grid-template-columns:repeat(2,minmax(0,1fr))!important}.tl-profile-game-cover-v116{min-height:118px}}
+@media(max-width:390px){.tl-profile-game-cover-v116{min-height:108px}.tl-profile-game-cover-v116 .game-name{font-size:.78rem}}
