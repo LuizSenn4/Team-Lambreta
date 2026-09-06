@@ -26,6 +26,7 @@
     streamer: [], vip: [], supporter: [], member: []
   });
   let verifiedProfile = null;
+  let refreshPromise = null;
 
   const normalizeRole = role => ROLE_ALIASES[String(role || 'member').trim().toLowerCase()] || String(role || 'member').trim().toLowerCase();
   const roleLabel = role => ROLE_LABELS[normalizeRole(role)] || 'MEMBRO';
@@ -52,9 +53,13 @@
     return allowed.includes('*') || allowed.includes(permission);
   };
   async function refresh() {
-    verifiedProfile = await window.TeamProfiles?.getCurrentProfile({ fresh: true }) || null;
-    window.dispatchEvent(new CustomEvent('tl:permissions', { detail: { role: normalizeRole(verifiedProfile?.role) } }));
-    return verifiedProfile;
+    if (refreshPromise) return refreshPromise;
+    refreshPromise = (async () => {
+      verifiedProfile = await window.TeamProfiles?.getCurrentProfile({ fresh: true }) || null;
+      window.dispatchEvent(new CustomEvent('tl:permissions', { detail: { role: normalizeRole(verifiedProfile?.role) } }));
+      return verifiedProfile;
+    })().finally(() => { refreshPromise = null; });
+    return refreshPromise;
   }
   async function can(permission) {
     const session = await window.TeamAuth?.getSession();
