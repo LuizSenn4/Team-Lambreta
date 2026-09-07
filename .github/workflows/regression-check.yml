@@ -20,9 +20,11 @@ jobs:
       - name: JavaScript syntax
         run: |
           node --check tl-shell-v115.js
+          node --check auth-manager.js
+          node --check profile-v120.js
           node --check profile-edit-v117.js
           node --check profile-social-editor-v117.js
-          node --check profile-fixes-v116.js
+          node --check profile-game-v123.js
           node --check forum-board-v2.js
           node --check services/profile-service.js
       - name: Regression guard
