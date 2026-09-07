@@ -7,6 +7,7 @@
   const MAX_NICK = 16;
   const esc = value => String(value ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot',"'":'&#39;'}[c]));
   let privacyBusy = false;
+  let editShortcutBusy = false;
 
   const normalizeGameKey = value => String(value || '')
     .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
@@ -25,6 +26,24 @@
   };
 
   const privacyMessage = mode => mode === 'private' ? 'Lista de amigos privada.' : mode === 'friends' ? 'Lista de amigos visível apenas para amigos.' : '';
+
+  async function ensureEditShortcut(root) {
+    if (editShortcutBusy || root.querySelector('.p121-hero-edit')) return;
+    const hero = root.querySelector('.p120-hero');
+    if (!hero) return;
+    editShortcutBusy = true;
+    try {
+      const { own } = await getContext();
+      if (!own || root.querySelector('.p121-hero-edit')) return;
+      const link = document.createElement('a');
+      link.className = 'p121-hero-edit';
+      link.href = 'profile-edit.html';
+      link.setAttribute('aria-label', 'Editar perfil');
+      link.setAttribute('title', 'Editar perfil');
+      link.innerHTML = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20l4.2-1 10-10-3.2-3.2-10 10L4 20Z"/><path d="M13.8 7l3.2 3.2"/></svg>';
+      hero.appendChild(link);
+    } finally { editShortcutBusy = false; }
+  }
 
   async function syncPrivacy(root) {
     const { userId, own } = await getContext();
@@ -149,14 +168,14 @@
     const standaloneFacts = Array.from(root.children).find(node => node.classList?.contains('p120-facts'));
     standaloneFacts?.remove();
     root.querySelectorAll('.p120-game.is-empty').forEach(card => card.remove());
-    syncGames(root); syncPrivacy(root);
+    ensureEditShortcut(root); syncGames(root); syncPrivacy(root);
   };
 
   const observer = new MutationObserver(polish);
   const start = () => {
     const root = document.getElementById('profileRoot');
     if (!root) return setTimeout(start, 60);
-    observer.observe(root, { childList:true, subtree:true });
+    observer.observe(root, { childList:true,subtree:true });
     polish();
   };
   start();
