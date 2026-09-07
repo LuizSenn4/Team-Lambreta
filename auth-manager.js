@@ -15,9 +15,9 @@
     window.dispatchEvent(new CustomEvent('tl:auth', { detail: { event, session } }));
   }
 
-  async function signInWithGoogle() {
+  async function signInWithGoogle(returnTo) {
     if (!client) throw new Error('Cliente Supabase indisponível.');
-    const redirectTo = new URL('/home.html', window.location.origin).href;
+    const redirectTo = returnTo || new URL('/home.html', window.location.origin).href;
     const { data, error } = await client.auth.signInWithOAuth({ provider: 'google', options: { redirectTo } });
     if (error) {
       window.TeamDiagnostics?.error('TL-AUTH-002', 'auth', 'Login Google não iniciou', { redirectTo }, error);
@@ -30,6 +30,12 @@
     if (!client) return;
     const { error } = await client.auth.signOut();
     if (error) throw error;
+  }
+
+  function shouldAutoLoginProfile() {
+    const host = String(window.location.hostname || '').toLowerCase();
+    const path = String(window.location.pathname || '').toLowerCase();
+    return (host === 'teamlambreta.net' || host === 'www.teamlambreta.net') && /\/profile\.html$/.test(path);
   }
 
   if (!client) {
@@ -46,6 +52,9 @@
       initialized = true;
       resolveReady(session);
       notify('INITIAL_SESSION');
+      if (!session?.user && shouldAutoLoginProfile()) {
+        queueMicrotask(() => signInWithGoogle(window.location.href).catch(err => console.error('[AUTH] redirect perfil', err)));
+      }
     });
   }
 
