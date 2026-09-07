@@ -1,29 +1,46 @@
-/* V121 profile polish: compact mobile hero, single-line nickname, status box and DEV badge */
+/* V121 profile polish: compact mobile hero, single-line nickname, MSN-style status and DEV badge */
 .p120-identity h1{
   max-width:100%;
   white-space:nowrap;
   overflow:hidden;
-  text-overflow:ellipsis;
+  text-overflow:clip;
   overflow-wrap:normal;
+  font-size:clamp(20px,3vw,32px);
+}
+
+.p120-presence{
+  display:none!important;
 }
 
 .p120-identity>p{
   display:block;
-  width:fit-content;
-  max-width:min(100%,560px);
-  margin:12px 0 0;
-  padding:9px 13px;
+  width:min(100%,720px);
+  max-width:100%;
+  margin:9px 0 0;
+  padding:6px 12px;
   border:1px solid rgba(33,221,255,.30);
-  border-radius:13px;
+  border-radius:999px;
   background:linear-gradient(135deg,rgba(8,24,34,.92),rgba(4,14,22,.82));
   color:#c9f7ff;
-  box-shadow:inset 0 0 16px rgba(33,221,255,.035),0 0 14px rgba(33,221,255,.055);
-  font:500 11px/1.45 'Michroma',sans-serif;
-  letter-spacing:.025em;
+  box-shadow:inset 0 0 14px rgba(33,221,255,.035),0 0 12px rgba(33,221,255,.05);
+  font:500 10px/1.25 'Michroma',sans-serif;
+  letter-spacing:.015em;
   overflow:hidden;
-  text-overflow:ellipsis;
+  text-overflow:clip;
   white-space:nowrap;
 }
+
+.p120-edit.is-icon-only{
+  display:grid;
+  place-items:center;
+  width:38px;
+  min-width:38px;
+  height:38px;
+  min-height:38px;
+  padding:0;
+  border-radius:50%;
+}
+.p120-edit.is-icon-only svg{width:18px;height:18px;margin:0}
 
 .p120-role[data-role="developer"],
 .p120-role.is-developer{
@@ -42,23 +59,25 @@
   }
   .p120-avatar{width:102px;height:102px}
   .p120-identity h1{
-    font-size:clamp(19px,5.7vw,27px);
+    font-size:clamp(16px,4.8vw,22px);
     line-height:1.08;
   }
-  .p120-presence{margin-top:7px;font-size:9px}
-  .p120-roles{margin-top:9px;gap:6px}
-  .p120-role{min-height:32px}
+  .p120-roles{margin-top:8px;gap:6px}
+  .p120-role{min-height:30px}
   .p120-role b{font-size:7.5px}
   .p120-identity>p{
+    width:100%;
     max-width:100%;
-    margin-top:8px;
-    padding:7px 9px;
-    border-radius:11px;
-    font-size:8.5px;
-    line-height:1.35;
+    margin-top:7px;
+    padding:5px 9px;
+    border-radius:999px;
+    font-size:clamp(7px,2.1vw,8.5px);
+    line-height:1.2;
+    letter-spacing:0;
     -webkit-line-clamp:unset;
   }
   .p120-facts article{padding:11px 12px}
   .p120-tabs button{min-height:82px}
   .p120-panels{padding-top:13px}
+  .p120-edit.is-icon-only{width:34px;min-width:34px;height:34px;min-height:34px}
 }
