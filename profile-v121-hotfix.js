@@ -5,17 +5,17 @@
 
   const MAX_STATUS = 72;
   const MAX_NICK = 16;
-  const PRIVACY_KEY = 'tl_friends_privacy_v1';
+  const esc = value => String(value ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  let privacyBusy = false;
 
-  const privacyValue = () => {
-    try { return localStorage.getItem(PRIVACY_KEY) || 'public'; } catch { return 'public'; }
-  };
-  const setPrivacy = value => {
-    try { localStorage.setItem(PRIVACY_KEY, value); } catch {}
+  const getContext = async () => {
+    const session = await window.TeamAuth?.getSession?.();
+    if (!session?.user) return { session:null, userId:'', own:false };
+    const userId = new URLSearchParams(location.search).get('user') || session.user.id;
+    return { session, userId, own:userId === session.user.id };
   };
 
-  const privacyMarkup = () => {
-    const current = privacyValue();
+  const privacyMarkup = current => {
     const options = [
       ['public', 'Todos podem ver'],
       ['friends', 'Apenas amigos'],
@@ -27,21 +27,94 @@
     </section>`;
   };
 
-  const bindPrivacy = root => {
-    root.querySelectorAll('[data-friends-privacy]').forEach(btn => {
-      if (btn.dataset.bound) return;
-      btn.dataset.bound = '1';
-      btn.addEventListener('click', () => {
-        const value = btn.dataset.friendsPrivacy;
-        setPrivacy(value);
-        root.querySelectorAll('[data-friends-privacy]').forEach(x => {
-          const active = x.dataset.friendsPrivacy === value;
-          x.classList.toggle('is-active', active);
-          x.setAttribute('aria-pressed', String(active));
+  const privacyMessage = mode => mode === 'private'
+    ? 'Lista de amigos privada.'
+    : mode === 'friends'
+      ? 'Lista de amigos visível apenas para amigos.'
+      : '';
+
+  async function syncPrivacy(root) {
+    const { userId, own } = await getContext();
+    if (!userId || !window.TeamProfiles) return;
+    let profile;
+    try { profile = await window.TeamProfiles.getPublicProfile(userId, { fresh:true }); } catch { return; }
+    const mode = ['public','friends','private'].includes(profile?.friends_visibility) ? profile.friends_visibility : 'public';
+    const friends = root.querySelector('.p120-friends');
+    if (!friends) return;
+
+    if (own) {
+      let box = root.querySelector('.p121-friend-privacy');
+      if (!box) {
+        friends.insertAdjacentHTML('afterend', privacyMarkup(mode));
+        box = root.querySelector('.p121-friend-privacy');
+      }
+      box.querySelectorAll('[data-friends-privacy]').forEach(btn => {
+        const active = btn.dataset.friendsPrivacy === mode;
+        btn.classList.toggle('is-active', active);
+        btn.setAttribute('aria-pressed', String(active));
+        if (btn.dataset.bound) return;
+        btn.dataset.bound = '1';
+        btn.addEventListener('click', async () => {
+          if (privacyBusy) return;
+          privacyBusy = true;
+          const value = btn.dataset.friendsPrivacy;
+          box.querySelectorAll('button').forEach(b => b.disabled = true);
+          try {
+            const result = await window.teamSupabase.rpc('tl_set_friends_visibility', { p_visibility:value });
+            if (result.error) throw result.error;
+            box.querySelectorAll('[data-friends-privacy]').forEach(x => {
+              const selected = x.dataset.friendsPrivacy === value;
+              x.classList.toggle('is-active', selected);
+              x.setAttribute('aria-pressed', String(selected));
+            });
+            window.TeamProfiles?.clearCurrentCache?.();
+          } catch (error) {
+            console.error('[Profile privacy]', error);
+          } finally {
+            box.querySelectorAll('button').forEach(b => b.disabled = false);
+            privacyBusy = false;
+          }
         });
       });
-    });
-  };
+    } else {
+      root.querySelector('.p121-friend-privacy')?.remove();
+      const message = privacyMessage(mode);
+      if (message && !friends.querySelector('.p121-private-message')) {
+        const track = friends.querySelector('.p120-friends-track');
+        const empty = friends.querySelector('.p120-friends-empty');
+        if (!track || !track.children.length) {
+          track?.remove();
+          if (empty) empty.textContent = message;
+          else friends.insertAdjacentHTML('beforeend', `<div class="p120-friends-empty p121-private-message">${esc(message)}</div>`);
+        }
+      }
+    }
+  }
+
+  async function syncGames(root) {
+    const host = root.querySelector('.p120-games');
+    if (!host || host.dataset.v121Synced === '1' || !window.TeamProfiles) return;
+    const { userId } = await getContext();
+    if (!userId) return;
+    try {
+      const [profile, catalog] = await Promise.all([
+        window.TeamProfiles.getPublicProfile(userId, { fresh:true }),
+        window.TeamProfiles.getCatalog()
+      ]);
+      const chosen = [...new Set([...(Array.isArray(profile?.games) ? profile.games : []), profile?.main_game].filter(Boolean))].slice(0,4);
+      if (!chosen.length) return;
+      const map = new Map((catalog?.games || []).map(g => [g.slug, g]));
+      host.innerHTML = chosen.map(slug => {
+        const g = map.get(slug) || { slug, name:String(slug).replace(/[-_]/g,' ').replace(/\b\w/g,c=>c.toUpperCase()) };
+        return `<article class="p120-game"><div class="p120-game-media"><img src="assets/game-covers/${encodeURIComponent(slug)}.webp" alt="Capa de ${esc(g.name)}" decoding="async" loading="lazy"><span>${esc(g.short_name || g.name || slug)}</span></div><b>${esc(g.name || slug)}</b></article>`;
+      }).join('');
+      host.dataset.v121Synced = '1';
+      const title = root.querySelector('[data-panel="games"] h2');
+      if (title) title.lastChild && (title.lastChild.textContent = ` JOGOS MAIS JOGADOS (${chosen.length})`);
+    } catch (error) {
+      console.error('[Profile games V121]', error);
+    }
+  }
 
   const polish = () => {
     const root = document.getElementById('profileRoot');
@@ -91,42 +164,19 @@
       edit.classList.add('is-icon-only');
     }
 
-    // JOGOS | REDES | PERFIL: facts ficam somente dentro da aba PERFIL.
     const standaloneFacts = Array.from(root.children).find(node => node.classList?.contains('p120-facts'));
     standaloneFacts?.remove();
-
-    // Não desenhar slot vazio: o perfil suporta ATÉ quatro jogos.
     root.querySelectorAll('.p120-game.is-empty').forEach(card => card.remove());
 
-    // Tenta a capa local pelo slug original e depois pelo nome normalizado.
-    root.querySelectorAll('.p120-game-media img').forEach(img => {
-      if (img.dataset.v121Fallback) return;
-      img.dataset.v121Fallback = '1';
-      img.addEventListener('error', () => {
-        const card = img.closest('.p120-game');
-        const label = card?.querySelector('b')?.textContent?.trim();
-        if (!label) return;
-        const slug = label.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
-        const next = `assets/game-covers/${slug}.webp`;
-        if (!img.dataset.v121Retried && img.getAttribute('src') !== next) {
-          img.dataset.v121Retried = '1';
-          img.src = next;
-        }
-      });
-    });
-
-    const friends = root.querySelector('.p120-friends');
-    if (friends && !root.querySelector('.p121-friend-privacy')) {
-      friends.insertAdjacentHTML('afterend', privacyMarkup());
-    }
-    bindPrivacy(root);
+    syncGames(root);
+    syncPrivacy(root);
   };
 
   const observer = new MutationObserver(polish);
   const start = () => {
     const root = document.getElementById('profileRoot');
     if (!root) return setTimeout(start, 60);
-    observer.observe(root, { childList: true, subtree: true });
+    observer.observe(root, { childList:true, subtree:true });
     polish();
   };
   start();
