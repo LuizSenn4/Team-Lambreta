@@ -5,8 +5,12 @@
 
   const MAX_STATUS = 72;
   const MAX_NICK = 16;
-  const esc = value => String(value ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  const esc = value => String(value ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot',"'":'&#39;'}[c]));
   let privacyBusy = false;
+
+  const normalizeGameKey = value => String(value || '')
+    .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+    .trim().toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
 
   const getContext = async () => {
     const session = await window.TeamAuth?.getSession?.();
@@ -16,22 +20,11 @@
   };
 
   const privacyMarkup = current => {
-    const options = [
-      ['public', 'Todos podem ver'],
-      ['friends', 'Apenas amigos'],
-      ['private', 'Só para mim']
-    ];
-    return `<section class="p121-friend-privacy" aria-label="Privacidade dos amigos">
-      <strong>PRIVACIDADE DOS AMIGOS</strong>
-      <div>${options.map(([value,label]) => `<button type="button" data-friends-privacy="${value}" class="${current===value?'is-active':''}" aria-pressed="${current===value?'true':'false'}">${label}</button>`).join('')}</div>
-    </section>`;
+    const options = [['public','Todos podem ver'],['friends','Apenas amigos'],['private','Só para mim']];
+    return `<section class="p121-friend-privacy" aria-label="Privacidade dos amigos"><strong>PRIVACIDADE DOS AMIGOS</strong><div>${options.map(([value,label]) => `<button type="button" data-friends-privacy="${value}" class="${current===value?'is-active':''}" aria-pressed="${current===value?'true':'false'}">${label}</button>`).join('')}</div></section>`;
   };
 
-  const privacyMessage = mode => mode === 'private'
-    ? 'Lista de amigos privada.'
-    : mode === 'friends'
-      ? 'Lista de amigos visível apenas para amigos.'
-      : '';
+  const privacyMessage = mode => mode === 'private' ? 'Lista de amigos privada.' : mode === 'friends' ? 'Lista de amigos visível apenas para amigos.' : '';
 
   async function syncPrivacy(root) {
     const { userId, own } = await getContext();
@@ -41,13 +34,9 @@
     const mode = ['public','friends','private'].includes(profile?.friends_visibility) ? profile.friends_visibility : 'public';
     const friends = root.querySelector('.p120-friends');
     if (!friends) return;
-
     if (own) {
       let box = root.querySelector('.p121-friend-privacy');
-      if (!box) {
-        friends.insertAdjacentHTML('afterend', privacyMarkup(mode));
-        box = root.querySelector('.p121-friend-privacy');
-      }
+      if (!box) { friends.insertAdjacentHTML('afterend', privacyMarkup(mode)); box = root.querySelector('.p121-friend-privacy'); }
       box.querySelectorAll('[data-friends-privacy]').forEach(btn => {
         const active = btn.dataset.friendsPrivacy === mode;
         btn.classList.toggle('is-active', active);
@@ -68,12 +57,8 @@
               x.setAttribute('aria-pressed', String(selected));
             });
             window.TeamProfiles?.clearCurrentCache?.();
-          } catch (error) {
-            console.error('[Profile privacy]', error);
-          } finally {
-            box.querySelectorAll('button').forEach(b => b.disabled = false);
-            privacyBusy = false;
-          }
+          } catch (error) { console.error('[Profile privacy]', error); }
+          finally { box.querySelectorAll('button').forEach(b => b.disabled = false); privacyBusy = false; }
         });
       });
     } else {
@@ -91,35 +76,54 @@
     }
   }
 
+  function revealGameImages(host) {
+    host.querySelectorAll('.p120-game-media img').forEach(img => {
+      const reveal = () => img.classList.add('is-loaded');
+      if (img.complete && img.naturalWidth) reveal();
+      else img.addEventListener('load', reveal, { once:true });
+      img.addEventListener('error', () => img.classList.remove('is-loaded'), { once:true });
+    });
+  }
+
   async function syncGames(root) {
     const host = root.querySelector('.p120-games');
     if (!host || host.dataset.v121Synced === '1' || !window.TeamProfiles) return;
     const { userId } = await getContext();
     if (!userId) return;
     try {
-      const [profile, catalog] = await Promise.all([
-        window.TeamProfiles.getPublicProfile(userId, { fresh:true }),
-        window.TeamProfiles.getCatalog()
-      ]);
-      const chosen = [...new Set([...(Array.isArray(profile?.games) ? profile.games : []), profile?.main_game].filter(Boolean))].slice(0,4);
+      const [profile, catalog] = await Promise.all([window.TeamProfiles.getPublicProfile(userId, { fresh:true }), window.TeamProfiles.getCatalog()]);
+      const games = catalog?.games || [];
+      const catalogBySlug = new Map(games.map(g => [normalizeGameKey(g.slug), g]));
+      const aliasMap = new Map();
+      games.forEach(g => {
+        [g.slug, g.name, g.short_name, ...(Array.isArray(g.aliases) ? g.aliases : [])].filter(Boolean).forEach(v => aliasMap.set(normalizeGameKey(v), g.slug));
+      });
+      const raw = [...(Array.isArray(profile?.games) ? profile.games : []), profile?.main_game].filter(Boolean);
+      const chosen = [];
+      const seen = new Set();
+      raw.forEach(value => {
+        const normalized = normalizeGameKey(value);
+        const canonical = aliasMap.get(normalized) || normalized;
+        if (!canonical || seen.has(canonical) || chosen.length >= 4) return;
+        seen.add(canonical);
+        chosen.push(canonical);
+      });
       if (!chosen.length) return;
-      const map = new Map((catalog?.games || []).map(g => [g.slug, g]));
       host.innerHTML = chosen.map(slug => {
-        const g = map.get(slug) || { slug, name:String(slug).replace(/[-_]/g,' ').replace(/\b\w/g,c=>c.toUpperCase()) };
-        return `<article class="p120-game"><div class="p120-game-media"><img src="assets/game-covers/${encodeURIComponent(slug)}.webp" alt="Capa de ${esc(g.name)}" decoding="async" loading="lazy"><span>${esc(g.short_name || g.name || slug)}</span></div><b>${esc(g.name || slug)}</b></article>`;
+        const g = catalogBySlug.get(normalizeGameKey(slug)) || { slug, name:String(slug).replace(/[-_]/g,' ').replace(/\b\w/g,c=>c.toUpperCase()) };
+        const fileSlug = normalizeGameKey(g.slug || slug);
+        return `<article class="p120-game"><div class="p120-game-media"><img src="assets/game-covers/${encodeURIComponent(fileSlug)}.webp" alt="Capa de ${esc(g.name)}" decoding="async" loading="lazy"><span>${esc(g.short_name || g.name || slug)}</span></div><b>${esc(g.name || slug)}</b></article>`;
       }).join('');
+      revealGameImages(host);
       host.dataset.v121Synced = '1';
       const title = root.querySelector('[data-panel="games"] h2');
-      if (title) title.lastChild && (title.lastChild.textContent = ` JOGOS MAIS JOGADOS (${chosen.length})`);
-    } catch (error) {
-      console.error('[Profile games V121]', error);
-    }
+      if (title && title.lastChild) title.lastChild.textContent = ` JOGOS MAIS JOGADOS (${chosen.length})`;
+    } catch (error) { console.error('[Profile games V121]', error); }
   }
 
   const polish = () => {
     const root = document.getElementById('profileRoot');
     if (!root) return;
-
     const nick = root.querySelector('.p120-identity h1');
     if (nick && !nick.dataset.v121Done) {
       const full = (nick.textContent || '').replace(/\s+/g, ' ').trim();
@@ -127,49 +131,25 @@
       if (full.length > MAX_NICK) nick.textContent = full.slice(0, MAX_NICK);
       nick.dataset.v121Done = '1';
     }
-
     const presence = root.querySelector('.p120-presence');
-    if (presence) {
-      presence.hidden = true;
-      presence.setAttribute('aria-hidden', 'true');
-    }
-
+    if (presence) { presence.hidden = true; presence.setAttribute('aria-hidden','true'); }
     const status = root.querySelector('.p120-identity > p');
     if (status && !status.dataset.v121Done) {
       const full = (status.textContent || '').replace(/\s+/g, ' ').trim();
       const clean = full.slice(0, MAX_STATUS) || 'Sem status definido';
-      status.title = clean;
-      status.textContent = clean;
-      status.setAttribute('aria-label', `Status: ${clean}`);
-      status.dataset.v121Done = '1';
+      status.title = clean; status.textContent = clean; status.setAttribute('aria-label', `Status: ${clean}`); status.dataset.v121Done = '1';
     }
-
     root.querySelectorAll('.p120-role').forEach(role => {
-      const label = role.querySelector('b');
-      if (!label) return;
-      role.style.whiteSpace = 'nowrap';
-      role.style.flexWrap = 'nowrap';
-      if ((label.textContent || '').trim().toUpperCase() === 'DESENVOLVEDOR') {
-        label.textContent = 'DEV';
-        role.classList.add('is-developer');
-        role.dataset.role = 'developer';
-      }
+      const label = role.querySelector('b'); if (!label) return;
+      role.style.whiteSpace='nowrap'; role.style.flexWrap='nowrap';
+      if ((label.textContent || '').trim().toUpperCase() === 'DESENVOLVEDOR') { label.textContent='DEV'; role.classList.add('is-developer'); role.dataset.role='developer'; }
     });
-
     const edit = root.querySelector('.p120-edit');
-    if (edit) {
-      edit.querySelector('span')?.remove();
-      edit.setAttribute('aria-label', 'Editar perfil');
-      edit.setAttribute('title', 'Editar perfil');
-      edit.classList.add('is-icon-only');
-    }
-
+    if (edit) { edit.querySelector('span')?.remove(); edit.setAttribute('aria-label','Editar perfil'); edit.setAttribute('title','Editar perfil'); edit.classList.add('is-icon-only'); }
     const standaloneFacts = Array.from(root.children).find(node => node.classList?.contains('p120-facts'));
     standaloneFacts?.remove();
     root.querySelectorAll('.p120-game.is-empty').forEach(card => card.remove());
-
-    syncGames(root);
-    syncPrivacy(root);
+    syncGames(root); syncPrivacy(root);
   };
 
   const observer = new MutationObserver(polish);
