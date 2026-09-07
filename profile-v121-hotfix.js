@@ -5,6 +5,43 @@
 
   const MAX_STATUS = 72;
   const MAX_NICK = 16;
+  const PRIVACY_KEY = 'tl_friends_privacy_v1';
+
+  const privacyValue = () => {
+    try { return localStorage.getItem(PRIVACY_KEY) || 'public'; } catch { return 'public'; }
+  };
+  const setPrivacy = value => {
+    try { localStorage.setItem(PRIVACY_KEY, value); } catch {}
+  };
+
+  const privacyMarkup = () => {
+    const current = privacyValue();
+    const options = [
+      ['public', 'Todos podem ver'],
+      ['friends', 'Apenas amigos'],
+      ['private', 'Só para mim']
+    ];
+    return `<section class="p121-friend-privacy" aria-label="Privacidade dos amigos">
+      <strong>PRIVACIDADE DOS AMIGOS</strong>
+      <div>${options.map(([value,label]) => `<button type="button" data-friends-privacy="${value}" class="${current===value?'is-active':''}" aria-pressed="${current===value?'true':'false'}">${label}</button>`).join('')}</div>
+    </section>`;
+  };
+
+  const bindPrivacy = root => {
+    root.querySelectorAll('[data-friends-privacy]').forEach(btn => {
+      if (btn.dataset.bound) return;
+      btn.dataset.bound = '1';
+      btn.addEventListener('click', () => {
+        const value = btn.dataset.friendsPrivacy;
+        setPrivacy(value);
+        root.querySelectorAll('[data-friends-privacy]').forEach(x => {
+          const active = x.dataset.friendsPrivacy === value;
+          x.classList.toggle('is-active', active);
+          x.setAttribute('aria-pressed', String(active));
+        });
+      });
+    });
+  };
 
   const polish = () => {
     const root = document.getElementById('profileRoot');
@@ -48,18 +85,20 @@
 
     const edit = root.querySelector('.p120-edit');
     if (edit) {
-      const label = edit.querySelector('span');
-      label?.remove();
+      edit.querySelector('span')?.remove();
       edit.setAttribute('aria-label', 'Editar perfil');
       edit.setAttribute('title', 'Editar perfil');
       edit.classList.add('is-icon-only');
     }
 
-    // O V120 já renderiza JOGOS | REDES | PERFIL. Mantemos a aba PERFIL
-    // e removemos apenas a cópia das informações que ficava solta acima de Amigos.
+    // JOGOS | REDES | PERFIL: facts ficam somente dentro da aba PERFIL.
     const standaloneFacts = Array.from(root.children).find(node => node.classList?.contains('p120-facts'));
     standaloneFacts?.remove();
 
+    // Não desenhar slot vazio: o perfil suporta ATÉ quatro jogos.
+    root.querySelectorAll('.p120-game.is-empty').forEach(card => card.remove());
+
+    // Tenta a capa local pelo slug original e depois pelo nome normalizado.
     root.querySelectorAll('.p120-game-media img').forEach(img => {
       if (img.dataset.v121Fallback) return;
       img.dataset.v121Fallback = '1';
@@ -67,9 +106,7 @@
         const card = img.closest('.p120-game');
         const label = card?.querySelector('b')?.textContent?.trim();
         if (!label) return;
-        const slug = label
-          .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
-          .toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+        const slug = label.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
         const next = `assets/game-covers/${slug}.webp`;
         if (!img.dataset.v121Retried && img.getAttribute('src') !== next) {
           img.dataset.v121Retried = '1';
@@ -77,6 +114,12 @@
         }
       });
     });
+
+    const friends = root.querySelector('.p120-friends');
+    if (friends && !root.querySelector('.p121-friend-privacy')) {
+      friends.insertAdjacentHTML('afterend', privacyMarkup());
+    }
+    bindPrivacy(root);
   };
 
   const observer = new MutationObserver(polish);
