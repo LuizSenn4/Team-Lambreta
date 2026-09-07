@@ -3,7 +3,7 @@
   if (window.TeamProfileV121Hotfix) return;
   window.TeamProfileV121Hotfix = true;
 
-  const MAX_STATUS = 26;
+  const MAX_STATUS = 72;
   const MAX_NICK = 16;
 
   const polish = () => {
@@ -18,12 +18,19 @@
       nick.dataset.v121Done = '1';
     }
 
+    const presence = root.querySelector('.p120-presence');
+    if (presence) {
+      presence.hidden = true;
+      presence.setAttribute('aria-hidden', 'true');
+    }
+
     const status = root.querySelector('.p120-identity > p');
     if (status && !status.dataset.v121Done) {
       const full = (status.textContent || '').replace(/\s+/g, ' ').trim();
-      status.title = full;
-      status.textContent = full.slice(0, MAX_STATUS) || 'Sem status definido';
-      status.setAttribute('aria-label', `Status: ${status.textContent}`);
+      const clean = full.slice(0, MAX_STATUS) || 'Sem status definido';
+      status.title = clean;
+      status.textContent = clean;
+      status.setAttribute('aria-label', `Status: ${clean}`);
       status.dataset.v121Done = '1';
     }
 
@@ -38,6 +45,20 @@
         role.dataset.role = 'developer';
       }
     });
+
+    const edit = root.querySelector('.p120-edit');
+    if (edit) {
+      const label = edit.querySelector('span');
+      label?.remove();
+      edit.setAttribute('aria-label', 'Editar perfil');
+      edit.setAttribute('title', 'Editar perfil');
+      edit.classList.add('is-icon-only');
+    }
+
+    const profileTab = root.querySelector('[data-tab="profile"]');
+    const profilePanel = root.querySelector('[data-panel="profile"]');
+    profileTab?.remove();
+    profilePanel?.remove();
 
     root.querySelectorAll('.p120-game-media img').forEach(img => {
       if (img.dataset.v121Fallback) return;
