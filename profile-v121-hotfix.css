@@ -8,6 +8,10 @@
 .p121-friend-privacy{border:1px solid rgba(55,123,155,.35);border-radius:22px;background:rgba(3,17,27,.78);padding:12px 14px}.p121-friend-privacy>strong{display:block;color:#39ddff;font:600 10px/1.2 'Michroma',sans-serif;letter-spacing:.04em;margin-bottom:10px}.p121-friend-privacy>div{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}.p121-friend-privacy button{min-width:0;border:1px solid rgba(68,124,150,.35);border-radius:14px;background:rgba(3,15,24,.7);color:#aebdca;padding:9px 6px;font:500 8px/1.25 'Michroma',sans-serif;cursor:pointer}.p121-friend-privacy button.is-active{border-color:#21ddff;color:#d8fbff;background:rgba(0,112,143,.22);box-shadow:0 0 12px rgba(33,221,255,.08)}
 .p120-game.is-empty{display:none!important}
 
+/* Atalho de edição do próprio perfil */
+.p121-hero-edit{position:absolute;top:12px;right:12px;z-index:5;display:grid;width:36px;height:36px;place-items:center;border:1px solid rgba(33,221,255,.55);border-radius:50%;background:rgba(3,16,25,.82);color:#58eaff;text-decoration:none;box-shadow:0 0 14px rgba(33,221,255,.12);backdrop-filter:blur(5px);-webkit-backdrop-filter:blur(5px)}
+.p121-hero-edit svg{width:17px;height:17px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+
 /* Perfil: identidade no topo, arte visível à direita, status no rodapé */
 .p120-hero{align-items:start}
 .p120-hero::before{background-image:linear-gradient(180deg,rgba(2,7,13,.72) 0%,rgba(2,7,13,.20) 38%,rgba(2,7,13,.12) 67%,rgba(2,7,13,.76) 100%),var(--cover);background-position:center;background-size:cover}
@@ -24,12 +28,13 @@
  .p120-avatar>img,.p120-avatar>span{border-radius:10px}
  .p120-avatar>i{width:19px;height:19px;right:-5px;bottom:-5px;border:3px solid #071018;box-shadow:0 0 0 1px rgba(255,255,255,.08)}
 
- .p120-identity{grid-column:2;grid-row:1;min-width:0;padding:1px 2px 0 0;align-self:start}
- .p120-identity h1{margin:0;font-size:clamp(14px,4.3vw,19px);line-height:1.08;letter-spacing:-.015em}
- .p120-roles{margin-top:7px;gap:5px;align-items:flex-start}.p120-role{min-height:27px}
+ .p120-identity{grid-column:2;grid-row:1;min-width:0;padding:1px 40px 0 0;align-self:start}
+ .p120-identity h1{margin:0;padding-bottom:2px;font-size:clamp(14px,4.3vw,19px);line-height:1.22;letter-spacing:-.015em}
+ .p120-roles{margin-top:5px;gap:5px;align-items:flex-start}.p120-role{min-height:27px}
 
  /* Status cresce apenas conforme o texto, até ao limite da box */
  .p120-identity>p{position:absolute;left:12px;right:auto;bottom:5px;width:max-content;max-width:calc(100% - 24px);margin:0;padding:6px 11px;border-radius:999px;background:rgba(3,16,25,.88);font-size:clamp(7px,2.1vw,8.5px);line-height:1.2;letter-spacing:0;-webkit-line-clamp:unset;z-index:2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+ .p121-hero-edit{top:10px;right:10px;width:34px;height:34px}
 
  .p120-facts article{padding:11px 12px}.p120-tabs button{min-height:72px}.p120-panels{padding-top:13px}.p120-edit.is-icon-only{width:34px;min-width:34px;height:34px;min-height:34px}
  .p121-friend-privacy{padding:10px;border-radius:18px}.p121-friend-privacy>strong{font-size:8px;margin-bottom:8px}.p121-friend-privacy>div{gap:5px}.p121-friend-privacy button{padding:8px 3px;border-radius:11px;font-size:6.5px}
