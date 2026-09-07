@@ -55,10 +55,10 @@
       edit.classList.add('is-icon-only');
     }
 
-    const profileTab = root.querySelector('[data-tab="profile"]');
-    const profilePanel = root.querySelector('[data-panel="profile"]');
-    profileTab?.remove();
-    profilePanel?.remove();
+    // O V120 já renderiza JOGOS | REDES | PERFIL. Mantemos a aba PERFIL
+    // e removemos apenas a cópia das informações que ficava solta acima de Amigos.
+    const standaloneFacts = Array.from(root.children).find(node => node.classList?.contains('p120-facts'));
+    standaloneFacts?.remove();
 
     root.querySelectorAll('.p120-game-media img').forEach(img => {
       if (img.dataset.v121Fallback) return;
