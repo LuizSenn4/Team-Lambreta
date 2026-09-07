@@ -1,83 +1,19 @@
-/* V121 profile polish: compact mobile hero, single-line nickname, MSN-style status and DEV badge */
-.p120-identity h1{
-  max-width:100%;
-  white-space:nowrap;
-  overflow:hidden;
-  text-overflow:clip;
-  overflow-wrap:normal;
-  font-size:clamp(20px,3vw,32px);
-}
-
-.p120-presence{
-  display:none!important;
-}
-
-.p120-identity>p{
-  display:block;
-  width:min(100%,720px);
-  max-width:100%;
-  margin:9px 0 0;
-  padding:6px 12px;
-  border:1px solid rgba(33,221,255,.30);
-  border-radius:999px;
-  background:linear-gradient(135deg,rgba(8,24,34,.92),rgba(4,14,22,.82));
-  color:#c9f7ff;
-  box-shadow:inset 0 0 14px rgba(33,221,255,.035),0 0 12px rgba(33,221,255,.05);
-  font:500 10px/1.25 'Michroma',sans-serif;
-  letter-spacing:.015em;
-  overflow:hidden;
-  text-overflow:clip;
-  white-space:nowrap;
-}
-
-.p120-edit.is-icon-only{
-  display:grid;
-  place-items:center;
-  width:38px;
-  min-width:38px;
-  height:38px;
-  min-height:38px;
-  padding:0;
-  border-radius:50%;
-}
-.p120-edit.is-icon-only svg{width:18px;height:18px;margin:0}
-
-.p120-role[data-role="developer"],
-.p120-role.is-developer{
-  border-color:rgba(0,230,255,.62);
-  box-shadow:0 0 14px rgba(0,230,255,.12),inset 0 0 12px rgba(0,230,255,.055);
-}
+/* V121 profile polish — approved mobile layout */
+.p120-identity h1{max-width:100%;white-space:nowrap;overflow:hidden;text-overflow:clip;overflow-wrap:normal;font-size:clamp(20px,3vw,32px)}
+.p120-presence{display:none!important}
+.p120-identity>p{display:block;width:min(100%,720px);max-width:100%;margin:9px 0 0;padding:6px 12px;border:1px solid rgba(33,221,255,.34);border-radius:999px;background:rgba(3,16,25,.78);backdrop-filter:blur(5px);-webkit-backdrop-filter:blur(5px);color:#c9f7ff;box-shadow:inset 0 0 14px rgba(33,221,255,.035),0 0 12px rgba(33,221,255,.05);font:500 10px/1.25 'Michroma',sans-serif;letter-spacing:.015em;overflow:hidden;text-overflow:clip;white-space:nowrap}
+.p120-edit.is-icon-only{display:grid;place-items:center;width:38px;min-width:38px;height:38px;min-height:38px;padding:0;border-radius:50%}.p120-edit.is-icon-only svg{width:18px;height:18px;margin:0}
+.p120-role[data-role="developer"],.p120-role.is-developer{min-height:26px!important;padding:4px 9px!important;gap:6px!important;border-color:rgba(0,230,255,.55);box-shadow:0 0 10px rgba(0,230,255,.08),inset 0 0 10px rgba(0,230,255,.04)}
+.p120-role[data-role="developer"] i,.p120-role.is-developer i{width:17px!important;height:17px!important}.p120-role[data-role="developer"] b,.p120-role.is-developer b{font-size:7px!important;letter-spacing:.08em}
+.p121-friend-privacy{border:1px solid rgba(55,123,155,.35);border-radius:22px;background:rgba(3,17,27,.78);padding:12px 14px}.p121-friend-privacy>strong{display:block;color:#39ddff;font:600 10px/1.2 'Michroma',sans-serif;letter-spacing:.04em;margin-bottom:10px}.p121-friend-privacy>div{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}.p121-friend-privacy button{min-width:0;border:1px solid rgba(68,124,150,.35);border-radius:14px;background:rgba(3,15,24,.7);color:#aebdca;padding:9px 6px;font:500 8px/1.25 'Michroma',sans-serif;cursor:pointer}.p121-friend-privacy button.is-active{border-color:#21ddff;color:#d8fbff;background:rgba(0,112,143,.22);box-shadow:0 0 12px rgba(33,221,255,.08)}
+.p120-game.is-empty{display:none!important}
 
 @media(max-width:560px){
-  .tl-profile-app-v120{padding-top:5px}
-  .tl-profile-main-v120{gap:12px}
-  .p120-hero{
-    grid-template-columns:108px minmax(0,1fr);
-    min-height:0;
-    padding:11px 12px;
-    gap:11px;
-  }
-  .p120-avatar{width:102px;height:102px}
-  .p120-identity h1{
-    font-size:clamp(16px,4.8vw,22px);
-    line-height:1.08;
-  }
-  .p120-roles{margin-top:8px;gap:6px}
-  .p120-role{min-height:30px}
-  .p120-role b{font-size:7.5px}
-  .p120-identity>p{
-    width:100%;
-    max-width:100%;
-    margin-top:7px;
-    padding:5px 9px;
-    border-radius:999px;
-    font-size:clamp(7px,2.1vw,8.5px);
-    line-height:1.2;
-    letter-spacing:0;
-    -webkit-line-clamp:unset;
-  }
-  .p120-facts article{padding:11px 12px}
-  .p120-tabs button{min-height:82px}
-  .p120-panels{padding-top:13px}
-  .p120-edit.is-icon-only{width:34px;min-width:34px;height:34px;min-height:34px}
+ .tl-profile-app-v120{padding-top:5px}.tl-profile-main-v120{gap:12px}
+ .p120-hero{grid-template-columns:118px minmax(0,1fr);min-height:180px;padding:13px 14px;gap:12px;background-size:contain!important;background-repeat:no-repeat!important;background-position:center right!important}
+ .p120-avatar{width:112px;height:112px}.p120-identity h1{font-size:clamp(15px,4.35vw,20px);line-height:1.08}
+ .p120-roles{margin-top:7px;gap:5px}.p120-role{min-height:27px}
+ .p120-identity>p{width:100%;max-width:100%;margin-top:8px;padding:5px 10px;border-radius:999px;background:rgba(3,16,25,.78);font-size:clamp(7px,2.1vw,8.5px);line-height:1.2;letter-spacing:0;-webkit-line-clamp:unset}
+ .p120-facts article{padding:11px 12px}.p120-tabs button{min-height:72px}.p120-panels{padding-top:13px}.p120-edit.is-icon-only{width:34px;min-width:34px;height:34px;min-height:34px}
+ .p121-friend-privacy{padding:10px;border-radius:18px}.p121-friend-privacy>strong{font-size:8px;margin-bottom:8px}.p121-friend-privacy>div{gap:5px}.p121-friend-privacy button{padding:8px 3px;border-radius:11px;font-size:6.5px}
 }
