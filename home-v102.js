@@ -57,7 +57,7 @@
     return `<article class="home-live-card" data-watch-streamer="${esc(row.id)}" role="button" tabindex="0" aria-label="Ver opções para ${esc(row.display_name||'streamer')}">
       <span class="home-live-visual">${homeImage?`<img src="${esc(homeImage)}" alt="${esc(row.display_name||'Streamer')}" loading="lazy" decoding="async" width="480" height="320">`:'<span class="home-live-placeholder tl-image-skeleton" aria-hidden="true"></span>'}</span>
       <span class="home-live-copy">
-        <span class="home-live-toolbar">${statusMarkup(row)}<button class="home-live-next" type="button" data-live-next aria-label="Mostrar próximo streamer"><span aria-hidden="true">›</span></button></span>
+        <span class="home-live-toolbar">${statusMarkup(row)}<button class="home-live-next" type="button" data-live-next aria-label="Mostrar próximo streamer" title="Próximo streamer"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m7 5 8 7-8 7z"/><path d="M17 5v14"/></svg></button></span>
         <span class="home-live-heading"><strong>${esc(row.display_name||'Streamer')}</strong><time>${esc(schedule(row))}</time></span>
         <span class="home-live-meta"><b>${esc(row.main_game||'Jogo em atualização')}</b>${gameMode?`<span>${esc(gameMode)}</span>`:''}</span>
         ${socials?`<span class="home-live-platforms" aria-label="Redes sociais">${socials}</span>`:''}
