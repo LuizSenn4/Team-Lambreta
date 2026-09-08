@@ -17,7 +17,7 @@
   const tabKey = 'tl_presence_tab_v103';
 
   let client = null, userId = null, idleTimer = 0, heartbeatTimer = 0;
-  let presenceChannel = null, browserChannel = null, peerState = {};
+  let presenceChannel = null, browserChannel = null, peerState = {}, peerSeenAt = {};
   let manualStatus = 'online', effectiveStatus = 'offline', autoAway = false;
   let activityListenersStarted = false, storageListenerStarted = false;
   let lastActivityAt = 0, lastFrequentActivityAt = 0;
@@ -50,12 +50,18 @@
 
   function resolve(profile) {
     const id = typeof profile === 'string' ? profile : profile?.id || profile?.user_id;
-    if (id && Object.prototype.hasOwnProperty.call(peerState, id)) return normalize(peerState[id]);
+    const now = Date.now();
+    if (id && Object.prototype.hasOwnProperty.call(peerState, id)) {
+      const seen = Number(peerSeenAt[id] || 0);
+      if (seen && now - seen <= HEARTBEAT_EXPIRE_MS) return normalize(peerState[id]);
+      delete peerState[id]; delete peerSeenAt[id];
+    }
     const raw = normalize(typeof profile === 'string' ? '' : profile?.presence);
     if (raw === 'offline') return 'offline';
     const value = typeof profile === 'string' ? '' : profile?.last_seen_at || profile?.last_seen;
     const seenAt = value ? new Date(value).getTime() : 0;
-    return seenAt && Number.isFinite(seenAt) && Date.now() - seenAt > HEARTBEAT_EXPIRE_MS ? 'offline' : raw;
+    if (!seenAt || !Number.isFinite(seenAt)) return 'offline';
+    return now - seenAt > HEARTBEAT_EXPIRE_MS ? 'offline' : raw;
   }
   const snapshot = () => ({ manualStatus, status: effectiveStatus, autoAway, lastActivityAt, connected: Boolean(userId) });
   function emit() {
@@ -64,6 +70,18 @@
     window.dispatchEvent(new CustomEvent('tl:presence', { detail }));
   }
   const emitPeers = () => window.dispatchEvent(new CustomEvent('tl:presence-peers', { detail: { peers: { ...peerState } } }));
+  function prunePeers() {
+    const now = Date.now();
+    let changed = false;
+    Object.keys(peerState).forEach(id => {
+      const seen = Number(peerSeenAt[id] || 0);
+      if (!seen || now - seen > HEARTBEAT_EXPIRE_MS) {
+        delete peerState[id]; delete peerSeenAt[id]; changed = true;
+      }
+    });
+    if (changed) emitPeers();
+    return changed;
+  }
   function publish(message) {
     try { browserChannel?.postMessage({ ...message, userId, sourceTabId: tabId, sentAt: Date.now() }); } catch {}
   }
@@ -164,15 +182,17 @@
     ACTIVITY_EVENTS.forEach(type => window.addEventListener(type, onActivity, { passive:true }));
   }
   function buildPeerState(raw) {
-    const next = {}, newest = {};
+    const next = {}, newest = {}, seen = {}, now = Date.now();
     Object.entries(raw || {}).forEach(([key, entries]) => (Array.isArray(entries) ? entries : []).forEach(entry => {
       const id = String(entry?.user_id || key.split(':')[0] || '');
       if (!id) return;
       const stamp = new Date(entry?.at || 0).getTime() || 0;
+      if (!stamp || now - stamp > HEARTBEAT_EXPIRE_MS) return;
       if (!Object.prototype.hasOwnProperty.call(newest, id) || stamp >= newest[id]) {
-        newest[id] = stamp; next[id] = normalize(entry?.status || 'online');
+        newest[id] = stamp; next[id] = normalize(entry?.status || 'online'); seen[id] = stamp;
       }
     }));
+    peerSeenAt = seen;
     return next;
   }
 
@@ -194,7 +214,7 @@
       if (state === 'SUBSCRIBED') await channel.track({ user_id:userId, tab_id:tabId, status:effectiveStatus, at:new Date().toISOString() });
     });
     await sync(effectiveStatus); scheduleIdle();
-    heartbeatTimer = setInterval(async () => { await evaluateIdle(); await sync(effectiveStatus); emitPeers(); }, HEARTBEAT_MS);
+    heartbeatTimer = setInterval(async () => { await evaluateIdle(); await sync(effectiveStatus); prunePeers(); emitPeers(); }, HEARTBEAT_MS);
     emit(); return snapshot();
   }
   function disconnect() {
@@ -203,14 +223,14 @@
     const activeClient = client, activeChannel = presenceChannel;
     userId = null;
     if (activeChannel && activeClient) { activeChannel.untrack().catch(() => {}); activeClient.removeChannel(activeChannel); }
-    presenceChannel = null; peerState = {}; emitPeers(); effectiveStatus = 'offline'; autoAway = false; emit();
+    presenceChannel = null; peerState = {}; peerSeenAt = {}; emitPeers(); effectiveStatus = 'offline'; autoAway = false; emit();
   }
 
   window.TeamPresence = Object.freeze({
     connect, disconnect, setManual, recordActivity, getState:snapshot, resolve,
     subscribe(fn) { listeners.add(fn); fn(snapshot()); return () => listeners.delete(fn); },
     subscribePeers(fn) { const handler = event => fn(event.detail?.peers || {}); window.addEventListener('tl:presence-peers', handler); fn({ ...peerState }); return () => window.removeEventListener('tl:presence-peers', handler); },
-    getPeers() { return { ...peerState }; },
+    getPeers() { prunePeers(); return { ...peerState }; },
     constants: { IDLE_MS, PRODUCTION_IDLE_MS, HEARTBEAT_MS, HEARTBEAT_EXPIRE_MS }
   });
 })();
