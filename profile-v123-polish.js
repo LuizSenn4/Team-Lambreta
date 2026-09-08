@@ -7,6 +7,7 @@
   if (!root) return;
 
   const OFFICIAL_COVERS = {
+    'league-of-legends': 'https://images.gamewatcherstatic.com/image/file/6/98/124916/League-of-Legends-Key-art-3.jpg',
     fortnite: 'https://cdn2.unrealengine.com/ch5s2-br-1920-1920x1080-10f8b8d8327d.jpg',
     minecraft: 'https://www.minecraft.net/content/dam/minecraftnet/games/minecraft/key-art/Homepage_Discover-our-games_MC-Vanilla-KeyArt_864x864.jpg'
   };

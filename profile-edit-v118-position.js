@@ -3,7 +3,7 @@
   if (window.TeamProfileEditV118Position) return;
   window.TeamProfileEditV118Position = true;
 
-  const clamp = value => Math.max(0, Math.min(100, Math.round(Number(value) || 72)));
+  const clamp = value => { const number = Number(value); return Math.max(0, Math.min(100, Math.round(Number.isFinite(number) ? number : 72))); };
   let currentX = 72;
   let saving = false;
   let pendingSave = null;
@@ -14,6 +14,8 @@
     const range = document.getElementById('profileCoverPositionRange');
     const valueNode = document.getElementById('profileCoverPositionValue');
     preview?.style.setProperty('--edit-cover-x', `${currentX}%`);
+    const cover = preview?.querySelector('.tl-profile-edit-v117__preview-cover');
+    if (cover) cover.style.setProperty('background-position', `${currentX}% center`, 'important');
     if (range) range.value = String(currentX);
     if (valueNode) valueNode.textContent = `${currentX}%`;
   };
@@ -52,7 +54,7 @@
     if (!form || !preview || !coverPreview || document.getElementById('profileCoverPositionRange')) return false;
 
     currentX = clamp(profile?.cover_position_x ?? 72);
-    preview.style.setProperty('--edit-cover-x', `${currentX}%`);
+    setPreview(currentX);
 
     const coverRadio = form.querySelector('[name="cover"]');
     const coverField = coverRadio?.closest('.tl-profile-edit-v117__field');
