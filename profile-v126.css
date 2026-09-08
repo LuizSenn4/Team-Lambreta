@@ -1,8 +1,8 @@
-/* V126 — perfil estável: capa inteira, centralizada e sem controles legados. */
+/* V126.1 — perfil estável: imagem preenche a box sem tarjas mortas. */
 html,body{max-width:100%;overflow-x:hidden}
 .tl-profile-app-v120,.tl-profile-main-v120,.p120-card,.p120-panels,.p120-games,.p120-game{min-width:0;max-width:100%;box-sizing:border-box}
-.p120-hero::before{background-position:center,center,center!important;background-size:100% 100%,100% 100%,contain!important;background-repeat:no-repeat!important;background-color:#071018!important}
+.p120-hero::before{background-position:center,center,center!important;background-size:100% 100%,100% 100%,cover!important;background-repeat:no-repeat!important;background-color:#071018!important}
 @media(max-width:560px){
- .p120-hero::before{background-position:center,center,center!important;background-size:100% 100%,100% 100%,contain!important;background-repeat:no-repeat!important}
+ .p120-hero::before{background-position:center,center,center!important;background-size:100% 100%,100% 100%,cover!important;background-repeat:no-repeat!important}
  .p120-card,.p120-panels,.p120-games,.p120-game{min-width:0;max-width:100%}
 }
