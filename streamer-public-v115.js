@@ -10,6 +10,8 @@
   const count = document.getElementById('streamersCount');
   const liveCount = document.getElementById('streamersLiveCount');
   const soonCount = document.getElementById('streamersSoonCount');
+  const nextLiveButton = document.getElementById('streamersNextLive');
+  let nextCardIndex = 0;
   if (!grid) return;
 
   let rows = [];
@@ -144,6 +146,15 @@
     document.addEventListener('visibilitychange', () => { if (!document.hidden) scheduleLoad(); });
     window.addEventListener('focus', scheduleLoad, { passive:true });
   }
+
+  function showNextLive() {
+    const cards = [...grid.querySelectorAll('.streamer-poster-card')];
+    if (!cards.length) return;
+    nextCardIndex = (nextCardIndex + 1) % cards.length;
+    cards[nextCardIndex].scrollIntoView({ behavior:'smooth', block:'nearest', inline:'center' });
+    cards[nextCardIndex].animate?.([{transform:'scale(1)'},{transform:'scale(1.025)'},{transform:'scale(1)'}],{duration:520,easing:'ease'});
+  }
+  nextLiveButton?.addEventListener('click', showNextLive);
 
   async function boot() {
     const cached = images?.readCollection?.('streamers-public');

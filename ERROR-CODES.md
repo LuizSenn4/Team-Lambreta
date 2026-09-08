@@ -27,6 +27,10 @@ Os códigos abaixo são emitidos por `tl-diagnostics-v104.js`. Pesquise pelo có
 | `TL-FORUM-001` | Fórum | Operação do Fórum falhou | RPC, RLS, sessão ou dados inconsistentes | `forum-board-v2.js` e resposta Supabase |
 | `TL-ADMIN-001` | Administração | Gate ou ação administrativa falhou | Permissão insuficiente, sessão ou RPC | `admin-gate.js`, `admin.js` e PermissionService |
 | `TL-ASSET-001` | Assets/core | Código inválido ou falha não classificada | Chamada incorreta ao diagnóstico ou asset ausente | Payload completo e arquivo chamador |
+| `PRF-013` | Perfil | Falha ao guardar o status rápido | Sessão expirada, RPC indisponível ou validação do perfil | `profile-status-v124.js` e resposta Supabase |
+| `LAB-STR-001` | Laboratório | Ação exige sessão autenticada | Utilizador ainda não iniciou sessão | `laboratorio-streamers-v1.js` e Auth |
+| `LAB-STR-002` | Laboratório | Ordem ou aviso não pôde ser guardado | RPC, RLS, sessão ou dados inválidos | `laboratorio-streamers-v1.js`, `streamer_preferences` e Supabase |
+| `LAB-STR-003` | Laboratório | Streamers não puderam ser carregados | Rede, RLS ou tabela indisponível | `laboratorio-streamers-v1.js` e tabela `streamers` |
 | `TL-PERF-001` | Performance | Recurso duplicado ou bloqueio detectado | Preload redundante, cache incorreto ou inicialização repetida | Network, Performance e módulo proprietário |
 
 ## Uso

@@ -19,6 +19,7 @@
   <link rel="stylesheet" href="tl-polish-v100.css?v=103.0" />
   <link rel="stylesheet" href="home-streamers-v102.css?v=116.0" />
   <link rel="stylesheet" href="streamer-gallery-v101.css?v=103.2" />
+  <link rel="stylesheet" href="streamers-v117-polish.css?v=117.0" />
   <link rel="stylesheet" href="tl-presentation-hero-v102.css?v=103.0" />
   <style>
     .streamers-live-summary{display:flex;flex-wrap:wrap;gap:10px;margin-top:14px}
@@ -33,13 +34,12 @@
 
     <main class="streamers-showcase-page tl-page-hero-shell-v102">
       <section class="tl-page-hero-v102">
-        <h1 class="tl-page-hero-v102__title">Team Lambreta</h1>
-        <p class="tl-page-hero-v102__subtitle">Veja quem está ao vivo agora e os próximos horários da nossa equipa.</p>
-        <div class="streamers-live-summary" aria-label="Estado das lives">
-          <div><strong id="streamersLiveCount">0</strong><span>AO VIVO</span></div>
-          <div><strong id="streamersSoonCount">0</strong><span>EM BREVE</span></div>
-          <div><strong id="streamersCount">0</strong><span>STREAMERS</span></div>
+        <div class="streamers-live-toolbar">
+          <span class="streamers-live-now"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg><strong id="streamersLiveCount">0</strong><b>AO VIVO</b></span>
+          <button id="streamersNextLive" class="streamers-next-live" type="button" aria-label="Mostrar próxima live"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m7 5 8 7-8 7"/><path d="M17 5v14"/></svg><span>PRÓXIMA LIVE</span></button>
         </div>
+        <p class="streamers-live-copy">Veja quem está ao vivo agora e os próximos horários da equipa.</p>
+        <div class="streamers-mini-summary"><span><b id="streamersSoonCount">0</b> EM BREVE</span><span><b id="streamersCount">0</b> STREAMERS</span></div>
       </section>
 
       <section class="streamers-showcase-list">
@@ -61,7 +61,7 @@
   <script src="services/visual-image-service.js?v=103.0"></script>
   <script src="services/permission-service.js?v=102.3"></script>
   <script src="tl-shell-v115.js?v=115.0"></script>
-  <script src="streamer-public-v115.js?v=116.0"></script>
+  <script src="streamer-public-v115.js?v=117.0"></script>
   <script src="community-progress-v938.js?v=104.0"></script>
 </body>
 </html>
