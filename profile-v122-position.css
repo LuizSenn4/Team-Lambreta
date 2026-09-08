@@ -1,4 +1,5 @@
 /* V122 — mobile cover positioning + nickname descender fix */
+html,body{max-width:100%;overflow-x:hidden}.site-content,.site-header{width:100%;max-width:100%}
 .p120-identity h1{
   line-height:1.24!important;
   padding-bottom:3px;
@@ -12,6 +13,7 @@
 
   /* The first two background layers stay centered; the actual cover uses the saved X focus. */
   .p120-hero::before{
-    background-position:center,center,var(--cover-x,72%) center!important;
+    background-position:center,center,var(--cover-x,72%) var(--cover-y,50%)!important;
+    background-size:100% 100%,100% 100%,auto var(--cover-zoom,118%)!important;
   }
 }

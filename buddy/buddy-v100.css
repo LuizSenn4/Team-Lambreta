@@ -38,7 +38,7 @@
 /* Buddy V103: ocupa somente a área útil do viewport. O histórico e o
    conteúdo informativo são as únicas regiões roláveis. */
 .buddy-page{height:100dvh;overflow:hidden}
-.buddy-page .site-content{display:grid;grid-template-rows:var(--tl-header-h,76px) minmax(0,1fr);height:100dvh;min-height:0!important;overflow:hidden}
+.buddy-page .site-content{display:grid;grid-template-rows:auto minmax(0,1fr);height:100dvh;min-height:0!important;overflow:hidden}
 .buddy-page .site-content>main{width:100%!important;min-width:0;min-height:0;padding:0!important;margin:0!important;overflow:hidden}
 .buddy-shell-v100{height:calc(100% - 32px);min-height:0;margin:16px auto}
 .buddy-sidebar-v100,.buddy-conversation-v100,.buddy-info-v100{height:100%;min-height:0}

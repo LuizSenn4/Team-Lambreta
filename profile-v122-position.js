@@ -3,7 +3,7 @@
   if (window.TeamProfileV122Position) return;
   window.TeamProfileV122Position = true;
 
-  const clamp = value => Math.max(0, Math.min(100, Number(value) || 72));
+  const clamp=(value,min,max,fallback)=>Math.max(min,Math.min(max,Number.isFinite(Number(value))?Number(value):fallback));
   let syncing = false;
 
   async function applyCoverPosition() {
@@ -16,8 +16,8 @@
       if (!session?.user) return;
       const userId = new URLSearchParams(location.search).get('user') || session.user.id;
       const profile = await window.TeamProfiles.getPublicProfile(userId, { fresh:true });
-      const x = clamp(profile?.cover_position_x ?? 72);
-      hero.style.setProperty('--cover-x', `${x}%`);
+      const x=clamp(profile?.cover_position_x,0,100,72),y=clamp(profile?.cover_position_y,0,100,50),zoom=clamp(profile?.cover_zoom,100,180,118);
+      hero.style.setProperty('--cover-x',`${x}%`);hero.style.setProperty('--cover-y',`${y}%`);hero.style.setProperty('--cover-zoom',`${zoom}%`);
     } catch (error) {
       console.error('[Profile V122 cover position]', error);
     } finally {

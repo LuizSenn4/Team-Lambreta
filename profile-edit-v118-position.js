@@ -1,126 +1,44 @@
 (() => {
   'use strict';
   if (window.TeamProfileEditV118Position) return;
-  window.TeamProfileEditV118Position = true;
-
-  const clamp = value => { const number = Number(value); return Math.max(0, Math.min(100, Math.round(Number.isFinite(number) ? number : 72))); };
-  let currentX = 72;
-  let saving = false;
-  let pendingSave = null;
-
-  const setPreview = value => {
-    currentX = clamp(value);
-    const preview = document.getElementById('profileEditPreview');
-    const range = document.getElementById('profileCoverPositionRange');
-    const valueNode = document.getElementById('profileCoverPositionValue');
-    preview?.style.setProperty('--edit-cover-x', `${currentX}%`);
-    const cover = preview?.querySelector('.tl-profile-edit-v117__preview-cover');
-    if (cover) cover.style.setProperty('background-position', `${currentX}% center`, 'important');
-    if (range) range.value = String(currentX);
-    if (valueNode) valueNode.textContent = `${currentX}%`;
-  };
-
-  const persist = async () => {
-    if (saving) {
-      pendingSave = currentX;
-      return;
-    }
-    saving = true;
-    const value = currentX;
-    try {
-      const result = await window.teamSupabase?.rpc?.('tl_set_profile_cover_position', { p_x:value });
-      if (result?.error) throw result.error;
-      document.getElementById('profileEditFeedback')?.classList.remove('is-error');
-    } catch (error) {
-      console.error('[Profile cover position]', error);
-      const feedback = document.getElementById('profileEditFeedback');
-      if (feedback) {
-        feedback.textContent = 'Não foi possível guardar a posição da capa.';
-        feedback.className = 'tl-profile-edit-v117__feedback is-error';
-      }
-    } finally {
-      saving = false;
-      if (pendingSave !== null) {
-        pendingSave = null;
-        persist();
-      }
-    }
-  };
-
-  function mountControls(profile) {
-    const form = document.getElementById('profileEditForm');
-    const preview = document.getElementById('profileEditPreview');
-    const coverPreview = preview?.querySelector('.tl-profile-edit-v117__preview-cover');
-    if (!form || !preview || !coverPreview || document.getElementById('profileCoverPositionRange')) return false;
-
-    currentX = clamp(profile?.cover_position_x ?? 72);
-    setPreview(currentX);
-
-    const coverRadio = form.querySelector('[name="cover"]');
-    const coverField = coverRadio?.closest('.tl-profile-edit-v117__field');
-    const field = document.createElement('div');
-    field.className = 'tl-profile-edit-v117__field tl-profile-edit-v118__cover-position';
-    field.innerHTML = `<span>Posição da capa</span><small>Arrasta a imagem no preview ou usa &lt; &gt; para enquadrar.</small><div class="tl-profile-edit-v118__cover-controls"><button type="button" data-cover-step="-5" aria-label="Mover capa para a esquerda">‹</button><input id="profileCoverPositionRange" type="range" min="0" max="100" step="1" value="${currentX}" aria-label="Posição horizontal da capa"><button type="button" data-cover-step="5" aria-label="Mover capa para a direita">›</button></div><div id="profileCoverPositionValue" class="tl-profile-edit-v118__cover-value">${currentX}%</div>`;
-    coverField?.insertAdjacentElement('afterend', field) || form.appendChild(field);
-
-    field.querySelectorAll('[data-cover-step]').forEach(button => {
-      button.addEventListener('click', () => {
-        setPreview(currentX + Number(button.dataset.coverStep || 0));
-        persist();
-      });
-    });
-
-    field.querySelector('input[type="range"]')?.addEventListener('input', event => setPreview(event.target.value));
-    field.querySelector('input[type="range"]')?.addEventListener('change', persist);
-
-    let dragStartX = 0;
-    let dragStartValue = currentX;
-    let dragging = false;
-    coverPreview.addEventListener('pointerdown', event => {
-      dragging = true;
-      dragStartX = event.clientX;
-      dragStartValue = currentX;
-      coverPreview.classList.add('is-dragging');
-      coverPreview.setPointerCapture?.(event.pointerId);
-    });
-    coverPreview.addEventListener('pointermove', event => {
-      if (!dragging) return;
-      const width = Math.max(1, coverPreview.clientWidth);
-      const delta = (dragStartX - event.clientX) / width * 100;
-      setPreview(dragStartValue + delta);
-    });
-    const stopDrag = event => {
-      if (!dragging) return;
-      dragging = false;
-      coverPreview.classList.remove('is-dragging');
-      try { coverPreview.releasePointerCapture?.(event.pointerId); } catch {}
-      persist();
-    };
-    coverPreview.addEventListener('pointerup', stopDrag);
-    coverPreview.addEventListener('pointercancel', stopDrag);
-
-    form.addEventListener('change', event => {
-      if (event.target?.name === 'cover') {
-        setPreview(72);
-        persist();
-      }
-    });
-
+  const clamp=(value,min,max,fallback)=>{const n=Number(value);return Math.max(min,Math.min(max,Math.round(Number.isFinite(n)?n:fallback)))};
+  let x=72,y=50,zoom=118,dirty=false;
+  function setPreview(nextX=x,nextY=y,nextZoom=zoom){
+    x=clamp(nextX,0,100,72);y=clamp(nextY,0,100,50);zoom=clamp(nextZoom,100,180,118);dirty=true;
+    const preview=document.getElementById('profileEditPreview'),cover=preview?.querySelector('.tl-profile-edit-v117__preview-cover');
+    preview?.style.setProperty('--edit-cover-x',`${x}%`);preview?.style.setProperty('--edit-cover-y',`${y}%`);preview?.style.setProperty('--edit-cover-zoom',`${zoom}%`);
+    if(cover){cover.style.setProperty('background-position',`${x}% ${y}%`,'important');cover.style.setProperty('background-size',`auto ${zoom}%`,'important')}
+    const xr=document.getElementById('profileCoverPositionRange'),yr=document.getElementById('profileCoverPositionYRange'),zr=document.getElementById('profileCoverZoomRange');
+    if(xr)xr.value=String(x);if(yr)yr.value=String(y);if(zr)zr.value=String(zoom);
+  }
+  async function persist(){
+    if(!dirty)return true;
+    const result=await window.teamSupabase?.rpc?.('tl_set_profile_cover_transform',{p_x:x,p_y:y,p_zoom:zoom});
+    if(result?.error){console.error('[Profile cover transform]',result.error);throw result.error}
+    dirty=false;return true;
+  }
+  function mount(profile){
+    const form=document.getElementById('profileEditForm'),preview=document.getElementById('profileEditPreview'),cover=preview?.querySelector('.tl-profile-edit-v117__preview-cover');
+    if(!form||!preview||!cover||document.getElementById('profileCoverPositionRange'))return false;
+    x=clamp(profile?.cover_position_x,0,100,72);y=clamp(profile?.cover_position_y,0,100,50);zoom=clamp(profile?.cover_zoom,100,180,118);setPreview();dirty=false;
+    const coverField=form.querySelector('[name="cover"]')?.closest('.tl-profile-edit-v117__field');
+    const field=document.createElement('div');field.className='tl-profile-edit-v117__field tl-profile-edit-v118__cover-position';
+    field.innerHTML=`<span>Enquadramento da capa</span><small>Arrasta no preview. A cruz marca o centro que ficará no perfil.</small><label class="tl-profile-edit-v118__range"><b>Horizontal</b><input id="profileCoverPositionRange" type="range" min="0" max="100" step="1" value="${x}"></label><label class="tl-profile-edit-v118__range"><b>Vertical</b><input id="profileCoverPositionYRange" type="range" min="0" max="100" step="1" value="${y}"></label><label class="tl-profile-edit-v118__range"><b>Zoom</b><input id="profileCoverZoomRange" type="range" min="100" max="180" step="1" value="${zoom}"></label><button class="tl-profile-edit-v118__reset" type="button">Centralizar</button>`;
+    coverField?.insertAdjacentElement('afterend',field)||form.appendChild(field);
+    cover.insertAdjacentHTML('beforeend','<span class="tl-profile-edit-v118__guide" aria-hidden="true"></span>');
+    document.getElementById('profileCoverPositionRange').addEventListener('input',e=>setPreview(e.target.value));
+    document.getElementById('profileCoverPositionYRange').addEventListener('input',e=>setPreview(x,e.target.value));
+    document.getElementById('profileCoverZoomRange').addEventListener('input',e=>setPreview(x,y,e.target.value));
+    field.querySelector('.tl-profile-edit-v118__reset').addEventListener('click',()=>setPreview(50,50,118));
+    let dragging=false,startX=0,startY=0,startValueX=x,startValueY=y;
+    cover.addEventListener('pointerdown',e=>{dragging=true;startX=e.clientX;startY=e.clientY;startValueX=x;startValueY=y;cover.classList.add('is-dragging');cover.setPointerCapture?.(e.pointerId)});
+    cover.addEventListener('pointermove',e=>{if(!dragging)return;setPreview(startValueX+(startX-e.clientX)/Math.max(1,cover.clientWidth)*100,startValueY+(startY-e.clientY)/Math.max(1,cover.clientHeight)*100)});
+    const stop=e=>{if(!dragging)return;dragging=false;cover.classList.remove('is-dragging');try{cover.releasePointerCapture?.(e.pointerId)}catch{}};
+    cover.addEventListener('pointerup',stop);cover.addEventListener('pointercancel',stop);
+    form.addEventListener('change',e=>{if(e.target?.name==='cover')setPreview(50,50,118)});
     return true;
   }
-
-  async function init() {
-    try {
-      const profile = await window.TeamProfiles?.getCurrentProfile?.({ fresh:true });
-      const attempt = () => {
-        if (mountControls(profile)) return;
-        setTimeout(attempt, 80);
-      };
-      attempt();
-    } catch (error) {
-      console.error('[Profile edit V118 position]', error);
-    }
-  }
-
+  async function init(){try{const profile=await window.TeamProfiles?.getCurrentProfile?.({fresh:true});const attempt=()=>{if(!mount(profile))setTimeout(attempt,80)};attempt()}catch(error){console.error('[Profile edit cover transform]',error)}}
   Promise.resolve(window.TeamAuth?.ready).then(init);
+  window.TeamProfileEditV118Position=Object.freeze({persist,get value(){return{x,y,zoom}}});
 })();
