@@ -28,7 +28,7 @@ if(forum.includes('selectedGames.size >= 3')||forum.includes('${selectedGames.si
 const guardMigration=await read('supabase/migrations/20260908213000_profile_cover_transform_and_four_games_guard.sql');
 if(guardMigration.includes('cardinality(new.games)>3')||guardMigration.includes('até 3 jogos'))errors.push('profile catalog trigger: old 3-game limit remains');
 const profileHtml=await read('profile.html');
-for(const asset of ['profile-v122-position.css?v=125.0','profile-v122-position.js?v=125.0','profile-game-v123.css?v=125.0','profile-game-v123.js?v=125.0'])if(!profileHtml.includes(asset))errors.push(`profile.html: current asset not pinned: ${asset}`);
+for(const asset of ['profile-game-v123.css?v=126.1','profile-v126.css?v=126.1','profile-game-v123.js?v=126.0'])if(!profileHtml.includes(asset))errors.push(`profile.html: current asset not pinned: ${asset}`);
 for(const obsolete of ['profile-social-editor-v106.js','buddy-gunbound-v1.css','buddy.html.before-mobile-auth-fix','profile-v123-preview.html']){try{await read(obsolete);errors.push(`${obsolete}: obsolete file returned`)}catch(error){if(error?.code!=='ENOENT')throw error}}
 const vercel=JSON.parse(await read('vercel.json'));
 const joined=JSON.stringify(vercel);
